@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Gemstone Caverns: a dig-and-collect cave puzzle game for Android, with falling boulders, chain-reacting crystals, four kinds of guardians and 100 caves.">
+<title data-en="Gemstone Caverns — Stefan" data-fr="Gemstone Caverns — Stefan">Gemstone Caverns — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 05</div>
+<h1>Gemstone Caverns</h1>
+<div class="alias">Aboulder</div>
+<p class="lead" data-l="en">An underground digging game in the tradition of Boulder Dash. Dig through the soil, collect the gems, keep out from under the falling boulders, and reach the exit before the clock runs out — one hundred caves deep.</p>
+<p class="lead" data-l="fr">Un jeu de creusement souterrain dans la lignée de Boulder Dash. On creuse la terre, on ramasse les gemmes, on évite les rochers qui tombent, et on rejoint la sortie avant la fin du temps imparti — sur cent cavernes.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t" data-l="en">Puzzle · Action</span><span class="tag t" data-l="fr">Réflexion · Action</span><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/Aboulder" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/aboulder/capture-jeu.jpg" alt="Gemstone Caverns: a cave in progress"></div>
+
+<div class="stats">
+<div class="stat"><strong>100</strong><span data-l="en">Caves</span><span data-l="fr">Cavernes</span></div>
+<div class="stat"><strong>4</strong><span data-l="en">Guardian behaviours</span><span data-l="fr">Familles de gardiens</span></div>
+<div class="stat"><strong>9</strong><span data-l="en">Cave families</span><span data-l="fr">Familles de cavernes</span></div>
+<div class="stat"><strong>10</strong><span data-l="en">Simulation steps / s</span><span data-l="fr">Pas de simulation / s</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The rules</div>
+<h2>Four things to understand.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Dig and collect</h3><p>Dig through the soil to open a way, and pick up the cave’s quota of gems. The exit only opens once you have it.</p></div>
+<div class="card"><span class="num">02</span><h3>Boulders fall</h3><p>As soon as the soil gives way beneath them. They slide off rounded surfaces and crush whatever they meet — you included. They can be pushed sideways, provided the space behind is free.</p></div>
+<div class="card"><span class="num">03</span><h3>Unstable crystals</h3><p>They burst when a boulder strikes them or an explosion reaches them, and scatter gems. One explosion can set off the next.</p></div>
+<div class="card"><span class="num">04</span><h3>Guardians</h3><p>Four families, four behaviours. Crushed under a boulder, patrollers and trackers burst into gems — so the boulder is also a weapon.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Guardians</div>
+<h2>Know who is after you.</h2>
+<div class="table-wrap"><table>
+<tr><th>Guardian</th><th>Behaviour</th></tr>
+<tr><td>Wanderer</td><td>Drifts about, with no particular plan.</td></tr>
+<tr><td>Hunter</td><td>Charges in a straight line — a U-shaped wall is enough to hold it.</td></tr>
+<tr><td>Patroller</td><td>Follows the walls, round and round its island.</td></tr>
+<tr><td>Tracker</td><td>Computes a real path to reach you. It does not dig, but it will take the tunnel you dug.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">The caves</div>
+<h2>One idea per cave.</h2>
+<p>The first fifteen caves are each built around a single idea: you do not progress by replaying the previous one, only bigger. A few of them:</p>
+<div class="table-wrap"><table>
+<tr><th>Cave</th><th>Difficulty</th><th>What it asks of you</th></tr>
+<tr><td>First steps</td><td>Easy</td><td>Dig, collect, reach the exit.</td></tr>
+<tr><td>The weight of stones</td><td>Normal</td><td>Push a boulder, and do not linger underneath.</td></tr>
+<tr><td>The great vault</td><td>Hard</td><td>A fall wakes a crystal; the chain reaction breaks the vault open.</td></tr>
+<tr><td>The hourglass</td><td>Hard</td><td>Pierce a pile from below, and watch it settle.</td></tr>
+<tr><td>The lock</td><td>Expert</td><td>Taking the gem opens the corridor; pushing the boulder closes it again.</td></tr>
+<tr><td>The gem rain</td><td>Hard</td><td>A falling gem crushes too: empty each shaft from the bottom, without hurrying.</td></tr>
+<tr><td>The maze</td><td>Expert</td><td>A tracker that always knows the way, but walks half as fast.</td></tr>
+<tr><td>The bait</td><td>Expert</td><td>Open its path under a crystal, and drop the boulder in time.</td></tr>
+</table></div>
+<p style="margin-top:16px">The eighty-five that follow, from 16 to 100, work these mechanics into nine families — boulder fields, scree, shafts, crystals, guardians, rounds, traps, wanderers and mazes — from Normal to Expert. They rotate from one family to the next, so two neighbouring caves never look alike. They are variations: the engine gains no new rule for them. The last twenty-five are the hardest of the lot, chosen as the ones that cost the automated planner the most effort to solve.</p>
+</section>
+
+<section>
+<div class="kicker">Controls</div>
+<h2>A stick that finds your thumb.</h2>
+<p>Put a finger anywhere on the screen and push in a direction: the virtual stick settles under your thumb instead of sitting in a fixed corner. A physical keyboard works too — arrows or WASD, space to pause.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Les règles</div>
+<h2>Quatre choses à comprendre.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Creuser et ramasser</h3><p>On creuse la terre pour se frayer un passage, et on ramasse le quota de gemmes de la caverne. La sortie ne s’ouvre qu’à ce moment-là.</p></div>
+<div class="card"><span class="num">02</span><h3>Les rochers tombent</h3><p>Dès que la terre cède sous eux. Ils glissent sur les surfaces rondes et écrasent ce qu’ils rencontrent — joueur compris. Ils se poussent horizontalement, à condition que la place derrière soit libre.</p></div>
+<div class="card"><span class="num">03</span><h3>Les cristaux instables</h3><p>Ils éclatent quand un rocher les percute ou qu’une explosion les atteint, et sèment des gemmes. Une explosion peut en déclencher une autre.</p></div>
+<div class="card"><span class="num">04</span><h3>Les gardiens</h3><p>Quatre familles, quatre comportements. Écrasés par un rocher, patrouilleurs et traqueurs éclatent en gemmes — le rocher est donc aussi une arme.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Les gardiens</div>
+<h2>Savoir qui vous poursuit.</h2>
+<div class="table-wrap"><table>
+<tr><th>Gardien</th><th>Comportement</th></tr>
+<tr><td>L’errant</td><td>Dérive, sans plan particulier.</td></tr>
+<tr><td>Le chasseur</td><td>Fonce en ligne droite — un mur en U suffit à le retenir.</td></tr>
+<tr><td>Le patrouilleur</td><td>Longe les murs et fait le tour de son île.</td></tr>
+<tr><td>Le traqueur</td><td>Calcule un vrai chemin pour vous rejoindre. Il ne creuse pas, mais il emprunte le tunnel que vous creusez.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Les cavernes</div>
+<h2>Une idée par caverne.</h2>
+<p>Les quinze premières cavernes sont bâties chacune autour d’une idée : on ne progresse pas en refaisant la précédente en plus grand. Quelques-unes :</p>
+<div class="table-wrap"><table>
+<tr><th>Caverne</th><th>Difficulté</th><th>Ce qu’elle demande</th></tr>
+<tr><td>Premiers pas</td><td>Facile</td><td>Creuser, ramasser, rejoindre la sortie.</td></tr>
+<tr><td>Le poids des pierres</td><td>Normal</td><td>Pousser un rocher, et ne pas s’attarder dessous.</td></tr>
+<tr><td>Le grand coffre</td><td>Difficile</td><td>Une chute réveille un cristal, la chaîne perce le coffre.</td></tr>
+<tr><td>Le sablier</td><td>Difficile</td><td>Percer un tas par-dessous, et le regarder se tasser.</td></tr>
+<tr><td>Le verrou</td><td>Expert</td><td>La gemme prise ouvre le couloir, le rocher poussé le referme.</td></tr>
+<tr><td>La pluie de gemmes</td><td>Difficile</td><td>Une gemme qui tombe écrase aussi : vider chaque puits par le bas, sans se presser.</td></tr>
+<tr><td>Le labyrinthe</td><td>Expert</td><td>Un traqueur qui connaît toujours le chemin, mais marche deux fois moins vite.</td></tr>
+<tr><td>L’appât</td><td>Expert</td><td>Lui ouvrir le chemin sous un cristal, et lâcher le rocher à temps.</td></tr>
+</table></div>
+<p style="margin-top:16px">Les quatre-vingt-cinq suivantes, de la 16 à la 100, déclinent ces mécanismes en neuf familles — rochers, éboulis, puits, cristaux, gardiens, rondes, nasses, errants et labyrinthes — du Normal à l’Expert. Elles tournent d’une famille à l’autre, si bien que deux cavernes voisines ne se ressemblent jamais. Ce sont des variations : le moteur ne gagne aucune règle pour elles. Les vingt-cinq dernières sont les plus dures du lot, retenues comme celles qui ont coûté le plus d’effort au planificateur automatique.</p>
+</section>
+
+<section>
+<div class="kicker">Commandes</div>
+<h2>Un manche qui trouve votre pouce.</h2>
+<p>Posez un doigt n’importe où sur l’écran et poussez dans une direction : le manche virtuel se cale sous votre pouce plutôt que dans un coin fixe. Un clavier physique fonctionne aussi — flèches ou ZQSD/WASD, espace pour la pause.</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/aboulder/capture-niveaux.jpg" target="_blank"><img src="../assets/screenshots/aboulder/capture-niveaux.jpg" alt="Cave selection" loading="lazy"></a>
+<a href="../assets/screenshots/aboulder/capture-portrait.jpg" target="_blank"><img src="../assets/screenshots/aboulder/capture-portrait.jpg" alt="Playing in portrait" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>:core</td><td>The engine — domain, simulation, levels — in pure Kotlin/JVM with no Android dependency. Physics, collisions, AI, determinism and level validation all run on a development machine in seconds, without an emulator.</td></tr>
+<tr><td>:app</td><td>The Compose interface: rendering, input, sound and saves (DataStore).</td></tr>
+<tr><td>Snapshot</td><td>Rendering never sees the game state. The engine produces an immutable <code>RenderSnapshot</code> of each tick and the interface reads only that, so a display bug cannot alter a game.</td></tr>
+<tr><td>Fixed step</td><td>The simulation advances every 100 ms through twelve ordered phases (input, player movement, gravity, collisions, chain reactions, enemies, objectives, score, timer…).</td></tr>
+<tr><td>Determinism</td><td>All randomness goes through a seeded SplitMix64 generator. With the same seed and inputs, a game replays identically, tick for tick — and a test checks it.</td></tr>
+<tr><td>Smoothness</td><td>The display runs at the screen’s refresh rate: an accumulator decouples real time from the simulation, and moving objects are interpolated between two ticks.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>:core</td><td>Le moteur — domaine, simulation, niveaux — en Kotlin/JVM pur, sans dépendance Android. Physique, collisions, IA, déterminisme et validation des niveaux s’exécutent sur le poste de développement en quelques secondes, sans émulateur.</td></tr>
+<tr><td>:app</td><td>L’interface Compose : rendu, entrées, son et sauvegarde (DataStore).</td></tr>
+<tr><td>Instantané</td><td>Le rendu ne voit jamais l’état du jeu. Le moteur produit un <code>RenderSnapshot</code> immuable de chaque tick et l’interface ne lit que cela : un bug d’affichage ne peut pas modifier une partie.</td></tr>
+<tr><td>Pas fixe</td><td>La simulation avance toutes les 100 ms, en douze phases ordonnées (entrée, déplacement du joueur, gravité, collisions, réactions en chaîne, ennemis, objectifs, score, minuterie…).</td></tr>
+<tr><td>Déterminisme</td><td>Tout l’aléatoire passe par un générateur à graine SplitMix64. À graine et entrées identiques, une partie se rejoue à l’identique, tick pour tick — et un test le vérifie.</td></tr>
+<tr><td>Fluidité</td><td>L’affichage tourne à la fréquence de l’écran : un accumulateur découple le temps réel de la simulation, et les objets en mouvement sont interpolés entre deux ticks.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="3d-frog.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>3D Frog</b></a>
+<a href="acpc.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>Acpc</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>

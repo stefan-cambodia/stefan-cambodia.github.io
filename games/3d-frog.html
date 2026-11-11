@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="3D Frog (Ribbit Rush): a 3D arcade crossing game for Android. Hop across roads and rivers, ride logs and turtles, and bring every frog home.">
+<title data-en="3D Frog — Stefan" data-fr="3D Frog — Stefan">3D Frog — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 04</div>
+<h1>3D Frog</h1>
+<div class="alias">Ribbit Rush</div>
+<p class="lead" data-l="en">A 3D arcade crossing game. Hop a frog across roads and rivers, ride logs and turtles, and bring every frog home — seen from right behind the frog, with traffic looming past and the horizon ahead.</p>
+<p class="lead" data-l="fr">Un jeu d’arcade 3D de traversée. Faites sauter une grenouille par-dessus routes et rivières, voyagez sur les rondins et les tortues, et ramenez chaque grenouille à la maison — vu de juste derrière la grenouille, la circulation qui défile et l’horizon devant soi.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t">Arcade</span><span class="tag">Godot 4</span><span class="tag">GDScript</span><span class="tag">Vulkan</span></div>
+<div class="actions"><span class="soon" data-l="en">Repository coming soon</span><span class="soon" data-l="fr">Dépôt bientôt disponible</span></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/3d-frog/chase-sunset-landscape.jpg" alt="3D Frog: the chase view on the Sunset Highway"></div>
+
+<div class="stats">
+<div class="stat"><strong>5</strong><span data-l="en">Game modes</span><span data-l="fr">Modes de jeu</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">Camera views</span><span data-l="fr">Vues de caméra</span></div>
+<div class="stat"><strong>8</strong><span data-l="en">Frogs to unlock</span><span data-l="fr">Grenouilles à débloquer</span></div>
+<div class="stat"><strong>16</strong><span data-l="en">Achievements</span><span data-l="fr">Succès</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>The crossing, from the frog’s point of view.</h2>
+<p>Lanes of traffic, then a river of drifting logs and turtles, then the home bays on the far bank. The recipe is familiar; the viewpoint is not. The default camera is a low chase view right behind the frog, so cars are something that comes at you rather than something you watch from above.</p>
+<p>Two other views are one tap away — first person, and a high classic overview — and the game plays in portrait as well as landscape.</p>
+</section>
+
+<section>
+<div class="kicker">Modes</div>
+<h2>Five ways to cross.</h2>
+<div class="grid three">
+<div class="card"><span class="num">01</span><h3>Classic</h3><p>Five bays to fill, three lives, and difficulty that rises with every round.</p></div>
+<div class="card"><span class="num">02</span><h3>Endless</h3><p>One life. Keep moving forward and outrun the flood.</p></div>
+<div class="card"><span class="num">03</span><h3>Time Attack</h3><p>75 seconds on the clock; every frog brought home adds time.</p></div>
+<div class="card"><span class="num">04</span><h3>Challenges</h3><p>Twelve handcrafted levels, three stars to earn on each.</p></div>
+<div class="card"><span class="num">05</span><h3>Daily Run</h3><p>One run per day, seeded by the date.</p></div>
+<div class="card"><span class="num">+</span><h3>Four environments</h3><p>Meadow Day, Sunset Highway, Misty Dawn and Neon Night.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Fair, and quick under the thumb.</h2>
+<div class="grid">
+<div class="card"><h3>Fair by construction</h3><p>Lanes follow deterministic periodic patterns, and every generated level is proven solvable by a conservative search before it is used. Hitboxes are forgiving, and landings on logs and turtles tolerate the edges.</p></div>
+<div class="card"><h3>Warned before you see it</h3><p>Red arrows point at traffic that is still outside the view, so the close camera never hides the car that gets you.</p></div>
+<div class="card"><h3>Responsive controls</h3><p>A swipe fires as soon as the finger has travelled about 5 mm, without lifting. A tap hops forward, an optional on-screen d-pad fires on touch-down, and one hop can be buffered during the end of a jump.</p></div>
+<div class="card"><h3>Progression</h3><p>Experience and player levels, 16 achievements, 8 frogs to unlock, a high score per mode and lifetime statistics, in a checksummed save file with a backup.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Controls</div>
+<h2>How to play.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Touch</th><th>Keyboard</th></tr>
+<tr><td>Hop</td><td>Swipe in a direction, or the d-pad</td><td>Arrow keys / WASD</td></tr>
+<tr><td>Hop forward</td><td>Tap</td><td>Up / W</td></tr>
+<tr><td>Pause</td><td>Pause button, Android Back</td><td>Esc / P</td></tr>
+<tr><td>Change view</td><td>Camera button</td><td>Settings</td></tr>
+</table></div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>La traversée, du point de vue de la grenouille.</h2>
+<p>Des voies de circulation, puis une rivière de rondins et de tortues à la dérive, puis les abris sur la rive d’en face. La recette est connue ; le point de vue, non. La caméra par défaut est une vue de poursuite basse, juste derrière la grenouille : les voitures sont quelque chose qui vous arrive dessus, et non quelque chose qu’on regarde d’en haut.</p>
+<p>Deux autres vues sont à portée de doigt — la première personne, et une vue classique en hauteur — et le jeu se joue en portrait comme en paysage.</p>
+</section>
+
+<section>
+<div class="kicker">Modes</div>
+<h2>Cinq façons de traverser.</h2>
+<div class="grid three">
+<div class="card"><span class="num">01</span><h3>Classique</h3><p>Cinq abris à remplir, trois vies, et une difficulté qui monte à chaque manche.</p></div>
+<div class="card"><span class="num">02</span><h3>Sans fin</h3><p>Une seule vie. Avancez sans cesse pour échapper à la montée des eaux.</p></div>
+<div class="card"><span class="num">03</span><h3>Contre-la-montre</h3><p>75 secondes au compteur ; chaque grenouille ramenée ajoute du temps.</p></div>
+<div class="card"><span class="num">04</span><h3>Défis</h3><p>Douze niveaux conçus à la main, trois étoiles à gagner sur chacun.</p></div>
+<div class="card"><span class="num">05</span><h3>Course du jour</h3><p>Une course par jour, tirée de la date.</p></div>
+<div class="card"><span class="num">+</span><h3>Quatre décors</h3><p>Meadow Day, Sunset Highway, Misty Dawn et Neon Night.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Juste, et vif sous le pouce.</h2>
+<div class="grid">
+<div class="card"><h3>Équitable par construction</h3><p>Les voies suivent des motifs périodiques déterministes, et chaque niveau généré est prouvé faisable par une recherche prudente avant d’être utilisé. Les zones de collision sont indulgentes, et les atterrissages sur rondins et tortues tolèrent les bords.</p></div>
+<div class="card"><h3>Prévenu avant de voir</h3><p>Des flèches rouges signalent la circulation encore hors champ : la caméra rapprochée ne cache jamais la voiture qui vous aura.</p></div>
+<div class="card"><h3>Des commandes réactives</h3><p>Un glissement se déclenche dès que le doigt a parcouru 5 mm environ, sans le lever. Un toucher fait sauter en avant, une croix directionnelle optionnelle réagit dès le contact, et un saut peut être mis en attente pendant la fin du précédent.</p></div>
+<div class="card"><h3>Progression</h3><p>Expérience et niveaux de joueur, 16 succès, 8 grenouilles à débloquer, un meilleur score par mode et des statistiques cumulées, dans une sauvegarde à somme de contrôle doublée d’une copie de secours.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Commandes</div>
+<h2>Comment jouer.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Tactile</th><th>Clavier</th></tr>
+<tr><td>Sauter</td><td>Glisser dans une direction, ou la croix directionnelle</td><td>Flèches / ZQSD</td></tr>
+<tr><td>Sauter en avant</td><td>Toucher l’écran</td><td>Haut / Z</td></tr>
+<tr><td>Pause</td><td>Bouton pause, touche Retour d’Android</td><td>Échap / P</td></tr>
+<tr><td>Changer de vue</td><td>Bouton caméra</td><td>Réglages</td></tr>
+</table></div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/3d-frog/first-person.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/first-person.jpg" alt="First-person view" loading="lazy"></a>
+<a href="../assets/screenshots/3d-frog/endless-night.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/endless-night.jpg" alt="Endless mode in the Neon Night environment" loading="lazy"></a>
+</div>
+<div class="gallery portrait">
+<a href="../assets/screenshots/3d-frog/chase-meadow-portrait.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/chase-meadow-portrait.jpg" alt="Chase view in portrait, Meadow Day" loading="lazy"></a>
+<a href="../assets/screenshots/3d-frog/classic-view.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/classic-view.jpg" alt="The high classic overview" loading="lazy"></a>
+<a href="../assets/screenshots/3d-frog/modes.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/modes.jpg" alt="Mode selection" loading="lazy"></a>
+<a href="../assets/screenshots/3d-frog/frogs.jpg" target="_blank"><img src="../assets/screenshots/3d-frog/frogs.jpg" alt="The unlockable frogs" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Engine</td><td>Godot 4.7.2 with typed GDScript and the Vulkan mobile renderer.</td></tr>
+<tr><td>Assets</td><td>Original code, models, audio and branding.</td></tr>
+<tr><td>Levels</td><td>Deterministic lane patterns; generated levels pass a solvability search before use.</td></tr>
+<tr><td>Tests</td><td>124 automated tests, run headless.</td></tr>
+<tr><td>Saves</td><td>A checksummed save file with a backup copy.</td></tr>
+<tr><td>Display</td><td>Portrait and landscape, with quality presets measured on a mid-range phone.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Moteur</td><td>Godot 4.7.2, GDScript typé et moteur de rendu mobile Vulkan.</td></tr>
+<tr><td>Ressources</td><td>Code, modèles, sons et identité visuelle originaux.</td></tr>
+<tr><td>Niveaux</td><td>Des motifs de voies déterministes ; les niveaux générés passent une recherche de faisabilité avant d’être utilisés.</td></tr>
+<tr><td>Tests</td><td>124 tests automatisés, exécutés sans affichage.</td></tr>
+<tr><td>Sauvegarde</td><td>Un fichier à somme de contrôle, avec copie de secours.</td></tr>
+<tr><td>Affichage</td><td>Portrait et paysage, avec des préréglages de qualité mesurés sur un téléphone de milieu de gamme.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="3d-snake.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>3D Snake</b></a>
+<a href="aboulder.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>Gemstone Caverns</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>

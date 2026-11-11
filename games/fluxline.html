@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Fluxline: an original pipe-routing arcade puzzle for Android. Build the network with the pieces you are dealt before the plasma starts to flow.">
+<title data-en="Fluxline — Stefan" data-fr="Fluxline — Stefan">Fluxline — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 02</div>
+<h1>Fluxline</h1>
+<div class="alias"><span data-l="en">Pipe routing</span><span data-l="fr">Jeu de tuyaux</span></div>
+<p class="lead" data-l="en">An original pipe-routing arcade puzzle in the spirit of the late-1980s classics. The dispenser decides which piece comes next; you decide where it goes — and the plasma will not wait.</p>
+<p class="lead" data-l="fr">Un jeu de tuyaux original, dans la lignée des casse-tête d’arcade de la fin des années 1980. Le distributeur impose la prochaine pièce ; à vous de choisir où la poser — et le plasma n’attendra pas.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t" data-l="en">Arcade puzzle</span><span class="tag t" data-l="fr">Réflexion arcade</span><span class="tag">Kotlin</span><span class="tag">libGDX</span><span class="tag">GLSL</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/fluxline" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/fluxline.jpg" alt="Fluxline menu, gameplay and results screens"></div>
+
+<div class="stats">
+<div class="stat"><strong>4</strong><span data-l="en">Game modes</span><span data-l="fr">Modes de jeu</span></div>
+<div class="stat"><strong>20</strong><span data-l="en">Campaign levels</span><span data-l="fr">Niveaux de campagne</span></div>
+<div class="stat"><strong>5</strong><span data-l="en">Languages</span><span data-l="fr">Langues</span></div>
+<div class="stat"><strong>120 Hz</strong><span data-l="en">Display support</span><span data-l="fr">Affichage pris en charge</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Build the line before it fills.</h2>
+<p>A countdown runs, then plasma leaves the source and travels through whatever you have built. Each piece carries its own channels: straights, elbows, crosses with two independent channels, reservoirs, and one-way pieces that refuse fluid coming the wrong way. You place the pieces the dispenser hands you, in the order it hands them.</p>
+<p>When the plasma reaches a port with no pipe ready to receive it, it leaks and the round is over. The round is won if the network was long enough to meet the level’s objective — and, on some levels, if it reached the required end piece.</p>
+<p>Touching the board shows a preview and sight lines; lifting the finger places the piece, and sliding off the board cancels. Confident in your network? Hold “Speed up” to send the plasma through early: points scored while accelerated count double.</p>
+</section>
+
+<section>
+<div class="kicker">Modes</div>
+<h2>Four ways to play.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Campaign</h3><p>Twenty levels of rising difficulty — objective, countdown, flow speed, blocks, reservoirs, one-way pieces, a mandatory end piece. You may rotate the next piece, and each level is rated in stars. The first level opens with an animated tutorial.</p></div>
+<div class="card"><span class="num">02</span><h3>Classic</h3><p>No rotation: you play the pieces as they come, and one failed round ends the run.</p></div>
+<div class="card"><span class="num">03</span><h3>Arcade</h3><p>Rotation allowed, a fast pace and three lives.</p></div>
+<div class="card"><span class="num">04</span><h3>Daily challenge</h3><p>One board per day, seeded by the date: the same pieces in the same order for everyone.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Scoring</div>
+<h2>Every pipe counts.</h2>
+<div class="table-wrap"><table>
+<tr><th>Event</th><th>Points</th></tr>
+<tr><td>Pipe filled</td><td>+50, and +100 for each one beyond the objective</td></tr>
+<tr><td>Reservoir filled</td><td>+150</td></tr>
+<tr><td>Cross used in both directions</td><td>+500</td></tr>
+<tr><td>End piece reached</td><td>+1000</td></tr>
+<tr><td>Replacing a placed piece</td><td>−50, and a 0.4 s lock</td></tr>
+<tr><td>Piece placed but never used</td><td>−50</td></tr>
+<tr><td>Speeding up the flow</td><td>×2</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>What makes it tick.</h2>
+<div class="grid">
+<div class="card"><h3>Plasma you can watch flow</h3><p>A dedicated shader draws the fluid for the whole board in one batch. The front follows the exact shape of each channel, elbows included, with bloom and particles on top.</p></div>
+<div class="card"><h3>Balanced by simulated players</h3><p>A robot that sees only what a player sees plays the game at human speeds, hesitations and mistakes included. The tests guarantee that a beginner clears the early levels most of the time, and that an expert can finish all twenty.</p></div>
+<div class="card"><h3>Nothing imported</h3><p>Every texture, interface element, icon, sound effect and music track is generated by scripts in the repository. Only the fonts come from outside.</p></div>
+<div class="card"><h3>Five languages</h3><p>French, English, Russian, Simplified Chinese and Khmer, with proper plural rules and number formats. Khmer syllables are shaped ahead of time so they render correctly in the game engine.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Construire la ligne avant qu’elle ne se remplisse.</h2>
+<p>Un compte à rebours s’écoule, puis le plasma quitte la source et parcourt ce que vous avez construit. Chaque pièce a ses propres conduits : droites, coudes, croix à deux conduits indépendants, réservoirs, et sens uniques qui refusent le fluide à contre-courant. Vous posez les pièces que le distributeur vous donne, dans l’ordre où il les donne.</p>
+<p>Quand le plasma arrive à un port où aucun tuyau n’est prêt à le recevoir, c’est la fuite et la manche se termine. Elle est réussie si le réseau était assez long pour atteindre l’objectif du niveau — et, sur certains niveaux, s’il a rejoint la pièce d’arrivée exigée.</p>
+<p>Toucher le plateau affiche un aperçu et des lignes de visée ; relâcher pose la pièce, sortir du plateau annule. Sûr de votre réseau ? Maintenez « Accélérer » pour lancer le plasma sans attendre : les points marqués en accéléré comptent double.</p>
+</section>
+
+<section>
+<div class="kicker">Modes</div>
+<h2>Quatre façons de jouer.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Campagne</h3><p>Vingt niveaux de difficulté croissante — objectif, compte à rebours, vitesse du fluide, blocs, réservoirs, sens uniques, arrivée obligatoire. On peut tourner la prochaine pièce, et chaque niveau est noté en étoiles. Le premier niveau s’ouvre sur un tutoriel animé.</p></div>
+<div class="card"><span class="num">02</span><h3>Classique</h3><p>Pas de rotation : on joue les pièces comme elles viennent, et une manche ratée met fin à la partie.</p></div>
+<div class="card"><span class="num">03</span><h3>Arcade</h3><p>Rotation autorisée, rythme rapide et trois vies.</p></div>
+<div class="card"><span class="num">04</span><h3>Défi du jour</h3><p>Un plateau par jour, tiré de la date : les mêmes pièces dans le même ordre pour tout le monde.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Barème</div>
+<h2>Chaque tuyau compte.</h2>
+<div class="table-wrap"><table>
+<tr><th>Événement</th><th>Points</th></tr>
+<tr><td>Tuyau rempli</td><td>+50, et +100 pour chacun au-delà de l’objectif</td></tr>
+<tr><td>Réservoir rempli</td><td>+150</td></tr>
+<tr><td>Croix traversée dans les deux sens</td><td>+500</td></tr>
+<tr><td>Arrivée rejointe</td><td>+1000</td></tr>
+<tr><td>Remplacement d’une pièce posée</td><td>−50, et 0,4 s de blocage</td></tr>
+<tr><td>Pièce posée jamais traversée</td><td>−50</td></tr>
+<tr><td>Accélération du fluide</td><td>×2</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Ce qui fait la différence.</h2>
+<div class="grid">
+<div class="card"><h3>Un plasma qu’on regarde couler</h3><p>Un shader dédié dessine le fluide de tout le plateau en un seul lot. Le front suit exactement la forme de chaque conduit, coudes compris, avec bloom et particules par-dessus.</p></div>
+<div class="card"><h3>Équilibré par des joueurs simulés</h3><p>Un robot qui ne voit que ce que voit le joueur joue au rythme d’un humain, hésitations et erreurs comprises. Les tests garantissent qu’un débutant réussit les premiers niveaux la plupart du temps, et qu’un expert peut terminer les vingt.</p></div>
+<div class="card"><h3>Rien d’importé</h3><p>Toutes les textures, l’interface, les icônes, les bruitages et les musiques sont générés par des scripts du dépôt. Seules les polices viennent de l’extérieur.</p></div>
+<div class="card"><h3>Cinq langues</h3><p>Français, anglais, russe, chinois simplifié et khmer, avec les bonnes règles de pluriel et de format des nombres. Les syllabes khmères sont mises en forme à l’avance pour s’afficher correctement dans le moteur du jeu.</p></div>
+</div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span></h2>
+<div class="gallery portrait">
+<a href="../assets/screenshots/fluxline/1.jpg" target="_blank"><img src="../assets/screenshots/fluxline/1.jpg" alt="A round in progress" loading="lazy"></a>
+<a href="../assets/screenshots/fluxline/2.jpg" target="_blank"><img src="../assets/screenshots/fluxline/2.jpg" alt="Results screen with three stars" loading="lazy"></a>
+<a href="../assets/screenshots/fluxline/3.jpg" target="_blank"><img src="../assets/screenshots/fluxline/3.jpg" alt="The tutorial" loading="lazy"></a>
+<a href="../assets/screenshots/fluxline/4.jpg" target="_blank"><img src="../assets/screenshots/fluxline/4.jpg" alt="Main menu" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>Pure Kotlin with no dependency: grid, ports, flow simulation, scoring, levels, save format and the test robot. The logic knows nothing about rendering — it emits events (piece placed, channel filled, leak…) that the screen relays to graphics, audio and haptics.</td></tr>
+<tr><td>game</td><td>libGDX rendering: plasma shader, bloom at quarter resolution, fixed-size particle arrays with no allocation, a full-screen background shader, interface and audio.</td></tr>
+<tr><td>android</td><td>The launcher: full screen, display cutouts, vibration, 120 Hz.</td></tr>
+<tr><td>desktop</td><td>A PC launcher used for development, screenshots and demos.</td></tr>
+<tr><td>Simulation</td><td>A fixed step of 1/120 s makes the flow deterministic. The dispenser draws from a seeded generator and never deals three identical pieces in a row.</td></tr>
+<tr><td>Saves</td><td>A versioned text format that includes the whole board; decoding rejects any inconsistent state.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>Kotlin pur, sans dépendance : grille, ports, simulation de l’écoulement, score, niveaux, format de sauvegarde et robot de test. La logique ne connaît rien du rendu — elle émet des événements (pièce posée, conduit rempli, fuite…) que l’écran relaie à l’affichage, à l’audio et aux vibrations.</td></tr>
+<tr><td>game</td><td>Rendu libGDX : shader du plasma, bloom au quart de la résolution, particules en tableaux de taille fixe sans allocation, fond en shader plein écran, interface et audio.</td></tr>
+<tr><td>android</td><td>Le lanceur : plein écran, encoche, vibrations, 120 Hz.</td></tr>
+<tr><td>desktop</td><td>Un lanceur PC pour le développement, les captures et les démonstrations.</td></tr>
+<tr><td>Simulation</td><td>Un pas fixe de 1/120 s rend l’écoulement déterministe. Le distributeur tire dans un générateur à graine et ne donne jamais trois pièces identiques de suite.</td></tr>
+<tr><td>Sauvegarde</td><td>Un format texte versionné qui contient le plateau complet ; le décodage refuse tout état incohérent.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="asokoban.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>Sokoban</b></a>
+<a href="3d-snake.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>3D Snake</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Acpc: an Amstrad CPC 464/664/6128, CPC Plus and GX4000 emulator for Android, with discs, tapes, cartridges, snapshots, save states and searchable game libraries.">
+<title data-en="Acpc, Amstrad CPC emulator — Stefan" data-fr="Acpc, émulateur Amstrad CPC — Stefan">Acpc, Amstrad CPC emulator — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 06</div>
+<h1>Acpc</h1>
+<div class="alias"><span data-l="en">Amstrad CPC emulator</span><span data-l="fr">Émulateur Amstrad CPC</span></div>
+<p class="lead" data-l="en">The Amstrad CPC 464, 664 and 6128, the 6128 Plus and the GX4000 console, on an Android phone or tablet. It boots the real firmware, runs real games from discs, tapes and cartridges — and starts them by itself.</p>
+<p class="lead" data-l="fr">Les Amstrad CPC 464, 664 et 6128, le 6128 Plus et la console GX4000, sur un téléphone ou une tablette Android. Il démarre le vrai firmware, fait tourner les vrais jeux depuis disquettes, cassettes et cartouches — et les lance tout seul.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t" data-l="en">Emulator</span><span class="tag t" data-l="fr">Émulateur</span><span class="tag">Kotlin</span><span class="tag">Z80</span><span class="tag">CPC · Plus · GX4000</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/Acpc" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/acpc/game-playing.jpg" alt="A game running in Acpc, with the touch joystick and fire buttons"></div>
+
+<div class="stats">
+<div class="stat"><strong>5</strong><span data-l="en">Machines emulated</span><span data-l="fr">Machines émulées</span></div>
+<div class="stat"><strong>~700</strong><span data-l="en">Titles tested</span><span data-l="fr">Titres testés</span></div>
+<div class="stat"><strong>26 / 26</strong><span data-l="en">GX4000 games tested</span><span data-l="fr">Jeux GX4000 testés</span></div>
+<div class="stat"><strong>4096</strong><span data-l="en">Plus colours</span><span data-l="fr">Couleurs du Plus</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Pick a game. It starts.</h2>
+<p>On a real CPC you had to know the incantation: <code>RUN"DISC</code>, <code>|CPM</code>, or just <code>RUN"</code> and the play button of the tape deck. Acpc reads the disc catalogue and the AMSDOS file headers to work out which file is the loader, and types the right command for you. A tape gets <code>RUN"</code> on a machine without a disc ROM, as on a 464 of the day.</p>
+<p>It also picks the machine. A game cartridge boots a GX4000; a disc or tape written for the Plus is recognised and started on a 6128 Plus. Tape loading can run at full emulation speed while the motor turns, so the wait of 1985 is optional.</p>
+</section>
+
+<section>
+<div class="kicker">Machines and media</div>
+<h2>What it runs.</h2>
+<div class="table-wrap"><table>
+<tr><th>Machine</th><th>Notes</th></tr>
+<tr><td>CPC 464</td><td>OS and BASIC 1.0. Tapes, as in the day.</td></tr>
+<tr><td>CPC 664</td><td>OS and BASIC 1.1, with disc drive.</td></tr>
+<tr><td>CPC 6128</td><td>OS and BASIC 1.1, 128 KB, discs and CP/M games.</td></tr>
+<tr><td>CPC 6128 Plus</td><td>Boots its system cartridge and runs discs and tapes with the ASIC available to programs.</td></tr>
+<tr><td>GX4000</td><td>Boots straight from the game cartridge; no ROM needed.</td></tr>
+</table></div>
+<div class="table-wrap" style="margin-top:12px"><table>
+<tr><th>Format</th><th>Contents</th></tr>
+<tr><td>.dsk</td><td>Disc images. Discs written by games — saved games, high scores — are kept.</td></tr>
+<tr><td>.cdt</td><td>Tapes, including multi-side tapes.</td></tr>
+<tr><td>.cpr / .bin</td><td>Cartridges, or raw dumps.</td></tr>
+<tr><td>.sna</td><td>Snapshots, plain or zipped.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Made for a touch screen.</h2>
+<div class="grid">
+<div class="card"><h3>Controls that fit the game</h3><p>A touch joystick and fire buttons with movable layouts, an on-screen CPC keyboard, the Android keyboard for typing text, and Bluetooth or USB keyboards and gamepads.</p></div>
+<div class="card"><h3>A game library</h3><p>Local files, favourites, and remote servers: any HTTP directory index or an archive.org collection, browsable and searchable in the app. One tap downloads, caches and starts the game.</p></div>
+<div class="card"><h3>Multi-disc games</h3><p>The in-game “Change disc…” and “Change tape…” menus offer the other discs or sides of the set, from the library or downloaded from the server the game came from.</p></div>
+<div class="card"><h3>Save states and comfort</h3><p>Save states, adjustable speed, scaling modes, scanlines and screen orientation.</p></div>
+<div class="card"><h3>The Plus hardware</h3><p>The Plus ASIC is emulated: hardware sprites, 4096 colours, soft scrolling, split screen, raster interrupt and DMA sound.</p></div>
+<div class="card"><h3>Tested against real software</h3><p>About 700 titles went through automated harnesses: 453 disc images, 185 tapes, 38 cartridge images — including all 26 GX4000 games — and 20 productions from 2011–2020, with every failure traced to its cause.</p></div>
+</div>
+<p style="margin-top:16px">The Amstrad ROMs are not included: you import your own copies from the app, and they are recognised by their content. GX4000 games need none.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Choisissez un jeu. Il démarre.</h2>
+<p>Sur un vrai CPC, il fallait connaître la formule : <code>RUN"DISC</code>, <code>|CPM</code>, ou simplement <code>RUN"</code> et la touche lecture du magnétophone. Acpc lit le catalogue de la disquette et les en-têtes AMSDOS des fichiers pour trouver le chargeur, et tape la bonne commande à votre place. Une cassette reçoit <code>RUN"</code> sur une machine sans ROM disque, comme sur un 464 de l’époque.</p>
+<p>Il choisit aussi la machine. Une cartouche de jeu démarre une GX4000 ; une disquette ou une cassette écrite pour le Plus est reconnue et lancée sur un 6128 Plus. Le chargement des cassettes peut tourner à pleine vitesse d’émulation tant que le moteur tourne : l’attente de 1985 est facultative.</p>
+</section>
+
+<section>
+<div class="kicker">Machines et supports</div>
+<h2>Ce qu’il fait tourner.</h2>
+<div class="table-wrap"><table>
+<tr><th>Machine</th><th>Remarques</th></tr>
+<tr><td>CPC 464</td><td>OS et BASIC 1.0. Les cassettes, comme à l’époque.</td></tr>
+<tr><td>CPC 664</td><td>OS et BASIC 1.1, avec lecteur de disquettes.</td></tr>
+<tr><td>CPC 6128</td><td>OS et BASIC 1.1, 128 Ko, disquettes et jeux CP/M.</td></tr>
+<tr><td>CPC 6128 Plus</td><td>Démarre sa cartouche système et fait tourner disquettes et cassettes, l’ASIC restant accessible aux programmes.</td></tr>
+<tr><td>GX4000</td><td>Démarre directement sur la cartouche de jeu ; aucune ROM nécessaire.</td></tr>
+</table></div>
+<div class="table-wrap" style="margin-top:12px"><table>
+<tr><th>Format</th><th>Contenu</th></tr>
+<tr><td>.dsk</td><td>Images de disquettes. Les disquettes écrites par les jeux — parties sauvegardées, meilleurs scores — sont conservées.</td></tr>
+<tr><td>.cdt</td><td>Cassettes, y compris à plusieurs faces.</td></tr>
+<tr><td>.cpr / .bin</td><td>Cartouches, ou copies brutes.</td></tr>
+<tr><td>.sna</td><td>Snapshots, tels quels ou zippés.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Pensé pour un écran tactile.</h2>
+<div class="grid">
+<div class="card"><h3>Des commandes adaptées au jeu</h3><p>Un joystick tactile et des boutons de tir aux dispositions déplaçables, un clavier CPC à l’écran, le clavier Android pour saisir du texte, et les claviers et manettes Bluetooth ou USB.</p></div>
+<div class="card"><h3>Une bibliothèque de jeux</h3><p>Fichiers locaux, favoris et serveurs distants : n’importe quel index de répertoire HTTP ou une collection archive.org, à parcourir et à interroger depuis l’application. Un toucher télécharge, met en cache et lance le jeu.</p></div>
+<div class="card"><h3>Jeux sur plusieurs disquettes</h3><p>Les menus « Changer de disquette… » et « Changer de cassette… » proposent en cours de jeu les autres disquettes ou faces du jeu, depuis la bibliothèque ou téléchargées sur le serveur d’origine.</p></div>
+<div class="card"><h3>États instantanés et confort</h3><p>Sauvegardes d’état, vitesse réglable, modes de mise à l’échelle, lignes de balayage et orientation de l’écran.</p></div>
+<div class="card"><h3>Le matériel du Plus</h3><p>L’ASIC du Plus est émulé : sprites matériels, 4096 couleurs, défilement fin, écran partagé, interruption de trame et son DMA.</p></div>
+<div class="card"><h3>Testé sur de vrais logiciels</h3><p>Environ 700 titres sont passés par des bancs de test automatisés : 453 images de disquettes, 185 cassettes, 38 images de cartouches — dont les 26 jeux GX4000 — et 20 productions de 2011 à 2020, chaque échec étant remonté jusqu’à sa cause.</p></div>
+</div>
+<p style="margin-top:16px">Les ROM Amstrad ne sont pas fournies : vous importez vos propres copies depuis l’application, qui les reconnaît à leur contenu. Les jeux GX4000 n’en demandent aucune.</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">L’émulateur en images.</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/acpc.jpg" target="_blank"><img src="../assets/screenshots/acpc.jpg" alt="The Amstrad BASIC screen" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/gx4000-game.jpg" target="_blank"><img src="../assets/screenshots/acpc/gx4000-game.jpg" alt="A GX4000 cartridge game" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/tape-loading.jpg" target="_blank"><img src="../assets/screenshots/acpc/tape-loading.jpg" alt="A tape loading" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/cpc-keyboard.jpg" target="_blank"><img src="../assets/screenshots/acpc/cpc-keyboard.jpg" alt="The on-screen CPC keyboard" loading="lazy"></a>
+</div>
+<div class="gallery portrait">
+<a href="../assets/screenshots/acpc/library-home.jpg" target="_blank"><img src="../assets/screenshots/acpc/library-home.jpg" alt="The game library" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/game-details.jpg" target="_blank"><img src="../assets/screenshots/acpc/game-details.jpg" alt="A game's details" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/remote-browser.jpg" target="_blank"><img src="../assets/screenshots/acpc/remote-browser.jpg" alt="Browsing a remote server" loading="lazy"></a>
+<a href="../assets/screenshots/acpc/settings-machine.jpg" target="_blank"><img src="../assets/screenshots/acpc/settings-machine.jpg" alt="Machine settings" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>The emulation, in pure JVM Kotlin and unit-tested: Z80 CPU, gate array, CRTC, PPI, AY-3-8912 sound, µPD765 floppy controller, Plus ASIC, cartridges, disc and tape formats, snapshots, keyboard, joystick and save states.</td></tr>
+<tr><td>app</td><td>The Android application: emulator loop, input, video, audio, storage, network and interface.</td></tr>
+<tr><td>Tests</td><td>The unit tests run in seconds and need nothing outside the repository. Integration harnesses boot the real firmware and run batches of games.</td></tr>
+<tr><td>Docs</td><td>A user manual with screenshots, a compatibility report, and an architecture guide that goes through the emulator chip by chip.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>L’émulation, en Kotlin JVM pur et couverte par des tests unitaires : processeur Z80, gate array, CRTC, PPI, son AY-3-8912, contrôleur de disquette µPD765, ASIC du Plus, cartouches, formats de disquettes et de cassettes, snapshots, clavier, joystick et états instantanés.</td></tr>
+<tr><td>app</td><td>L’application Android : boucle d’émulation, entrées, vidéo, audio, stockage, réseau et interface.</td></tr>
+<tr><td>Tests</td><td>Les tests unitaires s’exécutent en quelques secondes et n’ont besoin de rien hors du dépôt. Des bancs d’intégration démarrent le vrai firmware et font tourner des lots de jeux.</td></tr>
+<tr><td>Docs</td><td>Un manuel utilisateur illustré, un rapport de compatibilité, et un guide d’architecture qui parcourt l’émulateur puce par puce.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="aboulder.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>Gemstone Caverns</b></a>
+<a href="asokoban.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>Sokoban</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Sokoban for Android: 70 hand-designed, solver-verified levels in seven worlds, on a clean 2D board or an animated 3D one.">
+<title data-en="Sokoban — Stefan" data-fr="Sokoban — Stefan">Sokoban — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 01</div>
+<h1>Sokoban</h1>
+<div class="alias">ASokoban</div>
+<p class="lead" data-l="en">The classic crate-pushing puzzle, carefully rebuilt for Android: 70 hand-designed levels, every one proven solvable, on a clean 2D board or an animated 3D one.</p>
+<p class="lead" data-l="fr">Le grand classique du pousse-caisses, refait avec soin pour Android : 70 niveaux conçus à la main, tous prouvés solvables, sur un plateau 2D épuré ou 3D animé.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t" data-l="en">Puzzle</span><span class="tag t" data-l="fr">Réflexion</span><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Filament</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/ASokoban" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/asokoban.jpg" alt="A Sokoban level on the 3D board"></div>
+
+<div class="stats">
+<div class="stat"><strong>70</strong><span data-l="en">Levels</span><span data-l="fr">Niveaux</span></div>
+<div class="stat"><strong>7</strong><span data-l="en">Worlds</span><span data-l="fr">Mondes</span></div>
+<div class="stat"><strong>2D / 3D</strong><span data-l="en">Boards</span><span data-l="fr">Plateaux</span></div>
+<div class="stat"><strong>∞</strong><span data-l="en">Undo steps</span><span data-l="fr">Annulations</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Push, never pull.</h2>
+<p>In each room, every crate has to end up on a target. You can only push, one crate at a time — one push too many into a corner and the room is lost. That is the whole rulebook, and it is enough to fill seventy rooms.</p>
+<p>Mistakes are cheap: undo is unlimited, and the engine detects deadlocks, positions from which the level can no longer be solved. The campaign opens one level after another across seven worlds, and the first levels teach the rules with short hints.</p>
+<p>Finishing a level earns up to three stars, depending on your move count against the level’s par — the length of its reference solution. The level-select screen shows a miniature map of each room, its stars and your best move count.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>What is in the game.</h2>
+<div class="grid">
+<div class="card"><h3>Levels that cannot be broken</h3><p>Each level ships with a stored solution. The tests replay every solution through the engine and prove solvability again with a solver, so a broken level fails the build instead of reaching a player.</p></div>
+<div class="card"><h3>An animated 3D board</h3><p>On by default and drawn with Filament: one mesh per level, plus the crates, targets and hero. Both boards are driven by the same motion, so they animate alike; dust and sparks are projected onto the 3D scene.</p></div>
+<div class="card"><h3>Big rooms, small screens</h3><p>A level always fits whole on the screen. In big rooms, pinch to zoom in: the view then follows the hero near the edges, and a button brings the whole board back.</p></div>
+<div class="card"><h3>Four ways to move</h3><p>An on-screen D-pad, swipes, tap a tile to walk there, or a physical keyboard.</p></div>
+<div class="card"><h3>Synthesised sound</h3><p>Every sound effect — steps, pushes, goals, stars, victory — is synthesised at startup. No audio files are shipped, and haptics follow the action.</p></div>
+<div class="card"><h3>English and Khmer</h3><p>The game ships as two apps, one language each. The Khmer edition adjusts its typography: no letter spacing in titles, taller lines for hints, and the system’s Khmer font.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Pousser, jamais tirer.</h2>
+<p>Dans chaque salle, toutes les caisses doivent finir sur une cible. On ne peut que pousser, une caisse à la fois — une poussée de trop dans un coin et la salle est perdue. C’est toute la règle, et elle suffit à remplir soixante-dix salles.</p>
+<p>L’erreur coûte peu : l’annulation est illimitée, et le moteur détecte les blocages, ces positions d’où le niveau ne peut plus être résolu. La campagne s’ouvre niveau après niveau à travers sept mondes, et les premiers niveaux enseignent les règles par de courtes indications.</p>
+<p>Terminer un niveau rapporte jusqu’à trois étoiles, selon votre nombre de mouvements comparé au « par » du niveau — la longueur de sa solution de référence. L’écran de sélection affiche une carte miniature de chaque salle, ses étoiles et votre meilleur score.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Ce qu’il y a dans le jeu.</h2>
+<div class="grid">
+<div class="card"><h3>Des niveaux qui ne peuvent pas être cassés</h3><p>Chaque niveau est livré avec une solution enregistrée. Les tests rejouent chaque solution dans le moteur et prouvent à nouveau la solvabilité avec un solveur : un niveau cassé fait échouer la compilation au lieu d’arriver chez un joueur.</p></div>
+<div class="card"><h3>Un plateau 3D animé</h3><p>Activé par défaut et dessiné avec Filament : un maillage par niveau, plus les caisses, les cibles et le héros. Les deux plateaux sont pilotés par le même mouvement et s’animent donc à l’identique ; poussière et étincelles sont projetées sur la scène 3D.</p></div>
+<div class="card"><h3>Grandes salles, petits écrans</h3><p>Un niveau tient toujours en entier à l’écran. Dans les grandes salles, pincez pour zoomer : la vue suit alors le héros près des bords, et un bouton réaffiche tout le plateau.</p></div>
+<div class="card"><h3>Quatre façons de se déplacer</h3><p>Croix directionnelle à l’écran, glissements, toucher une case pour s’y rendre, ou clavier physique.</p></div>
+<div class="card"><h3>Son synthétisé</h3><p>Tous les bruitages — pas, poussées, cibles, étoiles, victoire — sont synthétisés au démarrage. Aucun fichier audio n’est embarqué, et les vibrations accompagnent l’action.</p></div>
+<div class="card"><h3>Anglais et khmer</h3><p>Le jeu est publié en deux applications, une langue chacune. L’édition khmère adapte sa typographie : pas d’espacement des lettres dans les titres, des lignes plus hautes pour les indications, et la police khmère du système.</p></div>
+</div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span></h2>
+<div class="gallery portrait">
+<a href="../assets/screenshots/asokoban/home.jpg" target="_blank"><img src="../assets/screenshots/asokoban/home.jpg" alt="Home screen, with the hero pushing a crate in 3D" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/levels.jpg" target="_blank"><img src="../assets/screenshots/asokoban/levels.jpg" alt="Level select: each card shows the level's map, stars and best move count" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/board-3d-dark.jpg" target="_blank"><img src="../assets/screenshots/asokoban/board-3d-dark.jpg" alt="A level on the 3D board, dark theme" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/level-complete.jpg" target="_blank"><img src="../assets/screenshots/asokoban/level-complete.jpg" alt="Level complete: three stars and a new best" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/board-2d.jpg" target="_blank"><img src="../assets/screenshots/asokoban/board-2d.jpg" alt="Level 37 on the 2D board" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/board-3d.jpg" target="_blank"><img src="../assets/screenshots/asokoban/board-3d.jpg" alt="The same position on the 3D board" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/big-room-zoomed.jpg" target="_blank"><img src="../assets/screenshots/asokoban/big-room-zoomed.jpg" alt="A big room zoomed in around the hero" loading="lazy"></a>
+<a href="../assets/screenshots/asokoban/khmer-levels.jpg" target="_blank"><img src="../assets/screenshots/asokoban/khmer-levels.jpg" alt="Level select in Khmer" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>:core</td><td>Pure Kotlin/JVM with no Android dependency: the rules (<code>GameEngine</code>), an immutable <code>GameState</code> with unlimited undo, the level parser and validator, deadlock detection, campaign progress rules and the level pack.</td></tr>
+<tr><td>:app</td><td>The Compose app: board and character drawn in 2D (Canvas) or 3D (Filament), input, screens, synthesised sound, haptics and DataStore persistence.</td></tr>
+<tr><td>Data flow</td><td>One way only: <code>GameEngine</code> → <code>GameState</code> → <code>GameViewModel</code> (StateFlow) → Compose.</td></tr>
+<tr><td>3D engine</td><td>All boards share one Filament engine, kept alive 30 s after the last board closes so that sliding to the next level never stalls on shader compilation. Without OpenGL ES 3.0, the board falls back to 2D.</td></tr>
+<tr><td>Levels</td><td>The standard Sokoban text format (<code>#</code> wall, <code>.</code> goal, <code>$</code> box, <code>@</code> player), with design tools to analyse and generate rooms.</td></tr>
+<tr><td>Themes</td><td>Light and dark, set alongside sound, vibration and the 3D board.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>:core</td><td>Kotlin/JVM pur, sans dépendance Android : les règles (<code>GameEngine</code>), un <code>GameState</code> immuable avec annulation illimitée, l’analyseur et le validateur de niveaux, la détection des blocages, les règles de progression et le pack de niveaux.</td></tr>
+<tr><td>:app</td><td>L’application Compose : plateau et personnage dessinés en 2D (Canvas) ou en 3D (Filament), entrées, écrans, son synthétisé, vibrations et persistance DataStore.</td></tr>
+<tr><td>Flux</td><td>À sens unique : <code>GameEngine</code> → <code>GameState</code> → <code>GameViewModel</code> (StateFlow) → Compose.</td></tr>
+<tr><td>Moteur 3D</td><td>Tous les plateaux partagent un seul moteur Filament, gardé en vie 30 s après la fermeture du dernier plateau : passer au niveau suivant ne bute jamais sur la compilation des shaders. Sans OpenGL ES 3.0, le plateau repasse en 2D.</td></tr>
+<tr><td>Niveaux</td><td>Le format texte standard de Sokoban (<code>#</code> mur, <code>.</code> cible, <code>$</code> caisse, <code>@</code> joueur), avec des outils de conception pour analyser et générer des salles.</td></tr>
+<tr><td>Thèmes</td><td>Clair et sombre, réglables avec le son, les vibrations et le plateau 3D.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="acpc.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>Acpc</b></a>
+<a href="fluxline.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>Fluxline</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>
