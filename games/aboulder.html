@@ -36,7 +36,7 @@
 <div class="stat"><strong>100</strong><span data-l="en">Caves</span><span data-l="fr">Cavernes</span><span data-l="km">រូងភ្នំ</span></div>
 <div class="stat"><strong>4</strong><span data-l="en">Guardian behaviours</span><span data-l="fr">Familles de gardiens</span><span data-l="km">ប្រភេទអ្នកយាម</span></div>
 <div class="stat"><strong>9</strong><span data-l="en">Cave families</span><span data-l="fr">Familles de cavernes</span><span data-l="km">ក្រុមរូងភ្នំ</span></div>
-<div class="stat"><strong>10</strong><span data-l="en">Simulation steps / s</span><span data-l="fr">Pas de simulation / s</span><span data-l="km">ជំហាន simulation / វិនាទី</span></div>
+<div class="stat"><strong>10</strong><span data-l="en">Simulation steps / s</span><span data-l="fr">Pas de simulation / s</span><span data-l="km">ជំហាននៃការក្លែងធ្វើ / វិនាទី</span></div>
 </div>
 
 <div data-l="en">
@@ -225,12 +225,12 @@
 <div class="kicker">ផ្នែកបច្ចេកទេស</div>
 <h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>:core</td><td>ម៉ាស៊ីនហ្គេម — domain, simulation និងកម្រិត — សរសេរជា Kotlin/JVM សុទ្ធ ដោយមិនពឹងផ្អែកលើ Android។ រូបវិទ្យា ការបុកគ្នា AI ភាពកំណត់ជាមុន និងការផ្ទៀងផ្ទាត់កម្រិត ដំណើរការទាំងអស់លើម៉ាស៊ីនអភិវឌ្ឍន៍ ក្នុងរយៈពេលប៉ុន្មានវិនាទី ដោយមិនត្រូវការ emulator។</td></tr>
+<tr><td>:core</td><td>ម៉ាស៊ីនហ្គេម — domain, ការក្លែងធ្វើ និងកម្រិត — សរសេរជា Kotlin/JVM សុទ្ធ ដោយមិនពឹងផ្អែកលើ Android។ រូបវិទ្យា ការបុកគ្នា AI ភាពកំណត់ជាមុន និងការផ្ទៀងផ្ទាត់កម្រិត ដំណើរការទាំងអស់លើម៉ាស៊ីនអភិវឌ្ឍន៍ ក្នុងរយៈពេលប៉ុន្មានវិនាទី ដោយមិនត្រូវការ emulator។</td></tr>
 <tr><td>:app</td><td>ចំណុចប្រទាក់ Compose៖ ការបង្ហាញរូបភាព ការបញ្ចូល សំឡេង និងការរក្សាទុក (DataStore)។</td></tr>
 <tr><td>Snapshot</td><td>ផ្នែកបង្ហាញរូបភាព មិនដែលមើលឃើញស្ថានភាពហ្គេមផ្ទាល់ទេ។ ម៉ាស៊ីនហ្គេមបង្កើត <code>RenderSnapshot</code> ដែលមិនអាចកែប្រែបាន សម្រាប់ tick នីមួយៗ ហើយចំណុចប្រទាក់អានតែវាប៉ុណ្ណោះ ដូច្នេះ bug នៃការបង្ហាញ មិនអាចប៉ះពាល់ដល់វគ្គលេងបានទេ។</td></tr>
-<tr><td>ជំហានថេរ</td><td>simulation ដំណើរការទៅមុខរៀងរាល់ 100 ms តាម 12 ដំណាក់កាលដែលមានលំដាប់ (ការបញ្ចូល ចលនាអ្នកលេង ទំនាញផែនដី ការបុកគ្នា ប្រតិកម្មជាបន្តបន្ទាប់ សត្រូវ គោលដៅ ពិន្ទុ នាឡិកាកំណត់ពេល…)។</td></tr>
+<tr><td>ជំហានថេរ</td><td>ការក្លែងធ្វើដំណើរការទៅមុខរៀងរាល់ 100 ms តាម 12 ដំណាក់កាលដែលមានលំដាប់ (ការបញ្ចូល ចលនាអ្នកលេង ទំនាញផែនដី ការបុកគ្នា ប្រតិកម្មជាបន្តបន្ទាប់ សត្រូវ គោលដៅ ពិន្ទុ នាឡិកាកំណត់ពេល…)។</td></tr>
 <tr><td>ភាពកំណត់ជាមុន</td><td>ភាពចៃដន្យទាំងអស់ឆ្លងកាត់ម៉ាស៊ីនបង្កើតលេខចៃដន្យ SplitMix64 ដែលមាន seed។ ជាមួយ seed និងការបញ្ចូលដូចគ្នា វគ្គលេងមួយនឹងលេងឡើងវិញដូចគ្នាបេះបិទ tick ម្តងមួយៗ — ហើយមានការធ្វើតេស្តមួយពិនិត្យរឿងនេះ។</td></tr>
-<tr><td>ភាពរលូន</td><td>ការបង្ហាញដំណើរការតាមល្បឿន refresh របស់អេក្រង់៖ accumulator មួយបំបែកពេលវេលាពិតចេញពី simulation ហើយទីតាំងរបស់វត្ថុដែលកំពុងផ្លាស់ទី ត្រូវបានគណនាចន្លោះ 2 tick (interpolation)។</td></tr>
+<tr><td>ភាពរលូន</td><td>ការបង្ហាញដំណើរការតាមល្បឿន refresh របស់អេក្រង់៖ accumulator មួយបំបែកពេលវេលាពិតចេញពីការក្លែងធ្វើ ហើយទីតាំងរបស់វត្ថុដែលកំពុងផ្លាស់ទី ត្រូវបានគណនាចន្លោះ 2 tick (interpolation)។</td></tr>
 </table></div>
 </section>
 
