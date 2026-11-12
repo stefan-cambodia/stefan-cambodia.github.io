@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="3D Buggy (Dustline Rally): an original 3D off-road arcade buggy racer for Android. Race the clock across five stages, collect flags, fly off ramps and find the hidden shortcuts.">
+<title data-en="3D Buggy — Stefan" data-fr="3D Buggy — Stefan">3D Buggy — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span></a><button class="lang" id="langBtn">EN / FR</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span> / 05</div>
+<h1>3D Buggy</h1>
+<div class="alias">Dustline Rally</div>
+<p class="lead" data-l="en">An original 3D off-road arcade buggy racer. Race the clock across five stages of open country, collect flags, fly off ramps and find the hidden shortcuts — from a chase camera or a fully modelled cockpit.</p>
+<p class="lead" data-l="fr">Un jeu de course arcade 3D original en buggy tout-terrain. Battez le chrono sur cinq étapes en pleine nature, ramassez les drapeaux, décollez des tremplins et trouvez les raccourcis cachés — en vue poursuite ou depuis un cockpit entièrement modélisé.</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t">Racing</span><span class="tag">Godot 4</span><span class="tag">GDScript</span><span class="tag">Vulkan</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/3d-buggy" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/3d-buggy/stages-strip.jpg" alt="3D Buggy: Green Hills, Desert Run and Coastal Adventure"></div>
+
+<div class="stats">
+<div class="stat"><strong>5</strong><span data-l="en">Stages</span><span data-l="fr">Étapes</span></div>
+<div class="stat"><strong>15</strong><span data-l="en">Stars to earn</span><span data-l="fr">Étoiles à gagner</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">Buggies</span><span data-l="fr">Buggys</span></div>
+<div class="stat"><strong>4</strong><span data-l="en">Touch control schemes</span><span data-l="fr">Commandes tactiles</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Against the clock, off the road.</h2>
+<p>Each stage is a timed run through open country. The clock starts with the budget for the first leg, and every checkpoint adds time for the next one; run out and the race is over. Along the way, rows of flags, scoring gates, stars, time tokens, ramps and hidden shortcuts reward the driver who goes looking for them.</p>
+<p>Flags, gates, stars and jumps chained within six seconds of each other build a combo multiplier, up to ×5 — until a crash or a recovery resets it. Big air scores by time and distance, with a bonus for a clean landing.</p>
+</section>
+
+<section>
+<div class="kicker">Stages</div>
+<h2>Five stages, three stars each.</h2>
+<div class="table-wrap"><table>
+<tr><th>Stage</th><th>Scenery</th><th>Unlock</th></tr>
+<tr><td>Green Hills</td><td>Farmland, wooden bridges, a ford, windmills, balloons</td><td>Open</td></tr>
+<tr><td>Desert Run</td><td>Dunes, sandstone arches, an oil field, big ramps</td><td>1 star</td></tr>
+<tr><td>Alpine Circuit</td><td>A mountain pass, pine forest, chalets, a cable car</td><td>3 stars</td></tr>
+<tr><td>Coastal Adventure</td><td>Beaches, water crossings, a lighthouse, a pier</td><td>5 stars</td></tr>
+<tr><td>Forest Challenge</td><td>Narrow muddy tracks, fallen logs, giant trees</td><td>8 stars</td></tr>
+</table></div>
+<p>Every stage has three challenges, and each one earned is a star: reach the finish, collect a set number of flags, and one test of its own — finish with at most one crash, spend 9 seconds in the air, finish with 12 seconds to spare, score 16,000 points, or take the hidden shortcut.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Built to be driven.</h2>
+<div class="grid">
+<div class="card"><h3>A real suspension</h3><p>The buggy runs on its own vehicle simulation, not a generic physics engine: four sprung wheels with damping and anti-roll bars, tyre slip, and grip that changes across ten surfaces, from asphalt and gravel to sand, mud, snow and water.</p></div>
+<div class="card"><h3>Steering sized to grip</h3><p>Full lock is matched to the grip under the front wheels, so cornering force grows in proportion to the input with no sudden kick. On the touch buttons, a tap is a correction and a hold is a full turn.</p></div>
+<div class="card"><h3>Two ways to watch</h3><p>The chase camera follows the direction of travel, so slides read clearly, and lags in the air so jumps feel big. The cockpit view sits at the driver’s eyes, with a working steering wheel, gauges and the driver’s arms.</p></div>
+<div class="card"><h3>A garage to fill</h3><p>Stars unlock the Comet at 4 and the Mammoth at 9, alongside the starting Scout. Credits earned on each run buy 8 paints, 4 wheel sets and 5 extras — light bar, spare wheel, rear wing, whip flag and bull bar.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Controls</div>
+<h2>How to drive.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Touch</th><th>Keyboard</th><th>Gamepad</th></tr>
+<tr><td>Steer</td><td>Steering wheel, left/right buttons, floating joystick or tilt</td><td>Arrows / WASD</td><td>Left stick</td></tr>
+<tr><td>Accelerate</td><td>Gas pedal</td><td>Up / W</td><td>Right trigger, A</td></tr>
+<tr><td>Brake, reverse</td><td>Brake pedal (hold at a standstill to reverse)</td><td>Down / S, Space</td><td>Left trigger, B</td></tr>
+<tr><td>Change view</td><td>Camera button</td><td>C</td><td>Y</td></tr>
+<tr><td>Pause</td><td>Pause button</td><td>Esc</td><td>Start</td></tr>
+</table></div>
+<p>Size, opacity, side and the position of every touch control can be set in an edit mode; tilt can be calibrated and its sensitivity adjusted.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Contre la montre, hors des routes.</h2>
+<p>Chaque étape est une course chronométrée en pleine nature. Le chrono démarre avec le temps alloué à la première portion, et chaque point de contrôle ajoute du temps pour la suivante ; à zéro, la course s’arrête. En chemin, des rangées de drapeaux, des portes à points, des étoiles, des bonus de temps, des tremplins et des raccourcis cachés récompensent le pilote qui les cherche.</p>
+<p>Drapeaux, portes, étoiles et sauts enchaînés à moins de six secondes d’écart font grimper un multiplicateur de combo, jusqu’à ×5 — jusqu’à ce qu’un accident ou une remise en piste le remette à zéro. Les grands sauts rapportent selon le temps en l’air et la distance, avec un bonus pour une réception propre.</p>
+</section>
+
+<section>
+<div class="kicker">Étapes</div>
+<h2>Cinq étapes, trois étoiles chacune.</h2>
+<div class="table-wrap"><table>
+<tr><th>Étape</th><th>Décor</th><th>Déblocage</th></tr>
+<tr><td>Green Hills</td><td>Terres agricoles, ponts en bois, un gué, des moulins, des montgolfières</td><td>Ouverte</td></tr>
+<tr><td>Desert Run</td><td>Dunes, arches de grès, un champ pétrolier, de grands tremplins</td><td>1 étoile</td></tr>
+<tr><td>Alpine Circuit</td><td>Un col de montagne, une forêt de pins, des chalets, un téléphérique</td><td>3 étoiles</td></tr>
+<tr><td>Coastal Adventure</td><td>Plages, passages à gué, un phare, une jetée</td><td>5 étoiles</td></tr>
+<tr><td>Forest Challenge</td><td>Pistes étroites et boueuses, troncs couchés, arbres géants</td><td>8 étoiles</td></tr>
+</table></div>
+<p>Chaque étape propose trois défis, et chacun rapporte une étoile : franchir l’arrivée, ramasser un nombre donné de drapeaux, et une épreuve propre à l’étape — finir avec un accident au plus, passer 9 secondes en l’air, finir avec 12 secondes d’avance, marquer 16 000 points ou prendre le raccourci caché.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Fait pour être piloté.</h2>
+<div class="grid">
+<div class="card"><h3>Une vraie suspension</h3><p>Le buggy repose sur sa propre simulation de véhicule, pas sur un moteur physique générique : quatre roues suspendues avec amortissement et barres antiroulis, glissement des pneus, et une adhérence qui varie sur dix surfaces, de l’asphalte et du gravier au sable, à la boue, à la neige et à l’eau.</p></div>
+<div class="card"><h3>Une direction à la mesure de l’adhérence</h3><p>Le braquage maximal est calé sur l’adhérence sous les roues avant : la force en virage suit l’action du joueur, sans à-coup. Sur les boutons tactiles, un appui bref corrige la trajectoire et un appui long fait tourner à fond.</p></div>
+<div class="card"><h3>Deux façons de regarder</h3><p>La caméra de poursuite suit la direction du mouvement, pour que les dérapages se lisent, et prend du retard en l’air pour que les sauts paraissent grands. La vue cockpit est à hauteur des yeux du pilote, avec volant, cadrans et bras du pilote animés.</p></div>
+<div class="card"><h3>Un garage à remplir</h3><p>Les étoiles débloquent le Comet à 4 et le Mammoth à 9, en plus du Scout de départ. Les crédits gagnés à chaque course achètent 8 peintures, 4 jeux de jantes et 5 accessoires — rampe de phares, roue de secours, aileron, fanion et pare-buffle.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Commandes</div>
+<h2>Comment piloter.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Tactile</th><th>Clavier</th><th>Manette</th></tr>
+<tr><td>Diriger</td><td>Volant, boutons gauche/droite, joystick flottant ou inclinaison</td><td>Flèches / ZQSD</td><td>Stick gauche</td></tr>
+<tr><td>Accélérer</td><td>Pédale d’accélérateur</td><td>Haut / Z</td><td>Gâchette droite, A</td></tr>
+<tr><td>Freiner, reculer</td><td>Pédale de frein (maintenue à l’arrêt pour reculer)</td><td>Bas / S, Espace</td><td>Gâchette gauche, B</td></tr>
+<tr><td>Changer de vue</td><td>Bouton caméra</td><td>C</td><td>Y</td></tr>
+<tr><td>Pause</td><td>Bouton pause</td><td>Échap</td><td>Start</td></tr>
+</table></div>
+<p>La taille, l’opacité, le côté et la position de chaque commande tactile se règlent dans un mode d’édition ; l’inclinaison se calibre et sa sensibilité s’ajuste.</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/3d-buggy/alpine-circuit.jpg" target="_blank"><img src="../assets/screenshots/3d-buggy/alpine-circuit.jpg" alt="Alpine Circuit: the road up the mountain pass" loading="lazy"></a>
+<a href="../assets/screenshots/3d-buggy/forest-challenge.jpg" target="_blank"><img src="../assets/screenshots/3d-buggy/forest-challenge.jpg" alt="Forest Challenge: a wooden bridge before a checkpoint" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Engine</td><td>Godot 4.7 with GDScript and the Mobile (Vulkan) renderer.</td></tr>
+<tr><td>Physics</td><td>A custom vehicle simulation at 60 Hz, drawn interpolated so 90/120 Hz screens stay smooth.</td></tr>
+<tr><td>Assets</td><td>Models, textures, sounds and music are all generated by the project’s own code; the only outside asset is the Chakra Petch font (SIL Open Font License).</td></tr>
+<tr><td>Tracks</td><td>Each stage is written as driving directions, then baked into terrain ahead of time, so the phone loads a stage in about 4 seconds.</td></tr>
+<tr><td>Performance</td><td>Low, Medium, High and Ultra presets, picked from the GPU on first run, with adaptive resolution. A steady 60 fps at High on a Samsung Galaxy A56.</td></tr>
+<tr><td>Tests</td><td>Headless unit tests, and play tests in which an autopilot drives full races.</td></tr>
+<tr><td>Saves</td><td>The career is stored as JSON with a SHA-256 checksum and a backup copy.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Moteur</td><td>Godot 4.7, GDScript et moteur de rendu Mobile (Vulkan).</td></tr>
+<tr><td>Physique</td><td>Une simulation de véhicule maison à 60 Hz, affichée par interpolation pour rester fluide sur les écrans 90/120 Hz.</td></tr>
+<tr><td>Ressources</td><td>Modèles, textures, sons et musique sont tous générés par le code du projet ; seule la police Chakra Petch (licence SIL Open Font) vient de l’extérieur.</td></tr>
+<tr><td>Circuits</td><td>Chaque étape est décrite comme un itinéraire, puis transformée à l’avance en terrain : le téléphone charge une étape en 4 secondes environ.</td></tr>
+<tr><td>Performances</td><td>Préréglages Bas, Moyen, Haut et Ultra, choisis d’après le GPU au premier lancement, avec résolution adaptative. 60 images/s stables en Haut sur un Samsung Galaxy A56.</td></tr>
+<tr><td>Tests</td><td>Tests unitaires exécutés sans affichage, et tests de jeu où un pilote automatique dispute des courses complètes.</td></tr>
+<tr><td>Sauvegarde</td><td>La carrière est enregistrée en JSON avec une somme de contrôle SHA-256 et une copie de secours.</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="3d-frog.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span></small><b>3D Frog</b></a>
+<a href="aboulder.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span> →</small><b>Gemstone Caverns</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span></a></div></footer>
+</body></html>

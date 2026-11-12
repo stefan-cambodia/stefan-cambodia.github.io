@@ -53,6 +53,7 @@ code{font:.88em "DM Mono",monospace;color:var(--accent2);background:#0b1119;bord
 .card .num{font:10px "DM Mono",monospace;color:var(--accent);letter-spacing:.12em;display:block;margin-bottom:8px}
 
 .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.table-wrap + p{margin-top:18px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th{font:10px "DM Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
 td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--body)}
