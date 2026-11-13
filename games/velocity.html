@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Velocity (Anti-Gravity League): an original anti-gravity racer for Android. Eight teams, five circuits, airbrakes, weapons and over 900 km/h.">
+<title data-en="Velocity — Stefan" data-fr="Velocity — Stefan" data-km="Velocity — Stefan">Velocity — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game.css">
+<script src="game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#games">← <span data-l="en">All games</span><span data-l="fr">Tous les jeux</span><span data-l="km">ហ្គេមទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Games</span><span data-l="fr">Jeux</span><span data-l="km">ហ្គេម</span> / 06</div>
+<h1>Velocity</h1>
+<div class="alias">Anti-Gravity League</div>
+<p class="lead" data-l="en">An original anti-gravity racer. Eight teams fly hovering ships at over 900 km/h across five circuits — a dusk megacity, an Arctic station, a desert spaceport, a station in orbit and a rainforest gorge — braking on airbrakes and fighting for places with eight weapons and power-ups.</p>
+<p class="lead" data-l="fr">Un jeu de course anti-gravité original. Huit écuries pilotent des vaisseaux en sustentation à plus de 900 km/h sur cinq circuits — une mégapole au crépuscule, une station arctique, une base spatiale dans le désert, une station en orbite et une gorge en pleine forêt tropicale —, en freinant aux aérofreins et en se disputant les places avec huit armes et bonus.</p>
+<p class="lead" data-l="km">ហ្គេមប្រណាំងប្រឆាំងទំនាញ ដែលជាស្នាដៃដើម។ ក្រុមចំនួន 8 បើកយានអណ្តែតក្នុងល្បឿនជាង 900 km/h លើផ្លូវប្រណាំង 5 — ទីក្រុងធំពេលព្រលប់ ស្ថានីយនៅតំបន់អាក់ទិក កំពង់ផែអវកាសនៅវាលខ្សាច់ ស្ថានីយក្នុងគន្លងគោចរ និងជ្រលងភ្នំក្នុងព្រៃត្រូពិច — ដោយហ្វ្រាំងជាមួយ airbrakes និងដណ្តើមចំណាត់ថ្នាក់ជាមួយអាវុធ និងជំនួយ 8 ប្រភេទ។</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t">Racing</span><span class="tag">Godot 4</span><span class="tag">GDScript</span><span class="tag">Vulkan</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/velocity" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/velocity/race-hud.jpg" alt="Velocity: racing into Helix Bay at dusk, with the HUD"></div>
+
+<div class="stats">
+<div class="stat"><strong>5</strong><span data-l="en">Circuits</span><span data-l="fr">Circuits</span><span data-l="km">ផ្លូវប្រណាំង</span></div>
+<div class="stat"><strong>8</strong><span data-l="en">Teams</span><span data-l="fr">Écuries</span><span data-l="km">ក្រុម</span></div>
+<div class="stat"><strong>6</strong><span data-l="en">Game modes</span><span data-l="fr">Modes de jeu</span><span data-l="km">របៀបលេង</span></div>
+<div class="stat"><strong>8</strong><span data-l="en">Weapons &amp; power-ups</span><span data-l="fr">Armes et bonus</span><span data-l="km">អាវុធ និងជំនួយ</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>A metre above the track, at 900 km/h.</h2>
+<p>The year is 2189. In the Anti-Gravity League, eight teams race ships that hover a metre above a conductive deck. A flux lock holds each ship to the surface, so it can climb banked spirals, run over crests and even ride a deck that rolls a full turn. There are no wheels and no brake pedal: you steer with the nose and slow down with two independent airbrakes — one alone tightens the line, both together brake.</p>
+<p>Weapon pads on the track hand out one of eight items: plasma bolts, a seeker missile, an EMP pulse, a shockwave, an energy shield, a mine barrier, a turbo and a repair. Hits and wall contacts drain the shield — lose it all and you are out of the race. The recharge strip on the start straight tops it up once per lap, and boost pads reward the right line.</p>
+</section>
+
+<section>
+<div class="kicker">Circuits</div>
+<h2>Five worlds, one racing surface.</h2>
+<div class="table-wrap"><table>
+<tr><th>Circuit</th><th>World</th><th>Signature</th></tr>
+<tr><td>Helix Bay</td><td>A dusk megacity on a bay · 6.5 km</td><td>A 450° banked spiral round a 320 m spire, a jump over a canal, a tunnel under the harbour</td></tr>
+<tr><td>Glacier Ring</td><td>An Arctic research station under the aurora · 6.3 km</td><td>Hairpins up a glacier, a tunnel through blue ice, a 70 m jump over a crevasse</td></tr>
+<tr><td>Atacama Spaceport</td><td>A desert launch complex in full daylight · 6.8 km</td><td>A loop round a 120 m rocket, a jump over the flame trench, the assembly hall</td></tr>
+<tr><td>Lagrange Station</td><td>A racing station in low orbit · 6.3 km</td><td>A corkscrew in which the deck rolls a full 360°, a spiral round the station core, a habitat with garden terraces</td></tr>
+<tr><td>Serra Verde</td><td>A rainforest gorge in the rain · 6.8 km figure-eight</td><td>A start on a dam, a 1.26 km cable-stayed bridge, a grotto behind a waterfall</td></tr>
+</table></div>
+<p>Each world has its own light and weather, but the track, barriers and markings look the same everywhere, so the racing surface always reads the same way. A Proving Ground — straight, sweeper, hairpin, S-bends, crest and jump — is there to practise with telemetry. Five circuits are finished; seven more are planned.</p>
+</section>
+
+<section>
+<div class="kicker">Game modes</div>
+<h2>Six ways to race.</h2>
+<div class="table-wrap"><table>
+<tr><th>Mode</th><th>Rule</th></tr>
+<tr><td>Single Race</td><td>Eight ships; the first across the line wins.</td></tr>
+<tr><td>Elimination</td><td>The last ship is knocked out every 35 seconds.</td></tr>
+<tr><td>Combat</td><td>Points for every hit and every knockout.</td></tr>
+<tr><td>Speed Challenge</td><td>Bronze, silver and gold medals, with times set from the circuit’s ideal lap.</td></tr>
+<tr><td>Time Trial</td><td>Alone against the clock and your own records.</td></tr>
+<tr><td>Practice</td><td>Free laps with no opponents.</td></tr>
+</table></div>
+<p>The career follows four speed classes — Spark, Arc, Nova and Quasar, from about 520 to over 930 km/h — across 29 events, each with an objective and a credit reward; a tier opens once enough events of the one before are done. Six championship cups of three or four rounds mix the formats, with a points table and standings saved between rounds. Credits unlock teams and faster classes.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Built for speed.</h2>
+<div class="grid">
+<div class="card"><h3>Handling first</h3><p>Ships run on their own deterministic simulation at 120 Hz, not on a generic physics engine. Steering is limited by grip, so cornering force grows with the input and full lock gives a small, controllable drift. Banks and slopes pull on the ship, and in the air it keeps only part of its steering.</p></div>
+<div class="card"><h3>Eight teams, eight ships</h3><p>Every team flies its own silhouette — nose, pods, fins, canards and engines are generated from parameters — with its own livery, logo and pilot, and its own ratings for speed, thrust, handling, stability, shield and airbrakes. All ships share the same collision size, so no shape has an unfair edge.</p></div>
+<div class="card"><h3>Rivals that race clean</h3><p>The AI follows a racing line with a speed profile, overtakes, blocks and uses its items. Five driving personalities and three difficulties (Rookie, Pro, Elite) — and no rubber-banding: nobody is slowed down or pushed along to keep the pack together.</p></div>
+<div class="card"><h3>Speed you can feel</h3><p>The field of view widens with speed, streaks and edge blur appear, and in tunnels light bars sweep over the hull. Three chase cameras, a cockpit with live displays, and a trackside camera at the finish.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Controls</div>
+<h2>How to fly.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Touch</th><th>Keyboard</th><th>Gamepad</th></tr>
+<tr><td>Steer</td><td>Tilt the phone, ◀ ▶ buttons or a floating slider</td><td>← → / A D</td><td>Left stick</td></tr>
+<tr><td>Thrust</td><td>Automatic (optional thrust pad)</td><td>↑ / W</td><td>A</td></tr>
+<tr><td>Left / right airbrake</td><td>L / R buttons under the thumbs</td><td>Q / E</td><td>LT / RT (analogue), LB / RB</td></tr>
+<tr><td>Brake</td><td>Both airbrakes together</td><td>↓ / S</td><td>B</td></tr>
+<tr><td>Fire</td><td>Fire button</td><td>Space</td><td>X</td></tr>
+<tr><td>Change camera</td><td>CAM button</td><td>V / Tab</td><td>Y</td></tr>
+<tr><td>Pause</td><td>Pause button</td><td>Esc / P</td><td>Start</td></tr>
+</table></div>
+<p>A steering assist (Off, Low, High) adds the steering a corner needs while you are not steering, and nudges you away from a barrier; it fades out as soon as you steer. Tilt can be calibrated, and the opacity and size of the touch controls are set in Settings.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>À un mètre de la piste, à 900 km/h.</h2>
+<p>Nous sommes en 2189. Dans l’Anti-Gravity League, huit écuries font courir des vaisseaux qui flottent à un mètre au-dessus d’une piste conductrice. Un verrou de flux plaque chaque vaisseau contre la surface : il peut grimper des spirales relevées, passer des crêtes et même suivre une piste qui fait un tour complet sur elle-même. Pas de roues ni de pédale de frein : on dirige avec le nez du vaisseau et on ralentit avec deux aérofreins indépendants — un seul resserre la trajectoire, les deux ensemble freinent.</p>
+<p>Les plots d’armes de la piste distribuent l’un des huit objets : salves de plasma, missile à tête chercheuse, impulsion EMP, onde de choc, bouclier d’énergie, barrage de mines, turbo et réparation. Les tirs encaissés et les contacts avec les murs vident le bouclier — à zéro, c’est l’abandon. La bande de recharge de la ligne droite de départ le remplit une fois par tour, et les plots d’accélération récompensent la bonne trajectoire.</p>
+</section>
+
+<section>
+<div class="kicker">Circuits</div>
+<h2>Cinq mondes, une même piste.</h2>
+<div class="table-wrap"><table>
+<tr><th>Circuit</th><th>Univers</th><th>Signature</th></tr>
+<tr><td>Helix Bay</td><td>Une mégapole au crépuscule au bord d’une baie · 6,5 km</td><td>Une spirale relevée de 450° autour d’une tour de 320 m, un saut au-dessus d’un canal, un tunnel sous le port</td></tr>
+<tr><td>Glacier Ring</td><td>Une station de recherche arctique sous les aurores · 6,3 km</td><td>Des épingles sur un glacier, un tunnel dans la glace bleue, un saut de 70 m au-dessus d’une crevasse</td></tr>
+<tr><td>Atacama Spaceport</td><td>Une base de lancement dans le désert, en plein jour · 6,8 km</td><td>Une boucle autour d’une fusée de 120 m, un saut au-dessus de la tranchée des flammes, le hall d’assemblage</td></tr>
+<tr><td>Lagrange Station</td><td>Une station de course en orbite basse · 6,3 km</td><td>Un tire-bouchon où la piste fait un tour complet de 360°, une spirale autour du cœur de la station, un habitat aux terrasses-jardins</td></tr>
+<tr><td>Serra Verde</td><td>Une gorge en forêt tropicale sous la pluie · 6,8 km en huit</td><td>Un départ sur un barrage, un pont à haubans de 1,26 km, une grotte derrière une cascade</td></tr>
+</table></div>
+<p>Chaque monde a sa lumière et sa météo, mais la piste, les barrières et les marquages sont les mêmes partout : la surface de course se lit toujours de la même façon. Un Proving Ground — ligne droite, grande courbe, épingle, chicanes, crête et saut — sert à s’entraîner avec la télémétrie. Cinq circuits sont terminés ; sept autres sont prévus.</p>
+</section>
+
+<section>
+<div class="kicker">Modes de jeu</div>
+<h2>Six façons de courir.</h2>
+<div class="table-wrap"><table>
+<tr><th>Mode</th><th>Règle</th></tr>
+<tr><td>Course simple</td><td>Huit vaisseaux ; le premier à franchir la ligne gagne.</td></tr>
+<tr><td>Élimination</td><td>Le dernier vaisseau est éliminé toutes les 35 secondes.</td></tr>
+<tr><td>Combat</td><td>Des points pour chaque tir réussi et chaque élimination.</td></tr>
+<tr><td>Défi de vitesse</td><td>Médailles de bronze, d’argent et d’or, avec des temps fixés d’après le tour idéal du circuit.</td></tr>
+<tr><td>Contre-la-montre</td><td>Seul face au chrono et à vos propres records.</td></tr>
+<tr><td>Entraînement</td><td>Des tours libres, sans adversaires.</td></tr>
+</table></div>
+<p>La carrière suit quatre classes de vitesse — Spark, Arc, Nova et Quasar, d’environ 520 à plus de 930 km/h — à travers 29 épreuves, chacune avec un objectif et une récompense en crédits ; un palier s’ouvre quand assez d’épreuves du précédent sont réussies. Six coupes de championnat de trois ou quatre manches mélangent les formats, avec un barème de points et un classement sauvegardé entre les manches. Les crédits débloquent des écuries et des classes plus rapides.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Taillé pour la vitesse.</h2>
+<div class="grid">
+<div class="card"><h3>Le pilotage d’abord</h3><p>Les vaisseaux reposent sur leur propre simulation déterministe à 120 Hz, pas sur un moteur physique générique. La direction est limitée par l’adhérence : la force en virage suit l’action du joueur, et le braquage maximal donne une légère dérive, facile à contrôler. Dévers et pentes tirent sur le vaisseau, et en l’air il ne garde qu’une partie de sa direction.</p></div>
+<div class="card"><h3>Huit écuries, huit vaisseaux</h3><p>Chaque écurie pilote sa propre silhouette — nez, nacelles, ailerons, canards et moteurs sont générés à partir de paramètres — avec sa livrée, son logo, son pilote et ses propres notes de vitesse, poussée, maniabilité, stabilité, bouclier et aérofreins. Tous les vaisseaux ont la même taille de collision : aucune forme n’offre d’avantage injuste.</p></div>
+<div class="card"><h3>Des rivaux qui courent proprement</h3><p>L’IA suit une trajectoire de course avec un profil de vitesse, dépasse, bloque et utilise ses objets. Cinq personnalités de pilotage et trois niveaux de difficulté (Rookie, Pro, Elite) — et pas d’effet élastique : personne n’est ralenti ni poussé pour garder le peloton groupé.</p></div>
+<div class="card"><h3>Une vitesse qui se ressent</h3><p>Le champ de vision s’élargit avec la vitesse, des traînées et un flou en bord d’écran apparaissent, et dans les tunnels des barres de lumière balaient la coque. Trois caméras de poursuite, un cockpit aux écrans animés et une caméra en bord de piste à l’arrivée.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Commandes</div>
+<h2>Comment piloter.</h2>
+<div class="table-wrap"><table>
+<tr><th>Action</th><th>Tactile</th><th>Clavier</th><th>Manette</th></tr>
+<tr><td>Diriger</td><td>Inclinaison du téléphone, boutons ◀ ▶ ou curseur flottant</td><td>← → / A D</td><td>Stick gauche</td></tr>
+<tr><td>Poussée</td><td>Automatique (bouton de poussée en option)</td><td>↑ / W</td><td>A</td></tr>
+<tr><td>Aérofrein gauche / droit</td><td>Boutons L / R sous les pouces</td><td>Q / E</td><td>LT / RT (analogiques), LB / RB</td></tr>
+<tr><td>Freiner</td><td>Les deux aérofreins ensemble</td><td>↓ / S</td><td>B</td></tr>
+<tr><td>Tirer</td><td>Bouton de tir</td><td>Espace</td><td>X</td></tr>
+<tr><td>Changer de caméra</td><td>Bouton CAM</td><td>V / Tab</td><td>Y</td></tr>
+<tr><td>Pause</td><td>Bouton pause</td><td>Échap / P</td><td>Start</td></tr>
+</table></div>
+<p>L’aide à la direction (désactivée, faible, forte) ajoute le braquage qu’exige le virage tant que le joueur ne dirige pas, et l’écarte d’une barrière toute proche ; elle s’efface dès qu’il reprend la main. L’inclinaison se calibre, et l’opacité et la taille des commandes tactiles se règlent dans les paramètres.</p>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>ខ្ពស់ពីផ្លូវមួយម៉ែត្រ ក្នុងល្បឿន 900 km/h។</h2>
+<p>ឆ្នាំ 2189។ នៅក្នុង Anti-Gravity League ក្រុមចំនួន 8 ប្រណាំងយានដែលអណ្តែតខ្ពស់មួយម៉ែត្រពីលើផ្ទៃផ្លូវដែលចម្លងថាមពល។ ប្រព័ន្ធ flux lock រក្សាយាននីមួយៗឱ្យជាប់នឹងផ្ទៃផ្លូវ ដូច្នេះវាអាចឡើងតាមផ្លូវវង់ដែលផ្អៀង ឆ្លងកាត់កំពូលទួល និងសូម្បីតែបើកលើផ្ទៃផ្លូវដែលវិលមួយជុំពេញ។ គ្មានកង់ និងគ្មានឈ្នាន់ហ្វ្រាំងទេ៖ អ្នកបត់ទិសដោយក្បាលយាន ហើយបន្ថយល្បឿនដោយ airbrakes ពីរដែលដំណើរការដាច់ដោយឡែកពីគ្នា — airbrake តែមួយធ្វើឱ្យខ្សែផ្លូវបត់កាន់តែតឹង ហើយទាំងពីរព្រមគ្នាគឺជាការហ្វ្រាំង។</p>
+<p>បន្ទះអាវុធនៅលើផ្លូវ ផ្តល់វត្ថុមួយក្នុងចំណោម 8 ប្រភេទ៖ គ្រាប់ plasma មីស៊ីលតាមដានគោលដៅ EMP រលកឆក់ ខែលថាមពល របាំងមីន turbo និងការជួសជុល។ ការត្រូវគ្រាប់ និងការបុកជញ្ជាំង កាត់បន្ថយខែល — បើអស់ខែល អ្នកត្រូវចេញពីការប្រណាំង។ ផ្លូវបញ្ចូលថាមពលនៅលើផ្លូវត្រង់ចាប់ផ្តើម បំពេញខែលវិញម្តងក្នុងមួយជុំ ហើយបន្ទះបង្កើនល្បឿនផ្តល់រង្វាន់ដល់អ្នកដែលជ្រើសខ្សែផ្លូវត្រឹមត្រូវ។</p>
+</section>
+
+<section>
+<div class="kicker">ផ្លូវប្រណាំង</div>
+<h2>ពិភព 5 ផ្ទៃផ្លូវប្រណាំងតែមួយ។</h2>
+<div class="table-wrap"><table>
+<tr><th>ផ្លូវប្រណាំង</th><th>ពិភព</th><th>ចំណុចពិសេស</th></tr>
+<tr><td>Helix Bay</td><td>ទីក្រុងធំនៅមាត់ឈូងសមុទ្រ ពេលព្រលប់ · 6.5 km</td><td>ផ្លូវវង់ផ្អៀង 450° ជុំវិញអគារ Spire កម្ពស់ 320 m ការលោតឆ្លងប្រឡាយ និងផ្លូវរូងក្រោមកំពង់ផែ</td></tr>
+<tr><td>Glacier Ring</td><td>ស្ថានីយស្រាវជ្រាវនៅតំបន់អាក់ទិក ក្រោមពន្លឺ aurora · 6.3 km</td><td>ផ្លូវបត់កែងឡើងលើផ្ទាំងទឹកកក ផ្លូវរូងកាត់ទឹកកកពណ៌ខៀវ និងការលោត 70 m ឆ្លងប្រហោងទឹកកក</td></tr>
+<tr><td>Atacama Spaceport</td><td>កំពង់ផែអវកាសនៅវាលខ្សាច់ ពេលថ្ងៃភ្លឺច្បាស់ · 6.8 km</td><td>ផ្លូវជុំវិញរ៉ុក្កែតកម្ពស់ 120 m ការលោតឆ្លងប្រឡាយអណ្តាតភ្លើង និងរោងដំឡើងរ៉ុក្កែត</td></tr>
+<tr><td>Lagrange Station</td><td>ស្ថានីយប្រណាំងក្នុងគន្លងគោចរទាប · 6.3 km</td><td>Corkscrew ដែលផ្ទៃផ្លូវវិលមួយជុំពេញ 360° ផ្លូវវង់ជុំវិញស្នូលស្ថានីយ និងបំពង់លំនៅដ្ឋានដែលមានសួនច្បារ</td></tr>
+<tr><td>Serra Verde</td><td>ជ្រលងភ្នំក្នុងព្រៃត្រូពិច ក្រោមភ្លៀង · 6.8 km រាងលេខ 8</td><td>ចាប់ផ្តើមលើទំនប់ ស្ពានខ្សែកាបប្រវែង 1.26 km និងរូងភ្នំនៅពីក្រោយទឹកធ្លាក់</td></tr>
+</table></div>
+<p>ពិភពនីមួយៗមានពន្លឺ និងអាកាសធាតុផ្ទាល់ខ្លួន ប៉ុន្តែផ្លូវ របាំង និងសញ្ញាសម្គាល់ មើលទៅដូចគ្នានៅគ្រប់ទីកន្លែង ដូច្នេះផ្ទៃផ្លូវប្រណាំងតែងតែងាយមើលដូចគ្នា។ Proving Ground — ផ្លូវត្រង់ ផ្លូវបត់វែង ផ្លូវបត់កែង S-bends កំពូលទួល និងការលោត — មានសម្រាប់ហ្វឹកហាត់ជាមួយ telemetry។ ផ្លូវប្រណាំង 5 បានបញ្ចប់ហើយ ហើយ 7 ទៀតកំពុងគ្រោងទុក។</p>
+</section>
+
+<section>
+<div class="kicker">របៀបលេង</div>
+<h2>របៀបប្រណាំង 6 យ៉ាង។</h2>
+<div class="table-wrap"><table>
+<tr><th>របៀប</th><th>ច្បាប់</th></tr>
+<tr><td>ការប្រណាំងធម្មតា (Single Race)</td><td>យាន 8 គ្រឿង អ្នកដែលឆ្លងខ្សែបញ្ចប់មុនគេជាអ្នកឈ្នះ។</td></tr>
+<tr><td>ការកម្ចាត់ចេញ (Elimination)</td><td>យានដែលនៅចុងក្រោយគេ ត្រូវដកចេញរៀងរាល់ 35 វិនាទី។</td></tr>
+<tr><td>ការប្រយុទ្ធ (Combat)</td><td>ពិន្ទុសម្រាប់ការបាញ់ត្រូវ និងការកម្ចាត់គូប្រកួតនីមួយៗ។</td></tr>
+<tr><td>ការប្រជែងល្បឿន (Speed Challenge)</td><td>មេដាយសំរិទ្ធ ប្រាក់ និងមាស តាមពេលវេលាដែលកំណត់ពីជុំល្អបំផុតតាមទ្រឹស្តីនៃផ្លូវប្រណាំង។</td></tr>
+<tr><td>ការប្រណាំងនឹងពេលវេលា (Time Trial)</td><td>ម្នាក់ឯងប្រជែងនឹងនាឡិកា និងកំណត់ត្រារបស់អ្នកផ្ទាល់។</td></tr>
+<tr><td>ការហ្វឹកហាត់ (Practice)</td><td>ជុំសេរីគ្មានគូប្រកួត។</td></tr>
+</table></div>
+<p>អាជីពដើរតាមថ្នាក់ល្បឿន 4 — Spark, Arc, Nova និង Quasar ចាប់ពីប្រហែល 520 រហូតដល់ជាង 930 km/h — ក្នុងការប្រកួត 29 ដែលនីមួយៗមានគោលដៅ និងរង្វាន់ជាក្រេឌីត។ កម្រិតបន្ទាប់បើក នៅពេលបញ្ចប់ការប្រកួតគ្រប់ចំនួននៃកម្រិតមុន។ ពានរង្វាន់ជើងឯក 6 ដែលមាន 3 ឬ 4 វគ្គ លាយបញ្ចូលរបៀបប្រណាំងផ្សេងៗ ជាមួយតារាងពិន្ទុ និងចំណាត់ថ្នាក់ដែលរក្សាទុករវាងវគ្គនីមួយៗ។ ក្រេឌីតដោះសោក្រុម និងថ្នាក់ល្បឿនដែលលឿនជាងមុន។</p>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>បង្កើតឡើងសម្រាប់ល្បឿន។</h2>
+<div class="grid">
+<div class="card"><h3>ការបើកបរមកមុនគេ</h3><p>យានដំណើរការលើការក្លែងធ្វើផ្ទាល់ខ្លួន ដែលផ្តល់លទ្ធផលដូចគ្នាជានិច្ច (deterministic) នៅ 120 Hz មិនមែនលើម៉ាស៊ីនរូបវិទ្យាទូទៅទេ។ ការបត់ចង្កូតត្រូវបានកំណត់ដោយការចាប់ផ្លូវ ដូច្នេះកម្លាំងពេលបត់កើនឡើងតាមការបញ្ជា ហើយការបត់អស់ទីបង្កើតការរអិលបន្តិច ដែលអាចគ្រប់គ្រងបាន។ ការផ្អៀង និងជម្រាលផ្លូវទាញយាន ហើយនៅលើអាកាស យានរក្សាបានតែផ្នែកខ្លះនៃការបត់ចង្កូតប៉ុណ្ណោះ។</p></div>
+<div class="card"><h3>ក្រុម 8 យាន 8</h3><p>ក្រុមនីមួយៗបើកយានដែលមានរាងផ្ទាល់ខ្លួន — ក្បាល ពោង ស្លាប canards និងម៉ាស៊ីន ត្រូវបានបង្កើតពីប៉ារ៉ាម៉ែត្រ — ជាមួយពណ៌ ស្លាកសញ្ញា អ្នកបើកបរ និងពិន្ទុផ្ទាល់ខ្លួនសម្រាប់ល្បឿន កម្លាំងរុញ ការបត់បែន ស្ថិរភាព ខែល និង airbrakes។ យានទាំងអស់មានទំហំប៉ះទង្គិចដូចគ្នា ដូច្នេះគ្មានរាងណាមួយមានអត្ថប្រយោជន៍មិនយុត្តិធម៌ទេ។</p></div>
+<div class="card"><h3>គូប្រជែងដែលប្រណាំងដោយស្មោះត្រង់</h3><p>AI ដើរតាមខ្សែផ្លូវប្រណាំងជាមួយផែនការល្បឿន វ៉ាដាច់ ការពារចំណាត់ថ្នាក់ និងប្រើវត្ថុរបស់វា។ មានបុគ្គលិកលក្ខណៈបើកបរ 5 និងកម្រិតលំបាក 3 (Rookie, Pro, Elite) — ហើយគ្មាន rubber-banding ទេ៖ គ្មាននរណាម្នាក់ត្រូវបានបន្ថយល្បឿន ឬរុញឱ្យលឿន ដើម្បីរក្សាក្រុមឱ្យនៅជាមួយគ្នានោះទេ។</p></div>
+<div class="card"><h3>ល្បឿនដែលអ្នកអាចមានអារម្មណ៍</h3><p>វាលមើលពង្រីកតាមល្បឿន ខ្សែពន្លឺ និងភាពព្រិលនៅគែមអេក្រង់លេចឡើង ហើយនៅក្នុងផ្លូវរូង របារពន្លឺរំកិលលើតួយាន។ មានកាមេរ៉ាតាមពីក្រោយ 3 cockpit ដែលមានអេក្រង់បង្ហាញទិន្នន័យផ្ទាល់ និងកាមេរ៉ាតាមមាត់ផ្លូវនៅទីបញ្ចប់។</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">ការបញ្ជា</div>
+<h2>របៀបបើកយាន។</h2>
+<div class="table-wrap"><table>
+<tr><th>សកម្មភាព</th><th>ការប៉ះ</th><th>ក្តារចុច</th><th>Gamepad</th></tr>
+<tr><td>បត់ទិស</td><td>ផ្អៀងទូរស័ព្ទ ប៊ូតុង ◀ ▶ ឬ slider អណ្តែត</td><td>← → / A D</td><td>Left stick</td></tr>
+<tr><td>កម្លាំងរុញ</td><td>ស្វ័យប្រវត្តិ (អាចបន្ថែមប៊ូតុងរុញបាន)</td><td>↑ / W</td><td>A</td></tr>
+<tr><td>airbrake ឆ្វេង / ស្តាំ</td><td>ប៊ូតុង L / R នៅក្រោមមេដៃ</td><td>Q / E</td><td>LT / RT (analogue), LB / RB</td></tr>
+<tr><td>ហ្វ្រាំង</td><td>airbrakes ទាំងពីរព្រមគ្នា</td><td>↓ / S</td><td>B</td></tr>
+<tr><td>បាញ់</td><td>ប៊ូតុងបាញ់</td><td>Space</td><td>X</td></tr>
+<tr><td>ប្តូរកាមេរ៉ា</td><td>ប៊ូតុង CAM</td><td>V / Tab</td><td>Y</td></tr>
+<tr><td>ផ្អាក</td><td>ប៊ូតុងផ្អាក</td><td>Esc / P</td><td>Start</td></tr>
+</table></div>
+<p>ជំនួយបត់ចង្កូត (Off, Low, High) បន្ថែមការបត់ដែលផ្លូវកោងត្រូវការ ពេលអ្នកមិនកំពុងបត់ ហើយរុញអ្នកចេញពីរបាំងបន្តិច។ វាបាត់ទៅវិញភ្លាមៗ នៅពេលអ្នកចាប់ផ្តើមបត់ដោយខ្លួនឯង។ ការផ្អៀងទូរស័ព្ទអាចក្រិតតាមខ្នាតបាន ហើយភាពស្រអាប់ និងទំហំនៃប៊ូតុងប៉ះ អាចកំណត់បានក្នុង Settings។</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le jeu en images.</span><span data-l="km">ហ្គេមតាមរយៈរូបភាព។</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/velocity/lagrange-station-corkscrew.jpg" target="_blank"><img src="../assets/screenshots/velocity/lagrange-station-corkscrew.jpg" alt="Lagrange Station: the Corkscrew in orbit" loading="lazy"></a>
+<a href="../assets/screenshots/velocity/serra-verde-sky-bridge.jpg" target="_blank"><img src="../assets/screenshots/velocity/serra-verde-sky-bridge.jpg" alt="Serra Verde: the Sky Bridge in the rain" loading="lazy"></a>
+<a href="../assets/screenshots/velocity/atacama-spaceport-launch-pad.jpg" target="_blank"><img src="../assets/screenshots/velocity/atacama-spaceport-launch-pad.jpg" alt="Atacama Spaceport: the Launch Pad Loop" loading="lazy"></a>
+<a href="../assets/screenshots/velocity/glacier-ring-aurora.jpg" target="_blank"><img src="../assets/screenshots/velocity/glacier-ring-aurora.jpg" alt="Glacier Ring: under the aurora" loading="lazy"></a>
+<a href="../assets/screenshots/velocity/helix-bay-aerial.jpg" target="_blank"><img src="../assets/screenshots/velocity/helix-bay-aerial.jpg" alt="Helix Bay: the Helix round the Spire" loading="lazy"></a>
+<a href="../assets/screenshots/velocity/race-weapons.jpg" target="_blank"><img src="../assets/screenshots/velocity/race-weapons.jpg" alt="Plasma bolts in flight on the Grand Straight" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Engine</td><td>Godot 4.7 with typed GDScript and the Mobile (Vulkan) renderer.</td></tr>
+<tr><td>Physics</td><td>A custom, deterministic ship simulation at 120 Hz, with no physics bodies. The track is an analytic data structure that physics, AI, cameras and respawn all query, so a ship cannot pass through a wall or the floor at any speed.</td></tr>
+<tr><td>Tracks</td><td>Each circuit is written in a small segment language — eased curves, banking, elevation — and closes exactly; the visible mesh is generated from the same data as the physical surface.</td></tr>
+<tr><td>Assets</td><td>Models, textures, sound effects and music are all generated by the project’s own code; the only outside assets are the Orbitron and Rajdhani fonts (SIL Open Font License). Each race song has an intense final-lap version that crossfades in sync.</td></tr>
+<tr><td>Performance</td><td>Low, Medium, High and Ultra presets, picked automatically, with adaptive resolution. About 59 fps on average at High on a Samsung Galaxy A56, on Helix Bay.</td></tr>
+<tr><td>Tests</td><td>31 headless unit tests (handling, tracks, weapons, modes, saves), a handling bench, and play tests in which an autopilot drives full races.</td></tr>
+<tr><td>Saves</td><td>Career and records are stored as versioned JSON with a SHA-256 checksum and a backup copy.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Moteur</td><td>Godot 4.7, GDScript typé et moteur de rendu Mobile (Vulkan).</td></tr>
+<tr><td>Physique</td><td>Une simulation de vaisseau maison, déterministe, à 120 Hz, sans corps physiques. La piste est une structure de données analytique qu’interrogent la physique, l’IA, les caméras et la remise en piste : aucun vaisseau ne peut traverser un mur ou le sol, quelle que soit sa vitesse.</td></tr>
+<tr><td>Circuits</td><td>Chaque circuit est décrit dans un petit langage de segments — courbes progressives, dévers, dénivelé — et se referme exactement ; le maillage visible est généré à partir des mêmes données que la surface physique.</td></tr>
+<tr><td>Ressources</td><td>Modèles, textures, effets sonores et musique sont tous générés par le code du projet ; seules les polices Orbitron et Rajdhani (licence SIL Open Font) viennent de l’extérieur. Chaque morceau de course a une version plus intense pour le dernier tour, qui prend le relais en fondu, en rythme.</td></tr>
+<tr><td>Performances</td><td>Préréglages Bas, Moyen, Haut et Ultra, choisis automatiquement, avec résolution adaptative. Environ 59 images/s en moyenne en Haut sur un Samsung Galaxy A56, sur Helix Bay.</td></tr>
+<tr><td>Tests</td><td>31 tests unitaires exécutés sans affichage (pilotage, circuits, armes, modes, sauvegardes), un banc d’essai de pilotage, et des tests de jeu où un pilote automatique dispute des courses complètes.</td></tr>
+<tr><td>Sauvegarde</td><td>Carrière et records sont enregistrés en JSON versionné, avec une somme de contrôle SHA-256 et une copie de secours.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>ម៉ាស៊ីនហ្គេម</td><td>Godot 4.7 ជាមួយ GDScript (typed) និងម៉ាស៊ីនបង្ហាញរូបភាព Mobile (Vulkan)។</td></tr>
+<tr><td>រូបវិទ្យា</td><td>ការក្លែងធ្វើយានផ្ទាល់ខ្លួន ដែលផ្តល់លទ្ធផលដូចគ្នាជានិច្ច នៅ 120 Hz ដោយមិនប្រើ physics bodies។ ផ្លូវប្រណាំងជារចនាសម្ព័ន្ធទិន្នន័យគណិតវិទ្យា ដែលរូបវិទ្យា AI កាមេរ៉ា និងការដាក់យានត្រឡប់មកលើផ្លូវវិញ សុទ្ធតែប្រើ ដូច្នេះយានមិនអាចឆ្លងកាត់ជញ្ជាំង ឬផ្ទៃផ្លូវបានទេ ទោះលឿនប៉ុណ្ណាក៏ដោយ។</td></tr>
+<tr><td>ផ្លូវប្រណាំង</td><td>ផ្លូវប្រណាំងនីមួយៗត្រូវបានសរសេរជាភាសាតូចមួយដែលពិពណ៌នាតាមផ្នែក — ផ្លូវកោងរលូន ការផ្អៀង កម្ពស់ — ហើយបិទជារង្វង់យ៉ាងជាក់លាក់។ mesh ដែលមើលឃើញត្រូវបានបង្កើតពីទិន្នន័យដូចគ្នានឹងផ្ទៃរូបវិទ្យា។</td></tr>
+<tr><td>ធនធាន</td><td>ម៉ូដែល វាយនភាព បែបផែនសំឡេង និងតន្ត្រីទាំងអស់ ត្រូវបានបង្កើតដោយកូដរបស់គម្រោងផ្ទាល់។ ធនធានតែមួយគត់ដែលមកពីខាងក្រៅ គឺពុម្ពអក្សរ Orbitron និង Rajdhani (SIL Open Font License)។ បទចម្រៀងប្រណាំងនីមួយៗមានកំណែខ្លាំងជាងសម្រាប់ជុំចុងក្រោយ ដែលប្តូរចូលគ្នាដោយរលូនតាមចង្វាក់។</td></tr>
+<tr><td>ដំណើរការ</td><td>កម្រិតកំណត់ជាមុន Low, Medium, High និង Ultra ដែលត្រូវបានជ្រើសរើសដោយស្វ័យប្រវត្តិ ជាមួយគុណភាពបង្ហាញដែលសម្របខ្លួន។ ជាមធ្យមប្រហែល 59 fps នៅកម្រិត High លើ Samsung Galaxy A56 នៅលើ Helix Bay។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្តឯកតា 31 ដែលដំណើរការដោយគ្មានការបង្ហាញ (ការបើកបរ ផ្លូវប្រណាំង អាវុធ របៀបលេង ការរក្សាទុក) ឧបករណ៍វាស់ការបើកបរ និងការធ្វើតេស្តលេង ដែលប្រព័ន្ធបើកបរស្វ័យប្រវត្តិប្រណាំងពេញលេញ។</td></tr>
+<tr><td>ការរក្សាទុក</td><td>អាជីព និងកំណត់ត្រា ត្រូវបានរក្សាទុកជា JSON ដែលមានលេខកំណែ ជាមួយលេខផ្ទៀងផ្ទាត់ SHA-256 និងច្បាប់ចម្លងបម្រុង។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="3d-buggy.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>3D Buggy</b></a>
+<a href="aboulder.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>Gemstone Caverns</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#games">← <span data-l="en">Back to all games</span><span data-l="fr">Retour aux jeux</span><span data-l="km">ត្រឡប់ទៅហ្គេមទាំងអស់</span></a></div></footer>
+</body></html>
