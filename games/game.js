@@ -1,4 +1,4 @@
-// Shared by the game pages: language switch (EN/FR/KM), in sync with the home page's choice.
+// Shared by the game and project pages: language switch (EN/FR/KM), in sync with the home page's choice.
 (function () {
   var KEY = "portfolio-lang";
   function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
