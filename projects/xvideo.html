@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="xvideo: a command-line tool that downloads the videos of public X (Twitter) posts, with batches of URLs, quality selection, safe file names, resumable downloads and JSON output. Python and yt-dlp.">
+<title data-en="xvideo, X video downloader — Stefan" data-fr="xvideo, téléchargeur de vidéos X — Stefan" data-km="xvideo, កម្មវិធីទាញយកវីដេអូ X — Stefan">xvideo, X video downloader — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#projects">← <span data-l="en">All projects</span><span data-l="fr">Tous les projets</span><span data-l="km">គម្រោងទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Projects</span><span data-l="fr">Projets</span><span data-l="km">គម្រោង</span> / 06</div>
+<h1>xvideo</h1>
+<div class="alias"><span data-l="en">X video downloader</span><span data-l="fr">Téléchargeur de vidéos X</span><span data-l="km">កម្មវិធីទាញយកវីដេអូ X</span></div>
+<p class="lead" data-l="en">Download the videos of public X (Twitter) posts from the command line. Give it one link, several, or a file of them: it picks the quality you ask for, names each file after its author and post, resumes interrupted downloads and explains every failure in plain words.</p>
+<p class="lead" data-l="fr">Téléchargez les vidéos des posts X (Twitter) publics depuis la ligne de commande. Donnez-lui un lien, plusieurs, ou un fichier qui les contient : il choisit la qualité demandée, nomme chaque fichier d’après l’auteur et le post, reprend les téléchargements interrompus et explique chaque échec en termes simples.</p>
+<p class="lead" data-l="km">ទាញយកវីដេអូពី post X (Twitter) សាធារណៈ តាមរយៈ command line។ ផ្តល់ឱ្យវានូវតំណមួយ តំណច្រើន ឬឯកសារដែលមានបញ្ជីតំណ៖ វាជ្រើសរើសគុណភាពដែលអ្នកចង់បាន ដាក់ឈ្មោះឯកសារនីមួយៗតាមឈ្មោះអ្នកបង្ហោះ និងលេខ post បន្តការទាញយកដែលត្រូវបានផ្អាក ហើយពន្យល់រាល់ការបរាជ័យជាពាក្យសាមញ្ញៗ។</p>
+<div class="tags"><span class="tag p">Desktop</span><span class="tag t" data-l="en">Tools</span><span class="tag t" data-l="fr">Outils</span><span class="tag t" data-l="km">ឧបករណ៍</span><span class="tag">Python</span><span class="tag">yt-dlp</span><span class="tag">Typer · Rich</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/xvideo" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<pre class="term" style="margin:34px 0 0"><span class="p">$ </span>xvideo "https://x.com/&lt;user&gt;/status/&lt;id&gt;"
+<span class="c">X Video Downloader
+
+Fetching post...
+✓ Video found
+  Resolution: 3840x2160
+  Duration: 00:25
+  Size: 34.3 MB
+
+Downloading ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 34.3/34.3 MB 5.8 MB/s 0:00:00
+
+✓ Saved:
+  ./&lt;user&gt;_&lt;id&gt;.mp4</span></pre>
+
+<div class="stats">
+<div class="stat"><strong>186</strong><span data-l="en">Unit tests</span><span data-l="fr">Tests unitaires</span><span data-l="km">ការធ្វើតេស្ត</span></div>
+<div class="stat"><strong>16</strong><span data-l="en">Error codes</span><span data-l="fr">Codes d’erreur</span><span data-l="km">កូដកំហុស</span></div>
+<div class="stat"><strong>13</strong><span data-l="en">Command-line options</span><span data-l="fr">Options de commande</span><span data-l="km">ជម្រើសពាក្យបញ្ជា</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">Operating systems</span><span data-l="fr">Systèmes d’exploitation</span><span data-l="km">ប្រព័ន្ធប្រតិបត្តិការ</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Paste a link. Get the file.</h2>
+<p>X plays videos inside the post but offers no way to save them. xvideo takes the address of a post — on <code>x.com</code> or <code>twitter.com</code>, web or mobile — finds its video and saves it as an MP4 named after the author and the post, such as <code>USERNAME_POSTID.mp4</code>. A post with several videos gives one file each, <code>_v1</code>, <code>_v2</code>…; a link ending in <code>/video/2</code> fetches only the second one.</p>
+<p>The hard part — talking to X and reading its formats — is done by yt-dlp, the open-source downloader. xvideo adds what a command-line tool needs around it: choosing the right format, safe file names, batches, progress, retries and errors you can read. ffmpeg is optional: X normally serves ready-to-play MP4 files, so ffmpeg is only used to merge separate audio and video streams when a quality is offered only that way, and to embed metadata.</p>
+</section>
+
+<section>
+<div class="kicker">Usage</div>
+<h2>One link, or a whole list.</h2>
+<pre class="term"><span class="c"># One post</span>
+<span class="p">$ </span>xvideo "https://x.com/USERNAME/status/POST_ID"
+
+<span class="c"># Several posts</span>
+<span class="p">$ </span>xvideo URL1 URL2 URL3
+
+<span class="c"># From a file: one URL per line, blank lines and # comments are ignored</span>
+<span class="p">$ </span>xvideo --file urls.txt
+<span class="p">$ </span>cat urls.txt | xvideo --file -
+
+<span class="c"># Output directory (created if needed)</span>
+<span class="p">$ </span>xvideo URL --output ./downloads
+
+<span class="c"># At most 720p</span>
+<span class="p">$ </span>xvideo URL --quality 720p</pre>
+<div class="table-wrap"><table class="kv">
+<tr><th>Option</th><th>What it does</th></tr>
+<tr><td style="white-space:nowrap">--file, -f</td><td>Reads URLs from a file, or from standard input with <code>-</code>. Can be combined with URLs on the command line.</td></tr>
+<tr><td style="white-space:nowrap">--output, -o</td><td>Output directory, created if needed. Default: the current directory.</td></tr>
+<tr><td style="white-space:nowrap">--quality, -q</td><td><code>best</code> (default), <code>worst</code>, or a maximum resolution: <code>2160p</code>, <code>1080p</code>, <code>720p</code>, <code>4k</code>…</td></tr>
+<tr><td style="white-space:nowrap">--overwrite<br>--skip-existing</td><td>Replace an existing file, or leave it and skip the video. By default, the new file gets <code>_1</code>, <code>_2</code>…</td></tr>
+<tr><td style="white-space:nowrap">--metadata, -m</td><td>Writes the title, author, date, text and original link into the MP4 (needs ffmpeg).</td></tr>
+<tr><td style="white-space:nowrap">--quiet<br>--verbose<br>--json</td><td>Nothing but errors; debug logs and stack traces; or one JSON object per line, for scripts.</td></tr>
+<tr><td style="white-space:nowrap">--timeout<br>--retries</td><td>Network timeout (30 s by default) and retries on network errors (3 by default, with exponential backoff).</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Made for long lists.</h2>
+<div class="grid">
+<div class="card"><h3>A batch never stops</h3><p>A failing URL is reported and the next one starts. The same post listed twice is downloaded once, and a final summary counts what was downloaded, skipped and failed.</p></div>
+<div class="card"><h3>Quality with a fallback</h3><p>A resolution means the short side of the frame, so <code>720p</code> also matches a vertical 720×1280 video. If the requested one does not exist, xvideo takes the best lower one and says so; if all are higher, the lowest. At equal resolution, a single MP4 is preferred over separate streams.</p></div>
+<div class="card"><h3>File names that work everywhere</h3><p>Characters invalid on Windows, macOS or Linux are replaced; reserved Windows names such as <code>CON</code> and over-long names are handled. An existing file is never overwritten without <code>--overwrite</code>: the new one gets <code>_1</code>, <code>_2</code>… Files of the same run never collide.</p></div>
+<div class="card"><h3>Downloads that resume</h3><p>An interrupted download keeps its <code>.part</code> file and continues where it stopped on the next run, even after Ctrl+C. Network errors, timeouts and server errors are retried with a growing delay; X rate limiting (HTTP 429) is reported, not hammered.</p></div>
+<div class="card"><h3>Errors in plain words</h3><p>Missing post, no video, private account, timeout, disk full, ffmpeg missing… each case has a clear message and a stable code for scripts. Free disk space is checked before the download when the size is known. Stack traces only appear with <code>--verbose</code>.</p></div>
+<div class="card"><h3>Metadata without re-encoding</h3><p>With <code>--metadata</code>, the title, author, date, full text and original link are written into the MP4 tags without re-encoding. The file is rewritten to a temporary copy, then swapped in at once, so an error never leaves a half-written video. Without ffmpeg, the video is still saved, with a warning.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Scope</div>
+<h2>Public posts only.</h2>
+<p>xvideo only downloads what anyone can see on X without signing in. It reads no cookies and asks for no credentials, and it has no way around private or protected accounts, age-restricted posts, paywalls, geo-restrictions, rate limits, anti-bot checks or CAPTCHAs. It uses yt-dlp’s default HTTP headers: no User-Agent rotation, no other evasion technique.</p>
+<p>Respecting X’s Terms of Service and the copyright of the videos is up to the user: the README asks you to download only videos you have the right to keep, such as your own posts or content whose license allows it. And since X changes its website and API regularly, the first thing to try when extraction stops working is updating yt-dlp: <code>pip install -U yt-dlp</code>.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Collez un lien. Récupérez le fichier.</h2>
+<p>X lit les vidéos dans le post, mais n’offre aucun moyen de les enregistrer. xvideo prend l’adresse d’un post — sur <code>x.com</code> ou <code>twitter.com</code>, version web ou mobile —, trouve sa vidéo et l’enregistre en MP4 sous un nom tiré de l’auteur et du post, comme <code>USERNAME_POSTID.mp4</code>. Un post à plusieurs vidéos donne un fichier par vidéo, <code>_v1</code>, <code>_v2</code>… ; un lien terminé par <code>/video/2</code> ne récupère que la deuxième.</p>
+<p>Le plus délicat — dialoguer avec X et lire ses formats — est confié à yt-dlp, le téléchargeur open source. xvideo ajoute autour ce qu’il faut à un outil en ligne de commande : le choix du bon format, des noms de fichiers sûrs, le traitement par lots, la progression, les nouvelles tentatives et des erreurs lisibles. ffmpeg est facultatif : X fournit normalement des MP4 prêts à lire, et ffmpeg ne sert qu’à fusionner l’audio et la vidéo quand une qualité n’existe qu’en flux séparés, et à intégrer les métadonnées.</p>
+</section>
+
+<section>
+<div class="kicker">Utilisation</div>
+<h2>Un lien, ou toute une liste.</h2>
+<pre class="term"><span class="c"># Un post</span>
+<span class="p">$ </span>xvideo "https://x.com/USERNAME/status/POST_ID"
+
+<span class="c"># Plusieurs posts</span>
+<span class="p">$ </span>xvideo URL1 URL2 URL3
+
+<span class="c"># Depuis un fichier : une URL par ligne, lignes vides et commentaires # ignorés</span>
+<span class="p">$ </span>xvideo --file urls.txt
+<span class="p">$ </span>cat urls.txt | xvideo --file -
+
+<span class="c"># Dossier de sortie (créé si besoin)</span>
+<span class="p">$ </span>xvideo URL --output ./downloads
+
+<span class="c"># Au plus 720p</span>
+<span class="p">$ </span>xvideo URL --quality 720p</pre>
+<div class="table-wrap"><table class="kv">
+<tr><th>Option</th><th>Rôle</th></tr>
+<tr><td style="white-space:nowrap">--file, -f</td><td>Lit les URL dans un fichier, ou sur l’entrée standard avec <code>-</code>. Se combine avec des URL passées sur la ligne de commande.</td></tr>
+<tr><td style="white-space:nowrap">--output, -o</td><td>Dossier de sortie, créé si besoin. Par défaut : le dossier courant.</td></tr>
+<tr><td style="white-space:nowrap">--quality, -q</td><td><code>best</code> (par défaut), <code>worst</code>, ou une résolution maximale : <code>2160p</code>, <code>1080p</code>, <code>720p</code>, <code>4k</code>…</td></tr>
+<tr><td style="white-space:nowrap">--overwrite<br>--skip-existing</td><td>Remplace un fichier existant, ou le laisse et passe la vidéo. Par défaut, le nouveau fichier reçoit <code>_1</code>, <code>_2</code>…</td></tr>
+<tr><td style="white-space:nowrap">--metadata, -m</td><td>Écrit le titre, l’auteur, la date, le texte et le lien d’origine dans le MP4 (nécessite ffmpeg).</td></tr>
+<tr><td style="white-space:nowrap">--quiet<br>--verbose<br>--json</td><td>Rien d’autre que les erreurs ; journaux de débogage et piles d’appels ; ou un objet JSON par ligne, pour les scripts.</td></tr>
+<tr><td style="white-space:nowrap">--timeout<br>--retries</td><td>Délai réseau (30 s par défaut) et nouvelles tentatives sur erreur réseau (3 par défaut, avec une attente exponentielle).</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Pensé pour les longues listes.</h2>
+<div class="grid">
+<div class="card"><h3>Un lot ne s’arrête jamais</h3><p>Une URL en échec est signalée, et la suivante démarre. Un même post présent deux fois n’est téléchargé qu’une fois, et un bilan final compte les vidéos téléchargées, ignorées et en échec.</p></div>
+<div class="card"><h3>Une qualité avec repli</h3><p>Une résolution désigne le petit côté de l’image : <code>720p</code> vaut aussi pour une vidéo verticale en 720×1280. Si la résolution demandée n’existe pas, xvideo prend la meilleure inférieure et le signale ; si toutes sont supérieures, la plus basse. À résolution égale, un MP4 unique est préféré à des flux séparés.</p></div>
+<div class="card"><h3>Des noms de fichiers valables partout</h3><p>Les caractères interdits sous Windows, macOS ou Linux sont remplacés ; les noms réservés de Windows comme <code>CON</code> et les noms trop longs sont gérés. Un fichier existant n’est jamais écrasé sans <code>--overwrite</code> : le nouveau reçoit <code>_1</code>, <code>_2</code>… Les fichiers d’une même exécution n’entrent jamais en collision.</p></div>
+<div class="card"><h3>Des téléchargements qui reprennent</h3><p>Un téléchargement interrompu garde son fichier <code>.part</code> et reprend là où il s’était arrêté à l’exécution suivante, même après un Ctrl+C. Erreurs réseau, délais dépassés et erreurs serveur sont retentés avec une attente croissante ; la limitation de débit de X (HTTP 429) est signalée, sans insister.</p></div>
+<div class="card"><h3>Des erreurs en clair</h3><p>Post introuvable, pas de vidéo, compte privé, délai dépassé, disque plein, ffmpeg absent… chaque cas a un message clair et un code stable pour les scripts. L’espace disque libre est vérifié avant le téléchargement quand la taille est connue. Les piles d’appels n’apparaissent qu’avec <code>--verbose</code>.</p></div>
+<div class="card"><h3>Des métadonnées sans réencodage</h3><p>Avec <code>--metadata</code>, le titre, l’auteur, la date, le texte complet et le lien d’origine sont écrits dans les balises du MP4, sans réencodage. Le fichier est réécrit dans une copie temporaire puis remplacé d’un coup : une erreur ne laisse jamais une vidéo à moitié écrite. Sans ffmpeg, la vidéo est tout de même enregistrée, avec un avertissement.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Périmètre</div>
+<h2>Posts publics uniquement.</h2>
+<p>xvideo ne télécharge que ce que tout le monde peut voir sur X sans se connecter. Il ne lit aucun cookie, ne demande aucun identifiant, et n’a aucun moyen de contourner les comptes privés ou protégés, les posts soumis à une limite d’âge, les paywalls, les restrictions géographiques, les limitations de débit, les contrôles anti-robots ou les CAPTCHA. Il utilise les en-têtes HTTP par défaut de yt-dlp : ni rotation de User-Agent, ni autre technique de contournement.</p>
+<p>Respecter les conditions d’utilisation de X et le droit d’auteur des vidéos revient à l’utilisateur : le README demande de ne télécharger que les vidéos que l’on a le droit de conserver, comme ses propres posts ou des contenus dont la licence le permet. Et comme X modifie régulièrement son site et son API, la première chose à faire quand l’extraction ne fonctionne plus est de mettre à jour yt-dlp : <code>pip install -U yt-dlp</code>.</p>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>បិទភ្ជាប់តំណ។ ទទួលបានឯកសារ។</h2>
+<p>X ចាក់វីដេអូនៅក្នុង post ប៉ុន្តែមិនផ្តល់មធ្យោបាយរក្សាទុកវាទេ។ xvideo យកអាសយដ្ឋានរបស់ post មួយ — ពី <code>x.com</code> ឬ <code>twitter.com</code> ទាំងកំណែ web និង mobile — រកវីដេអូរបស់វា ហើយរក្សាទុកជាឯកសារ MP4 ដែលមានឈ្មោះតាមអ្នកបង្ហោះ និង post ដូចជា <code>USERNAME_POSTID.mp4</code>។ post ដែលមានវីដេអូច្រើន ផ្តល់ឯកសារមួយសម្រាប់វីដេអូនីមួយៗ <code>_v1</code>, <code>_v2</code>… ហើយតំណដែលបញ្ចប់ដោយ <code>/video/2</code> ទាញយកតែវីដេអូទីពីរប៉ុណ្ណោះ។</p>
+<p>ផ្នែកពិបាក — ការទាក់ទងជាមួយ X និងការអានទម្រង់វីដេអូរបស់វា — ត្រូវបានធ្វើដោយ yt-dlp ដែលជាកម្មវិធីទាញយក open-source។ xvideo បន្ថែមអ្វីដែលឧបករណ៍ command-line ត្រូវការនៅជុំវិញវា៖ ការជ្រើសរើសទម្រង់ត្រឹមត្រូវ ឈ្មោះឯកសារដែលមានសុវត្ថិភាព ការទាញយកជាបាច់ របារវឌ្ឍនភាព ការព្យាយាមម្តងទៀត និងសារកំហុសដែលអានយល់។ ffmpeg មិនចាំបាច់ទេ៖ ជាធម្មតា X ផ្តល់ឯកសារ MP4 ដែលអាចចាក់បានភ្លាម ដូច្នេះ ffmpeg ត្រូវបានប្រើតែដើម្បីបញ្ចូលស្ទ្រីមសំឡេង និងរូបភាពដែលដាច់ដោយឡែកពីគ្នា នៅពេលគុណភាពណាមួយមានតែក្នុងទម្រង់នោះ និងដើម្បីបញ្ចូល metadata ប៉ុណ្ណោះ។</p>
+</section>
+
+<section>
+<div class="kicker">ការប្រើប្រាស់</div>
+<h2>តំណមួយ ឬបញ្ជីទាំងមូល។</h2>
+<pre class="term"><span class="c"># post មួយ</span>
+<span class="p">$ </span>xvideo "https://x.com/USERNAME/status/POST_ID"
+
+<span class="c"># post ច្រើន</span>
+<span class="p">$ </span>xvideo URL1 URL2 URL3
+
+<span class="c"># ពីឯកសារ៖ URL មួយក្នុងមួយបន្ទាត់ បន្ទាត់ទទេ និង comment # ត្រូវបានរំលង</span>
+<span class="p">$ </span>xvideo --file urls.txt
+<span class="p">$ </span>cat urls.txt | xvideo --file -
+
+<span class="c"># ថតសម្រាប់រក្សាទុក (បង្កើតឡើងបើចាំបាច់)</span>
+<span class="p">$ </span>xvideo URL --output ./downloads
+
+<span class="c"># យ៉ាងច្រើនបំផុត 720p</span>
+<span class="p">$ </span>xvideo URL --quality 720p</pre>
+<div class="table-wrap"><table class="kv">
+<tr><th>ជម្រើស</th><th>អ្វីដែលវាធ្វើ</th></tr>
+<tr><td style="white-space:nowrap">--file, -f</td><td>អាន URL ពីឯកសារ ឬពី standard input ជាមួយ <code>-</code>។ អាចប្រើរួមគ្នាជាមួយ URL នៅលើ command line បាន។</td></tr>
+<tr><td style="white-space:nowrap">--output, -o</td><td>ថតសម្រាប់រក្សាទុក ដែលនឹងត្រូវបង្កើតឡើងបើមិនទាន់មាន។ លំនាំដើម៖ ថតបច្ចុប្បន្ន។</td></tr>
+<tr><td style="white-space:nowrap">--quality, -q</td><td><code>best</code> (លំនាំដើម), <code>worst</code> ឬកម្រិតភាពច្បាស់អតិបរមា៖ <code>2160p</code>, <code>1080p</code>, <code>720p</code>, <code>4k</code>…</td></tr>
+<tr><td style="white-space:nowrap">--overwrite<br>--skip-existing</td><td>ជំនួសឯកសារដែលមានស្រាប់ ឬទុកវាដដែល ហើយរំលងវីដេអូនោះ។ តាមលំនាំដើម ឯកសារថ្មីទទួលបានបច្ច័យ <code>_1</code>, <code>_2</code>…</td></tr>
+<tr><td style="white-space:nowrap">--metadata, -m</td><td>សរសេរចំណងជើង អ្នកបង្ហោះ កាលបរិច្ឆេទ អត្ថបទ និងតំណដើម ចូលទៅក្នុង MP4 (ត្រូវការ ffmpeg)។</td></tr>
+<tr><td style="white-space:nowrap">--quiet<br>--verbose<br>--json</td><td>បង្ហាញតែកំហុស, log លម្អិត និង stack trace, ឬ JSON object មួយក្នុងមួយបន្ទាត់ សម្រាប់ script។</td></tr>
+<tr><td style="white-space:nowrap">--timeout<br>--retries</td><td>រយៈពេលរង់ចាំបណ្តាញ (30 វិនាទីតាមលំនាំដើម) និងចំនួនដងព្យាយាមម្តងទៀតពេលមានកំហុសបណ្តាញ (3 ដងតាមលំនាំដើម ដោយពន្យារពេលកើនឡើងជា exponential)។</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>បង្កើតឡើងសម្រាប់បញ្ជីវែងៗ។</h2>
+<div class="grid">
+<div class="card"><h3>ការទាញយកជាបាច់មិនដែលឈប់</h3><p>URL ដែលបរាជ័យត្រូវបានរាយការណ៍ ហើយ URL បន្ទាប់ចាប់ផ្តើមភ្លាម។ post ដដែលដែលមាននៅក្នុងបញ្ជីពីរដង ត្រូវបានទាញយកតែម្តងប៉ុណ្ណោះ ហើយសេចក្តីសង្ខេបនៅចុងបញ្ចប់រាប់ចំនួនវីដេអូដែលបានទាញយក រំលង និងបរាជ័យ។</p></div>
+<div class="card"><h3>គុណភាពដែលមានជម្រើសបម្រុង</h3><p>កម្រិតភាពច្បាស់សំដៅលើជ្រុងខ្លីនៃរូបភាព ដូច្នេះ <code>720p</code> ក៏ត្រូវនឹងវីដេអូបញ្ឈរ 720×1280 ដែរ។ បើកម្រិតដែលបានស្នើមិនមានទេ xvideo យកកម្រិតល្អបំផុតដែលទាបជាងនោះ ហើយប្រាប់អ្នក។ បើកម្រិតទាំងអស់ខ្ពស់ជាង វាយកកម្រិតទាបបំផុត។ នៅកម្រិតដូចគ្នា ឯកសារ MP4 តែមួយត្រូវបានជ្រើសរើសជាជាងស្ទ្រីមដាច់ដោយឡែក។</p></div>
+<div class="card"><h3>ឈ្មោះឯកសារដែលប្រើបានគ្រប់ទីកន្លែង</h3><p>តួអក្សរដែលមិនត្រឹមត្រូវលើ Windows, macOS ឬ Linux ត្រូវបានជំនួស ហើយឈ្មោះដែល Windows បម្រុងទុក ដូចជា <code>CON</code> និងឈ្មោះដែលវែងពេក ក៏ត្រូវបានដោះស្រាយដែរ។ ឯកសារដែលមានស្រាប់មិនដែលត្រូវបានសរសេរជាន់ទេ បើគ្មាន <code>--overwrite</code>៖ ឯកសារថ្មីទទួលបាន <code>_1</code>, <code>_2</code>… ហើយឯកសារក្នុងការដំណើរការតែមួយមិនដែលជាន់ឈ្មោះគ្នាទេ។</p></div>
+<div class="card"><h3>ការទាញយកដែលអាចបន្តបាន</h3><p>ការទាញយកដែលត្រូវបានរំខានរក្សាទុកឯកសារ <code>.part</code> របស់វា ហើយបន្តពីកន្លែងដែលវាបានឈប់ នៅពេលដំណើរការលើកក្រោយ សូម្បីតែក្រោយពេលចុច Ctrl+C។ កំហុសបណ្តាញ ការអស់ពេលរង់ចាំ និងកំហុស server ត្រូវបានព្យាយាមម្តងទៀត ដោយរង់ចាំកាន់តែយូរ ចំណែកការកំណត់ចំនួនសំណើរបស់ X (HTTP 429) ត្រូវបានរាយការណ៍ ដោយមិនព្យាយាមម្តងហើយម្តងទៀតទេ។</p></div>
+<div class="card"><h3>កំហុសជាពាក្យសាមញ្ញ</h3><p>រក post មិនឃើញ, គ្មានវីដេអូ, គណនីឯកជន, អស់ពេលរង់ចាំ, ថាសពេញ, គ្មាន ffmpeg… ករណីនីមួយៗមានសារច្បាស់លាស់ និងកូដថេរសម្រាប់ script។ ទំហំទំនេរលើថាសត្រូវបានពិនិត្យមុនពេលទាញយក នៅពេលដឹងទំហំឯកសារ។ stack trace បង្ហាញតែជាមួយ <code>--verbose</code> ប៉ុណ្ណោះ។</p></div>
+<div class="card"><h3>Metadata ដោយមិន encode ឡើងវិញ</h3><p>ជាមួយ <code>--metadata</code> ចំណងជើង អ្នកបង្ហោះ កាលបរិច្ឆេទ អត្ថបទពេញ និងតំណដើម ត្រូវបានសរសេរចូលក្នុង tag របស់ MP4 ដោយមិន encode ឡើងវិញ។ ឯកសារត្រូវបានសរសេរទៅក្នុងច្បាប់ចម្លងបណ្តោះអាសន្ន រួចប្តូរជំនួសក្នុងពេលតែមួយ ដូច្នេះកំហុសមិនដែលទុកវីដេអូដែលសរសេរបានពាក់កណ្តាលនោះទេ។ បើគ្មាន ffmpeg វីដេអូនៅតែត្រូវបានរក្សាទុក ជាមួយការព្រមានមួយ។</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">វិសាលភាព</div>
+<h2>សម្រាប់ post សាធារណៈតែប៉ុណ្ណោះ។</h2>
+<p>xvideo ទាញយកតែអ្វីដែលអ្នកណាក៏អាចមើលឃើញនៅលើ X ដោយមិនចាំបាច់ចូលគណនី។ វាមិនអាន cookies និងមិនសុំព័ត៌មានចូលគណនីទេ ហើយវាគ្មានមធ្យោបាយរំលងគណនីឯកជន ឬគណនីដែលការពារ, post ដែលកំណត់អាយុ, paywall, ការរឹតបន្តឹងតាមតំបន់, ការកំណត់ចំនួនសំណើ, ការត្រួតពិនិត្យប្រឆាំង bot ឬ CAPTCHA ឡើយ។ វាប្រើ HTTP header លំនាំដើមរបស់ yt-dlp៖ គ្មានការប្តូរ User-Agent ឬបច្ចេកទេសគេចវេសផ្សេងទៀតទេ។</p>
+<p>ការគោរពលក្ខខណ្ឌប្រើប្រាស់របស់ X និងសិទ្ធិអ្នកនិពន្ធលើវីដេអូ គឺជាទំនួលខុសត្រូវរបស់អ្នកប្រើ៖ README ស្នើឱ្យទាញយកតែវីដេអូដែលអ្នកមានសិទ្ធិរក្សាទុកប៉ុណ្ណោះ ដូចជា post ផ្ទាល់ខ្លួនរបស់អ្នក ឬខ្លឹមសារដែលអាជ្ញាប័ណ្ណរបស់វាអនុញ្ញាត។ ហើយដោយសារ X ផ្លាស់ប្តូរគេហទំព័រ និង API របស់ខ្លួនជាប្រចាំ រឿងដំបូងដែលត្រូវសាកល្បង នៅពេលការទាញយកព័ត៌មានឈប់ដំណើរការ គឺធ្វើបច្ចុប្បន្នភាព yt-dlp៖ <code>pip install -U yt-dlp</code>។</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">In the terminal</span><span data-l="fr">Dans le terminal</span><span data-l="km">នៅក្នុង terminal</span></div>
+<h2><span data-l="en">What it prints.</span><span data-l="fr">Ce qu’il affiche.</span><span data-l="km">អ្វីដែលវាបង្ហាញ។</span></h2>
+<p><span data-l="en">When a post has no video, the message says so, without a stack trace:</span><span data-l="fr">Quand un post n’a pas de vidéo, le message le dit, sans pile d’appels :</span><span data-l="km">នៅពេល post មួយគ្មានវីដេអូ សារនោះប្រាប់យ៉ាងដូច្នោះ ដោយគ្មាន stack trace៖</span></p>
+<pre class="term"><span class="c">✗ Unable to download video
+
+Reason:
+The post does not contain an accessible video.
+
+URL:
+https://x.com/&lt;user&gt;/status/&lt;id&gt;</span></pre>
+<p><span data-l="en">With <code>--json</code>, standard output carries one JSON object per line — one per downloaded video or failed URL, with a stable <code>error_type</code>:</span><span data-l="fr">Avec <code>--json</code>, la sortie standard reçoit un objet JSON par ligne — un par vidéo téléchargée ou URL en échec, avec un <code>error_type</code> stable :</span><span data-l="km">ជាមួយ <code>--json</code> standard output ទទួលបាន JSON object មួយក្នុងមួយបន្ទាត់ — មួយសម្រាប់វីដេអូនីមួយៗដែលបានទាញយក ឬ URL នីមួយៗដែលបរាជ័យ ជាមួយ <code>error_type</code> ថេរ៖</span></p>
+<pre class="term"><span class="c">{"url": "https://x.com/&lt;user&gt;/status/&lt;id&gt;", "success": true, "filename": "./downloads/&lt;user&gt;_&lt;id&gt;.mp4", "path": "/home/me/downloads/&lt;user&gt;_&lt;id&gt;.mp4", "resolution": "1920x1080", "width": 1920, "height": 1080, "duration": 25, "filesize": 9464003, "post_id": "&lt;id&gt;", "username": "&lt;user&gt;", "video_index": 1, "video_count": 1, "format_id": "http-10368", "quality": "1080p", "metadata": false, "skipped": false, "warnings": []}
+{"url": "https://x.com/&lt;user2&gt;/status/&lt;id2&gt;", "success": false, "error": "The post does not contain an accessible video.", "error_type": "no_video"}</span></pre>
+<p><span data-l="en">A script can then pick up the saved files:</span><span data-l="fr">Un script peut alors récupérer les fichiers enregistrés :</span><span data-l="km">បន្ទាប់មក script អាចយកឯកសារដែលបានរក្សាទុកទៅប្រើបាន៖</span></p>
+<pre class="term"><span class="p">$ </span>xvideo --file urls.txt --json | jq -r 'select(.success) | .path'</pre>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>cli.py</td><td>The command, built with Typer: options, their validation and the exit codes: 0 when everything was downloaded, 1 when at least one URL failed, 2 for invalid usage, 130 when interrupted.</td></tr>
+<tr><td>downloader.py</td><td>The orchestration: URL → post → format → file. It never prints anything and reports its progress as events, so the same code drives the terminal display, <code>--quiet</code>, <code>--json</code> and use as a Python library.</td></tr>
+<tr><td>extractor.py</td><td>Reads the post through yt-dlp, with one session for the whole batch and retries. It asks the server for the exact size of each file, because the bitrates X advertises overestimate sizes 2 to 3 times.</td></tr>
+<tr><td>selector.py</td><td>Turns the requested quality into a format: one progressive MP4, or separate HLS video and audio streams that ffmpeg merges.</td></tr>
+<tr><td>filenames.py</td><td>Portable file names and collision-free allocation.</td></tr>
+<tr><td>console.py</td><td>The Rich progress bar and console output, and the <code>--quiet</code> and <code>--json</code> modes.</td></tr>
+<tr><td>exceptions.py</td><td>One error class per case, each with a plain-language message and the stable code shown in the JSON output.</td></tr>
+<tr><td>Requires</td><td>Python 3.11 or later. yt-dlp, Typer and Rich are installed automatically; ffmpeg is optional.</td></tr>
+<tr><td>Tests</td><td>186 unit tests with pytest, which need no network access. Ruff for linting and formatting, mypy in strict mode. GitHub Actions runs the tests on Linux, macOS and Windows with Python 3.11 to 3.14.</td></tr>
+<tr><td>Release</td><td>Version 1.0.0 is published as a GitHub release: a wheel and a source package with SHA-256 checksums, built and published automatically when a version tag is pushed. MIT licence.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>cli.py</td><td>La commande, construite avec Typer : les options, leur validation et les codes de sortie : 0 quand tout a été téléchargé, 1 quand au moins une URL a échoué, 2 pour une utilisation incorrecte, 130 en cas d’interruption.</td></tr>
+<tr><td>downloader.py</td><td>L’orchestration : URL → post → format → fichier. Il n’affiche jamais rien et signale sa progression par des événements : le même code sert à l’affichage dans le terminal, à <code>--quiet</code>, à <code>--json</code> et à l’usage comme bibliothèque Python.</td></tr>
+<tr><td>extractor.py</td><td>Lit le post via yt-dlp, avec une seule session pour tout le lot et de nouvelles tentatives. Il demande au serveur la taille exacte de chaque fichier, car les débits annoncés par X surestiment les tailles de 2 à 3 fois.</td></tr>
+<tr><td>selector.py</td><td>Traduit la qualité demandée en format : un MP4 progressif unique, ou des flux HLS vidéo et audio séparés que ffmpeg fusionne.</td></tr>
+<tr><td>filenames.py</td><td>Noms de fichiers portables et attribution sans collision.</td></tr>
+<tr><td>console.py</td><td>La barre de progression et l’affichage Rich, et les modes <code>--quiet</code> et <code>--json</code>.</td></tr>
+<tr><td>exceptions.py</td><td>Une classe d’erreur par cas, chacune avec un message en clair et le code stable repris dans la sortie JSON.</td></tr>
+<tr><td>Prérequis</td><td>Python 3.11 ou plus récent. yt-dlp, Typer et Rich s’installent automatiquement ; ffmpeg est facultatif.</td></tr>
+<tr><td>Tests</td><td>186 tests unitaires avec pytest, sans accès au réseau. Ruff pour le lint et le formatage, mypy en mode strict. GitHub Actions lance les tests sous Linux, macOS et Windows, de Python 3.11 à 3.14.</td></tr>
+<tr><td>Publication</td><td>La version 1.0.0 est publiée en release GitHub : un wheel et un paquet source avec leurs sommes SHA-256, construits et publiés automatiquement quand un tag de version est poussé. Licence MIT.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>cli.py</td><td>ពាក្យបញ្ជា ដែលបង្កើតដោយ Typer៖ ជម្រើស ការត្រួតពិនិត្យជម្រើស និង exit code៖ 0 នៅពេលទាញយកបានទាំងអស់, 1 នៅពេល URL យ៉ាងហោចណាស់មួយបរាជ័យ, 2 សម្រាប់ការប្រើមិនត្រឹមត្រូវ, 130 នៅពេលត្រូវបានរំខាន។</td></tr>
+<tr><td>downloader.py</td><td>ការសម្របសម្រួលទាំងមូល៖ URL → post → ទម្រង់ → ឯកសារ។ វាមិនបង្ហាញអ្វីទាំងអស់ដោយខ្លួនឯងទេ ប៉ុន្តែរាយការណ៍វឌ្ឍនភាពរបស់វាជា event ដូច្នេះកូដដដែលដំណើរការការបង្ហាញក្នុង terminal, <code>--quiet</code>, <code>--json</code> និងការប្រើជា library Python។</td></tr>
+<tr><td>extractor.py</td><td>អាន post តាមរយៈ yt-dlp ដោយប្រើ session តែមួយសម្រាប់បាច់ទាំងមូល និងមានការព្យាយាមម្តងទៀត។ វាសួរ server អំពីទំហំពិតប្រាកដនៃឯកសារនីមួយៗ ព្រោះ bitrate ដែល X ប្រកាស ធ្វើឱ្យទំហំប៉ាន់ស្មានធំជាងការពិត 2 ទៅ 3 ដង។</td></tr>
+<tr><td>selector.py</td><td>បម្លែងគុណភាពដែលបានស្នើទៅជាទម្រង់មួយ៖ MP4 progressive តែមួយ ឬស្ទ្រីម HLS វីដេអូ និងសំឡេងដាច់ដោយឡែក ដែល ffmpeg បញ្ចូលគ្នា។</td></tr>
+<tr><td>filenames.py</td><td>ឈ្មោះឯកសារដែលប្រើបានគ្រប់ប្រព័ន្ធ និងការកំណត់ឈ្មោះដោយមិនជាន់គ្នា។</td></tr>
+<tr><td>console.py</td><td>របារវឌ្ឍនភាព និងការបង្ហាញក្នុង console ដោយ Rich ព្រមទាំងរបៀប <code>--quiet</code> និង <code>--json</code>។</td></tr>
+<tr><td>exceptions.py</td><td>class កំហុសមួយសម្រាប់ករណីនីមួយៗ ដែលនីមួយៗមានសារជាភាសាសាមញ្ញ និងកូដថេរដែលបង្ហាញក្នុង JSON output។</td></tr>
+<tr><td>តម្រូវការ</td><td>Python 3.11 ឬថ្មីជាងនេះ។ yt-dlp, Typer និង Rich ត្រូវបានដំឡើងដោយស្វ័យប្រវត្តិ ចំណែក ffmpeg មិនចាំបាច់ទេ។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>unit tests ចំនួន 186 ជាមួយ pytest ដែលមិនត្រូវការបណ្តាញ។ Ruff សម្រាប់ lint និង format, mypy ក្នុងរបៀប strict។ GitHub Actions ដំណើរការការធ្វើតេស្តនៅលើ Linux, macOS និង Windows ជាមួយ Python 3.11 ដល់ 3.14។</td></tr>
+<tr><td>ការចេញផ្សាយ</td><td>កំណែ 1.0.0 ត្រូវបានចេញផ្សាយជា GitHub release៖ wheel និង source package ជាមួយ checksum SHA-256 ដែលត្រូវបានបង្កើត និងចេញផ្សាយដោយស្វ័យប្រវត្តិ នៅពេល tag កំណែត្រូវបាន push។ អាជ្ញាប័ណ្ណ MIT។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="capture.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>rscap</b></a>
+<a href="portfolio.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b><span data-l="en">This website</span><span data-l="fr">Ce site</span><span data-l="km">គេហទំព័រនេះ</span></b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#projects">← <span data-l="en">Back to all projects</span><span data-l="fr">Retour aux projets</span><span data-l="km">ត្រឡប់ទៅគម្រោងទាំងអស់</span></a></div></footer>
+</body></html>

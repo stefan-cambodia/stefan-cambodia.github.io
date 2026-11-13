@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="BTC Terminal (btcterm): a Bloomberg-style Bitcoin market terminal served locally to the browser, with 22 synchronized panels for price, order books, arbitrage, liquidations, ETF flows, derivatives, news, macro and on-chain data, and alerts. Public data only, read-only.">
+<title data-en="BTC Terminal, Bitcoin market terminal — Stefan" data-fr="BTC Terminal, terminal de marché Bitcoin — Stefan" data-km="BTC Terminal, ស្ថានីយទីផ្សារ Bitcoin — Stefan">BTC Terminal, Bitcoin market terminal — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#projects">← <span data-l="en">All projects</span><span data-l="fr">Tous les projets</span><span data-l="km">គម្រោងទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Projects</span><span data-l="fr">Projets</span><span data-l="km">គម្រោង</span> / 01</div>
+<h1>BTC Terminal</h1>
+<div class="alias">btcterm</div>
+<p class="lead" data-l="en">A Bloomberg-style terminal for Bitcoin, served by your own machine to your browser. Twenty-two synchronized panels — price chart and indicators, the order books of five exchanges, arbitrage, liquidations, spot ETF flows, futures and options, news, the macro calendar, on-chain data — under alerts you set yourself. It reads public market data only: no API key, no account, and it never places an order.</p>
+<p class="lead" data-l="fr">Un terminal à la Bloomberg pour le bitcoin, servi par votre propre machine à votre navigateur. Vingt-deux panneaux synchronisés — graphique du cours et indicateurs, carnets d’ordres de cinq plateformes, arbitrage, liquidations, flux des ETF spot, contrats à terme et options, news, calendrier macro, données de la chaîne — sous des alertes que vous réglez vous-même. Il ne lit que des données de marché publiques : aucune clé d’API, aucun compte, et jamais un ordre passé.</p>
+<p class="lead" data-l="km">ស្ថានីយបែប Bloomberg សម្រាប់ Bitcoin ដែលដំណើរការលើម៉ាស៊ីនរបស់អ្នកផ្ទាល់ ហើយបង្ហាញក្នុង browser របស់អ្នក។ ផ្ទាំងចំនួន 22 ដែលធ្វើសមកាលកម្មជាមួយគ្នា — ក្រាហ្វតម្លៃ និង indicators, order books ពី exchange ចំនួន 5, arbitrage, liquidations, លំហូរ ETF spot, futures និង options, ព័ត៌មាន, ប្រតិទិន macro, ទិន្នន័យ on-chain — ព្រមទាំង alerts ដែលអ្នកកំណត់ដោយខ្លួនឯង។ វាអានតែទិន្នន័យទីផ្សារសាធារណៈប៉ុណ្ណោះ៖ មិនត្រូវការ API key មិនត្រូវការគណនី ហើយមិនដែលដាក់ order ណាមួយឡើយ។</p>
+<div class="tags"><span class="tag p">Web</span><span class="tag t" data-l="en">Finance</span><span class="tag t" data-l="fr">Finance</span><span class="tag t" data-l="km">ហិរញ្ញវត្ថុ</span><span class="tag">Python</span><span class="tag">Dash</span><span class="tag">Lightweight Charts</span><span class="tag">WebSockets</span></div>
+<div class="actions"><a class="btn primary" href="https://stefan-cambodia.github.io/btcterm/" target="_blank" rel="noopener noreferrer"><span data-l="en">Try the chart demo</span><span data-l="fr">Essayer la démo du graphique</span><span data-l="km">សាកល្បង demo ក្រាហ្វ</span> ↗</a><a class="btn secondary" href="https://github.com/stefan-cambodia/btcterm" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/btcterm/terminal-grid.jpg" alt="BTC Terminal's default grid: price chart with indicators, order book, arbitrage, ETF flows, scored news feed and bitcoin against M2 money supply"></div>
+
+<div class="stats">
+<div class="stat"><strong>22</strong><span data-l="en">Panels</span><span data-l="fr">Panneaux</span><span data-l="km">ផ្ទាំង</span></div>
+<div class="stat"><strong>5</strong><span data-l="en">Exchange order books</span><span data-l="fr">Carnets d’ordres</span><span data-l="km">Order books ពី exchange</span></div>
+<div class="stat"><strong>11</strong><span data-l="en">Chart intervals</span><span data-l="fr">Intervalles du graphique</span><span data-l="km">Interval នៃក្រាហ្វ</span></div>
+<div class="stat"><strong>35</strong><span data-l="en">Test files</span><span data-l="fr">Fichiers de tests</span><span data-l="km">ឯកសារការធ្វើតេស្ត</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>The whole market on one screen.</h2>
+<p>Reading the Bitcoin market means watching many things at once: the chart, the order books of several exchanges, the gaps between their prices, the positions being forced shut, the money going in and out of spot ETFs, the futures and options markets, the news and the macro calendar. BTC Terminal puts all of it on one screen, as a grid of six cells. A cell can hold several panels behind tabs, any panel opens full screen with one click, and the layout is yours to arrange.</p>
+<p>It is a local web application written in Python: you start it on your computer, or on a server you reach through an SSH tunnel, and open it in the browser. Run as a background service, it keeps its journal and its alerts going with no browser open. All its data comes from public sources: Binance, Kraken, Coinbase, Bybit and OKX for the order books, Deribit for options, and others for ETF flows, news, macro and on-chain data. It needs no API key and no account.</p>
+<p>BTC Terminal displays market data; it does not tell you what to do. It places no orders, and where it draws levels or ranges it says what they are: key levels are prices where orders usually gather, not guarantees of a bounce, and the move implied by options is a reading of priced risk, not a forecast.</p>
+<p>A static demo of the price panel runs in the browser on a frozen snapshot of a thousand candles per interval. Zoom, crosshair, the $/€ switch, log scale, RSI panes and the volume profile all work there, but nothing in it is live.</p>
+</section>
+
+<section>
+<div class="kicker">Panels</div>
+<h2>What it shows.</h2>
+<div class="table-wrap"><table>
+<tr><th>Panels</th><th>What you see</th></tr>
+<tr><td>Price</td><td>Candles from one minute to one month, with the time left before the candle closes. Moving averages 9/26/200, Bollinger bands, volume profile, signals, key levels (previous day, week and month; levels from options) and anchored VWAP. Optional panes and layers: RSI, CVD, volume, open interest, large-trade bubbles, an order-book heat map, a liquidation map. $/€, log scale, local time or UTC.</td></tr>
+<tr><td>Order book · Depth · Tape</td><td>The live book of the exchange you pick among five, 8 levels per side (20 full screen), with the spread and the buyers’ share; the cumulative depth of all five books overlaid; and the tape of large trades on Binance, Coinbase and Bybit spot, showing whether a buyer or a seller took the initiative.</td></tr>
+<tr><td>Arbitrage · Liquidations</td><td>Price gaps between exchanges, net of taker fees, sorted by profitability, with the Coinbase premium and the Korean premium (Upbit) split into its won and bitcoin parts. Positions forcibly closed on Binance, Bybit and OKX from $10k, with the hour’s totals and its largest liquidation.</td></tr>
+<tr><td>Perpetual · Options</td><td>Funding rate, open interest and long share on Binance, Bybit and OKX, and the crowd’s positioning against that of the largest accounts. Deribit options in five views: implied (DVOL) against realised volatility, term structure and skew, open interest by strike with max pain, market makers’ gamma exposure, and a history kept by the journal.</td></tr>
+<tr><td>ETF flows · Macro · Markets</td><td>Daily net flows of the spot bitcoin ETFs, also in bitcoins against what miners issue. The price against US M2 money supply or the supply of stablecoins, with an adjustable lag and correlations. Bitcoin against the S&amp;P 500, the Nasdaq, gold, the dollar and the 10-year yield.</td></tr>
+<tr><td>Dominance · On-chain · Cycle</td><td>Market-cap shares and their trend. Hashrate and difficulty with hash ribbons, block pace, the next difficulty adjustment, mempool, fees and hashprice. Where bitcoin stands since the halving and since its peak: halving countdown, past cycles overlaid, Mayer multiple, drawdown, MVRV, Puell multiple.</td></tr>
+<tr><td>News · Calendar · Summary</td><td>A feed from six RSS sources, each article scored from 0 to 100, with the Fear &amp; Greed index. FOMC, CPI, NFP and PCE dates, large Deribit option expiries and the week’s US releases, with countdowns. The last 24 hours on one page, which can also be sent to a phone every morning.</td></tr>
+<tr><td>Alerts · Journal · Sources</td><td>Alert rules and their settings; a replay of the last 24 hours (alerts, arbitrage episodes, liquidations, large trades); the state of every data feed, the age of its last fresh data and its last error.</td></tr>
+<tr><td>Position · Analysis</td><td>A position you type in by hand: result, distance to the stop, size for a chosen risk — nothing leaves the browser and no account is involved. Trend, RSI, ATR and last signal from 15m to 1w; signals and simple rules compared with just holding, fees included; monthly returns; CSV export.</td></tr>
+</table></div>
+<p>A panel hidden behind a tab is not in the page: it costs nothing and fills in as soon as it is shown. The ⚙ button puts each panel in the cell of your choice, and every setting — interval, currency, tabs, layout — survives a reload.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Made to be left running.</h2>
+<div class="grid">
+<div class="card"><h3>Fast where it counts</h3><p>The fast panels — order book, depth, arbitrage, liquidations — never touch the network: they read books that a single hub keeps in memory, with one connection per exchange for all panels. While the browser holds a WebSocket open, the server pushes the order book every 100 ms; if it drops, the page goes back to polling without breaking. That keeps the book alive over a distant SSH tunnel.</p></div>
+<div class="card"><h3>A chart to work on</h3><p>The price chart is drawn in the browser with Lightweight Charts and keeps your zoom while data flows in. Shift + drag zooms on a box, Ctrl + drag measures a move, <code>T</code> draws a trend line, <code>A</code> anchors a VWAP on a candle, Alt + click sets a price alert. Keyboard shortcuts and a command line (<code>/</code>) drive the whole terminal.</p></div>
+<div class="card"><h3>Alerts, even on your phone</h3><p>Rules for price thresholds, a 2 % move in fifteen minutes, liquidation bursts, extreme funding, high-scoring news, arbitrage gaps, a daily close across the 200-day average, options and on-chain events, and more. They ring when a condition starts, with a cooldown, so a flickering condition does not ring in bursts — and they can be pushed to a phone through ntfy, with a summary every morning.</p></div>
+<div class="card"><h3>A session you can replay</h3><p>Liquidations, arbitrage episodes, large trades and alerts go into a local SQLite journal, kept 30 days. Market snapshots taken every five minutes are kept 400 days, which extends funding and open interest beyond the 30 days Binance serves. Closed candles are stored on disk, so the chart opens faster and survives an exchange outage.</p></div>
+<div class="card"><h3>When the DNS lies</h3><p>Some internet providers — in Cambodia, for one — answer <code>127.0.0.1</code> for the exchanges’ hostnames, and the terminal would silently fall back to demo data. At start-up the hub asks a DNS-over-HTTPS resolver reached by IP address (1.1.1.1, then 8.8.8.8) for those names, and connects to the real addresses. Nothing to configure.</p></div>
+<div class="card"><h3>It says what it does not know</h3><p>A Sources panel lists every feed — ok, fallback, down, silent or cut — with the age of its last fresh data and its last error. If Binance cannot be reached at start-up, the chart shows a locally generated demo series under an orange banner saying the figures are not real; an ETF day still being published is marked “partial”.</p></div>
+</div>
+<p style="margin-top:16px">Some alert thresholds were set without much hindsight: those for thin order books and for the options skew are still provisional, waiting for a few weeks of journal data.</p>
+</section>
+
+<section>
+<div class="kicker">Running it</div>
+<h2>One command, one port.</h2>
+<p>It installs in a Python virtual environment and starts with one command. It listens on <code>127.0.0.1:8050</code> only, so from another computer you reach it through an SSH tunnel. For round-the-clock use, a systemd user unit template serves it through gunicorn.</p>
+<pre class="term"><span class="p">$ </span>pip install -e .
+<span class="p">$ </span>btcterm                                <span class="c"># or: python -m terminal.app</span>
+<span class="c">  → http://127.0.0.1:8050</span>
+<span class="p">$ </span>ssh -L 8050:localhost:8050 &lt;machine&gt;   <span class="c"># from another computer</span>
+<span class="p">$ </span>python -m btcterm.journal --heures 6   <span class="c"># replay the last six hours</span></pre>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Tout le marché sur un seul écran.</h2>
+<p>Lire le marché du bitcoin, c’est surveiller beaucoup de choses à la fois : le graphique, les carnets d’ordres de plusieurs plateformes, les écarts de prix entre elles, les positions fermées de force, l’argent qui entre dans les ETF spot et qui en sort, les marchés à terme et d’options, les news et le calendrier macro. BTC Terminal réunit tout cela sur un seul écran, en une grille de six cellules. Une cellule peut accueillir plusieurs panneaux derrière des onglets, chaque panneau passe en plein écran d’un clic, et la disposition se règle à votre guise.</p>
+<p>C’est une application web locale écrite en Python : on la lance sur son ordinateur, ou sur un serveur joint par tunnel SSH, et on l’ouvre dans le navigateur. Lancée comme service en arrière-plan, elle tient son journal et ses alertes sans navigateur ouvert. Toutes ses données viennent de sources publiques : Binance, Kraken, Coinbase, Bybit et OKX pour les carnets, Deribit pour les options, et d’autres pour les flux ETF, les news, la macro et la chaîne. Il ne faut ni clé d’API ni compte.</p>
+<p>BTC Terminal affiche des données de marché ; il ne dit pas quoi faire. Il ne passe aucun ordre, et là où il trace des niveaux ou des fourchettes, il dit ce qu’ils sont : les niveaux clés sont des prix où les ordres s’accumulent d’ordinaire, pas des garanties de rebond, et le mouvement qu’impliquent les options est une lecture du risque payé, pas une prévision.</p>
+<p>Une démo statique du panneau prix tourne dans le navigateur, sur un instantané figé de mille bougies par intervalle. Zoom, crosshair, bascule $/€, échelle log, panes RSI et profil de volume y fonctionnent, mais rien n’y est en direct.</p>
+</section>
+
+<section>
+<div class="kicker">Panneaux</div>
+<h2>Ce qu’il affiche.</h2>
+<div class="table-wrap"><table>
+<tr><th>Panneaux</th><th>Ce qu’on y voit</th></tr>
+<tr><td>Prix</td><td>Des chandeliers d’une minute à un mois, avec le temps restant avant la clôture de la bougie. Moyennes mobiles 9/26/200, bandes de Bollinger, profil de volume, signaux, niveaux clés (veille, semaine et mois passés ; niveaux des options) et VWAP ancré. Panes et couches en option : RSI, CVD, volume, open interest, bulles des gros ordres, carte de chaleur du carnet, carte des liquidations. $/€, échelle log, heure locale ou UTC.</td></tr>
+<tr><td>Carnet · Profondeur · Ruban</td><td>Le carnet en direct de la plateforme choisie parmi cinq, 8 niveaux par côté (20 en plein écran), avec le spread et la part des acheteurs ; la profondeur cumulée des cinq carnets superposés ; et le ruban des gros ordres exécutés sur Binance, Coinbase et Bybit au comptant, qui dit si un acheteur ou un vendeur a pris l’initiative.</td></tr>
+<tr><td>Arbitrage · Liquidations</td><td>Les écarts de prix entre plateformes, nets des frais taker, triés par rentabilité, avec la prime Coinbase et la prime coréenne (Upbit) décomposée en won et en bitcoin. Les positions fermées de force sur Binance, Bybit et OKX à partir de 10 k$, avec les totaux de l’heure et sa plus grosse liquidation.</td></tr>
+<tr><td>Perpétuel · Options</td><td>Financement, open interest et part des longs sur Binance, Bybit et OKX, et le positionnement de la foule face à celui des plus gros comptes. Les options Deribit en cinq vues : volatilité implicite (DVOL) contre réalisée, structure par échéance et skew, open interest par strike avec le max pain, exposition gamma des teneurs de marché, et un historique tenu par le journal.</td></tr>
+<tr><td>Flux ETF · Macro · Marchés</td><td>Les flux nets quotidiens des ETF bitcoin spot, aussi en bitcoins face à l’émission des mineurs. Le cours face à la masse monétaire M2 américaine ou à l’offre de stablecoins, avec un décalage réglable et des corrélations. Le bitcoin face au S&amp;P 500, au Nasdaq, à l’or, au dollar et au taux à dix ans.</td></tr>
+<tr><td>Dominance · On-chain · Cycle</td><td>Les parts de capitalisation et leur tendance. Hashrate et difficulté avec les hash ribbons, rythme des blocs, prochain ajustement de difficulté, mempool, frais et hashprice. Où en est le bitcoin depuis le halving et depuis son sommet : compte à rebours du prochain halving, cycles superposés, multiple de Mayer, repli, MVRV, multiple de Puell.</td></tr>
+<tr><td>News · Calendrier · Synthèse</td><td>Un fil tiré de six flux RSS, chaque article noté de 0 à 100, avec l’indice Fear &amp; Greed. Les dates du FOMC, du CPI, du NFP et du PCE, les grosses échéances d’options Deribit et les publications américaines de la semaine, avec compte à rebours. Les dernières 24 h en une page, qui peut aussi partir chaque matin vers un téléphone.</td></tr>
+<tr><td>Alertes · Journal · Sources</td><td>Les règles d’alerte et leurs réglages ; la relecture des dernières 24 h (alertes, épisodes d’arbitrage, liquidations, gros ordres) ; l’état de chaque source de données, l’âge de sa dernière donnée fraîche et sa dernière erreur.</td></tr>
+<tr><td>Position · Analyse</td><td>Une position saisie à la main : résultat, distance au stop, taille pour un risque choisi — rien ne quitte le navigateur, aucun compte n’est en jeu. Tendance, RSI, ATR et dernier signal de 15m à 1w ; signaux et règles simples confrontés à la simple détention, frais compris ; rendements mensuels ; export CSV.</td></tr>
+</table></div>
+<p>Un panneau caché derrière un onglet n’est pas dans la page : il ne coûte rien et se remplit dès qu’on l’affiche. Le bouton ⚙ range chaque panneau dans la cellule de votre choix, et tous les réglages — intervalle, devise, onglets, disposition — survivent au rechargement.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Fait pour tourner en continu.</h2>
+<div class="grid">
+<div class="card"><h3>Rapide là où ça compte</h3><p>Les panneaux rapides — carnet, profondeur, arbitrage, liquidations — ne touchent jamais le réseau : ils lisent les carnets qu’un hub unique tient en mémoire, avec une seule connexion par plateforme pour tous les panneaux. Tant que le navigateur tient un WebSocket ouvert, le serveur pousse le carnet toutes les 100 ms ; si la connexion tombe, la page repasse à l’interrogation sans rien casser. C’est ce qui garde le carnet vif sur un tunnel SSH lointain.</p></div>
+<div class="card"><h3>Un graphique pour travailler</h3><p>Le cours est dessiné dans le navigateur avec Lightweight Charts et garde votre zoom pendant que les données arrivent. Maj + glisser zoome sur un cadre, Ctrl + glisser mesure un mouvement, <code>T</code> trace une ligne de tendance, <code>A</code> ancre un VWAP sur une bougie, Alt + clic pose une alerte de cours. Raccourcis clavier et ligne de commande (<code>/</code>) conduisent tout le terminal.</p></div>
+<div class="card"><h3>Des alertes jusqu’au téléphone</h3><p>Des règles pour les seuils de cours, un mouvement de 2 % en quinze minutes, les rafales de liquidations, un financement extrême, les news à fort score, les écarts d’arbitrage, une clôture journalière de part et d’autre de la moyenne de 200 jours, des événements d’options et de chaîne, et d’autres encore. Elles sonnent quand une condition apparaît, sous délai de garde — une condition qui clignote ne sonne pas en rafale —, et peuvent partir vers un téléphone par ntfy, avec une synthèse chaque matin.</p></div>
+<div class="card"><h3>Une séance qui se relit</h3><p>Liquidations, épisodes d’arbitrage, gros ordres et alertes vont dans un journal SQLite local, gardé 30 jours. Les instantanés de marché, pris toutes les cinq minutes, sont gardés 400 jours, ce qui prolonge financement et open interest au-delà des 30 jours que sert Binance. Les bougies closes sont gardées sur disque : le graphique s’ouvre plus vite et survit à une panne de la plateforme.</p></div>
+<div class="card"><h3>Quand le DNS ment</h3><p>Certains fournisseurs d’accès — au Cambodge, par exemple — répondent <code>127.0.0.1</code> pour les noms des plateformes, et le terminal retomberait sans bruit sur des données de démonstration. Au démarrage, le hub demande ces noms à un résolveur DNS sur HTTPS joint par son adresse IP (1.1.1.1, puis 8.8.8.8), et se connecte aux vraies adresses. Rien à configurer.</p></div>
+<div class="card"><h3>Il dit ce qu’il ne sait pas</h3><p>Un panneau Sources liste chaque flux — ok, secours, panne, muet ou coupé — avec l’âge de sa dernière donnée fraîche et sa dernière erreur. Si Binance est injoignable au démarrage, le graphique affiche une série de démonstration générée localement sous un bandeau orange qui dit que les chiffres ne sont pas réels ; un jour de flux ETF encore en cours de publication est marqué « partiel ».</p></div>
+</div>
+<p style="margin-top:16px">Certains seuils d’alerte ont été posés sans grand recul : ceux des carnets creux et du skew des options restent provisoires, en attendant quelques semaines de journal.</p>
+</section>
+
+<section>
+<div class="kicker">Lancement</div>
+<h2>Une commande, un port.</h2>
+<p>Il s’installe dans un environnement virtuel Python et se lance d’une commande. Il n’écoute que sur <code>127.0.0.1:8050</code> : depuis un autre ordinateur, on y accède par un tunnel SSH. Pour un usage en continu, un gabarit d’unité systemd utilisateur le sert par gunicorn.</p>
+<pre class="term"><span class="p">$ </span>pip install -e .
+<span class="p">$ </span>btcterm                                <span class="c"># ou : python -m terminal.app</span>
+<span class="c">  → http://127.0.0.1:8050</span>
+<span class="p">$ </span>ssh -L 8050:localhost:8050 &lt;machine&gt;   <span class="c"># depuis un autre ordinateur</span>
+<span class="p">$ </span>python -m btcterm.journal --heures 6   <span class="c"># relire les six dernières heures</span></pre>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>ទីផ្សារទាំងមូលនៅលើអេក្រង់តែមួយ។</h2>
+<p>ការអានទីផ្សារ Bitcoin មានន័យថាត្រូវតាមដានរឿងច្រើនក្នុងពេលតែមួយ៖ ក្រាហ្វតម្លៃ order books របស់ exchange ជាច្រើន គម្លាតតម្លៃរវាង exchange ទាំងនោះ positions ដែលត្រូវបានបិទដោយបង្ខំ ប្រាក់ដែលហូរចូល និងហូរចេញពី ETF spot ទីផ្សារ futures និង options ព័ត៌មាន និងប្រតិទិន macro។ BTC Terminal ដាក់អ្វីៗទាំងអស់នេះនៅលើអេក្រង់តែមួយ ជាក្រឡាចត្រង្គដែលមានប្រអប់ 6។ ប្រអប់មួយអាចផ្ទុកផ្ទាំងច្រើនតាមរយៈ tabs ផ្ទាំងណាមួយក៏អាចបើកពេញអេក្រង់ដោយចុចតែម្តង ហើយអ្នកអាចរៀបចំប្លង់តាមចិត្ត។</p>
+<p>វាជាកម្មវិធី web ក្នុងម៉ាស៊ីន (local) ដែលសរសេរដោយ Python៖ អ្នកបើកវានៅលើកុំព្យូទ័ររបស់អ្នក ឬនៅលើ server ដែលអ្នកចូលតាម SSH tunnel ហើយមើលវាក្នុង browser។ នៅពេលដំណើរការជា service នៅផ្ទៃខាងក្រោយ វានៅតែកត់ត្រាកំណត់ហេតុ (journal) និងតាមដាន alerts ទោះបីគ្មាន browser បើកក៏ដោយ។ ទិន្នន័យទាំងអស់មកពីប្រភពសាធារណៈ៖ Binance, Kraken, Coinbase, Bybit និង OKX សម្រាប់ order books, Deribit សម្រាប់ options និងប្រភពផ្សេងទៀតសម្រាប់លំហូរ ETF ព័ត៌មាន macro និងទិន្នន័យ on-chain។ វាមិនត្រូវការ API key ឬគណនីណាមួយទេ។</p>
+<p>BTC Terminal បង្ហាញទិន្នន័យទីផ្សារ ប៉ុន្តែវាមិនប្រាប់អ្នកថាត្រូវធ្វើអ្វីនោះទេ។ វាមិនដាក់ order ណាមួយឡើយ ហើយនៅកន្លែងដែលវាគូសកម្រិត ឬចន្លោះតម្លៃ វាប្រាប់យ៉ាងច្បាស់ថាវាជាអ្វី៖ key levels គឺជាតម្លៃដែល orders ច្រើនតែប្រមូលផ្តុំ មិនមែនជាការធានាថាតម្លៃនឹងងើបឡើងវិញទេ ហើយចលនាតម្លៃដែល options បង្ហាញ គឺជាការអានហានិភ័យដែលទីផ្សារបានបង់ថ្លៃ មិនមែនជាការព្យាករណ៍ទេ។</p>
+<p>demo ឋិតិវន្ត (static) នៃផ្ទាំងតម្លៃ ដំណើរការក្នុង browser ដោយប្រើទិន្នន័យដែលបានថតទុក (snapshot) ចំនួន 1000 candles សម្រាប់ interval នីមួយៗ។ zoom, crosshair, ការប្តូរ $/€, log scale, RSI panes និង volume profile ទាំងអស់ដំណើរការនៅទីនោះ ប៉ុន្តែគ្មានអ្វីនៅក្នុងនោះជាទិន្នន័យផ្ទាល់ (live) ទេ។</p>
+</section>
+
+<section>
+<div class="kicker">ផ្ទាំង</div>
+<h2>អ្វីដែលវាបង្ហាញ។</h2>
+<div class="table-wrap"><table>
+<tr><th>ផ្ទាំង</th><th>អ្វីដែលអ្នកឃើញ</th></tr>
+<tr><td>ក្រាហ្វតម្លៃ</td><td>candles ពី 1 នាទីដល់ 1 ខែ ជាមួយពេលវេលាដែលនៅសល់មុនពេល candle បិទ។ moving averages 9/26/200, Bollinger bands, volume profile, signals, key levels (ថ្ងៃមុន សប្តាហ៍មុន ខែមុន និងកម្រិតពី options) និង anchored VWAP។ panes និង layers ជាជម្រើស៖ RSI, CVD, volume, open interest, ពពុះនៃ orders ធំៗ, heat map នៃ order book និងផែនទី liquidations។ $/€, log scale, ម៉ោងក្នុងស្រុក ឬ UTC។</td></tr>
+<tr><td>Order book · Depth · Tape</td><td>order book ផ្ទាល់នៃ exchange ដែលអ្នកជ្រើសក្នុងចំណោម 5, 8 កម្រិតម្ខាង (20 ពេលពេញអេក្រង់) ជាមួយ spread និងចំណែករបស់អ្នកទិញ។ depth សរុបនៃ books ទាំង 5 ដាក់ត្រួតលើគ្នា។ និង tape នៃការជួញដូរធំៗលើ Binance, Coinbase និង Bybit spot ដែលបង្ហាញថាអ្នកទិញ ឬអ្នកលក់ជាអ្នកផ្តួចផ្តើម។</td></tr>
+<tr><td>Arbitrage · Liquidations</td><td>គម្លាតតម្លៃរវាង exchanges ក្រោយកាត់ taker fees ចេញ តម្រៀបតាមប្រាក់ចំណេញ ជាមួយ Coinbase premium និង premium កូរ៉េ (Upbit) ដែលបំបែកជាផ្នែកប្រាក់វ៉ុន និងផ្នែក bitcoin។ positions ដែលត្រូវបានបិទដោយបង្ខំលើ Binance, Bybit និង OKX ចាប់ពី 10 k$ ឡើងទៅ ជាមួយចំនួនសរុបក្នុងម៉ោងនោះ និង liquidation ធំបំផុតនៃម៉ោងនោះ។</td></tr>
+<tr><td>Perpetual · Options</td><td>funding rate, open interest និងចំណែក long លើ Binance, Bybit និង OKX ព្រមទាំងការប្រៀបធៀបទីតាំងរបស់អ្នកជួញដូរទូទៅ ជាមួយគណនីធំៗ។ options របស់ Deribit ក្នុង 5 ទិដ្ឋភាព៖ volatility implied (DVOL) ធៀបនឹង realised, term structure និង skew, open interest តាម strike ជាមួយ max pain, gamma exposure របស់ market makers និងប្រវត្តិដែលកំណត់ហេតុរក្សាទុក។</td></tr>
+<tr><td>លំហូរ ETF · Macro · ទីផ្សារ</td><td>លំហូរសុទ្ធប្រចាំថ្ងៃនៃ ETF bitcoin spot ដែលបង្ហាញជា bitcoin ធៀបនឹងចំនួនដែល miners ផលិតថ្មីផងដែរ។ តម្លៃធៀបនឹងរូបិយវត្ថុ M2 របស់សហរដ្ឋអាមេរិក ឬបរិមាណ stablecoins ជាមួយការពន្យារពេលដែលអាចកែបាន និង correlations។ Bitcoin ធៀបនឹង S&amp;P 500, Nasdaq, មាស, ប្រាក់ដុល្លារ និងអត្រាការប្រាក់ 10 ឆ្នាំ។</td></tr>
+<tr><td>Dominance · On-chain · វដ្ត</td><td>ចំណែក market cap និងនិន្នាការរបស់វា។ hashrate និង difficulty ជាមួយ hash ribbons, ល្បឿននៃ blocks, ការកែតម្រូវ difficulty បន្ទាប់, mempool, ថ្លៃប្រតិបត្តិការ និង hashprice។ ទីតាំងរបស់ bitcoin ចាប់តាំងពី halving និងចាប់តាំងពីកំពូល៖ ការរាប់ថយក្រោយទៅ halving បន្ទាប់, វដ្តមុនៗដាក់ត្រួតគ្នា, Mayer multiple, ការធ្លាក់ពីកំពូល, MVRV និង Puell multiple។</td></tr>
+<tr><td>ព័ត៌មាន · ប្រតិទិន · សេចក្តីសង្ខេប</td><td>ព័ត៌មានពីប្រភព RSS ចំនួន 6 ដែលអត្ថបទនីមួយៗមានពិន្ទុពី 0 ដល់ 100 ជាមួយសន្ទស្សន៍ Fear &amp; Greed។ កាលបរិច្ឆេទ FOMC, CPI, NFP និង PCE, ថ្ងៃផុតកំណត់ options ធំៗរបស់ Deribit និងការចេញផ្សាយទិន្នន័យអាមេរិកប្រចាំសប្តាហ៍ ជាមួយការរាប់ថយក្រោយ។ 24 ម៉ោងចុងក្រោយក្នុងទំព័រតែមួយ ដែលអាចផ្ញើទៅទូរស័ព្ទរៀងរាល់ព្រឹកបានផងដែរ។</td></tr>
+<tr><td>Alerts · កំណត់ហេតុ · Sources</td><td>ច្បាប់ alerts និងការកំណត់របស់វា។ ការមើលឡើងវិញនូវ 24 ម៉ោងចុងក្រោយ (alerts, ឱកាស arbitrage, liquidations, orders ធំៗ)។ ស្ថានភាពនៃប្រភពទិន្នន័យនីមួយៗ អាយុនៃទិន្នន័យថ្មីចុងក្រោយរបស់វា និងកំហុសចុងក្រោយ។</td></tr>
+<tr><td>Position · ការវិភាគ</td><td>position ដែលអ្នកវាយបញ្ចូលដោយដៃ៖ លទ្ធផល ចម្ងាយទៅ stop និងទំហំសម្រាប់កម្រិតហានិភ័យដែលបានជ្រើស — គ្មានអ្វីចេញពី browser ហើយមិនភ្ជាប់ជាមួយគណនីណាមួយទេ។ និន្នាការ RSI ATR និង signal ចុងក្រោយពី 15m ដល់ 1w, ការប្រៀបធៀប signals និងច្បាប់សាមញ្ញៗជាមួយការកាន់ទុកធម្មតា (រួមទាំងថ្លៃសេវា), ទិន្នផលប្រចាំខែ និង export CSV។</td></tr>
+</table></div>
+<p>ផ្ទាំងដែលលាក់នៅពីក្រោយ tab មិនមាននៅក្នុងទំព័រទេ៖ វាមិនចំណាយធនធានអ្វីឡើយ ហើយវាបំពេញទិន្នន័យភ្លាមៗនៅពេលអ្នកបើកវា។ ប៊ូតុង ⚙ អនុញ្ញាតឱ្យដាក់ផ្ទាំងនីមួយៗទៅក្នុងប្រអប់ដែលអ្នកចង់បាន ហើយការកំណត់ទាំងអស់ — interval, រូបិយប័ណ្ណ, tabs, ប្លង់ — នៅតែរក្សាទុក បន្ទាប់ពីផ្ទុកទំព័រឡើងវិញ។</p>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>បង្កើតឡើងដើម្បីដំណើរការជាប់ជានិច្ច។</h2>
+<div class="grid">
+<div class="card"><h3>លឿននៅកន្លែងដែលសំខាន់</h3><p>ផ្ទាំងលឿនៗ — order book, depth, arbitrage, liquidations — មិនដែលប្រើបណ្តាញដោយផ្ទាល់ទេ៖ វាអាន books ដែល hub តែមួយរក្សាទុកក្នុង memory ដោយបើកការតភ្ជាប់តែមួយក្នុងមួយ exchange សម្រាប់ផ្ទាំងទាំងអស់។ ខណៈដែល browser បើក WebSocket នោះ server បញ្ជូន (push) order book រៀងរាល់ 100 ms ហើយប្រសិនបើការតភ្ជាប់ដាច់ ទំព័រត្រឡប់ទៅប្រើ polling វិញដោយគ្មានអ្វីខូច។ នេះហើយដែលធ្វើឱ្យ order book នៅតែរស់រវើក សូម្បីតែតាម SSH tunnel ពីចម្ងាយ។</p></div>
+<div class="card"><h3>ក្រាហ្វសម្រាប់ធ្វើការ</h3><p>ក្រាហ្វតម្លៃត្រូវបានគូរក្នុង browser ដោយ Lightweight Charts ហើយ zoom របស់អ្នកនៅដដែល ខណៈទិន្នន័យថ្មីកំពុងហូរចូល។ Shift + អូស ដើម្បី zoom លើតំបន់មួយ, Ctrl + អូស ដើម្បីវាស់ចលនាតម្លៃ, <code>T</code> ដើម្បីគូរបន្ទាត់និន្នាការ, <code>A</code> ដើម្បីដាក់ anchored VWAP លើ candle មួយ និង Alt + ចុច ដើម្បីដាក់ alert តម្លៃ។ shortcuts ក្តារចុច និងបន្ទាត់ពាក្យបញ្ជា (<code>/</code>) អាចបញ្ជាស្ថានីយទាំងមូលបាន។</p></div>
+<div class="card"><h3>Alerts រហូតដល់ទូរស័ព្ទ</h3><p>មានច្បាប់សម្រាប់កម្រិតតម្លៃ, ចលនា 2 % ក្នុង 15 នាទី, liquidations ច្រើនក្នុងពេលខ្លី, funding ខ្លាំងពេក, ព័ត៌មានពិន្ទុខ្ពស់, គម្លាត arbitrage, តម្លៃបិទប្រចាំថ្ងៃដែលឆ្លងកាត់មធ្យមភាគ 200 ថ្ងៃ, ព្រឹត្តិការណ៍ options និង on-chain និងច្រើនទៀត។ វារោទិ៍នៅពេលលក្ខខណ្ឌមួយទើបតែកើតឡើង ហើយមានរយៈពេលរង់ចាំ ដូច្នេះលក្ខខណ្ឌដែលភ្លឹបភ្លែតមិនរោទិ៍ជាបន្តបន្ទាប់ទេ — ហើយ alerts អាចផ្ញើទៅទូរស័ព្ទតាម ntfy រួមជាមួយសេចក្តីសង្ខេបរៀងរាល់ព្រឹក។</p></div>
+<div class="card"><h3>វគ្គដែលអាចមើលឡើងវិញបាន</h3><p>liquidations, ឱកាស arbitrage, orders ធំៗ និង alerts ត្រូវបានកត់ត្រាក្នុងកំណត់ហេតុ SQLite ក្នុងម៉ាស៊ីន ហើយរក្សាទុក 30 ថ្ងៃ។ ទិន្នន័យទីផ្សារដែលថតរៀងរាល់ 5 នាទី ត្រូវរក្សាទុក 400 ថ្ងៃ ដែលពង្រីកប្រវត្តិ funding និង open interest លើសពី 30 ថ្ងៃដែល Binance ផ្តល់ឱ្យ។ candles ដែលបិទរួចត្រូវរក្សាទុកលើ disk ដូច្នេះក្រាហ្វបើកលឿនជាងមុន ហើយនៅតែដំណើរការនៅពេល exchange មានបញ្ហា។</p></div>
+<div class="card"><h3>នៅពេល DNS កុហក</h3><p>អ្នកផ្តល់សេវាអ៊ីនធឺណិតខ្លះ — ឧទាហរណ៍នៅកម្ពុជា — ឆ្លើយតបនឹងឈ្មោះ host របស់ exchanges ដោយ <code>127.0.0.1</code> ហើយស្ថានីយនឹងប្តូរទៅប្រើទិន្នន័យ demo ដោយស្ងាត់ៗ។ នៅពេលចាប់ផ្តើម hub សួររកឈ្មោះទាំងនោះពី DNS-over-HTTPS resolver ដែលភ្ជាប់តាមអាសយដ្ឋាន IP (1.1.1.1 បន្ទាប់មក 8.8.8.8) ហើយតភ្ជាប់ទៅអាសយដ្ឋានពិតប្រាកដ។ មិនចាំបាច់កំណត់អ្វីទាំងអស់។</p></div>
+<div class="card"><h3>វាប្រាប់ពីអ្វីដែលវាមិនដឹង</h3><p>ផ្ទាំង Sources បង្ហាញប្រភពទិន្នន័យនីមួយៗ — ok, បម្រុង, ខូច, ស្ងាត់ ឬដាច់ — ជាមួយអាយុនៃទិន្នន័យថ្មីចុងក្រោយ និងកំហុសចុងក្រោយ។ ប្រសិនបើមិនអាចភ្ជាប់ទៅ Binance បាននៅពេលចាប់ផ្តើម ក្រាហ្វបង្ហាញស៊េរី demo ដែលបង្កើតក្នុងម៉ាស៊ីន ក្រោមបដាពណ៌ទឹកក្រូចដែលប្រាប់ថាតួលេខទាំងនោះមិនមែនជាទិន្នន័យពិតទេ ហើយថ្ងៃលំហូរ ETF ដែលកំពុងចេញផ្សាយ ត្រូវបានសម្គាល់ថា “partial”។</p></div>
+</div>
+<p style="margin-top:16px">កម្រិតរោទិ៍ខ្លះត្រូវបានកំណត់ដោយមិនទាន់មានបទពិសោធន៍គ្រប់គ្រាន់៖ កម្រិតសម្រាប់ order books ស្តើង និង skew របស់ options នៅតែជាកម្រិតបណ្តោះអាសន្ន ដោយរង់ចាំទិន្នន័យកំណត់ហេតុរយៈពេលប៉ុន្មានសប្តាហ៍ទៀត។</p>
+</section>
+
+<section>
+<div class="kicker">ការដំណើរការ</div>
+<h2>ពាក្យបញ្ជាមួយ port មួយ។</h2>
+<p>វាដំឡើងក្នុង Python virtual environment ហើយចាប់ផ្តើមដោយពាក្យបញ្ជាតែមួយ។ វាស្តាប់តែនៅលើ <code>127.0.0.1:8050</code> ប៉ុណ្ណោះ ដូច្នេះពីកុំព្យូទ័រផ្សេង អ្នកចូលប្រើវាតាម SSH tunnel។ សម្រាប់ការប្រើប្រាស់ទាំងយប់ទាំងថ្ងៃ មានគំរូ systemd user unit ដែលដំណើរការវាតាម gunicorn។</p>
+<pre class="term"><span class="p">$ </span>pip install -e .
+<span class="p">$ </span>btcterm                                <span class="c"># ឬ៖ python -m terminal.app</span>
+<span class="c">  → http://127.0.0.1:8050</span>
+<span class="p">$ </span>ssh -L 8050:localhost:8050 &lt;machine&gt;   <span class="c"># ពីកុំព្យូទ័រផ្សេង</span>
+<span class="p">$ </span>python -m btcterm.journal --heures 6   <span class="c"># មើល 6 ម៉ោងចុងក្រោយឡើងវិញ</span></pre>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le terminal en images.</span><span data-l="km">ស្ថានីយតាមរយៈរូបភាព។</span></h2>
+<p><span data-l="en">Captured from the running terminal on 13 November 2026. The interface is in French.</span><span data-l="fr">Captures du terminal en marche, le 13 novembre 2026. L’interface est en français.</span><span data-l="km">រូបថតពីស្ថានីយដែលកំពុងដំណើរការ នៅថ្ងៃទី 13 ខែវិច្ឆិកា ឆ្នាំ 2026។ ផ្ទាំងប្រើប្រាស់ជាភាសាបារាំង។</span></p>
+<div class="gallery landscape">
+<a href="../assets/screenshots/btcterm/price-fullscreen.jpg" target="_blank"><img src="../assets/screenshots/btcterm/price-fullscreen.jpg" alt="The price panel full screen on the 4-hour chart, with moving averages, Bollinger bands, signals, volume profile and RSI" loading="lazy"></a>
+<a href="../assets/screenshots/btcterm/price-chart-layers.jpg" target="_blank"><img src="../assets/screenshots/btcterm/price-chart-layers.jpg" alt="The 15-minute chart with its layers: key levels, anchored VWAP, large-order bubbles, order-book heat map and open interest" loading="lazy"></a>
+<a href="../assets/screenshots/btcterm/grid-secondary-tabs.jpg" target="_blank"><img src="../assets/screenshots/btcterm/grid-secondary-tabs.jpg" alt="The grid on other tabs: compared depth of five books, liquidations, perpetual futures, macro calendar and dominance" loading="lazy"></a>
+<a href="../assets/screenshots/btcterm/daily-summary-and-tape.jpg" target="_blank"><img src="../assets/screenshots/btcterm/daily-summary-and-tape.jpg" alt="The 24-hour summary, the tape of large trades, the status of every data source and options volatility" loading="lazy"></a>
+<a href="../assets/screenshots/btcterm/journal-alerts-position.jpg" target="_blank"><img src="../assets/screenshots/btcterm/journal-alerts-position.jpg" alt="The session journal, alert settings, the position panel and on-chain hashrate and difficulty" loading="lazy"></a>
+<a href="../assets/screenshots/btcterm/options-gamma-exposure.jpg" target="_blank"><img src="../assets/screenshots/btcterm/options-gamma-exposure.jpg" alt="Options view: market makers' gamma exposure by strike, and the gamma flip" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>btcterm/</td><td>The core, with no display code: indicators, normalised order books and WebSocket connectors for five exchanges, the arbitrage engine, REST collectors, the journal, the alert engine and the DNS fallback. A hub opens one connection per exchange for every panel.</td></tr>
+<tr><td>terminal/</td><td>The Dash application: grid, tabs, layout dialog, one module per panel, Plotly figures. The price and perpetual charts are drawn in the browser with Lightweight Charts 5, bundled with the code (no CDN).</td></tr>
+<tr><td>Refresh</td><td>Three clocks — 250 ms for the fast panels, 2 s for the header and news, 5 min for slow series — plus a WebSocket push channel on <code>/push</code>. News is collected every 15 minutes in a background thread.</td></tr>
+<tr><td>Storage</td><td>SQLite under <code>~/.btcterm/</code>: the journal (30 days of events, 400 days of market snapshots) and the closed candles. A cache keeps the last reading of slow series for up to 30 days. Settings and layout live in the browser’s localStorage.</td></tr>
+<tr><td>Service</td><td>Binds to <code>127.0.0.1:8050</code>. A systemd user unit serves it through gunicorn; <code>/api/health</code> reports the state of the sources to a monitoring tool.</td></tr>
+<tr><td>Data</td><td>Public endpoints only: Binance, Kraken, Coinbase, Bybit, OKX, Deribit, Upbit, plus Farside (ETF flows), Coin Metrics, CoinGecko, Yahoo Finance, blockchain.info, six RSS news feeds and others. Read-only: no order is ever sent.</td></tr>
+<tr><td>Tests</td><td>35 test files that stay off the network — indicators checked value for value against the original scripts, order books, alerts, journal, calendar and more — some JavaScript run under Node, and <code>ui_smoke.py</code>, which drives Firefox to check what only shows on screen.</td></tr>
+<tr><td>Tools</td><td><code>etf_bitcoin_flows.py</code> prints or exports spot ETF flows; <code>news/btc_news.py</code> is a command-line news tracker sharing the terminal’s database and scoring rules.</td></tr>
+<tr><td>Stack</td><td>Python 3.11 or later, pandas, NumPy, Dash, Plotly, flask-sock and websockets.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>btcterm/</td><td>Le socle, sans code d’affichage : indicateurs, carnets normalisés et connecteurs WebSocket de cinq plateformes, moteur d’arbitrage, collecteurs REST, journal, moteur d’alertes et résolution DNS de secours. Un hub n’ouvre qu’une connexion par plateforme pour tous les panneaux.</td></tr>
+<tr><td>terminal/</td><td>L’application Dash : grille, onglets, dialogue de disposition, un module par panneau, figures Plotly. Les graphiques du prix et du perpétuel sont dessinés dans le navigateur avec Lightweight Charts 5, livré avec le code (aucun CDN).</td></tr>
+<tr><td>Rafraîchissement</td><td>Trois horloges — 250 ms pour les panneaux rapides, 2 s pour le bandeau et les news, 5 min pour les séries lentes — plus un canal push WebSocket sur <code>/push</code>. Les news sont collectées toutes les 15 minutes dans un thread de fond.</td></tr>
+<tr><td>Stockage</td><td>SQLite sous <code>~/.btcterm/</code> : le journal (30 jours d’événements, 400 jours d’instantanés de marché) et les bougies closes. Un cache garde la dernière lecture des séries lentes jusqu’à 30 jours. Réglages et disposition vivent dans le localStorage du navigateur.</td></tr>
+<tr><td>Service</td><td>Écoute sur <code>127.0.0.1:8050</code>. Une unité systemd utilisateur le sert par gunicorn ; <code>/api/health</code> donne l’état des sources à un outil de surveillance.</td></tr>
+<tr><td>Données</td><td>Uniquement des API publiques : Binance, Kraken, Coinbase, Bybit, OKX, Deribit, Upbit, plus Farside (flux ETF), Coin Metrics, CoinGecko, Yahoo Finance, blockchain.info, six flux RSS de news et d’autres encore. Lecture seule : aucun ordre n’est jamais envoyé.</td></tr>
+<tr><td>Tests</td><td>35 fichiers de tests qui ne touchent pas au réseau — indicateurs vérifiés valeur par valeur contre les scripts d’origine, carnets, alertes, journal, calendrier et le reste —, du JavaScript exécuté sous Node, et <code>ui_smoke.py</code>, qui pilote Firefox pour contrôler ce qui ne se voit qu’à l’écran.</td></tr>
+<tr><td>Outils</td><td><code>etf_bitcoin_flows.py</code> affiche ou exporte les flux des ETF spot ; <code>news/btc_news.py</code> est un tracker de news en ligne de commande qui partage la base et les règles de score du terminal.</td></tr>
+<tr><td>Pile</td><td>Python 3.11 ou plus récent, pandas, NumPy, Dash, Plotly, flask-sock et websockets.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>btcterm/</td><td>ស្នូលដែលគ្មានកូដបង្ហាញ៖ indicators, order books ដែលមានទម្រង់រួម និង WebSocket connectors សម្រាប់ exchange ចំនួន 5, ម៉ាស៊ីន arbitrage, កម្មវិធីប្រមូលទិន្នន័យ REST, កំណត់ហេតុ, ម៉ាស៊ីន alerts និង DNS បម្រុង។ hub មួយបើកការតភ្ជាប់តែមួយក្នុងមួយ exchange សម្រាប់ផ្ទាំងទាំងអស់។</td></tr>
+<tr><td>terminal/</td><td>កម្មវិធី Dash៖ ក្រឡាចត្រង្គ, tabs, ប្រអប់រៀបចំប្លង់, module មួយសម្រាប់ផ្ទាំងនីមួយៗ និងក្រាហ្វ Plotly។ ក្រាហ្វតម្លៃ និង perpetual ត្រូវបានគូរក្នុង browser ដោយ Lightweight Charts 5 ដែលភ្ជាប់មកជាមួយកូដ (គ្មាន CDN)។</td></tr>
+<tr><td>ការធ្វើបច្ចុប្បន្នភាព</td><td>នាឡិកា 3 — 250 ms សម្រាប់ផ្ទាំងលឿនៗ, 2 s សម្រាប់ header និងព័ត៌មាន, 5 នាទីសម្រាប់ស៊េរីយឺតៗ — ព្រមទាំងបណ្តាញ push តាម WebSocket លើ <code>/push</code>។ ព័ត៌មានត្រូវបានប្រមូលរៀងរាល់ 15 នាទីក្នុង thread នៅផ្ទៃខាងក្រោយ។</td></tr>
+<tr><td>ការផ្ទុកទិន្នន័យ</td><td>SQLite ក្នុង <code>~/.btcterm/</code>៖ កំណត់ហេតុ (ព្រឹត្តិការណ៍ 30 ថ្ងៃ, ទិន្នន័យទីផ្សារ 400 ថ្ងៃ) និង candles ដែលបិទរួច។ cache រក្សាការអានចុងក្រោយនៃស៊េរីយឺតៗរហូតដល់ 30 ថ្ងៃ។ ការកំណត់ និងប្លង់ត្រូវបានរក្សាទុកក្នុង localStorage របស់ browser។</td></tr>
+<tr><td>Service</td><td>ស្តាប់នៅលើ <code>127.0.0.1:8050</code>។ systemd user unit ដំណើរការវាតាម gunicorn ហើយ <code>/api/health</code> រាយការណ៍ស្ថានភាពប្រភពទិន្នន័យទៅឧបករណ៍តាមដាន។</td></tr>
+<tr><td>ទិន្នន័យ</td><td>endpoints សាធារណៈតែប៉ុណ្ណោះ៖ Binance, Kraken, Coinbase, Bybit, OKX, Deribit, Upbit ព្រមទាំង Farside (លំហូរ ETF), Coin Metrics, CoinGecko, Yahoo Finance, blockchain.info, ប្រភពព័ត៌មាន RSS ចំនួន 6 និងប្រភពផ្សេងទៀត។ អានតែប៉ុណ្ណោះ៖ មិនដែលផ្ញើ order ណាមួយទេ។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ឯកសារការធ្វើតេស្តចំនួន 35 ដែលមិនប្រើបណ្តាញ — indicators ត្រូវបានផ្ទៀងផ្ទាត់តម្លៃម្តងមួយៗជាមួយ scripts ដើម, order books, alerts, កំណត់ហេតុ, ប្រតិទិន និងផ្សេងទៀត — JavaScript ខ្លះដំណើរការក្រោម Node និង <code>ui_smoke.py</code> ដែលបញ្ជា Firefox ដើម្បីពិនិត្យអ្វីដែលមើលឃើញតែនៅលើអេក្រង់។</td></tr>
+<tr><td>ឧបករណ៍</td><td><code>etf_bitcoin_flows.py</code> បង្ហាញ ឬ export លំហូរ ETF spot ហើយ <code>news/btc_news.py</code> ជាកម្មវិធីតាមដានព័ត៌មានតាម command line ដែលប្រើមូលដ្ឋានទិន្នន័យ និងច្បាប់ដាក់ពិន្ទុដូចគ្នានឹងស្ថានីយ។</td></tr>
+<tr><td>Stack</td><td>Python 3.11 ឬថ្មីជាងនេះ, pandas, NumPy, Dash, Plotly, flask-sock និង websockets។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="vsm-studio.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>VSM Studio</b></a>
+<a href="immo.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>Khmer Estate</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#projects">← <span data-l="en">Back to all projects</span><span data-l="fr">Retour aux projets</span><span data-l="km">ត្រឡប់ទៅគម្រោងទាំងអស់</span></a></div></footer>
+</body></html>

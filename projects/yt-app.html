@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="TubeGuard: a personal YouTube browser for Android built on GeckoView, Firefox’s engine, with its own ad-blocking extension, background audio and picture-in-picture. Personal use only, not distributed.">
+<title data-en="TubeGuard, YouTube browser for Android — Stefan" data-fr="TubeGuard, navigateur YouTube pour Android — Stefan" data-km="TubeGuard, browser YouTube សម្រាប់ Android — Stefan">TubeGuard, YouTube browser for Android — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#projects">← <span data-l="en">All projects</span><span data-l="fr">Tous les projets</span><span data-l="km">គម្រោងទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Projects</span><span data-l="fr">Projets</span><span data-l="km">គម្រោង</span> / 04</div>
+<h1>TubeGuard</h1>
+<div class="alias">yt-app</div>
+<p class="lead" data-l="en">A YouTube browser for Android, built on GeckoView — Firefox’s engine — so that it can run its own ad-blocking extension. One full-screen window and no address bar: it opens YouTube links, keeps the sound on with the screen off and shrinks into picture-in-picture, like a native app. A personal project: it goes against YouTube’s terms of service and is not distributed.</p>
+<p class="lead" data-l="fr">Un navigateur YouTube pour Android, bâti sur GeckoView — le moteur de Firefox — pour pouvoir y faire tourner sa propre extension anti-pub. Une seule fenêtre plein écran, sans barre d’adresse : il ouvre les liens YouTube, garde le son écran éteint et se réduit en vignette (picture-in-picture), comme une application native. Un projet personnel : il contrevient aux conditions d’utilisation de YouTube et n’est pas distribué.</p>
+<p class="lead" data-l="km">Browser YouTube សម្រាប់ Android ដែលបង្កើតលើ GeckoView — ម៉ាស៊ីនរបស់ Firefox — ដើម្បីអាចដំណើរការ extension រារាំងពាណិជ្ជកម្មផ្ទាល់ខ្លួនរបស់វា។ មានតែផ្ទាំងពេញអេក្រង់មួយ គ្មាន address bar៖ វាបើក links YouTube បន្តចាក់សំឡេងពេលបិទអេក្រង់ ហើយបង្រួមជាផ្ទាំងតូច (picture-in-picture) ដូចកម្មវិធី native មួយ។ នេះជាគម្រោងផ្ទាល់ខ្លួន៖ វាផ្ទុយនឹងលក្ខខណ្ឌប្រើប្រាស់របស់ YouTube ហើយមិនត្រូវបានចែកចាយទេ។</p>
+<div class="tags"><span class="tag p">Android</span><span class="tag t" data-l="en">Tools</span><span class="tag t" data-l="fr">Outils</span><span class="tag t" data-l="km">ឧបករណ៍</span><span class="tag">Kotlin</span><span class="tag">GeckoView</span><span class="tag">WebExtension</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/yt-app" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a><span class="soon" data-l="en">Personal use only — not distributed</span><span class="soon" data-l="fr">Usage strictement personnel — non distribué</span><span class="soon" data-l="km">សម្រាប់ប្រើផ្ទាល់ខ្លួនតែប៉ុណ្ណោះ — មិនចែកចាយ</span></div>
+</div>
+
+<div class="stats">
+<div class="stat"><strong>154</strong><span data-l="en">GeckoView version</span><span data-l="fr">Version de GeckoView</span><span data-l="km">កំណែ GeckoView</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">Ad-blocking layers</span><span data-l="fr">Couches anti-pub</span><span data-l="km">ស្រទាប់រារាំងពាណិជ្ជកម្ម</span></div>
+<div class="stat"><strong>189</strong><span data-l="en">Built-in filter rules</span><span data-l="fr">Règles de filtrage intégrées</span><span data-l="km">ច្បាប់ filter ភ្ជាប់មកជាមួយ</span></div>
+<div class="stat"><strong>195 <span data-l="en">MB</span><span data-l="fr">Mo</span><span data-l="km">MB</span></strong><span data-l="en">APK size (arm64)</span><span data-l="fr">Taille de l’APK (arm64)</span><span data-l="km">ទំហំ APK (arm64)</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>YouTube, and nothing around it.</h2>
+<p>On a phone, YouTube is either the official app or a tab in a browser. TubeGuard is a third way: a single full-screen window that loads the mobile site, <code>m.youtube.com</code>, with no address bar and no tabs, and handles the Android back button, links and sharing the way an app does. The Google account stays signed in from one launch to the next.</p>
+<p>It exists to block ads, and that decides the engine. Android’s built-in <code>WebView</code> cannot run browser extensions, so it cannot block requests — injecting CSS or JavaScript into the page does nothing against the ads played before a video. GeckoView, the engine of Firefox for Android, runs WebExtensions, so TubeGuard ships with one of its own. The price is size: 195 MB for the arm64 APK, 152 MB of it for the Gecko engine alone.</p>
+<p>It is a personal project, built from source and installed by hand on its author’s own phone. Blocking ads goes against YouTube’s terms of service, Google could in theory restrict an account used this way, and Play Store rules forbid apps that alter a third-party service — so it is not published anywhere. It uses neither YouTube’s name nor its logo. As its README points out, creators are paid by advertising; YouTube Premium is the way to watch without ads and still support them.</p>
+</section>
+
+<section>
+<div class="kicker">What it does</div>
+<h2>An app, not a browser.</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>What happens</th></tr>
+<tr><td>Full screen</td><td>Immersive mode, opening on <code>m.youtube.com</code>. No address bar, no tabs.</td></tr>
+<tr><td>Back button</td><td>Leaves full-screen video, then goes back through the history, then sends the app to the background instead of closing it, so the sound keeps playing.</td></tr>
+<tr><td>Session</td><td>Cookies, the Google account and the current page survive a restart. They are deliberately left out of Android backups, so session cookies never end up on Google Drive.</td></tr>
+<tr><td>YouTube links</td><td>Links to youtube.com, youtu.be, m.youtube.com and music.youtube.com open in the app, and so do <code>vnd.youtube</code> links. On Android 12 and later this has to be allowed once by hand in the system settings (“Open supported links”), because YouTube’s domain cannot vouch for a third-party app. “Share to TubeGuard” works with no setup.</td></tr>
+<tr><td>Other links</td><td>A link that leaves YouTube — a sponsor in a video description — opens in the regular browser. <code>intent:</code>, <code>mailto:</code> or <code>whatsapp:</code> links go to the app concerned, and the Share button opens the Android share sheet.</td></tr>
+<tr><td>Background audio</td><td>Screen off or another app in front: playback goes on, with a notification (previous, play/pause, next) and the headset buttons.</td></tr>
+<tr><td>Picture-in-picture</td><td>The video alone fills the floating window and keeps playing; pause and resume work from the media controls. Checked on a Galaxy A56 running Android 16.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Three layers against ads.</h2>
+<p>The built-in extension, <code>ytblock</code>, works at three levels: the network, the video player and the page.</p>
+<div class="grid">
+<div class="card"><h3>Network filtering</h3><p>A filter engine reads lists in the Adblock Plus format — a subset: domain anchors, wildcards, type and domain options, exceptions, cosmetic rules — and cancels matching requests before they leave the phone.</p></div>
+<div class="card"><h3>Lists that work offline</h3><p>Two lists ship in the app: 62 rules aimed at YouTube and 127 taken from the core of EasyList, active from the first second. The full EasyList and a cosmetic list from the uBlock Origin project are downloaded on first launch, cached and refreshed every three days; that update can be switched off.</p></div>
+<div class="card"><h3>The player is told there are no ads</h3><p>YouTube describes its ad breaks in the data it sends to the player, under keys such as <code>adPlacements</code>, <code>playerAds</code> and <code>adSlots</code>. A content script removes them before the player reads them, through Firefox’s own way of reaching into a page — the only one that gets past YouTube’s strict Content Security Policy.</p></div>
+<div class="card"><h3>A safety net</h3><p>If a pre-roll or mid-roll starts anyway, it is spotted (the <code>ad-showing</code> class on the player), muted and jumped to its end, and the “Skip ad” button is clicked.</p></div>
+<div class="card"><h3>No flash of banners</h3><p>A style sheet hides banners, promoted videos and overlays. It is injected before the page first draws, so they never flicker into view.</p></div>
+<div class="card"><h3>A list it must never block</h3><p>On YouTube, ads and videos come through the same addresses (<code>/youtubei/v1/player</code>, <code>googlevideo.com</code>). A rule that is too broad does not remove the ad, it breaks playback. A fixed list of addresses that must always pass is checked before any rule.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Limits</div>
+<h2>An arms race YouTube can win.</h2>
+<p>The README is blunt about it. The script relies on the internal names YouTube uses today — JSON keys, CSS classes — and YouTube changes its player regularly, sometimes precisely to break this kind of blocking. When it does, the script has to be fixed by hand, by inspecting the page from desktop Firefox through remote debugging. YouTube also detects ad blockers and has shown warnings since 2023; and if it ever stitched ads into the video stream itself, as Twitch has done, neither filtering nor skipping would work.</p>
+<p>The filter engine understands only a subset of the Adblock Plus syntax — none of uBlock Origin’s procedural filters, scriptlets or redirects — which matters little on YouTube, where the content script does most of the work. A second route, loading uBlock Origin itself as a bundled extension, is written but switched off: GeckoView refuses most of the permissions it asks for, and uBlock Origin’s code is not redistributed, so its folder ships empty.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>YouTube, et rien autour.</h2>
+<p>Sur un téléphone, YouTube, c’est soit l’application officielle, soit un onglet de navigateur. TubeGuard est une troisième voie : une seule fenêtre plein écran qui charge le site mobile, <code>m.youtube.com</code>, sans barre d’adresse ni onglets, et qui gère le bouton retour d’Android, les liens et le partage comme le ferait une application. Le compte Google reste connecté d’un lancement à l’autre.</p>
+<p>Il existe pour bloquer les publicités, et c’est ce qui impose le moteur. La <code>WebView</code> intégrée à Android ne sait pas exécuter d’extensions de navigateur, donc pas bloquer de requêtes : injecter du CSS ou du JavaScript dans la page ne peut rien contre les pubs diffusées avant une vidéo. GeckoView, le moteur de Firefox pour Android, exécute les WebExtensions : TubeGuard embarque donc la sienne. Le prix à payer, c’est la taille : 195 Mo pour l’APK arm64, dont 152 Mo pour le seul moteur Gecko.</p>
+<p>C’est un projet personnel, compilé depuis les sources et installé à la main sur le téléphone de son auteur. Bloquer les publicités contrevient aux conditions d’utilisation de YouTube, Google pourrait en théorie restreindre un compte utilisé de cette façon, et les règles du Play Store interdisent les applications qui altèrent un service tiers : il n’est donc publié nulle part. Il n’utilise ni le nom ni le logo de YouTube. Comme le rappelle son README, les créateurs sont rémunérés par la publicité ; YouTube Premium reste le moyen de regarder sans pub tout en les soutenant.</p>
+</section>
+
+<section>
+<div class="kicker">Ce qu’il fait</div>
+<h2>Une application, pas un navigateur.</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Ce qui se passe</th></tr>
+<tr><td>Plein écran</td><td>Mode immersif, ouverture sur <code>m.youtube.com</code>. Ni barre d’adresse, ni onglets.</td></tr>
+<tr><td>Bouton retour</td><td>Quitte la vidéo plein écran, puis remonte l’historique, puis met l’application en arrière-plan au lieu de la fermer, pour ne pas couper le son.</td></tr>
+<tr><td>Session</td><td>Cookies, compte Google et page en cours survivent à un redémarrage. Ils sont volontairement exclus des sauvegardes Android : les cookies de session ne partent pas sur Google Drive.</td></tr>
+<tr><td>Liens YouTube</td><td>Les liens youtube.com, youtu.be, m.youtube.com et music.youtube.com s’ouvrent dans l’application, tout comme les liens <code>vnd.youtube</code>. Depuis Android 12, il faut l’autoriser une fois à la main dans les réglages (« Ouvrir les liens compatibles »), car le domaine de YouTube ne peut pas se porter garant d’une application tierce. « Partager vers TubeGuard » fonctionne sans réglage.</td></tr>
+<tr><td>Autres liens</td><td>Un lien qui sort de YouTube — un sponsor dans la description d’une vidéo — s’ouvre dans le navigateur habituel. Les liens <code>intent:</code>, <code>mailto:</code> ou <code>whatsapp:</code> vont à l’application concernée, et le bouton Partager ouvre la feuille de partage d’Android.</td></tr>
+<tr><td>Audio en arrière-plan</td><td>Écran éteint ou autre application au premier plan : la lecture continue, avec une notification (précédent, lecture/pause, suivant) et les boutons du casque.</td></tr>
+<tr><td>Picture-in-picture</td><td>La vidéo seule remplit la vignette flottante et continue de jouer ; pause et reprise fonctionnent depuis les commandes multimédias. Vérifié sur un Galaxy A56 sous Android 16.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Trois couches contre les pubs.</h2>
+<p>L’extension intégrée, <code>ytblock</code>, agit à trois niveaux : le réseau, le lecteur vidéo et la page.</p>
+<div class="grid">
+<div class="card"><h3>Filtrage réseau</h3><p>Un moteur de filtres lit des listes au format Adblock Plus — un sous-ensemble : ancrages de domaine, jokers, options de type et de domaine, exceptions, règles cosmétiques — et annule les requêtes concernées avant qu’elles ne quittent le téléphone.</p></div>
+<div class="card"><h3>Des listes qui marchent hors ligne</h3><p>Deux listes sont livrées dans l’application : 62 règles visant YouTube et 127 tirées du noyau d’EasyList, actives dès la première seconde. L’EasyList complète et une liste cosmétique du projet uBlock Origin sont téléchargées au premier lancement, mises en cache et rafraîchies tous les trois jours ; cette mise à jour peut être désactivée.</p></div>
+<div class="card"><h3>Le lecteur croit qu’il n’y a pas de pub</h3><p>YouTube décrit ses coupures publicitaires dans les données qu’il envoie au lecteur, sous des clés comme <code>adPlacements</code>, <code>playerAds</code> et <code>adSlots</code>. Un script de contenu les retire avant que le lecteur ne les lise, par la méthode propre à Firefox pour intervenir dans une page — la seule qui passe la politique de sécurité du contenu (CSP), très stricte, de YouTube.</p></div>
+<div class="card"><h3>Un filet de sécurité</h3><p>Si une pré-roll ou une mid-roll démarre quand même, elle est repérée (classe <code>ad-showing</code> sur le lecteur), le son est coupé, la lecture saute à la fin du spot et le bouton « Passer l’annonce » est cliqué.</p></div>
+<div class="card"><h3>Pas de bandeaux qui clignotent</h3><p>Une feuille de style masque bannières, vidéos sponsorisées et incrustations. Elle est injectée avant le premier affichage de la page : rien n’apparaît le temps d’être masqué.</p></div>
+<div class="card"><h3>Une liste à ne jamais bloquer</h3><p>Sur YouTube, pubs et vidéos passent par les mêmes adresses (<code>/youtubei/v1/player</code>, <code>googlevideo.com</code>). Une règle trop large ne supprime pas la pub, elle casse la lecture. Une liste fixe d’adresses qui doivent toujours passer est vérifiée avant toute règle.</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">Limites</div>
+<h2>Une course que YouTube peut gagner.</h2>
+<p>Le README ne le cache pas. Le script s’appuie sur les noms internes qu’emploie YouTube aujourd’hui — clés JSON, classes CSS —, et YouTube modifie régulièrement son lecteur, parfois précisément pour casser ce genre de blocage. Quand cela arrive, il faut corriger le script à la main, en inspectant la page depuis Firefox sur ordinateur grâce au débogage à distance. YouTube détecte aussi les bloqueurs et affiche des avertissements depuis 2023 ; et s’il insérait un jour les pubs directement dans le flux vidéo, comme l’a fait Twitch, ni le filtrage ni le saut ne fonctionneraient plus.</p>
+<p>Le moteur de filtres ne comprend qu’un sous-ensemble de la syntaxe Adblock Plus — ni les filtres procéduraux d’uBlock Origin, ni ses scriptlets, ni ses redirections —, ce qui compte peu sur YouTube, où le script de contenu fait l’essentiel du travail. Une seconde voie, charger uBlock Origin lui-même comme extension embarquée, est écrite mais désactivée : GeckoView refuse la plupart des permissions qu’il demande, et le code d’uBlock Origin n’est pas redistribué, si bien que son dossier est livré vide.</p>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>YouTube ហើយគ្មានអ្វីផ្សេងនៅជុំវិញ។</h2>
+<p>នៅលើទូរស័ព្ទ YouTube គឺជាកម្មវិធីផ្លូវការ ឬជា tab មួយក្នុង browser។ TubeGuard ជាជម្រើសទីបី៖ ផ្ទាំងពេញអេក្រង់តែមួយ ដែលបើកគេហទំព័រ mobile <code>m.youtube.com</code> គ្មាន address bar គ្មាន tabs ហើយគ្រប់គ្រងប៊ូតុង back របស់ Android, links និងការចែករំលែក ដូចកម្មវិធីមួយ។ គណនី Google នៅតែចូលដដែល ពីការបើកម្តងទៅម្តងទៀត។</p>
+<p>វាកើតមានឡើងដើម្បីរារាំងពាណិជ្ជកម្ម ហើយនេះជាអ្វីដែលកំណត់ការជ្រើសរើសម៉ាស៊ីន។ <code>WebView</code> ដែលមានស្រាប់ក្នុង Android មិនអាចដំណើរការ extension របស់ browser បានទេ ដូច្នេះមិនអាចរារាំង requests បាន៖ ការបញ្ចូល CSS ឬ JavaScript ទៅក្នុងទំព័រ មិនអាចធ្វើអ្វីបានចំពោះពាណិជ្ជកម្មដែលចាក់មុនវីដេអូទេ។ GeckoView ដែលជាម៉ាស៊ីនរបស់ Firefox សម្រាប់ Android ដំណើរការ WebExtensions បាន ដូច្នេះ TubeGuard ភ្ជាប់មកជាមួយ extension ផ្ទាល់ខ្លួនរបស់វា។ តម្លៃដែលត្រូវបង់គឺទំហំ៖ APK arm64 មានទំហំ 195 MB ក្នុងនោះ 152 MB គឺសម្រាប់តែម៉ាស៊ីន Gecko ប៉ុណ្ណោះ។</p>
+<p>នេះជាគម្រោងផ្ទាល់ខ្លួន ដែល build ពីកូដប្រភព ហើយដំឡើងដោយដៃនៅលើទូរស័ព្ទរបស់អ្នកបង្កើតខ្លួនឯង។ ការរារាំងពាណិជ្ជកម្មផ្ទុយនឹងលក្ខខណ្ឌប្រើប្រាស់របស់ YouTube តាមទ្រឹស្តី Google អាចដាក់កម្រិតលើគណនីដែលប្រើតាមរបៀបនេះ ហើយច្បាប់របស់ Play Store ហាមឃាត់កម្មវិធីដែលកែប្រែដំណើរការរបស់សេវាភាគីទីបី — ដូច្នេះវាមិនត្រូវបានចេញផ្សាយនៅកន្លែងណាទេ។ វាមិនប្រើឈ្មោះ ឬ logo របស់ YouTube ទេ។ ដូចដែល README របស់វាបានរំលឹក អ្នកបង្កើតមាតិកាទទួលបានប្រាក់ពីពាណិជ្ជកម្ម ហើយ YouTube Premium គឺជាមធ្យោបាយមើលដោយគ្មានពាណិជ្ជកម្ម ទន្ទឹមនឹងការគាំទ្រពួកគេ។</p>
+</section>
+
+<section>
+<div class="kicker">អ្វីដែលវាធ្វើ</div>
+<h2>ជាកម្មវិធី មិនមែនជា browser ទេ។</h2>
+<div class="table-wrap"><table>
+<tr><th>មុខងារ</th><th>អ្វីដែលកើតឡើង</th></tr>
+<tr><td>ពេញអេក្រង់</td><td>របៀប immersive ដោយបើកនៅលើ <code>m.youtube.com</code>។ គ្មាន address bar គ្មាន tabs។</td></tr>
+<tr><td>ប៊ូតុង back</td><td>ចេញពីវីដេអូពេញអេក្រង់ បន្ទាប់មកថយក្រោយក្នុងប្រវត្តិ ហើយចុងក្រោយដាក់កម្មវិធីទៅផ្ទៃខាងក្រោយ ជំនួសឱ្យការបិទ ដើម្បីកុំឱ្យសំឡេងដាច់។</td></tr>
+<tr><td>Session</td><td>cookies, គណនី Google និងទំព័របច្ចុប្បន្ន នៅដដែលបន្ទាប់ពីបើកឡើងវិញ។ ពួកវាត្រូវបានដកចេញពីការ backup របស់ Android ដោយចេតនា ដូច្នេះ session cookies មិនទៅដល់ Google Drive ទេ។</td></tr>
+<tr><td>Links YouTube</td><td>links youtube.com, youtu.be, m.youtube.com និង music.youtube.com បើកក្នុងកម្មវិធី ព្រមទាំង links <code>vnd.youtube</code> ផងដែរ។ ចាប់ពី Android 12 ត្រូវអនុញ្ញាតដោយដៃម្តងក្នុង settings របស់ប្រព័ន្ធ (“Open supported links”) ព្រោះ domain របស់ YouTube មិនអាចធានាសម្រាប់កម្មវិធីភាគីទីបីបានទេ។ “Share to TubeGuard” ដំណើរការដោយមិនចាំបាច់កំណត់អ្វីទេ។</td></tr>
+<tr><td>Links ផ្សេងទៀត</td><td>link ដែលចេញក្រៅ YouTube — ដូចជា sponsor ក្នុងការពិពណ៌នាវីដេអូ — បើកក្នុង browser ធម្មតា។ links <code>intent:</code>, <code>mailto:</code> ឬ <code>whatsapp:</code> ទៅកម្មវិធីដែលពាក់ព័ន្ធ ហើយប៊ូតុង Share បើក share sheet របស់ Android។</td></tr>
+<tr><td>សំឡេងនៅផ្ទៃខាងក្រោយ</td><td>បិទអេក្រង់ ឬបើកកម្មវិធីផ្សេងនៅខាងមុខ៖ ការចាក់នៅតែបន្ត ជាមួយការជូនដំណឹង (មុន, ចាក់/ផ្អាក, បន្ទាប់) និងប៊ូតុងរបស់កាស។</td></tr>
+<tr><td>Picture-in-picture</td><td>មានតែវីដេអូប៉ុណ្ណោះដែលពេញផ្ទាំងតូចអណ្តែត ហើយបន្តចាក់។ ការផ្អាក និងការបន្តចាក់ ដំណើរការពីប៊ូតុងបញ្ជា media។ បានផ្ទៀងផ្ទាត់លើ Galaxy A56 ដែលដំណើរការ Android 16។</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>ស្រទាប់បីប្រឆាំងនឹងពាណិជ្ជកម្ម។</h2>
+<p>extension ដែលភ្ជាប់មកជាមួយ គឺ <code>ytblock</code> ធ្វើការនៅបីកម្រិត៖ បណ្តាញ, video player និងទំព័រ។</p>
+<div class="grid">
+<div class="card"><h3>ការត្រងតាមបណ្តាញ</h3><p>ម៉ាស៊ីន filter អានបញ្ជីក្នុងទម្រង់ Adblock Plus — តែមួយផ្នែក៖ anchors របស់ domain, wildcards, options តាមប្រភេទ និង domain, exceptions, ច្បាប់ cosmetic — ហើយបោះបង់ requests ដែលត្រូវគ្នា មុនពេលវាចេញពីទូរស័ព្ទ។</p></div>
+<div class="card"><h3>បញ្ជីដែលដំណើរការដោយគ្មានអ៊ីនធឺណិត</h3><p>បញ្ជីពីរភ្ជាប់មកជាមួយកម្មវិធី៖ ច្បាប់ 62 សម្រាប់ YouTube និង 127 ដកស្រង់ពីស្នូលរបស់ EasyList ដែលដំណើរការតាំងពីវិនាទីដំបូង។ EasyList ពេញលេញ និងបញ្ជី cosmetic មួយពីគម្រោង uBlock Origin ត្រូវបានទាញយកនៅពេលបើកលើកដំបូង រក្សាទុកក្នុង cache និងធ្វើបច្ចុប្បន្នភាពរៀងរាល់បីថ្ងៃម្តង។ ការធ្វើបច្ចុប្បន្នភាពនេះអាចបិទបាន។</p></div>
+<div class="card"><h3>Player ត្រូវបានប្រាប់ថាគ្មានពាណិជ្ជកម្ម</h3><p>YouTube ពិពណ៌នាការកាត់ចាក់ពាណិជ្ជកម្មរបស់វា ក្នុងទិន្នន័យដែលវាផ្ញើទៅ player ក្រោម keys ដូចជា <code>adPlacements</code>, <code>playerAds</code> និង <code>adSlots</code>។ content script មួយដកវាចេញ មុនពេល player អានវា តាមវិធីផ្ទាល់របស់ Firefox សម្រាប់ធ្វើអន្តរាគមន៍ក្នុងទំព័រ — ជាវិធីតែមួយគត់ដែលឆ្លងកាត់ Content Security Policy ដ៏តឹងរ៉ឹងរបស់ YouTube បាន។</p></div>
+<div class="card"><h3>សំណាញ់សុវត្ថិភាព</h3><p>បើ pre-roll ឬ mid-roll នៅតែចាប់ផ្តើម វាត្រូវបានរកឃើញ (class <code>ad-showing</code> លើ player) បិទសំឡេង រំលងទៅចុងបញ្ចប់នៃពាណិជ្ជកម្ម ហើយចុចប៊ូតុង “Skip ad”។</p></div>
+<div class="card"><h3>គ្មាន banner លេចឡើងមួយភ្លែត</h3><p>style sheet មួយលាក់ banners, វីដេអូដែលបានឧបត្ថម្ភ និង overlays។ វាត្រូវបានបញ្ចូលមុនពេលទំព័របង្ហាញលើកដំបូង ដូច្នេះវាមិនដែលលេចឡើងសូម្បីតែមួយភ្លែត។</p></div>
+<div class="card"><h3>បញ្ជីដែលមិនត្រូវរារាំងដាច់ខាត</h3><p>នៅលើ YouTube ពាណិជ្ជកម្ម និងវីដេអូមកតាមអាសយដ្ឋានដូចគ្នា (<code>/youtubei/v1/player</code>, <code>googlevideo.com</code>)។ ច្បាប់ដែលទូលាយពេក មិនលុបពាណិជ្ជកម្មទេ តែធ្វើឱ្យការចាក់វីដេអូខូច។ បញ្ជីអាសយដ្ឋានថេរដែលត្រូវតែអនុញ្ញាតជានិច្ច ត្រូវបានពិនិត្យមុនច្បាប់ណាមួយ។</p></div>
+</div>
+</section>
+
+<section>
+<div class="kicker">ដែនកំណត់</div>
+<h2>ការប្រកួតប្រជែងដែល YouTube អាចឈ្នះ។</h2>
+<p>README និយាយយ៉ាងត្រង់ៗអំពីរឿងនេះ។ script ពឹងលើឈ្មោះខាងក្នុងដែល YouTube ប្រើនាពេលបច្ចុប្បន្ន — JSON keys, CSS classes — ហើយ YouTube ផ្លាស់ប្តូរ player របស់វាជាញឹកញាប់ ពេលខ្លះក្នុងគោលបំណងបំបាក់ការរារាំងបែបនេះ។ ពេលរឿងនេះកើតឡើង ត្រូវកែ script ដោយដៃ ដោយពិនិត្យទំព័រពី Firefox លើកុំព្យូទ័រតាមរយៈ remote debugging។ YouTube ក៏ចាប់បានកម្មវិធីរារាំងពាណិជ្ជកម្ម ហើយបង្ហាញការព្រមានតាំងពីឆ្នាំ 2023 មក។ ហើយបើថ្ងៃណាមួយ វាបញ្ចូលពាណិជ្ជកម្មផ្ទាល់ទៅក្នុង stream វីដេអូ ដូចដែល Twitch បានធ្វើ ទាំងការត្រង និងការរំលង នឹងលែងដំណើរការទៀតហើយ។</p>
+<p>ម៉ាស៊ីន filter យល់តែផ្នែកមួយនៃ syntax របស់ Adblock Plus — គ្មាន procedural filters, scriptlets ឬ redirects របស់ uBlock Origin ទេ — ដែលមិនសូវសំខាន់នៅលើ YouTube ព្រោះ content script ធ្វើការងារភាគច្រើន។ វិធីទីពីរ គឺការផ្ទុក uBlock Origin ផ្ទាល់ជា extension ភ្ជាប់មកជាមួយ ត្រូវបានសរសេររួចហើយ ប៉ុន្តែត្រូវបានបិទ៖ GeckoView បដិសេធ permissions ភាគច្រើនដែលវាស្នើសុំ ហើយកូដរបស់ uBlock Origin មិនត្រូវបានចែកចាយបន្តទេ ដូច្នេះ folder របស់វាត្រូវបានភ្ជាប់មកទទេ។</p>
+</section>
+</div>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>MainActivity.kt</td><td>The single full-screen window: immersive mode, back button, links, sharing, picture-in-picture. While audio plays in the background, it re-asserts every 3 seconds that the Gecko session is active; without that, GeckoView cut the sound after a few tens of seconds.</td></tr>
+<tr><td>GeckoEngine.kt</td><td>One Gecko runtime and one session for the whole app, with the browser profile and the saved state of the current page.</td></tr>
+<tr><td>PlaybackService.kt</td><td>A foreground service with a wake lock and a MediaSession: the playback notification, lock-screen controls and headset buttons.</td></tr>
+<tr><td>NativeBridge.kt · MediaBridge.kt</td><td>The channel between the app and the extension’s content script, and the state of the web player that the notification reflects.</td></tr>
+<tr><td>ytblock/</td><td>The extension (WebExtension, Manifest V2): network blocking in <code>background.js</code> and <code>lib/filters.js</code>, player hooks and ad skipping in <code>content/ads.js</code>, cosmetic rules in <code>content/ads.css</code>. To keep playing in the background or in picture-in-picture, the content script tells YouTube the page is always visible and focused, and ignores the player’s own calls to pause the main video.</td></tr>
+<tr><td>Build</td><td>Kotlin, GeckoView 154, Android Gradle Plugin 9.3, compile SDK 37.1, Android 8.0 or later (min SDK 26). One APK per architecture: 195 MB for arm64-v8a, 157 MB for armeabi-v7a.</td></tr>
+<tr><td>Licence</td><td>GPL v3.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>MainActivity.kt</td><td>La fenêtre plein écran unique : mode immersif, bouton retour, liens, partage, picture-in-picture. Tant que l’audio joue en arrière-plan, elle réaffirme toutes les 3 secondes que la session Gecko est active ; sans cela, GeckoView coupait le son au bout de quelques dizaines de secondes.</td></tr>
+<tr><td>GeckoEngine.kt</td><td>Un seul moteur Gecko et une seule session pour toute l’application, avec le profil du navigateur et l’état sauvegardé de la page en cours.</td></tr>
+<tr><td>PlaybackService.kt</td><td>Un service au premier plan avec wake lock et MediaSession : la notification de lecture, les commandes de l’écran de verrouillage et les boutons du casque.</td></tr>
+<tr><td>NativeBridge.kt · MediaBridge.kt</td><td>Le canal entre l’application et le script de contenu de l’extension, et l’état du lecteur web que reflète la notification.</td></tr>
+<tr><td>ytblock/</td><td>L’extension (WebExtension, Manifest V2) : blocage réseau dans <code>background.js</code> et <code>lib/filters.js</code>, interception du lecteur et saut des pubs dans <code>content/ads.js</code>, règles cosmétiques dans <code>content/ads.css</code>. Pour continuer à jouer en arrière-plan ou en vignette, le script de contenu fait croire à YouTube que la page est toujours visible et active, et ignore les appels du lecteur qui mettent la vidéo principale en pause.</td></tr>
+<tr><td>Compilation</td><td>Kotlin, GeckoView 154, Android Gradle Plugin 9.3, SDK de compilation 37.1, Android 8.0 ou plus récent (SDK minimal 26). Un APK par architecture : 195 Mo pour arm64-v8a, 157 Mo pour armeabi-v7a.</td></tr>
+<tr><td>Licence</td><td>GPL v3.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>MainActivity.kt</td><td>ផ្ទាំងពេញអេក្រង់តែមួយ៖ របៀប immersive, ប៊ូតុង back, links, ការចែករំលែក, picture-in-picture។ ខណៈដែលសំឡេងកំពុងចាក់នៅផ្ទៃខាងក្រោយ វាបញ្ជាក់ម្តងទៀតរៀងរាល់ 3 វិនាទីថា session Gecko នៅសកម្ម។ បើគ្មានការនេះ GeckoView បានកាត់សំឡេងបន្ទាប់ពីប៉ុន្មានដប់វិនាទី។</td></tr>
+<tr><td>GeckoEngine.kt</td><td>ម៉ាស៊ីន Gecko មួយ និង session មួយសម្រាប់កម្មវិធីទាំងមូល ជាមួយ profile របស់ browser និងស្ថានភាពដែលបានរក្សាទុករបស់ទំព័របច្ចុប្បន្ន។</td></tr>
+<tr><td>PlaybackService.kt</td><td>foreground service ជាមួយ wake lock និង MediaSession៖ ការជូនដំណឹងពេលចាក់ ប៊ូតុងបញ្ជានៅលើអេក្រង់ចាក់សោ និងប៊ូតុងរបស់កាស។</td></tr>
+<tr><td>NativeBridge.kt · MediaBridge.kt</td><td>ច្រកទំនាក់ទំនងរវាងកម្មវិធី និង content script របស់ extension ព្រមទាំងស្ថានភាពរបស់ web player ដែលការជូនដំណឹងបង្ហាញ។</td></tr>
+<tr><td>ytblock/</td><td>extension (WebExtension, Manifest V2)៖ ការរារាំងតាមបណ្តាញក្នុង <code>background.js</code> និង <code>lib/filters.js</code>, ការស្ទាក់ player និងការរំលងពាណិជ្ជកម្មក្នុង <code>content/ads.js</code>, ច្បាប់ cosmetic ក្នុង <code>content/ads.css</code>។ ដើម្បីបន្តចាក់នៅផ្ទៃខាងក្រោយ ឬក្នុង picture-in-picture, content script ធ្វើឱ្យ YouTube គិតថាទំព័រតែងតែមើលឃើញ និងសកម្ម ហើយមិនអើពើនឹងការហៅរបស់ player ដើម្បីផ្អាកវីដេអូចម្បង។</td></tr>
+<tr><td>Build</td><td>Kotlin, GeckoView 154, Android Gradle Plugin 9.3, compile SDK 37.1, Android 8.0 ឬថ្មីជាងនេះ (min SDK 26)។ APK មួយសម្រាប់ architecture នីមួយៗ៖ 195 MB សម្រាប់ arm64-v8a, 157 MB សម្រាប់ armeabi-v7a។</td></tr>
+<tr><td>អាជ្ញាប័ណ្ណ</td><td>GPL v3។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="hms.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>HMS</b></a>
+<a href="capture.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>rscap</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#projects">← <span data-l="en">Back to all projects</span><span data-l="fr">Retour aux projets</span><span data-l="km">ត្រឡប់ទៅគម្រោងទាំងអស់</span></a></div></footer>
+</body></html>

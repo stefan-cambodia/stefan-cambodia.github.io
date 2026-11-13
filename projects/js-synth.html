@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Synth Rack (js-synth): 26 vintage synthesizers and drum machines played in the browser, with a MIDI sequencer and a mixer edition that records. Plain HTML, CSS and JavaScript, no dependencies, no build.">
+<title data-en="Synth Rack, vintage synths in the browser — Stefan" data-fr="Synth Rack, synthés vintage dans le navigateur — Stefan" data-km="Synth Rack, synth vintage ក្នុង browser — Stefan">Synth Rack, vintage synths in the browser — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#sound">← <span data-l="en">Sound lab</span><span data-l="fr">Sound lab</span><span data-l="km">មន្ទីរពិសោធន៍សំឡេង</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Sound lab</span><span data-l="fr">Sound lab</span><span data-l="km">មន្ទីរពិសោធន៍សំឡេង</span> / 01</div>
+<h1>Synth Rack</h1>
+<div class="alias">js-synth</div>
+<p class="lead" data-l="en">Twenty-six vintage machines — from the ARP 2600 and the Prophet-5 to the TR-808 — that you play in a web browser, and a MIDI sequencer that plays a song through them. Plain HTML, CSS and JavaScript: no dependencies, no build, one file per machine.</p>
+<p class="lead" data-l="fr">Vingt-six machines vintage — de l’ARP 2600 et du Prophet-5 à la TR-808 — qui se jouent dans un navigateur, et un séquenceur MIDI qui leur fait jouer un morceau. Du HTML, du CSS et du JavaScript natifs : aucune dépendance, aucun build, un fichier par machine.</p>
+<p class="lead" data-l="km">ម៉ាស៊ីន vintage ចំនួន 26 — ចាប់ពី ARP 2600 និង Prophet-5 រហូតដល់ TR-808 — ដែលអ្នកអាចលេងបាននៅក្នុង browser ព្រមទាំង MIDI sequencer មួយដែលចាក់បទភ្លេងតាមរយៈម៉ាស៊ីនទាំងនោះ។ សរសេរដោយ HTML, CSS និង JavaScript សុទ្ធ៖ គ្មាន dependencies គ្មាន build ហើយម៉ាស៊ីនមួយ ឯកសារមួយ។</p>
+<div class="tags"><span class="tag p">Web</span><span class="tag t" data-l="en">Sound</span><span class="tag t" data-l="fr">Son</span><span class="tag t" data-l="km">សំឡេង</span><span class="tag">JavaScript</span><span class="tag">Web Audio API</span><span class="tag">MIDI</span></div>
+<div class="actions"><a class="btn primary" href="https://stefan-cambodia.github.io/js-synth/" target="_blank" rel="noopener noreferrer"><span data-l="en">Launch the live demo</span><span data-l="fr">Lancer la démo</span><span data-l="km">បើកការបង្ហាញផ្ទាល់</span> ↗</a><a class="btn secondary" href="https://github.com/stefan-cambodia/js-synth" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/js-synth/mixer-edition.jpg" alt="The mixer edition: the ARP 2600 in its tab, the mixing console and the transport bar"></div>
+
+<div class="stats">
+<div class="stat"><strong>26</strong><span data-l="en">Machines</span><span data-l="fr">Machines</span><span data-l="km">ម៉ាស៊ីន</span></div>
+<div class="stat"><strong>2</strong><span data-l="en">Editions</span><span data-l="fr">Éditions</span><span data-l="km">កំណែ</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">Built-in step sequencers</span><span data-l="fr">Séquenceurs à pas intégrés</span><span data-l="km">step sequencer ដែលមានស្រាប់</span></div>
+<div class="stat"><strong>0</strong><span data-l="en">Dependencies or build</span><span data-l="fr">Dépendance ou build</span><span data-l="km">dependencies ឬ build</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>A wall of synths in one browser tab.</h2>
+<p>Each machine is a single, self-contained <code>.html</code> file: its front panel, a sound engine written with the Web Audio API, and the code that lets it receive notes. Open one on its own and you play it with the mouse, the on-screen keyboard or the computer keyboard. Open the hub and the machines line up in tabs, under a MIDI sequencer that plays a <code>.mid</code> file through them: drum tracks go to the TR-909, and the other tracks are dealt out to the Prophet-5, the Jupiter-8, the ARP 2600 and the next ones, until you route them yourself.</p>
+<p>There are no audio files in the repository: every sound is synthesized by code, in the browser — the drum machines and even the Fairlight’s “samples” included. Nothing needs installing: the project is a set of static files, and the live demo runs straight from GitHub Pages. The panels and help texts are in French.</p>
+</section>
+
+<section>
+<div class="kicker">The rack</div>
+<h2>Twenty-six machines.</h2>
+<div class="table-wrap"><table>
+<tr><th>Family</th><th>Machines</th></tr>
+<tr><td>Analog</td><td>ARP 2600 and Korg MS-20 (mono); Prophet-5, Jupiter-8, Oberheim OB-Xa, Korg Polysix, Elka Synthex, Roland JX-8P, Yamaha CS-50, CS-60, CS-80 and GX-1 (poly)</td></tr>
+<tr><td>Virtual analog</td><td>Roland JP-8000, Roland GAIA 2, Yamaha Reface CS</td></tr>
+<tr><td>Digital</td><td>Roland D-50 (LA synthesis), Fairlight CMI (sampler), Korg M1 and Novation MiniNova (PCM), Yamaha DX100 (4-operator FM), Arturia MicroFreak (hybrid)</td></tr>
+<tr><td>Rhythm and acid</td><td>Roland TB-303 bass line, TR-808 and TR-909 drum machines, each with its own 16-step sequencer</td></tr>
+<tr><td>Second versions</td><td>JP-8000 · worklet and MicroFreak · alt — other implementations of the same instruments, kept because they do not sound the same</td></tr>
+</table></div>
+<p>Polyphony goes from mono (ARP 2600, MS-20) to 5 voices on the Prophet-5, 8 on the Jupiter-8 and 64 on the GAIA 2. These are unofficial recreations; several panels say plainly that they are not affiliated with the manufacturer.</p>
+</section>
+
+<section>
+<div class="kicker">The hub</div>
+<h2>Load a song. Route it. Press play.</h2>
+<div class="table-wrap"><table>
+<tr><th>Feature</th><th>What it does</th></tr>
+<tr><td>MIDI files</td><td>Reads standard MIDI files (formats 0 and 1): notes, tempo and track names.</td></tr>
+<tr><td>Routing</td><td>Each track of the file goes to one of the 26 machines and can be muted. Drum tracks (channel 10) start on the TR-909.</td></tr>
+<tr><td>Transport</td><td>Play, pause, stop, 4 bars back or forward, and a position bar; shows bar · beat and elapsed time. Keys: <code>Space</code>, <code>Enter</code>, <code>←</code> <code>→</code>.</td></tr>
+<tr><td>Tempo</td><td>40 to 220 BPM; the whole song is sped up or slowed down from its own tempo.</td></tr>
+<tr><td>Takes</td><td>Arm ⏺, play on a machine’s keyboard, stop: the notes become a take that can be added back as a track or downloaded as a <code>.mid</code> file.</td></tr>
+<tr><td>Built-in sequencers</td><td>One button starts or stops the pattern sequencers of the TB-303, TR-808 and TR-909 together, independently of the MIDI player.</td></tr>
+</table></div>
+<p>The rack comes in two editions with the same machines. They differ in one thing only: where the sound goes.</p>
+<div class="table-wrap"><table>
+<tr><th></th><th>classic/</th><th>mixer/</th></tr>
+<tr><td>Audio</td><td>Each machine has its own audio context, sealed in its <code>iframe</code></td><td>One audio context shared by the whole rack</td></tr>
+<tr><td>Mixing console</td><td>—</td><td>Fader (0 to 140 %), pan, mute, solo and level meter for each machine</td></tr>
+<tr><td>Master bus</td><td>—</td><td>Master fader and meter</td></tr>
+<tr><td>Recording</td><td>Not possible</td><td>Records everything on the master bus and downloads the file when you stop</td></tr>
+<tr><td>Same origin</td><td>Recommended (to switch machines on automatically)</td><td>Required (to share the audio)</td></tr>
+</table></div>
+<p><code>classic</code> suits playing the machines one at a time: each one is sealed off and can be copied elsewhere as is. <code>mixer</code> is for making them sound together; its recordings are <code>.webm</code> (Opus) on Chrome and Firefox and <code>.m4a</code> on Safari.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Old circuits, rebuilt in code.</h2>
+<div class="grid">
+<div class="card"><h3>One file, one machine</h3><p>Every machine is a complete page: panel, sound engine, presets and keyboard. It opens on its own, works without the hub, and can be copied to another site with nothing else.</p></div>
+<div class="card"><h3>Two ways to make sound</h3><p>Most machines are graphs of Web Audio nodes — oscillators, filters, amplifiers, and envelopes written as scheduled ramps. The ARP 2600, GAIA 2, JX-8P and the JP-8000 worklet compute every sample themselves in an AudioWorklet, which a ladder filter or oscillator sync calls for.</p></div>
+<div class="card"><h3>Drum machines that read MIDI</h3><p>The TR-808 (16 voices) and the TR-909 (11 voices) are fully synthesized, with four banks of 16-step patterns and an accent track. A General MIDI drum map lets them play the drum tracks of a <code>.mid</code> file directly.</p></div>
+<div class="card"><h3>A real mixer in the browser</h3><p>In the mixer edition the hub owns the rack’s only audio context and lends it to each machine. A machine still calls <code>new AudioContext()</code>, but its sound now lands on its own strip. Mute and solo are short fades, so they do not click.</p></div>
+<div class="card"><h3>Record what you play</h3><p>Notes played on a machine’s keyboard become MIDI takes, exportable as <code>.mid</code>. The mixer edition also records the audio of the master bus: the sequencer, the drum machines’ own sequencers and keyboard playing included.</p></div>
+<div class="card"><h3>Loaded on demand</h3><p>A machine is loaded only when its tab is shown, a track is routed to it or it is switched on. Playback waits up to 3 seconds for the machines involved to be ready, so the first notes are not lost.</p></div>
+</div>
+<p style="margin-top:16px">Limits, as the project documents them: notes leave the sequencer at screen refresh (about every 16 ms), so fast patterns can jitter, and playback slows down when the tab is in the background; a song with tempo changes plays at one constant tempo; takes are kept in memory and disappear when the page is closed; not every machine reports what is played on its own keyboard, so not all of them can be recorded as takes; and in the mixer each machine has a single strip — the M1’s parts or the drum voices cannot be mixed separately.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Un mur de synthés dans un onglet.</h2>
+<p>Chaque machine tient dans un seul fichier <code>.html</code> autonome : sa façade, un moteur sonore écrit avec la Web Audio API, et le code qui lui permet de recevoir des notes. Ouverte seule, elle se joue à la souris, au clavier à l’écran ou au clavier de l’ordinateur. Dans le hub, les machines s’alignent en onglets sous un séquenceur MIDI qui leur fait jouer un fichier <code>.mid</code> : les pistes de batterie partent vers la TR-909, les autres sont distribuées au Prophet-5, au Jupiter-8, à l’ARP 2600 et aux suivantes, jusqu’à ce que vous les routiez vous-même.</p>
+<p>Le dépôt ne contient aucun fichier audio : chaque son est synthétisé par le code, dans le navigateur — boîtes à rythmes et même « échantillons » du Fairlight compris. Rien à installer : le projet n’est fait que de fichiers statiques, et la démo tourne directement sur GitHub Pages. Les façades et les textes d’aide sont en français.</p>
+</section>
+
+<section>
+<div class="kicker">Le rack</div>
+<h2>Vingt-six machines.</h2>
+<div class="table-wrap"><table>
+<tr><th>Famille</th><th>Machines</th></tr>
+<tr><td>Analogiques</td><td>ARP 2600 et Korg MS-20 (monophoniques) ; Prophet-5, Jupiter-8, Oberheim OB-Xa, Korg Polysix, Elka Synthex, Roland JX-8P, Yamaha CS-50, CS-60, CS-80 et GX-1 (polyphoniques)</td></tr>
+<tr><td>Analogique virtuel</td><td>Roland JP-8000, Roland GAIA 2, Yamaha Reface CS</td></tr>
+<tr><td>Numériques</td><td>Roland D-50 (synthèse LA), Fairlight CMI (échantillonneur), Korg M1 et Novation MiniNova (PCM), Yamaha DX100 (FM à 4 opérateurs), Arturia MicroFreak (hybride)</td></tr>
+<tr><td>Rythme et acid</td><td>Roland TB-303 (ligne de basse), TR-808 et TR-909 (boîtes à rythmes), chacune avec son séquenceur à 16 pas</td></tr>
+<tr><td>Variantes</td><td>JP-8000 · worklet et MicroFreak · alt — d’autres implémentations des mêmes instruments, gardées parce qu’elles ne sonnent pas pareil</td></tr>
+</table></div>
+<p>La polyphonie va du monophonique (ARP 2600, MS-20) à 5 voix sur le Prophet-5, 8 sur le Jupiter-8 et 64 sur la GAIA 2. Ce sont des recréations non officielles ; plusieurs façades précisent qu’elles ne sont pas affiliées au fabricant.</p>
+</section>
+
+<section>
+<div class="kicker">Le hub</div>
+<h2>Chargez un morceau. Routez. Lecture.</h2>
+<div class="table-wrap"><table>
+<tr><th>Fonction</th><th>Ce qu’elle fait</th></tr>
+<tr><td>Fichiers MIDI</td><td>Lit les fichiers MIDI standard (formats 0 et 1) : notes, tempo et noms de pistes.</td></tr>
+<tr><td>Routage</td><td>Chaque piste du fichier va vers l’une des 26 machines et peut être coupée. Les pistes de batterie (canal 10) partent d’office vers la TR-909.</td></tr>
+<tr><td>Transport</td><td>Lecture, pause, stop, 4 mesures en arrière ou en avant, barre de position ; affichage mesure · temps et temps écoulé. Touches : <code>Espace</code>, <code>Entrée</code>, <code>←</code> <code>→</code>.</td></tr>
+<tr><td>Tempo</td><td>De 40 à 220 BPM ; tout le morceau est accéléré ou ralenti par rapport à son propre tempo.</td></tr>
+<tr><td>Prises</td><td>Armez ⏺, jouez au clavier d’une machine, arrêtez : les notes deviennent une prise, à réinjecter comme piste ou à télécharger en fichier <code>.mid</code>.</td></tr>
+<tr><td>Séquenceurs internes</td><td>Un bouton lance ou arrête ensemble les séquenceurs à motifs de la TB-303, de la TR-808 et de la TR-909, indépendamment du lecteur MIDI.</td></tr>
+</table></div>
+<p>Le rack existe en deux éditions, avec les mêmes machines. Elles ne diffèrent que sur un point : le chemin du son.</p>
+<div class="table-wrap"><table>
+<tr><th></th><th>classic/</th><th>mixer/</th></tr>
+<tr><td>Audio</td><td>Un contexte audio par machine, enfermé dans son <code>iframe</code></td><td>Un seul contexte audio pour tout le rack</td></tr>
+<tr><td>Console de mixage</td><td>—</td><td>Fader (0 à 140 %), panoramique, mute, solo et vu-mètre pour chaque machine</td></tr>
+<tr><td>Bus maître</td><td>—</td><td>Fader et vu-mètre maîtres</td></tr>
+<tr><td>Enregistrement</td><td>Impossible</td><td>Capture tout ce qui passe par le bus maître et télécharge le fichier à l’arrêt</td></tr>
+<tr><td>Même origine</td><td>Conseillée (pour allumer les machines automatiquement)</td><td>Obligatoire (pour partager l’audio)</td></tr>
+</table></div>
+<p><code>classic</code> convient pour jouer les machines une par une : chacune est étanche et se copie ailleurs telle quelle. <code>mixer</code> sert à les faire sonner ensemble ; ses enregistrements sont en <code>.webm</code> (Opus) sur Chrome et Firefox, en <code>.m4a</code> sur Safari.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>De vieux circuits, refaits en code.</h2>
+<div class="grid">
+<div class="card"><h3>Un fichier, une machine</h3><p>Chaque machine est une page complète : façade, moteur sonore, presets et clavier. Elle s’ouvre seule, fonctionne sans le hub et se copie sur un autre site sans rien d’autre.</p></div>
+<div class="card"><h3>Deux façons de faire du son</h3><p>La plupart des machines sont des graphes de nœuds Web Audio — oscillateurs, filtres, amplis, et enveloppes écrites en rampes planifiées. L’ARP 2600, la GAIA 2, la JX-8P et le JP-8000 « worklet » calculent eux-mêmes chaque échantillon dans un AudioWorklet, ce qu’exigent un filtre en échelle ou la synchronisation d’oscillateurs.</p></div>
+<div class="card"><h3>Des boîtes à rythmes qui lisent le MIDI</h3><p>La TR-808 (16 voix) et la TR-909 (11 voix) sont entièrement synthétisées, avec quatre banques de motifs de 16 pas et une piste d’accent. Une table de batterie General MIDI leur fait jouer directement les pistes de batterie d’un fichier <code>.mid</code>.</p></div>
+<div class="card"><h3>Une vraie console dans le navigateur</h3><p>Dans l’édition mixer, le hub possède l’unique contexte audio du rack et le prête à chaque machine. La machine appelle toujours <code>new AudioContext()</code>, mais son son arrive désormais sur sa propre tranche. Mute et solo sont de courts fondus : ils ne claquent pas.</p></div>
+<div class="card"><h3>Enregistrer ce que l’on joue</h3><p>Les notes jouées au clavier d’une machine deviennent des prises MIDI, exportables en <code>.mid</code>. L’édition mixer enregistre en plus l’audio du bus maître : séquenceur, séquenceurs internes des boîtes à rythmes et jeu au clavier compris.</p></div>
+<div class="card"><h3>Chargé à la demande</h3><p>Une machine n’est chargée que lorsque son onglet s’affiche, qu’une piste lui est routée ou qu’elle est allumée. La lecture attend jusqu’à 3 secondes que les machines concernées soient prêtes, pour ne pas perdre les premières notes.</p></div>
+</div>
+<p style="margin-top:16px">Les limites, telles que le projet les documente : les notes partent du séquenceur au rythme de l’affichage (environ toutes les 16 ms), si bien que les motifs rapides peuvent flotter, et la lecture ralentit quand l’onglet passe en arrière-plan ; un morceau à tempo variable est joué à tempo constant ; les prises restent en mémoire et disparaissent à la fermeture de la page ; toutes les machines ne signalent pas ce qu’on joue sur leur propre clavier, et toutes ne peuvent donc pas être enregistrées en prises ; enfin, dans le mixer, chaque machine n’a qu’une tranche — les parties du M1 ou les voix des boîtes à rythmes ne se mixent pas séparément.</p>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>ជញ្ជាំង synth ទាំងមូល ក្នុង tab browser តែមួយ។</h2>
+<p>ម៉ាស៊ីននីមួយៗស្ថិតនៅក្នុងឯកសារ <code>.html</code> តែមួយ ដែលដំណើរការដោយខ្លួនឯង៖ ផ្ទាំងបញ្ជារបស់វា ម៉ាស៊ីនបង្កើតសំឡេងដែលសរសេរដោយ Web Audio API និងកូដដែលអនុញ្ញាតឱ្យវាទទួលណូតភ្លេង។ បើកវាតែឯង អ្នកអាចលេងវាដោយ mouse ក្តារចុចនៅលើអេក្រង់ ឬក្តារចុចកុំព្យូទ័រ។ បើក hub ម៉ាស៊ីនទាំងអស់តម្រៀបគ្នាជា tabs នៅក្រោម MIDI sequencer មួយ ដែលចាក់ឯកសារ <code>.mid</code> តាមរយៈម៉ាស៊ីនទាំងនោះ៖ tracks ស្គរទៅកាន់ TR-909 ហើយ tracks ផ្សេងទៀតត្រូវបានចែកទៅ Prophet-5, Jupiter-8, ARP 2600 និងម៉ាស៊ីនបន្តបន្ទាប់ រហូតដល់អ្នកកំណត់ផ្លូវដោយខ្លួនឯង។</p>
+<p>នៅក្នុងឃ្លាំងកូដ គ្មានឯកសារសំឡេងណាមួយទេ៖ សំឡេងទាំងអស់ត្រូវបានសំយោគដោយកូដ នៅក្នុង browser — រួមទាំងម៉ាស៊ីនស្គរ និងសូម្បីតែ “samples” របស់ Fairlight ផងដែរ។ មិនចាំបាច់ដំឡើងអ្វីទេ៖ គម្រោងនេះមានតែឯកសារ static ហើយការបង្ហាញផ្ទាល់ដំណើរការដោយផ្ទាល់ពី GitHub Pages។ ផ្ទាំងបញ្ជា និងអត្ថបទជំនួយ សរសេរជាភាសាបារាំង។</p>
+</section>
+
+<section>
+<div class="kicker">រ៉ាក់</div>
+<h2>ម៉ាស៊ីនចំនួន 26។</h2>
+<div class="table-wrap"><table>
+<tr><th>ប្រភេទ</th><th>ម៉ាស៊ីន</th></tr>
+<tr><td>អាណាឡូក</td><td>ARP 2600 និង Korg MS-20 (mono); Prophet-5, Jupiter-8, Oberheim OB-Xa, Korg Polysix, Elka Synthex, Roland JX-8P, Yamaha CS-50, CS-60, CS-80 និង GX-1 (poly)</td></tr>
+<tr><td>អាណាឡូកនិម្មិត</td><td>Roland JP-8000, Roland GAIA 2, Yamaha Reface CS</td></tr>
+<tr><td>ឌីជីថល</td><td>Roland D-50 (ការសំយោគ LA), Fairlight CMI (sampler), Korg M1 និង Novation MiniNova (PCM), Yamaha DX100 (FM 4 operators), Arturia MicroFreak (hybrid)</td></tr>
+<tr><td>ចង្វាក់ និង acid</td><td>Roland TB-303 (ខ្សែបាស), TR-808 និង TR-909 (ម៉ាស៊ីនស្គរ) ដែលនីមួយៗមាន sequencer 16 ជំហានផ្ទាល់ខ្លួន</td></tr>
+<tr><td>កំណែទីពីរ</td><td>JP-8000 · worklet និង MicroFreak · alt — ការសរសេរឡើងវិញមួយទៀតនៃឧបករណ៍ដដែល ដែលត្រូវបានរក្សាទុក ព្រោះសំឡេងរបស់វាមិនដូចគ្នា</td></tr>
+</table></div>
+<p>ចំនួនសំឡេងដែលអាចលេងព្រមគ្នា (polyphony) មានចាប់ពី mono (ARP 2600, MS-20) រហូតដល់ 5 សំឡេងលើ Prophet-5, 8 លើ Jupiter-8 និង 64 លើ GAIA 2។ ទាំងនេះជាការបង្កើតឡើងវិញក្រៅផ្លូវការ ហើយផ្ទាំងបញ្ជាមួយចំនួនបញ្ជាក់យ៉ាងច្បាស់ថា វាមិនមានទំនាក់ទំនងជាមួយក្រុមហ៊ុនផលិតទេ។</p>
+</section>
+
+<section>
+<div class="kicker">Hub</div>
+<h2>ផ្ទុកបទភ្លេង។ កំណត់ផ្លូវ។ ចុច Play។</h2>
+<div class="table-wrap"><table>
+<tr><th>មុខងារ</th><th>អ្វីដែលវាធ្វើ</th></tr>
+<tr><td>ឯកសារ MIDI</td><td>អានឯកសារ MIDI ស្តង់ដារ (format 0 និង 1)៖ ណូត tempo និងឈ្មោះ tracks។</td></tr>
+<tr><td>ការកំណត់ផ្លូវ</td><td>track នីមួយៗនៃឯកសារ ត្រូវបានបញ្ជូនទៅម៉ាស៊ីនមួយក្នុងចំណោម 26 ហើយអាចបិទសំឡេង (mute) បាន។ tracks ស្គរ (channel 10) ទៅកាន់ TR-909 ដោយស្វ័យប្រវត្តិ។</td></tr>
+<tr><td>Transport</td><td>Play, pause, stop, ថយក្រោយ ឬទៅមុខ 4 bars និងរបារទីតាំង ព្រមទាំងបង្ហាញ bar · beat និងពេលវេលាដែលបានកន្លងទៅ។ គ្រាប់ចុច៖ <code>Space</code>, <code>Enter</code>, <code>←</code> <code>→</code>។</td></tr>
+<tr><td>Tempo</td><td>ពី 40 ដល់ 220 BPM៖ បទទាំងមូលត្រូវបានធ្វើឱ្យលឿន ឬយឺត ធៀបនឹង tempo ដើមរបស់វា។</td></tr>
+<tr><td>Takes</td><td>ចុច ⏺ លេងលើក្តារចុចរបស់ម៉ាស៊ីនណាមួយ រួចបញ្ឈប់៖ ណូតទាំងនោះក្លាយជា take មួយ ដែលអាចបញ្ចូលវិញជា track ឬទាញយកជាឯកសារ <code>.mid</code>។</td></tr>
+<tr><td>Sequencers ដែលមានស្រាប់</td><td>ប៊ូតុងតែមួយបើក ឬបញ្ឈប់ sequencers លំនាំ (pattern) របស់ TB-303, TR-808 និង TR-909 ព្រមគ្នា ដោយឯករាជ្យពីកម្មវិធីចាក់ MIDI។</td></tr>
+</table></div>
+<p>រ៉ាក់នេះមានពីរកំណែ ដែលមានម៉ាស៊ីនដូចគ្នា។ ពួកវាខុសគ្នាតែមួយចំណុចប៉ុណ្ណោះ៖ ផ្លូវដែលសំឡេងធ្វើដំណើរ។</p>
+<div class="table-wrap"><table>
+<tr><th></th><th>classic/</th><th>mixer/</th></tr>
+<tr><td>អូឌីយ៉ូ</td><td>ម៉ាស៊ីននីមួយៗមាន audio context ផ្ទាល់ខ្លួន ដែលនៅដាច់ដោយឡែកក្នុង <code>iframe</code> របស់វា</td><td>audio context តែមួយ សម្រាប់រ៉ាក់ទាំងមូល</td></tr>
+<tr><td>តុលាយសំឡេង</td><td>—</td><td>fader (0 ដល់ 140 %), pan, mute, solo និងម៉ែត្រកម្រិតសំឡេង សម្រាប់ម៉ាស៊ីននីមួយៗ</td></tr>
+<tr><td>Master bus</td><td>—</td><td>fader និងម៉ែត្រ master</td></tr>
+<tr><td>ការថតសំឡេង</td><td>មិនអាចធ្វើបាន</td><td>ថតអ្វីៗទាំងអស់ដែលឆ្លងកាត់ master bus ហើយទាញយកឯកសារនៅពេលបញ្ឈប់</td></tr>
+<tr><td>Origin ដូចគ្នា</td><td>ណែនាំ (ដើម្បីបើកម៉ាស៊ីនដោយស្វ័យប្រវត្តិ)</td><td>ចាំបាច់ (ដើម្បីចែករំលែកអូឌីយ៉ូ)</td></tr>
+</table></div>
+<p><code>classic</code> សមសម្រាប់លេងម៉ាស៊ីនម្តងមួយៗ៖ ម៉ាស៊ីននីមួយៗនៅដាច់ដោយឡែក ហើយអាចចម្លងទៅកន្លែងផ្សេងបានដូចដើម។ <code>mixer</code> គឺសម្រាប់ឱ្យម៉ាស៊ីនច្រើនបន្លឺសំឡេងជាមួយគ្នា ហើយឯកសារដែលថតបានជា <code>.webm</code> (Opus) នៅលើ Chrome និង Firefox និង <code>.m4a</code> នៅលើ Safari។</p>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>សៀគ្វីចាស់ៗ បង្កើតឡើងវិញដោយកូដ។</h2>
+<div class="grid">
+<div class="card"><h3>ឯកសារមួយ ម៉ាស៊ីនមួយ</h3><p>ម៉ាស៊ីននីមួយៗជាទំព័រពេញលេញ៖ ផ្ទាំងបញ្ជា ម៉ាស៊ីនបង្កើតសំឡេង presets និងក្តារចុច។ វាបើកតែឯងបាន ដំណើរការដោយគ្មាន hub និងអាចចម្លងទៅគេហទំព័រផ្សេង ដោយមិនត្រូវការអ្វីបន្ថែម។</p></div>
+<div class="card"><h3>វិធីពីរយ៉ាងក្នុងការបង្កើតសំឡេង</h3><p>ម៉ាស៊ីនភាគច្រើនជាបណ្តាញនៃ nodes Web Audio — oscillators, filters, amplifiers និង envelopes ដែលសរសេរជា ramps កំណត់ពេលទុកជាមុន។ ARP 2600, GAIA 2, JX-8P និង JP-8000 worklet គណនា sample នីមួយៗដោយខ្លួនឯងនៅក្នុង AudioWorklet ដែលជាការចាំបាច់សម្រាប់ ladder filter ឬ oscillator sync។</p></div>
+<div class="card"><h3>ម៉ាស៊ីនស្គរដែលអាន MIDI</h3><p>TR-808 (16 សំឡេង) និង TR-909 (11 សំឡេង) ត្រូវបានសំយោគទាំងស្រុងដោយកូដ ជាមួយលំនាំ 16 ជំហាន ក្នុង 4 banks និង track សម្រាប់ accent។ តារាងស្គរ General MIDI អនុញ្ញាតឱ្យវាចាក់ tracks ស្គររបស់ឯកសារ <code>.mid</code> ដោយផ្ទាល់។</p></div>
+<div class="card"><h3>តុលាយសំឡេងពិតប្រាកដក្នុង browser</h3><p>នៅក្នុងកំណែ mixer, hub ជាម្ចាស់ audio context តែមួយគត់របស់រ៉ាក់ ហើយខ្ចីវាឱ្យម៉ាស៊ីននីមួយៗ។ ម៉ាស៊ីននៅតែហៅ <code>new AudioContext()</code> ដដែល ប៉ុន្តែសំឡេងរបស់វាឥឡូវទៅដល់ strip ផ្ទាល់ខ្លួន។ mute និង solo គឺជាការបន្ថយ ឬបង្កើនសំឡេងយ៉ាងរលូនក្នុងរយៈពេលខ្លី ដូច្នេះមិនបង្កើតសំឡេង click ទេ។</p></div>
+<div class="card"><h3>ថតអ្វីដែលអ្នកលេង</h3><p>ណូតដែលលេងលើក្តារចុចរបស់ម៉ាស៊ីន ក្លាយជា takes MIDI ដែលអាច export ជា <code>.mid</code> បាន។ កំណែ mixer ថែមទាំងថតសំឡេងពី master bus ទៀតផង រួមទាំង sequencer, sequencers ផ្ទាល់ខ្លួនរបស់ម៉ាស៊ីនស្គរ និងការលេងលើក្តារចុច។</p></div>
+<div class="card"><h3>ផ្ទុកតែពេលត្រូវការ</h3><p>ម៉ាស៊ីនមួយត្រូវបានផ្ទុក តែនៅពេលដែល tab របស់វាត្រូវបានបើក មាន track បញ្ជូនមកវា ឬវាត្រូវបានបើកដំណើរការប៉ុណ្ណោះ។ ការចាក់រង់ចាំរហូតដល់ 3 វិនាទី ឱ្យម៉ាស៊ីនពាក់ព័ន្ធត្រៀមរួចរាល់ ដើម្បីកុំឱ្យបាត់ណូតដំបូងៗ។</p></div>
+</div>
+<p style="margin-top:16px">ដែនកំណត់ ដូចដែលគម្រោងបានកត់ត្រាទុក៖ ណូតចេញពី sequencer តាមល្បឿននៃការធ្វើបច្ចុប្បន្នភាពអេក្រង់ (ប្រហែលរៀងរាល់ 16 ms) ដូច្នេះលំនាំលឿនៗអាចមិនទៀងចង្វាក់ ហើយការចាក់យឺតទៅវិញនៅពេល tab នៅខាងក្រោយ។ បទដែលប្តូរ tempo ត្រូវបានចាក់ក្នុង tempo ថេរតែមួយ។ takes ត្រូវបានរក្សាទុកតែក្នុង memory ហើយបាត់ទៅវិញនៅពេលបិទទំព័រ។ មិនមែនម៉ាស៊ីនទាំងអស់សុទ្ធតែរាយការណ៍អំពីអ្វីដែលលេងលើក្តារចុចផ្ទាល់ខ្លួនរបស់វានោះទេ ដូច្នេះមិនមែនទាំងអស់អាចថតជា takes បានទេ។ ហើយនៅក្នុង mixer ម៉ាស៊ីននីមួយៗមាន strip តែមួយ — parts របស់ M1 ឬសំឡេងនីមួយៗរបស់ម៉ាស៊ីនស្គរ មិនអាចលាយដាច់ដោយឡែកពីគ្នាបានទេ។</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">The rack in pictures.</span><span data-l="fr">Le rack en images.</span><span data-l="km">រ៉ាក់តាមរយៈរូបភាព។</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/js-synth/home-page.jpg" target="_blank"><img src="../assets/screenshots/js-synth/home-page.jpg" alt="The Synth Rack home page, with links to the mixer and classic editions" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth.jpg" target="_blank"><img src="../assets/screenshots/js-synth.jpg" alt="The classic edition: the sequencer hub with the ARP 2600 panel" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/prophet-5.jpg" target="_blank"><img src="../assets/screenshots/js-synth/prophet-5.jpg" alt="The Prophet-5 opened on its own, with its presets and keyboard" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/roland-d50-piano-roll.jpg" target="_blank"><img src="../assets/screenshots/js-synth/roland-d50-piano-roll.jpg" alt="The Roland D-50 and its piano roll" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/tr-808-step-sequencer.jpg" target="_blank"><img src="../assets/screenshots/js-synth/tr-808-step-sequencer.jpg" alt="The TR-808 drum machine and its 16-step pattern" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/tb-303-bass-line.jpg" target="_blank"><img src="../assets/screenshots/js-synth/tb-303-bass-line.jpg" alt="The TB-303 bass line and its 16-step sequencer" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/machines-overview.jpg" target="_blank"><img src="../assets/screenshots/js-synth/machines-overview.jpg" alt="The 26 machines listed on the home page, colour-coded by family" loading="lazy"></a>
+<a href="../assets/screenshots/js-synth/korg-ms20.jpg" target="_blank"><img src="../assets/screenshots/js-synth/korg-ms20.jpg" alt="The Korg MS-20 panel" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>The hub: a hand-written MIDI file reader (formats 0 and 1) and <code>.mid</code> writer, the routing matrix, the transport clock and the takes. In the mixer edition it also owns the rack’s only <code>AudioContext</code>, the strips, the master bus and the recorder.</td></tr>
+<tr><td>Machines</td><td>26 <code>.html</code> files, from a few hundred to 5,000 lines each. Each holds a manifest, its voices and presets, its MIDI handling, a panic, and its interface: SVG knobs, an on-screen keyboard and the computer keyboard.</td></tr>
+<tr><td>Protocol</td><td>The hub talks to each machine, loaded in an <code>iframe</code>, with plain <code>postMessage</code> messages: <code>init</code>, <code>note-on</code>, <code>note-off</code>, <code>all-notes-off</code>, <code>panic</code>… A machine answers <code>ready</code> when its engine runs and <code>midi-out</code> when you play on it. No sound is made before <code>init</code>, in line with the browsers’ autoplay rules.</td></tr>
+<tr><td>Synthesis</td><td>Web Audio nodes for most machines; an <code>AudioWorklet</code> processor, loaded from a <code>Blob</code>, for the ARP 2600, GAIA 2, JX-8P and JP-8000 worklet.</td></tr>
+<tr><td>Mixer bridge</td><td>A few dozen lines in the <code>&lt;head&gt;</code> of each machine: it asks the hub for a strip and replaces <code>window.AudioContext</code> with a <code>Proxy</code> of the hub’s context whose <code>destination</code> is that strip. Outside the hub it does nothing, and the machine makes its own context.</td></tr>
+<tr><td>Docs</td><td>A README and an <code>architecture.md</code> for each edition, in French.</td></tr>
+</table></div>
+<p>To run it locally, serve the folder over HTTP (the iframes do not work from <code>file://</code>):</p>
+<pre class="term"><span class="p">$ </span>python3 -m http.server 8080
+<span class="c"># http://localhost:8080/classic/  or  http://localhost:8080/mixer/</span></pre>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>Le hub : un lecteur de fichiers MIDI (formats 0 et 1) et un writer <code>.mid</code> écrits à la main, la matrice de routage, l’horloge du transport et les prises. Dans l’édition mixer, il possède aussi l’unique <code>AudioContext</code> du rack, les tranches, le bus maître et l’enregistreur.</td></tr>
+<tr><td>Machines</td><td>26 fichiers <code>.html</code>, de quelques centaines à 5 000 lignes chacun. Chacun contient un manifeste, ses voix et ses presets, sa gestion du MIDI, un panic, et son interface : potentiomètres SVG, clavier à l’écran et clavier de l’ordinateur.</td></tr>
+<tr><td>Protocole</td><td>Le hub parle à chaque machine, chargée dans une <code>iframe</code>, par de simples messages <code>postMessage</code> : <code>init</code>, <code>note-on</code>, <code>note-off</code>, <code>all-notes-off</code>, <code>panic</code>… La machine répond <code>ready</code> quand son moteur tourne et <code>midi-out</code> quand on joue dessus. Aucun son avant <code>init</code>, conformément aux règles d’autoplay des navigateurs.</td></tr>
+<tr><td>Synthèse</td><td>Des nœuds Web Audio pour la plupart des machines ; un processeur <code>AudioWorklet</code>, chargé depuis un <code>Blob</code>, pour l’ARP 2600, la GAIA 2, la JX-8P et le JP-8000 « worklet ».</td></tr>
+<tr><td>Pont mixer</td><td>Quelques dizaines de lignes dans le <code>&lt;head&gt;</code> de chaque machine : il réclame une tranche au hub et remplace <code>window.AudioContext</code> par un <code>Proxy</code> du contexte du hub dont la <code>destination</code> est cette tranche. Hors du hub, il ne fait rien et la machine crée son propre contexte.</td></tr>
+<tr><td>Docs</td><td>Un README et un <code>architecture.md</code> par édition, en français.</td></tr>
+</table></div>
+<p>Pour le lancer en local, servez le dossier en HTTP (les iframes ne fonctionnent pas en <code>file://</code>) :</p>
+<pre class="term"><span class="p">$ </span>python3 -m http.server 8080
+<span class="c"># http://localhost:8080/classic/  ou  http://localhost:8080/mixer/</span></pre>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>hub៖ កម្មវិធីអានឯកសារ MIDI (format 0 និង 1) និងកម្មវិធីសរសេរ <code>.mid</code> ដែលសរសេរដោយដៃ matrix កំណត់ផ្លូវ នាឡិកា transport និង takes។ នៅក្នុងកំណែ mixer វាក៏ជាម្ចាស់ <code>AudioContext</code> តែមួយគត់របស់រ៉ាក់ strips, master bus និងឧបករណ៍ថតសំឡេងផងដែរ។</td></tr>
+<tr><td>ម៉ាស៊ីន</td><td>ឯកសារ <code>.html</code> ចំនួន 26 ដែលនីមួយៗមានពីរាប់រយ ដល់ 5,000 បន្ទាត់។ ឯកសារនីមួយៗមាន manifest, voices, presets, ការគ្រប់គ្រង MIDI, panic និងផ្ទាំងប្រើប្រាស់៖ knobs SVG ក្តារចុចនៅលើអេក្រង់ និងក្តារចុចកុំព្យូទ័រ។</td></tr>
+<tr><td>Protocol</td><td>hub ទាក់ទងជាមួយម៉ាស៊ីននីមួយៗ ដែលផ្ទុកក្នុង <code>iframe</code> តាមរយៈសារ <code>postMessage</code> សាមញ្ញ៖ <code>init</code>, <code>note-on</code>, <code>note-off</code>, <code>all-notes-off</code>, <code>panic</code>… ម៉ាស៊ីនឆ្លើយតបវិញដោយ <code>ready</code> នៅពេលម៉ាស៊ីនសំឡេងរបស់វាដំណើរការ និង <code>midi-out</code> នៅពេលអ្នកលេងលើវា។ គ្មានសំឡេងណាមួយចេញមុន <code>init</code> ទេ ស្របតាមច្បាប់ autoplay របស់ browsers។</td></tr>
+<tr><td>ការសំយោគ</td><td>nodes Web Audio សម្រាប់ម៉ាស៊ីនភាគច្រើន និង processor <code>AudioWorklet</code> ដែលផ្ទុកពី <code>Blob</code> សម្រាប់ ARP 2600, GAIA 2, JX-8P និង JP-8000 worklet។</td></tr>
+<tr><td>ស្ពាន mixer</td><td>កូដប៉ុន្មានដប់បន្ទាត់នៅក្នុង <code>&lt;head&gt;</code> របស់ម៉ាស៊ីននីមួយៗ៖ វាស្នើសុំ strip មួយពី hub ហើយជំនួស <code>window.AudioContext</code> ដោយ <code>Proxy</code> នៃ context របស់ hub ដែល <code>destination</code> របស់វាគឺ strip នោះ។ នៅក្រៅ hub វាមិនធ្វើអ្វីទេ ហើយម៉ាស៊ីនបង្កើត context ផ្ទាល់ខ្លួន។</td></tr>
+<tr><td>ឯកសារ</td><td>README និង <code>architecture.md</code> សម្រាប់កំណែនីមួយៗ ជាភាសាបារាំង។</td></tr>
+</table></div>
+<p>ដើម្បីដំណើរការនៅលើកុំព្យូទ័ររបស់អ្នក ត្រូវបម្រើថតឯកសារតាម HTTP (iframes មិនដំណើរការតាម <code>file://</code> ទេ)៖</p>
+<pre class="term"><span class="p">$ </span>python3 -m http.server 8080
+<span class="c"># http://localhost:8080/classic/  ឬ  http://localhost:8080/mixer/</span></pre>
+</section>
+
+<nav class="pager">
+<a href="portfolio.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b><span data-l="en">This website</span><span data-l="fr">Ce site</span><span data-l="km">គេហទំព័រនេះ</span></b></a>
+<a href="vsm-studio.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>VSM Studio</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#sound">← <span data-l="en">Back to the Sound lab</span><span data-l="fr">Retour au Sound lab</span><span data-l="km">ត្រឡប់ទៅមន្ទីរពិសោធន៍សំឡេង</span></a></div></footer>
+</body></html>

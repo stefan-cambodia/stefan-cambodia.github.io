@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="This website: a single-file portfolio in plain HTML, CSS and JavaScript, with no framework or build step, live data from GitHub and three languages (English, French, Khmer).">
+<title data-en="This website — Stefan" data-fr="Ce site — Stefan" data-km="គេហទំព័រនេះ — Stefan">This website — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#projects">← <span data-l="en">All projects</span><span data-l="fr">Tous les projets</span><span data-l="km">គម្រោងទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Projects</span><span data-l="fr">Projets</span><span data-l="km">គម្រោង</span> / 07</div>
+<h1><span data-l="en">This website</span><span data-l="fr">Ce site</span><span data-l="km">គេហទំព័រនេះ</span></h1>
+<div class="alias">stefan-cambodia.github.io</div>
+<p class="lead" data-l="en">The site you are reading. A portfolio in plain HTML, CSS and JavaScript, with no framework and no build step, hosted on GitHub Pages. The projects, their stars and the latest commits come live from GitHub, and every word switches between English, French and Khmer.</p>
+<p class="lead" data-l="fr">Le site que vous lisez. Un portfolio en HTML, CSS et JavaScript natifs, sans framework ni compilation, hébergé sur GitHub Pages. Les projets, leurs étoiles et les derniers commits arrivent en direct de GitHub, et chaque mot bascule entre anglais, français et khmer.</p>
+<p class="lead" data-l="km">គេហទំព័រដែលអ្នកកំពុងអាន។ portfolio ដែលសរសេរដោយ HTML, CSS និង JavaScript ដើម គ្មាន framework និងគ្មានដំណាក់កាល build ហើយដាក់នៅលើ GitHub Pages។ គម្រោង ចំនួន stars និង commits ចុងក្រោយ ត្រូវបានទាញយកផ្ទាល់ពី GitHub ហើយរាល់ពាក្យទាំងអស់អាចប្តូររវាងភាសាអង់គ្លេស បារាំង និងខ្មែរ។</p>
+<div class="tags"><span class="tag p">Web</span><span class="tag t" data-l="en">Tools</span><span class="tag t" data-l="fr">Outils</span><span class="tag t" data-l="km">ឧបករណ៍</span><span class="tag">HTML · CSS · JavaScript</span><span class="tag">GitHub API</span><span class="tag">GitHub Pages</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/stefan-cambodia.github.io" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/portfolio/home.jpg" alt="The top of the home page"></div>
+
+<div class="stats">
+<div class="stat"><strong>3</strong><span data-l="en">Languages</span><span data-l="fr">Langues</span><span data-l="km">ភាសា</span></div>
+<div class="stat"><strong>17</strong><span data-l="en">Presentation pages</span><span data-l="fr">Pages de présentation</span><span data-l="km">ទំព័របង្ហាញ</span></div>
+<div class="stat"><strong>0</strong><span data-l="en">Build steps</span><span data-l="fr">Étape de compilation</span><span data-l="km">ដំណាក់កាល build</span></div>
+<div class="stat"><strong>20</strong><span data-l="en">Latest commits shown</span><span data-l="fr">Derniers commits affichés</span><span data-l="km">commits ចុងក្រោយដែលបង្ហាញ</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>One file. Nothing to build.</h2>
+<p>The home page is a single file, <code>index.html</code>, with its markup, styles and script inside. There is no framework, no package to install and nothing to compile: the file your browser downloads is the file in the repository. Publishing is a push to the <code>main</code> branch, and GitHub Pages does the rest.</p>
+<p>What can change on its own is read from GitHub when the page opens: the list of projects with their stars and forks, the number of public repositories and followers, and the latest commits. A new repository shows up in Projects without anyone touching the site.</p>
+</section>
+
+<section>
+<div class="kicker">The sections</div>
+<h2>What is on the page.</h2>
+<div class="table-wrap"><table>
+<tr><th>Section</th><th>What it shows</th></tr>
+<tr><td>About</td><td>A short introduction, with the number of public repositories and followers read from GitHub.</td></tr>
+<tr><td>Games</td><td>Eight games, each with its own presentation page.</td></tr>
+<tr><td>Sound Lab</td><td>Synth Rack, playable right in the page, and VSM Studio.</td></tr>
+<tr><td>Projects</td><td>The other repositories, live from GitHub, with a search box and filters by platform, theme and language.</td></tr>
+<tr><td>Pictures</td><td>Photo albums on Google Photos.</td></tr>
+<tr><td>Last changes</td><td>The 20 latest commits across all the public repositories, grouped by day.</td></tr>
+<tr><td>Contact</td><td>A link to GitHub.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Small, but alive.</h2>
+<div class="grid">
+<div class="card"><h3>Live from GitHub</h3><p>Projects, stars, forks and commits are read from the GitHub API in the visitor’s browser. Forks are left out, and a repository already shown in Games or the Sound Lab is not repeated in Projects.</p></div>
+<div class="card"><h3>Sorted by platform and theme</h3><p>Each project carries a platform and a theme, set by hand in a small table. A repository that is not in it yet is classified from its name, description and topics.</p></div>
+<div class="card"><h3>Three languages</h3><p>English, French and Khmer, for the interface and for the description of every game and project. The choice is remembered and carried over to the presentation pages.</p></div>
+<div class="card"><h3>Khmer set properly</h3><p>Manrope and DM Mono have no Khmer glyphs, so Noto Sans Khmer takes over for Khmer text. On the presentation pages, letter-spacing is reset and the smallest labels are enlarged, so stacked vowels and subscript consonants stay readable.</p></div>
+<div class="card"><h3>The latest commits</h3><p>The 20 most recent commits, grouped by day, with “today” and “yesterday” in the visitor’s language. Repositories are walked from the most recently pushed, and the walk stops once an older one cannot hold a newer commit. The result is kept for ten minutes.</p></div>
+<div class="card"><h3>A page per game and project</h3><p>Seventeen presentation pages share one small stylesheet and one script, and follow the same plan: the idea, highlights, screenshots and how it is built, with links to the previous and next page.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Un seul fichier. Rien à compiler.</h2>
+<p>La page d’accueil tient dans un seul fichier, <code>index.html</code>, qui contient son balisage, ses styles et son script. Pas de framework, aucun paquet à installer, rien à compiler : le fichier que télécharge votre navigateur est celui du dépôt. Publier, c’est pousser sur la branche <code>main</code> ; GitHub Pages fait le reste.</p>
+<p>Ce qui peut changer tout seul est lu sur GitHub à l’ouverture de la page : la liste des projets avec leurs étoiles et leurs forks, le nombre de dépôts publics et d’abonnés, et les derniers commits. Un nouveau dépôt apparaît dans Projets sans que personne ne touche au site.</p>
+</section>
+
+<section>
+<div class="kicker">Les sections</div>
+<h2>Ce que contient la page.</h2>
+<div class="table-wrap"><table>
+<tr><th>Section</th><th>Ce qu’elle montre</th></tr>
+<tr><td>À propos</td><td>Une courte présentation, avec le nombre de dépôts publics et d’abonnés lu sur GitHub.</td></tr>
+<tr><td>Jeux</td><td>Huit jeux, chacun avec sa page de présentation.</td></tr>
+<tr><td>Sound Lab</td><td>Synth Rack, jouable directement dans la page, et VSM Studio.</td></tr>
+<tr><td>Projets</td><td>Les autres dépôts, en direct de GitHub, avec une recherche et des filtres par plateforme, thème et langage.</td></tr>
+<tr><td>Photos</td><td>Des albums sur Google Photos.</td></tr>
+<tr><td>Derniers changements</td><td>Les 20 derniers commits de tous les dépôts publics, regroupés par jour.</td></tr>
+<tr><td>Contact</td><td>Un lien vers GitHub.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Petit, mais vivant.</h2>
+<div class="grid">
+<div class="card"><h3>En direct de GitHub</h3><p>Projets, étoiles, forks et commits sont lus dans l’API GitHub, depuis le navigateur du visiteur. Les forks sont écartés, et un dépôt déjà présenté dans Jeux ou le Sound Lab n’est pas répété dans Projets.</p></div>
+<div class="card"><h3>Classés par plateforme et par thème</h3><p>Chaque projet porte une plateforme et un thème, fixés à la main dans une petite table. Un dépôt qui n’y figure pas encore est classé d’après son nom, sa description et ses sujets.</p></div>
+<div class="card"><h3>Trois langues</h3><p>Anglais, français et khmer, pour l’interface comme pour la description de chaque jeu et de chaque projet. Le choix est mémorisé et suit le visiteur sur les pages de présentation.</p></div>
+<div class="card"><h3>Le khmer bien composé</h3><p>Manrope et DM Mono n’ont pas de glyphes khmers : Noto Sans Khmer prend le relais pour le texte khmer. Sur les pages de présentation, l’espacement des lettres est remis à zéro et les plus petites étiquettes sont agrandies, pour que voyelles et consonnes souscrites restent lisibles.</p></div>
+<div class="card"><h3>Les derniers commits</h3><p>Les 20 commits les plus récents, regroupés par jour, avec « aujourd’hui » et « hier » dans la langue du visiteur. Les dépôts sont parcourus du plus récemment modifié au plus ancien, et le parcours s’arrête dès qu’un dépôt plus ancien ne peut plus contenir de commit plus récent. Le résultat est gardé dix minutes.</p></div>
+<div class="card"><h3>Une page par jeu et par projet</h3><p>Dix-sept pages de présentation partagent une petite feuille de style et un script, et suivent le même plan : l’idée, les points forts, des captures et la construction, avec des liens vers la page précédente et la suivante.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>ឯកសារតែមួយ។ គ្មានអ្វីត្រូវ build ទេ។</h2>
+<p>ទំព័រដើមស្ថិតនៅក្នុងឯកសារតែមួយគត់ គឺ <code>index.html</code> ដែលមានទាំង markup, styles និង script នៅខាងក្នុង។ គ្មាន framework គ្មាន package ត្រូវដំឡើង ហើយគ្មានអ្វីត្រូវ compile ទេ៖ ឯកសារដែល browser របស់អ្នកទាញយក គឺជាឯកសារដដែលនៅក្នុងឃ្លាំងកូដ។ ការបោះផ្សាយគ្រាន់តែជាការ push ទៅ branch <code>main</code> ហើយ GitHub Pages ធ្វើការងារដែលនៅសល់។</p>
+<p>អ្វីដែលអាចផ្លាស់ប្តូរដោយខ្លួនឯង ត្រូវបានអានពី GitHub នៅពេលបើកទំព័រ៖ បញ្ជីគម្រោងជាមួយចំនួន stars និង forks ចំនួនឃ្លាំងកូដសាធារណៈ និងអ្នកតាមដាន ព្រមទាំង commits ចុងក្រោយបំផុត។ ឃ្លាំងកូដថ្មីនឹងបង្ហាញនៅក្នុងផ្នែកគម្រោងដោយខ្លួនឯង ដោយមិនចាំបាច់កែប្រែគេហទំព័រទេ។</p>
+</section>
+
+<section>
+<div class="kicker">ផ្នែកនានា</div>
+<h2>អ្វីដែលមាននៅលើទំព័រ។</h2>
+<div class="table-wrap"><table>
+<tr><th>ផ្នែក</th><th>អ្វីដែលវាបង្ហាញ</th></tr>
+<tr><td>អំពីខ្ញុំ</td><td>ការណែនាំខ្លីមួយ ជាមួយចំនួនឃ្លាំងកូដសាធារណៈ និងអ្នកតាមដាន ដែលអានពី GitHub។</td></tr>
+<tr><td>ហ្គេម</td><td>ហ្គេមចំនួន 8 ដែលនីមួយៗមានទំព័របង្ហាញផ្ទាល់ខ្លួន។</td></tr>
+<tr><td>មន្ទីរពិសោធន៍សំឡេង</td><td>Synth Rack ដែលអាចលេងបានដោយផ្ទាល់នៅក្នុងទំព័រ និង VSM Studio។</td></tr>
+<tr><td>គម្រោង</td><td>ឃ្លាំងកូដផ្សេងទៀត ទាញយកផ្ទាល់ពី GitHub ជាមួយប្រអប់ស្វែងរក និងតម្រងតាមវេទិកា ប្រធានបទ និងភាសាសរសេរកូដ។</td></tr>
+<tr><td>រូបថត</td><td>អាល់ប៊ុមរូបថតនៅលើ Google Photos។</td></tr>
+<tr><td>ការផ្លាស់ប្ដូរចុងក្រោយ</td><td>commits ចុងក្រោយបំផុតចំនួន 20 ពីឃ្លាំងកូដសាធារណៈទាំងអស់ ដាក់ជាក្រុមតាមថ្ងៃ។</td></tr>
+<tr><td>ទំនាក់ទំនង</td><td>តំណទៅកាន់ GitHub។</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>តូច ប៉ុន្តែមានជីវិត។</h2>
+<div class="grid">
+<div class="card"><h3>ផ្ទាល់ពី GitHub</h3><p>គម្រោង stars, forks និង commits ត្រូវបានអានពី GitHub API នៅក្នុង browser របស់អ្នកទស្សនា។ forks មិនត្រូវបានបង្ហាញទេ ហើយឃ្លាំងកូដដែលបានបង្ហាញរួចហើយនៅក្នុងផ្នែកហ្គេម ឬមន្ទីរពិសោធន៍សំឡេង មិនត្រូវបានបង្ហាញម្តងទៀតនៅក្នុងផ្នែកគម្រោងទេ។</p></div>
+<div class="card"><h3>តម្រៀបតាមវេទិកា និងប្រធានបទ</h3><p>គម្រោងនីមួយៗមានវេទិកា (platform) និងប្រធានបទ ដែលកំណត់ដោយដៃនៅក្នុងតារាងតូចមួយ។ ឃ្លាំងកូដដែលមិនទាន់មាននៅក្នុងតារាងនោះ ត្រូវបានចាត់ថ្នាក់តាមឈ្មោះ ការពិពណ៌នា និង topics របស់វា។</p></div>
+<div class="card"><h3>បីភាសា</h3><p>អង់គ្លេស បារាំង និងខ្មែរ សម្រាប់ផ្ទាំងប្រើប្រាស់ និងសម្រាប់ការពិពណ៌នាហ្គេម និងគម្រោងនីមួយៗ។ ភាសាដែលបានជ្រើសរើសត្រូវបានចងចាំ ហើយប្រើបន្តនៅលើទំព័របង្ហាញទាំងអស់។</p></div>
+<div class="card"><h3>អក្សរខ្មែរបង្ហាញបានត្រឹមត្រូវ</h3><p>ពុម្ពអក្សរ Manrope និង DM Mono គ្មានតួអក្សរខ្មែរទេ ដូច្នេះ Noto Sans Khmer ត្រូវបានប្រើជំនួសសម្រាប់អត្ថបទខ្មែរ។ នៅលើទំព័របង្ហាញ គម្លាតរវាងតួអក្សរត្រូវបានដកចេញ ហើយស្លាកតូចៗបំផុតត្រូវបានពង្រីក ដើម្បីឱ្យស្រៈ និងជើងអក្សរដែលនៅជាន់គ្នា នៅតែអានបានច្បាស់។</p></div>
+<div class="card"><h3>commits ចុងក្រោយបំផុត</h3><p>commits ថ្មីបំផុតចំនួន 20 ដាក់ជាក្រុមតាមថ្ងៃ ជាមួយពាក្យ «ថ្ងៃនេះ» និង «ម្សិលមិញ» ជាភាសារបស់អ្នកទស្សនា។ ឃ្លាំងកូដត្រូវបានពិនិត្យចាប់ពីឃ្លាំងដែលទើបតែ push ថ្មីបំផុត ហើយការពិនិត្យឈប់ភ្លាម នៅពេលឃ្លាំងចាស់ជាងនេះមិនអាចមាន commit ថ្មីជាងបានទៀត។ លទ្ធផលត្រូវបានរក្សាទុករយៈពេល 10 នាទី។</p></div>
+<div class="card"><h3>ទំព័រមួយសម្រាប់ហ្គេម និងគម្រោងនីមួយៗ</h3><p>ទំព័របង្ហាញចំនួន 17 ប្រើ stylesheet តូចមួយ និង script មួយរួមគ្នា ហើយមានរចនាសម្ព័ន្ធដូចគ្នា៖ គំនិតដើម ចំណុចពិសេស រូបថតអេក្រង់ និងរបៀបដែលវាត្រូវបានបង្កើត ព្រមទាំងតំណទៅទំព័រមុន និងទំព័របន្ទាប់។</p></div>
+</div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">A look around.</span><span data-l="fr">Le site en images.</span><span data-l="km">គេហទំព័រតាមរយៈរូបភាព។</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/portfolio/games.jpg" target="_blank"><img src="../assets/screenshots/portfolio/games.jpg" alt="The Games section" loading="lazy"></a>
+<a href="../assets/screenshots/portfolio/projects-fr.jpg" target="_blank"><img src="../assets/screenshots/portfolio/projects-fr.jpg" alt="The Projects section in French, with its filters" loading="lazy"></a>
+<a href="../assets/screenshots/portfolio/changes.jpg" target="_blank"><img src="../assets/screenshots/portfolio/changes.jpg" alt="The latest commits, grouped by day" loading="lazy"></a>
+<a href="../assets/screenshots/portfolio/game-page-km.jpg" target="_blank"><img src="../assets/screenshots/portfolio/game-page-km.jpg" alt="A game presentation page in Khmer" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>The whole home page in one file of about 95 KB: markup, styles, the texts in three languages and the script.</td></tr>
+<tr><td>game.css · game.js</td><td>Shared by the seventeen presentation pages under <code>games/</code> and <code>projects/</code>: about ninety lines of CSS and twenty of JavaScript, for the layout and the language switch.</td></tr>
+<tr><td>Data</td><td>The GitHub REST API, called without a key from the visitor’s browser: the profile, the repositories and their commits.</td></tr>
+<tr><td>Fonts</td><td>Manrope, DM Mono and Noto Sans Khmer, from Google Fonts.</td></tr>
+<tr><td>Hosting</td><td>GitHub Pages, published from the <code>main</code> branch on every push.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>Toute la page d’accueil en un fichier d’environ 95 Ko : balisage, styles, textes en trois langues et script.</td></tr>
+<tr><td>game.css · game.js</td><td>Partagés par les dix-sept pages de présentation de <code>games/</code> et <code>projects/</code> : environ quatre-vingt-dix lignes de CSS et vingt de JavaScript, pour la mise en page et le choix de la langue.</td></tr>
+<tr><td>Données</td><td>L’API REST de GitHub, appelée sans clé depuis le navigateur du visiteur : le profil, les dépôts et leurs commits.</td></tr>
+<tr><td>Polices</td><td>Manrope, DM Mono et Noto Sans Khmer, depuis Google Fonts.</td></tr>
+<tr><td>Hébergement</td><td>GitHub Pages, publié depuis la branche <code>main</code> à chaque push.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>index.html</td><td>ទំព័រដើមទាំងមូលនៅក្នុងឯកសារតែមួយ ទំហំប្រហែល 95 KB៖ markup, styles អត្ថបទជាបីភាសា និង script។</td></tr>
+<tr><td>game.css · game.js</td><td>ប្រើរួមគ្នាដោយទំព័របង្ហាញទាំង 17 នៅក្នុង <code>games/</code> និង <code>projects/</code>៖ CSS ប្រហែល 90 បន្ទាត់ និង JavaScript ប្រហែល 20 បន្ទាត់ សម្រាប់ប្លង់ទំព័រ និងការប្តូរភាសា។</td></tr>
+<tr><td>ទិន្នន័យ</td><td>GitHub REST API ដែលហៅដោយគ្មាន key ពី browser របស់អ្នកទស្សនា៖ ប្រវត្តិរូប ឃ្លាំងកូដ និង commits របស់វា។</td></tr>
+<tr><td>ពុម្ពអក្សរ</td><td>Manrope, DM Mono និង Noto Sans Khmer ពី Google Fonts។</td></tr>
+<tr><td>ការដាក់ឱ្យដំណើរការ</td><td>GitHub Pages បោះផ្សាយពី branch <code>main</code> រាល់ពេល push។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="xvideo.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>xvideo</b></a>
+<a href="js-synth.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>Synth Rack</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#projects">← <span data-l="en">Back to all projects</span><span data-l="fr">Retour aux projets</span><span data-l="km">ត្រឡប់ទៅគម្រោងទាំងអស់</span></a></div></footer>
+</body></html>

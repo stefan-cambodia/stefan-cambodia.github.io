@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="rscap: a real-time screen and system-sound recorder for Linux, written in Rust. Wayland and X11 through the desktop portal, hardware H.264, HEVC or AV1 encoding with a software fallback, and an optional GTK 4 window.">
+<title data-en="rscap, Linux screen recorder — Stefan" data-fr="rscap, enregistreur d’écran pour Linux — Stefan" data-km="rscap, កម្មវិធីថតអេក្រង់សម្រាប់ Linux — Stefan">rscap, Linux screen recorder — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#projects">← <span data-l="en">All projects</span><span data-l="fr">Tous les projets</span><span data-l="km">គម្រោងទាំងអស់</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Projects</span><span data-l="fr">Projets</span><span data-l="km">គម្រោង</span> / 05</div>
+<h1>rscap</h1>
+<div class="alias">capture</div>
+<p class="lead" data-l="en">A screen recorder for Linux, written in Rust. It records a whole screen together with the sound the computer is playing, encodes the video on the graphics processor when it can, and aims for 60 frames per second — 30 at the least. When the machine cannot keep up, it says so.</p>
+<p class="lead" data-l="fr">Un enregistreur d’écran pour Linux, écrit en Rust. Il enregistre un écran entier avec le son que joue l’ordinateur, encode la vidéo sur le processeur graphique quand il le peut, et vise 60 images par seconde — 30 au minimum. Quand la machine ne suit pas, il le dit.</p>
+<p class="lead" data-l="km">កម្មវិធីថតអេក្រង់សម្រាប់ Linux សរសេរដោយ Rust។ វាថតអេក្រង់ទាំងមូល រួមជាមួយសំឡេងដែលកុំព្យូទ័រកំពុងចាក់ encode វីដេអូនៅលើ GPU នៅពេលដែលអាចធ្វើបាន ហើយមានគោលដៅ 60 រូបភាពក្នុងមួយវិនាទី — យ៉ាងហោចណាស់ 30។ នៅពេលដែលម៉ាស៊ីនមិនអាចតាមទាន់ វាប្រាប់អ្នកដោយត្រង់ៗ។</p>
+<div class="tags"><span class="tag p">Linux</span><span class="tag t" data-l="en">Tools</span><span class="tag t" data-l="fr">Outils</span><span class="tag t" data-l="km">ឧបករណ៍</span><span class="tag">Rust</span><span class="tag">FFmpeg</span><span class="tag">PipeWire</span><span class="tag">GTK 4</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/capture" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="stats">
+<div class="stat"><strong>59.96</strong><span data-l="en">FPS of 60, at 1440p</span><span data-l="fr">Images/s sur 60, en 1440p</span><span data-l="km">FPS ក្នុងចំណោម 60 នៅ 1440p</span></div>
+<div class="stat"><strong>3.8%</strong><span data-l="en">Of the CPU, recording 1440p60</span><span data-l="fr">Du processeur, en 1440p60</span><span data-l="km">នៃ CPU ពេលថត 1440p60</span></div>
+<div class="stat"><strong>−0.24 ms</strong><span data-l="en">A/V drift over 20 s</span><span data-l="fr">Dérive son/image sur 20 s</span><span data-l="km">គម្លាតសំឡេង/រូបភាពក្នុង 20 s</span></div>
+<div class="stat"><strong>133</strong><span data-l="en">Tests (136 with the GUI)</span><span data-l="fr">Tests (136 avec l’interface)</span><span data-l="km">ការធ្វើតេស្ត (136 រួមទាំង GUI)</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>The capture never waits.</h2>
+<p>At 60 frames per second, a recorder has 16.7 ms per frame to copy the image, convert it, encode it and write it to disk. At 2560×1440 a raw frame weighs 14.7 MiB. If one slow step holds up the next, a single late frame makes the following one late too, and the recording falls apart.</p>
+<p>rscap gives each step its own thread and links them with bounded queues. The thread that takes frames from the screen never waits — not for the encoder, the sound, the muxer or the disk. When a queue is full, a frame is dropped and counted, and the desktop of the person recording never stutters.</p>
+<p>On Wayland, no program may read the screen by itself: the desktop portal asks which screen to share, then the compositor sends the frames through PipeWire. The choice is remembered, so later runs start without the question. X11 sessions go through the same portal.</p>
+</section>
+
+<section>
+<div class="kicker">The pipeline</div>
+<h2>From the screen to a file.</h2>
+<div class="table-wrap"><table>
+<tr><th>Stage</th><th>What it does</th><th>Then</th></tr>
+<tr><td>Screen capture</td><td>The portal and PipeWire deliver each frame from the compositor, with the time it was drawn. One copy into a buffer prepared in advance: no memory allocation, no lock.</td><td>A queue of 8 frames (133 ms at 60 FPS)</td></tr>
+<tr><td>Sound capture</td><td>Reads the monitor of the audio output — what goes to the speakers, not the microphone — in 10 ms blocks.</td><td>A queue of 64 blocks (640 ms)</td></tr>
+<tr><td>Video encoding</td><td>Places each frame on a fixed grid of time slots, converts it to NV12 and encodes it on the GPU (VAAPI, QSV, NVENC, AMF) or with <code>libx264</code>.</td><td>The packet queue (256)</td></tr>
+<tr><td>Sound encoding</td><td>Resamples the sound, encodes it to AAC, and keeps the sound card’s clock locked to the system clock.</td><td>The packet queue (256)</td></tr>
+<tr><td>Muxer and disk</td><td>Interleaves both tracks into MP4 or MKV through a 4 MiB write buffer, writes the index, then syncs the file to disk.</td><td>The finished file</td></tr>
+</table></div>
+<p>Five threads, one per row. The two captures can never block; the encoders may wait for the muxer, and the muxer for the disk. A slow disk fills the packet queue, then the frame queue, then frames are dropped and counted — but the pressure never reaches the screen.</p>
+<p>Measured on an Intel Core Ultra 7 155H with its integrated Arc GPU, at 2560×1440 and 60 FPS with VAAPI H.264: 59.96 frames per second out of 60, no frame lost, 0.84 of one CPU core (3.8% of the machine), 4.3 ms to encode a frame (5.5 ms at the 99th percentile) against a budget of 16.7 ms, and −0.24 ms of audio/video drift over 20 seconds.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Built to keep time.</h2>
+<div class="grid">
+<div class="card"><h3>Sound in step with the picture</h3><p>Video and sound never start at the same instant, so rscap starts both tracks at the first moment when both have data. Then it keeps correcting: a sound card’s clock drifts by 10 to 100 ppm — 180 ms an hour at 50 ppm — and rscap stretches or squeezes the sound by an inaudible amount, so the drift cannot build up.</p></div>
+<div class="card"><h3>Encoders tried, not assumed</h3><p>A name in FFmpeg’s list proves nothing: on the development machine it lists <code>h264_nvenc</code> with no NVIDIA card. rscap orders the candidates by GPU maker, really opens each one at the real resolution and bit rate, and falls back to <code>libx264</code>. <code>rscap --probe</code> shows what works.</p></div>
+<div class="card"><h3>No fake 60 FPS</h3><p>Every anomaly has a counter — frames lost, duplicated, merged or late — shown live and in the final summary. When the machine falls more than a second behind, rscap skips the late slots instead of padding the file: the video shows a jerk where it happened, and the sound stays in sync.</p></div>
+<div class="card"><h3>A benchmark with a verdict</h3><p><code>rscap --benchmark</code> times every stage (mean and 99th percentile), with CPU, GPU, memory, disk and drift, then gives a verdict and the likely bottleneck. The target counts as held only at 99% of the frame rate with no frame lost; otherwise the exit code is 2, for scripts.</p></div>
+<div class="card"><h3>A file that survives the stop</h3><p><code>Ctrl+C</code>, the end of <code>--duration</code> or an error: the queues are drained, the encoders flushed, the file finalised and synced to disk. A full disk is reported as a full disk, not as a vague input/output error.</p></div>
+<div class="card"><h3>An optional window</h3><p><code>rscap-gui</code>, a GTK 4 / libadwaita window built with <code>--features gui</code>, drives the same library: six pages with the same settings as <code>rscap.toml</code> and the same counters. It never freezes, greys out the settings while recording, and closing it mid-recording waits until the file is safely written.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>La capture n’attend jamais.</h2>
+<p>À 60 images par seconde, un enregistreur dispose de 16,7 ms par image pour la copier, la convertir, l’encoder et l’écrire sur le disque. En 2560×1440, une image brute pèse 14,7 Mio. Si une étape lente retient la suivante, une seule image en retard met aussi la suivante en retard, et l’enregistrement s’effondre.</p>
+<p>rscap donne à chaque étape son propre thread et les relie par des files bornées. Le thread qui prend les images à l’écran n’attend jamais — ni l’encodeur, ni le son, ni le muxer, ni le disque. Quand une file est pleine, une image est jetée et comptée, et le bureau de la personne qui enregistre ne saccade jamais.</p>
+<p>Sous Wayland, aucun programme ne peut lire l’écran de lui-même : le portail de bureau demande quel écran partager, puis le compositeur envoie les images par PipeWire. Le choix est mémorisé, et les lancements suivants démarrent sans la question. Les sessions X11 passent par le même portail.</p>
+</section>
+
+<section>
+<div class="kicker">Le pipeline</div>
+<h2>De l’écran au fichier.</h2>
+<div class="table-wrap"><table>
+<tr><th>Étage</th><th>Ce qu’il fait</th><th>Ensuite</th></tr>
+<tr><td>Capture de l’écran</td><td>Le portail et PipeWire livrent chaque image du compositeur, avec l’instant où elle a été composée. Une seule copie, dans un tampon préparé d’avance : ni allocation de mémoire, ni verrou.</td><td>Une file de 8 images (133 ms à 60 FPS)</td></tr>
+<tr><td>Capture du son</td><td>Lit le moniteur de la sortie audio — ce qui part vers les haut-parleurs, pas le micro — par blocs de 10 ms.</td><td>Une file de 64 blocs (640 ms)</td></tr>
+<tr><td>Encodage vidéo</td><td>Place chaque image sur une grille fixe d’intervalles de temps, la convertit en NV12 et l’encode sur le GPU (VAAPI, QSV, NVENC, AMF) ou avec <code>libx264</code>.</td><td>La file de paquets (256)</td></tr>
+<tr><td>Encodage audio</td><td>Rééchantillonne le son, l’encode en AAC, et asservit l’horloge de la carte son à celle du système.</td><td>La file de paquets (256)</td></tr>
+<tr><td>Muxer et disque</td><td>Entrelace les deux pistes en MP4 ou MKV via un tampon d’écriture de 4 Mio, écrit l’index, puis synchronise le fichier sur le disque.</td><td>Le fichier terminé</td></tr>
+</table></div>
+<p>Cinq threads, un par ligne. Les deux captures ne bloquent jamais ; les encodeurs peuvent attendre le muxer, et le muxer le disque. Un disque lent remplit la file de paquets, puis celle des images, puis des images sont jetées et comptées — mais la pression ne remonte jamais jusqu’à l’écran.</p>
+<p>Mesuré sur un Intel Core Ultra 7 155H et son GPU Arc intégré, en 2560×1440 à 60 FPS avec l’encodage H.264 VAAPI : 59,96 images par seconde sur 60, aucune image perdue, 0,84 cœur de processeur (3,8 % de la machine), 4,3 ms pour encoder une image (5,5 ms au 99<sup>e</sup> centile) pour un budget de 16,7 ms, et une dérive son/image de −0,24 ms sur 20 secondes.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Fait pour tenir la cadence.</h2>
+<div class="grid">
+<div class="card"><h3>Le son calé sur l’image</h3><p>La vidéo et le son ne démarrent jamais au même instant : rscap fait donc commencer les deux pistes au premier moment où les deux ont des données. Puis il corrige en continu : l’horloge d’une carte son dérive de 10 à 100 ppm — 180 ms par heure à 50 ppm — et rscap étire ou comprime le son d’une quantité inaudible, si bien que la dérive ne peut pas s’accumuler.</p></div>
+<div class="card"><h3>Des encodeurs essayés, pas supposés</h3><p>Un nom dans la liste de FFmpeg ne prouve rien : sur la machine de développement, elle annonce <code>h264_nvenc</code> sans aucune carte NVIDIA. rscap classe les candidats selon le fabricant du GPU, ouvre réellement chacun à la résolution et au débit réels, et se replie sur <code>libx264</code>. <code>rscap --probe</code> montre ce qui marche.</p></div>
+<div class="card"><h3>Pas de faux 60 FPS</h3><p>Chaque anomalie a son compteur — images perdues, dupliquées, fusionnées ou en retard — affiché en direct et dans le résumé final. Quand la machine prend plus d’une seconde de retard, rscap saute les intervalles manqués au lieu de remplir le fichier : la vidéo montre une saccade à l’endroit exact, et le son reste synchrone.</p></div>
+<div class="card"><h3>Un banc d’essai avec verdict</h3><p><code>rscap --benchmark</code> chronomètre chaque étage (moyenne et 99<sup>e</sup> centile), avec CPU, GPU, mémoire, disque et dérive, puis rend un verdict et nomme le goulot probable. La cible n’est tenue qu’à 99 % de la cadence sans aucune image perdue ; sinon le code de sortie vaut 2, pour les scripts.</p></div>
+<div class="card"><h3>Un fichier qui survit à l’arrêt</h3><p><code>Ctrl+C</code>, fin de <code>--duration</code> ou erreur : les files sont vidées, les encodeurs purgés, le fichier finalisé et synchronisé sur le disque. Un disque plein est signalé comme un disque plein, pas comme une vague erreur d’entrée-sortie.</p></div>
+<div class="card"><h3>Une fenêtre en option</h3><p><code>rscap-gui</code>, une fenêtre GTK 4 / libadwaita compilée avec <code>--features gui</code>, pilote la même bibliothèque : six pages avec les mêmes réglages que <code>rscap.toml</code> et les mêmes compteurs. Elle ne se fige jamais, grise les réglages pendant l’enregistrement, et la fermer en cours de route attend que le fichier soit bien écrit.</p></div>
+</div>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>ការថតមិនដែលរង់ចាំ។</h2>
+<p>នៅ 60 រូបភាពក្នុងមួយវិនាទី កម្មវិធីថតមានពេលត្រឹមតែ 16.7 ms សម្រាប់រូបភាពនីមួយៗ ដើម្បីចម្លង បំប្លែង encode និងសរសេររូបភាពនោះទៅ disk។ នៅ 2560×1440 រូបភាពដើមមួយមានទំហំ 14.7 MiB។ ប្រសិនបើជំហានយឺតមួយធ្វើឱ្យជំហានបន្ទាប់ត្រូវរង់ចាំ រូបភាពយឺតតែមួយនឹងធ្វើឱ្យរូបភាពបន្ទាប់យឺតដែរ ហើយការថតទាំងមូលនឹងដួលរលំ។</p>
+<p>rscap ផ្តល់ thread ដាច់ដោយឡែកមួយដល់ជំហាននីមួយៗ ហើយភ្ជាប់ពួកវាដោយជួរ (queue) ដែលមានទំហំកំណត់។ thread ដែលយករូបភាពពីអេក្រង់មិនដែលរង់ចាំទេ — មិនរង់ចាំ encoder សំឡេង muxer ឬ disk ឡើយ។ នៅពេលជួរណាមួយពេញ រូបភាពមួយត្រូវបានបោះចោល ហើយរាប់ទុក ដូច្នេះអេក្រង់របស់អ្នកដែលកំពុងថតមិនដែលរអាក់រអួលទេ។</p>
+<p>នៅលើ Wayland គ្មានកម្មវិធីណាអាចអានអេក្រង់ដោយខ្លួនឯងបានទេ៖ desktop portal សួរអ្នកថាតើត្រូវចែករំលែកអេក្រង់មួយណា បន្ទាប់មក compositor ផ្ញើរូបភាពតាម PipeWire។ ជម្រើសរបស់អ្នកត្រូវបានចងចាំ ដូច្នេះការបើកលើកក្រោយៗចាប់ផ្តើមដោយមិនសួរម្តងទៀតទេ។ session X11 ក៏ឆ្លងកាត់ portal ដដែលនេះដែរ។</p>
+</section>
+
+<section>
+<div class="kicker">Pipeline</div>
+<h2>ពីអេក្រង់ ទៅជាឯកសារ។</h2>
+<div class="table-wrap"><table>
+<tr><th>ដំណាក់កាល</th><th>អ្វីដែលវាធ្វើ</th><th>បន្ទាប់មក</th></tr>
+<tr><td>ការថតអេក្រង់</td><td>portal និង PipeWire បញ្ជូនរូបភាពនីមួយៗពី compositor រួមជាមួយពេលវេលាដែលរូបភាពនោះត្រូវបានគូរ។ ចម្លងតែម្តងគត់ ទៅក្នុង buffer ដែលបានរៀបចំទុកជាមុន៖ គ្មានការបែងចែក memory និងគ្មាន lock។</td><td>ជួរ 8 រូបភាព (133 ms នៅ 60 FPS)</td></tr>
+<tr><td>ការថតសំឡេង</td><td>អាន monitor នៃឧបករណ៍បញ្ចេញសំឡេង — សំឡេងដែលចេញទៅឧបករណ៍បំពងសំឡេង មិនមែន microphone ទេ — ជាដុំៗ ដុំនីមួយៗ 10 ms។</td><td>ជួរ 64 ដុំ (640 ms)</td></tr>
+<tr><td>ការ encode វីដេអូ</td><td>ដាក់រូបភាពនីមួយៗលើក្រឡាចន្លោះពេលថេរ បំប្លែងទៅជា NV12 ហើយ encode នៅលើ GPU (VAAPI, QSV, NVENC, AMF) ឬដោយ <code>libx264</code>។</td><td>ជួរ packet (256)</td></tr>
+<tr><td>ការ encode សំឡេង</td><td>resample សំឡេង encode ទៅជា AAC ហើយរក្សានាឡិការបស់កាតសំឡេង ឱ្យដើរស្របនឹងនាឡិកាប្រព័ន្ធ។</td><td>ជួរ packet (256)</td></tr>
+<tr><td>Muxer និង disk</td><td>បញ្ចូលបទទាំងពីរចូលគ្នាជា MP4 ឬ MKV តាម buffer សរសេរទំហំ 4 MiB សរសេរ index ហើយបញ្ចប់ដោយ sync ឯកសារទៅ disk។</td><td>ឯកសារដែលរួចរាល់</td></tr>
+</table></div>
+<p>thread ចំនួន 5 មួយសម្រាប់ជួរដេកនីមួយៗ។ ការថតទាំងពីរមិនដែលជាប់គាំងទេ។ encoder អាចរង់ចាំ muxer ហើយ muxer អាចរង់ចាំ disk។ disk ដែលយឺតធ្វើឱ្យជួរ packet ពេញ បន្ទាប់មកជួររូបភាព ហើយរូបភាពខ្លះត្រូវបោះចោល និងរាប់ទុក — ប៉ុន្តែសម្ពាធនោះមិនដែលទៅដល់អេក្រង់ឡើយ។</p>
+<p>វាស់នៅលើ Intel Core Ultra 7 155H ជាមួយ GPU Arc ដែលភ្ជាប់មកជាមួយ នៅ 2560×1440 និង 60 FPS ដោយ encode H.264 តាម VAAPI៖ 59.96 រូបភាពក្នុងមួយវិនាទី ក្នុងចំណោម 60 គ្មានរូបភាពបាត់ ប្រើ CPU 0.84 core (3.8% នៃម៉ាស៊ីន) ចំណាយ 4.3 ms ដើម្បី encode រូបភាពមួយ (5.5 ms នៅ percentile ទី 99) ក្នុងថវិកាពេល 16.7 ms និងគម្លាតសំឡេង/រូបភាព −0.24 ms ក្នុងរយៈពេល 20 វិនាទី។</p>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>បង្កើតឡើងដើម្បីរក្សាចង្វាក់។</h2>
+<div class="grid">
+<div class="card"><h3>សំឡេងស្របនឹងរូបភាព</h3><p>វីដេអូ និងសំឡេងមិនដែលចាប់ផ្តើមនៅពេលតែមួយទេ ដូច្នេះ rscap ចាប់ផ្តើមបទទាំងពីរនៅពេលដំបូងបំផុត ដែលបទទាំងពីរមានទិន្នន័យ។ បន្ទាប់មក វាកែតម្រូវជាបន្តបន្ទាប់៖ នាឡិការបស់កាតសំឡេងរសាត់ពី 10 ទៅ 100 ppm — 180 ms ក្នុងមួយម៉ោង នៅ 50 ppm — ហើយ rscap ពន្លា ឬបង្រួមសំឡេងបន្តិចបន្តួច ដែលត្រចៀកមិនអាចស្តាប់ដឹង ដូច្នេះគម្លាតមិនអាចកកកុញបានទេ។</p></div>
+<div class="card"><h3>encoder ដែលបានសាកល្បងពិតៗ មិនមែនស្មាន</h3><p>ឈ្មោះមួយនៅក្នុងបញ្ជីរបស់ FFmpeg មិនបញ្ជាក់អ្វីទេ៖ នៅលើម៉ាស៊ីនអភិវឌ្ឍន៍ បញ្ជីនោះបង្ហាញ <code>h264_nvenc</code> ទោះគ្មានកាត NVIDIA ក៏ដោយ។ rscap តម្រៀប encoder បេក្ខភាពតាមក្រុមហ៊ុនផលិត GPU បើក encoder នីមួយៗពិតៗ ជាមួយគុណភាពបង្ហាញ និង bit rate ពិតប្រាកដ ហើយត្រឡប់ទៅប្រើ <code>libx264</code> បើចាំបាច់។ <code>rscap --probe</code> បង្ហាញថាអ្វីខ្លះដំណើរការបាន។</p></div>
+<div class="card"><h3>មិនធ្វើពុតថាបាន 60 FPS</h3><p>ភាពមិនប្រក្រតីនីមួយៗមានបញ្ជររាប់ផ្ទាល់ខ្លួន — រូបភាពបាត់ ស្ទួន បញ្ចូលគ្នា ឬមកយឺត — ដែលបង្ហាញផ្ទាល់ និងនៅក្នុងសេចក្តីសង្ខេបចុងក្រោយ។ នៅពេលម៉ាស៊ីនយឺតជាងមួយវិនាទី rscap រំលងចន្លោះពេលដែលយឺត ជំនួសឱ្យការបំពេញឯកសារដោយរូបភាពស្ទួន៖ វីដេអូបង្ហាញការរអាក់មួយនៅចំកន្លែងដែលវាកើតឡើង ហើយសំឡេងនៅតែស្របគ្នា។</p></div>
+<div class="card"><h3>ការវាស់ស្ទង់ដែលមានសេចក្តីសន្និដ្ឋាន</h3><p><code>rscap --benchmark</code> វាស់ពេលនៃដំណាក់កាលនីមួយៗ (មធ្យម និង percentile ទី 99) ព្រមទាំង CPU, GPU, memory, disk និងគម្លាត បន្ទាប់មកផ្តល់សេចក្តីសន្និដ្ឋាន និងប្រាប់ចំណុចកកស្ទះដែលទំនងបំផុត។ គោលដៅត្រូវបានចាត់ទុកថាសម្រេច លុះត្រាតែបាន 99% នៃ FPS គោលដៅ ហើយគ្មានរូបភាពបាត់សោះ។ បើមិនដូច្នោះទេ exit code គឺ 2 សម្រាប់ប្រើក្នុង script។</p></div>
+<div class="card"><h3>ឯកសារនៅគង់វង្សក្រោយការបញ្ឈប់</h3><p><code>Ctrl+C</code> ការចប់ <code>--duration</code> ឬកំហុសណាមួយ៖ ជួរទាំងអស់ត្រូវបានបញ្ចេញឱ្យអស់ encoder ត្រូវបានបញ្ចប់ ហើយឯកសារត្រូវបានបិទបញ្ចប់ និង sync ទៅ disk។ disk ពេញត្រូវបានរាយការណ៍ថា disk ពេញ មិនមែនជាកំហុស input/output ដែលមិនច្បាស់លាស់ទេ។</p></div>
+<div class="card"><h3>បង្អួចជាជម្រើស</h3><p><code>rscap-gui</code> ជាបង្អួច GTK 4 / libadwaita ដែល build ជាមួយ <code>--features gui</code> ហើយប្រើ library ដដែល៖ ទំព័រ 6 ដែលមានការកំណត់ដូចគ្នានឹង <code>rscap.toml</code> និងបញ្ជររាប់ដូចគ្នា។ វាមិនដែលគាំងទេ ធ្វើឱ្យការកំណត់ប្រែជាពណ៌ប្រផេះពេលកំពុងថត ហើយការបិទវាពេលកំពុងថត នឹងរង់ចាំរហូតដល់ឯកសារត្រូវបានសរសេររួចរាល់ដោយសុវត្ថិភាព។</p></div>
+</div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">In use</span><span data-l="fr">À l’usage</span><span data-l="km">ការប្រើប្រាស់</span></div>
+<h2><span data-l="en">One command, one file.</span><span data-l="fr">Une commande, un fichier.</span><span data-l="km">ពាក្យបញ្ជាមួយ ឯកសារមួយ។</span></h2>
+<pre class="term"><span class="c"><span data-l="en"># screen + system sound, 60 FPS, H.264/AAC</span><span data-l="fr"># écran + son système, 60 FPS, H.264/AAC</span><span data-l="km"># អេក្រង់ + សំឡេងប្រព័ន្ធ, 60 FPS, H.264/AAC</span></span>
+<span class="p">$ </span>rscap -o capture.mp4
+
+<span class="c"><span data-l="en"># 30 FPS, high quality, HEVC</span><span data-l="fr"># 30 FPS, qualité élevée, HEVC</span><span data-l="km"># 30 FPS, គុណភាពខ្ពស់, HEVC</span></span>
+<span class="p">$ </span>rscap -o capture.mp4 --fps 30 --codec hevc --quality high
+
+<span class="c"><span data-l="en"># fixed bit rate, stops by itself after 60 seconds</span><span data-l="fr"># débit imposé, arrêt automatique après 60 secondes</span><span data-l="km"># bit rate ថេរ, ឈប់ដោយខ្លួនឯងក្រោយ 60 វិនាទី</span></span>
+<span class="p">$ </span>rscap -o capture.mp4 --bitrate 35000000 --duration 60
+
+<span class="c"><span data-l="en"># no sound</span><span data-l="fr"># sans son</span><span data-l="km"># គ្មានសំឡេង</span></span>
+<span class="p">$ </span>rscap -o capture.mp4 --no-audio
+
+<span class="c"><span data-l="en"># a given encoder, or the software fallback</span><span data-l="fr"># encodeur imposé, ou repli logiciel forcé</span><span data-l="km"># កំណត់ encoder ជាក់លាក់ ឬបង្ខំឱ្យប្រើ software</span></span>
+<span class="p">$ </span>rscap -o capture.mp4 --encoder h264_nvenc
+<span class="p">$ </span>rscap -o capture.mp4 --hardware off
+
+<span class="c"><span data-l="en"># every setting from a file</span><span data-l="fr"># fichier de configuration</span><span data-l="km"># ការកំណត់ទាំងអស់ពីឯកសារ</span></span>
+<span class="p">$ </span>rscap --config rscap.toml</pre>
+<p data-l="en"><code>Ctrl+C</code> stops cleanly. The first time, the desktop portal asks which screen to share; the choice is remembered, and <code>rscap --forget-permission</code> clears it. <code>rscap --help</code> lists all the options, and <code>rscap --probe</code> shows the hardware and the encoder that actually opens.</p>
+<p data-l="fr"><code>Ctrl+C</code> arrête proprement. La première fois, le portail de bureau demande quel écran partager ; le choix est mémorisé, et <code>rscap --forget-permission</code> l’efface. <code>rscap --help</code> liste toutes les options, et <code>rscap --probe</code> montre le matériel et l’encodeur qui s’ouvre réellement.</p>
+<p data-l="km"><code>Ctrl+C</code> បញ្ឈប់ការថតដោយត្រឹមត្រូវ។ នៅលើកដំបូង desktop portal សួរថាតើត្រូវចែករំលែកអេក្រង់មួយណា។ ជម្រើសនោះត្រូវបានចងចាំ ហើយ <code>rscap --forget-permission</code> លុបវាចោល។ <code>rscap --help</code> បង្ហាញជម្រើសទាំងអស់ ហើយ <code>rscap --probe</code> បង្ហាញផ្នែករឹង និង encoder ដែលពិតជាបើកបាន។</p>
+<pre class="term"><span class="p">$ </span>rscap -o capture.mp4
+<span class="c">● Enregistrement  0:01:23   312.4 Mio
+FPS       59.98 / 60   capture  60.01
+Images   perdues 0   dupliquées 4   fusionnées 0
+A/V      dérive +0.3 ms   audio 0 trous, 2 corrections
+Files    vidéo 1/8   audio 2/64   paquets 3/256
+Charge   CPU 84 %   GPU n/d   débit 34.8 Mb/s
+Latence  encodage 4.3 ms (p99 5.5)   capture 1.1 ms</span></pre>
+<p data-l="en">rscap’s messages are in French. While it records, it redraws this panel five times a second: frames encoded against the target and frames captured; frames lost, duplicated and merged; audio/video drift; how full each queue is; CPU, bit rate and latencies. Sent to a file, the display becomes plain log lines.</p>
+<p data-l="fr">Pendant l’enregistrement, rscap redessine ce tableau cinq fois par seconde : images encodées face à la cible et images capturées ; images perdues, dupliquées et fusionnées ; dérive son/image ; remplissage de chaque file ; CPU, débit et latences. Redirigé vers un fichier, l’affichage passe en simples lignes de journal.</p>
+<p data-l="km">សាររបស់ rscap ជាភាសាបារាំង។ ពេលកំពុងថត វាគូរផ្ទាំងនេះឡើងវិញ 5 ដងក្នុងមួយវិនាទី៖ រូបភាពដែលបាន encode ធៀបនឹងគោលដៅ និងរូបភាពដែលបានថត រូបភាពបាត់ ស្ទួន និងបញ្ចូលគ្នា គម្លាតសំឡេង/រូបភាព កម្រិតពេញនៃជួរនីមួយៗ CPU, bit rate និង latency។ នៅពេលបញ្ជូនលទ្ធផលទៅឯកសារ ការបង្ហាញប្តូរទៅជាបន្ទាត់ log ធម្មតា។</p>
+<pre class="term"><span class="c"><span data-l="en"># the whole chain, real screen, 20 seconds</span><span data-l="fr"># chaîne complète, écran réel, 20 secondes</span><span data-l="km"># ខ្សែសង្វាក់ទាំងមូល អេក្រង់ពិត 20 វិនាទី</span></span>
+<span class="p">$ </span>rscap --benchmark --benchmark-duration 20 --fps 60
+<span class="c">VERDICT
+  ✓ 60 FPS tenus de bout en bout, sans perte.
+
+<span data-l="en"># or, when the machine cannot keep up:</span><span data-l="fr"># ou, si la machine ne suit pas :</span><span data-l="km"># ឬ នៅពេលម៉ាស៊ីនមិនអាចតាមទាន់៖</span>
+VERDICT
+  ✗ 60 FPS NON tenus : 41.20 FPS réels, 312 images perdues.
+  → L'encodage est le goulot d'étranglement (p99 = 22.4 ms pour un budget de 16.7 ms).
+    L'encodeur est logiciel : vérifiez la disponibilité de VAAPI/NVENC/QSV.</span></pre>
+<p data-l="en">With <code>--synthetic --synthetic-audio</code>, the benchmark uses generated frames and sound: no portal to approve, and the same result every time, which suits automated runs.</p>
+<p data-l="fr">Avec <code>--synthetic --synthetic-audio</code>, le banc d’essai utilise des images et un son générés : aucun portail à approuver, et un résultat déterministe, adapté aux exécutions automatiques.</p>
+<p data-l="km">ជាមួយ <code>--synthetic --synthetic-audio</code> ការវាស់ស្ទង់ប្រើរូបភាព និងសំឡេងដែលបង្កើតដោយកម្មវិធី៖ មិនចាំបាច់អនុញ្ញាតតាម portal ទេ ហើយលទ្ធផលដូចគ្នារាល់ដង ដែលស័ក្តិសមសម្រាប់ការដំណើរការស្វ័យប្រវត្តិ។</p>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Language</td><td>Rust 1.82 or newer, about 11,700 lines. Two programs: <code>rscap</code> on the command line, and <code>rscap-gui</code>, built only with <code>--features gui</code>. Without it no GTK binding is downloaded or compiled, so <code>rscap</code> builds on a machine with no desktop.</td></tr>
+<tr><td>Capture</td><td><code>xdg-desktop-portal</code> (through <code>ashpd</code>) and PipeWire for the screen, in Wayland and X11 sessions; the PulseAudio client API, served by <code>pipewire-pulse</code> on current systems, for the sound. <code>tokio</code> is used only for the portal’s one-time D-Bus exchange; everything else runs on dedicated threads. Each frame is copied once: a zero-copy DMA-BUF path is not implemented, and the docs explain why.</td></tr>
+<tr><td>Encoding</td><td>FFmpeg 7.1 or newer, through <code>ffmpeg-next</code>: H.264, HEVC or AV1 with VAAPI, QSV, NVENC or AMF, and <code>libx264</code> as the fallback; AAC for the sound; MP4 (optionally fragmented) or MKV. Ubuntu 24.04 ships FFmpeg 6.1, which is too old; Ubuntu 26.04, Debian 13 and rolling distributions are fine.</td></tr>
+<tr><td>Timing</td><td>One clock for everything, <code>CLOCK_MONOTONIC</code> — the one PipeWire also uses to stamp its frames. Frames are placed by absolute deadlines rather than <code>sleep</code> calls, so delays do not add up; a test runs 216,000 slots, one hour at 60 FPS, without drift.</td></tr>
+<tr><td>Tests</td><td>133 tests, 136 with the GUI, run with Clippy by continuous integration on Ubuntu 26.04. The integration tests record real files, then read them back and decode them. Real screen capture needs a person to approve the portal dialog, so the tests use a frame generator; the rest of the chain runs exactly as in normal use.</td></tr>
+<tr><td>Platforms</td><td>Linux only, version 0.1.0. Windows and macOS are not implemented: capture sits behind two traits, <code>ScreenSource</code> and <code>AudioSource</code>, and the README sketches a Windows port (Windows.Graphics.Capture, WASAPI loopback).</td></tr>
+<tr><td>Docs</td><td>A README and <code>docs/PIPELINE.md</code>, both in French. The second explains the bottlenecks, timestamps, audio/video sync, buffer sizes and encoder choice, with measurements.</td></tr>
+<tr><td>Licence</td><td>MIT or Apache-2.0, at your choice.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>Langage</td><td>Rust 1.82 ou plus récent, environ 11 700 lignes. Deux programmes : <code>rscap</code> en ligne de commande, et <code>rscap-gui</code>, compilé seulement avec <code>--features gui</code>. Sans ce drapeau, aucune liaison GTK n’est téléchargée ni compilée : <code>rscap</code> se compile sur une machine sans bureau.</td></tr>
+<tr><td>Capture</td><td><code>xdg-desktop-portal</code> (via <code>ashpd</code>) et PipeWire pour l’écran, en session Wayland comme X11 ; l’API cliente PulseAudio, servie par <code>pipewire-pulse</code> sur les systèmes actuels, pour le son. <code>tokio</code> ne sert qu’à l’unique échange D-Bus avec le portail ; tout le reste tourne sur des threads dédiés. Chaque image est copiée une fois : le chemin zéro-copie DMA-BUF n’est pas implémenté, et la documentation explique pourquoi.</td></tr>
+<tr><td>Encodage</td><td>FFmpeg 7.1 ou plus récent, via <code>ffmpeg-next</code> : H.264, HEVC ou AV1 avec VAAPI, QSV, NVENC ou AMF, et <code>libx264</code> en repli ; AAC pour le son ; MP4 (fragmenté en option) ou MKV. Ubuntu 24.04 ne fournit que FFmpeg 6.1, trop ancien ; Ubuntu 26.04, Debian 13 et les distributions à publication continue conviennent.</td></tr>
+<tr><td>Horloge</td><td>Une seule horloge pour tout, <code>CLOCK_MONOTONIC</code> — celle-là même dont PipeWire se sert pour horodater ses images. Les images sont placées par échéances absolues plutôt que par des <code>sleep</code>, si bien que les retards ne s’additionnent pas ; un test enchaîne 216 000 intervalles, une heure à 60 FPS, sans dérive.</td></tr>
+<tr><td>Tests</td><td>133 tests, 136 avec l’interface, exécutés avec Clippy par l’intégration continue sous Ubuntu 26.04. Les tests d’intégration enregistrent de vrais fichiers, puis les relisent et les décodent. La capture réelle de l’écran exige qu’une personne approuve la fenêtre du portail : les tests utilisent donc un générateur d’images, et tout le reste de la chaîne tourne exactement comme en usage normal.</td></tr>
+<tr><td>Plateformes</td><td>Linux seulement, version 0.1.0. Windows et macOS ne sont pas implémentés : la capture se cache derrière deux traits, <code>ScreenSource</code> et <code>AudioSource</code>, et le README esquisse un portage Windows (Windows.Graphics.Capture, WASAPI en loopback).</td></tr>
+<tr><td>Docs</td><td>Un README et <code>docs/PIPELINE.md</code>, tous deux en français. Le second explique les goulots d’étranglement, les horodatages, la synchronisation son/image, la taille des tampons et le choix de l’encodeur, mesures à l’appui.</td></tr>
+<tr><td>Licence</td><td>MIT ou Apache-2.0, au choix.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>ភាសា</td><td>Rust 1.82 ឬថ្មីជាងនេះ ប្រហែល 11,700 បន្ទាត់។ មានកម្មវិធីពីរ៖ <code>rscap</code> សម្រាប់ command line និង <code>rscap-gui</code> ដែល build តែនៅពេលប្រើ <code>--features gui</code> ប៉ុណ្ណោះ។ បើគ្មានវាទេ គ្មាន binding GTK ណាមួយត្រូវបានទាញយក ឬ compile ឡើយ ដូច្នេះ <code>rscap</code> អាច build លើម៉ាស៊ីនដែលគ្មាន desktop បាន។</td></tr>
+<tr><td>ការថត</td><td><code>xdg-desktop-portal</code> (តាមរយៈ <code>ashpd</code>) និង PipeWire សម្រាប់អេក្រង់ ទាំងក្នុង session Wayland និង X11។ API client របស់ PulseAudio ដែលផ្តល់ដោយ <code>pipewire-pulse</code> លើប្រព័ន្ធបច្ចុប្បន្ន សម្រាប់សំឡេង។ <code>tokio</code> ត្រូវបានប្រើតែសម្រាប់ការទំនាក់ទំនង D-Bus តែម្តងជាមួយ portal ប៉ុណ្ណោះ ហើយផ្នែកផ្សេងទៀតទាំងអស់ដំណើរការលើ thread ដាច់ដោយឡែក។ រូបភាពនីមួយៗត្រូវបានចម្លងតែម្តង៖ ផ្លូវ zero-copy DMA-BUF មិនទាន់បានអនុវត្តទេ ហើយឯកសារពន្យល់ពីមូលហេតុ។</td></tr>
+<tr><td>ការ encode</td><td>FFmpeg 7.1 ឬថ្មីជាងនេះ តាមរយៈ <code>ffmpeg-next</code>៖ H.264, HEVC ឬ AV1 ជាមួយ VAAPI, QSV, NVENC ឬ AMF និង <code>libx264</code> ជាជម្រើសបម្រុង។ AAC សម្រាប់សំឡេង។ MP4 (អាចជា fragmented) ឬ MKV។ Ubuntu 24.04 មានត្រឹមតែ FFmpeg 6.1 ដែលចាស់ពេក។ Ubuntu 26.04, Debian 13 និង distribution ប្រភេទ rolling release អាចប្រើបាន។</td></tr>
+<tr><td>ពេលវេលា</td><td>នាឡិកាតែមួយសម្រាប់ទាំងអស់ គឺ <code>CLOCK_MONOTONIC</code> — នាឡិកាដដែលដែល PipeWire ប្រើដើម្បីដាក់ពេលវេលាលើរូបភាពរបស់វា។ រូបភាពត្រូវបានដាក់តាមពេលកំណត់ដាច់ខាត ជំនួសឱ្យការហៅ <code>sleep</code> ដូច្នេះការយឺតមិនកកកុញទេ។ ការធ្វើតេស្តមួយដំណើរការចន្លោះពេល 216,000 ពោលគឺមួយម៉ោងនៅ 60 FPS ដោយគ្មានគម្លាត។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្ត 133 និង 136 រួមទាំង GUI ដែលដំណើរការជាមួយ Clippy ដោយ continuous integration លើ Ubuntu 26.04។ ការធ្វើតេស្ត integration ថតឯកសារពិតៗ បន្ទាប់មកអាន និង decode ឯកសារទាំងនោះឡើងវិញ។ ការថតអេក្រង់ពិតតម្រូវឱ្យមនុស្សអនុញ្ញាតក្នុងផ្ទាំង portal ដូច្នេះការធ្វើតេស្តប្រើកម្មវិធីបង្កើតរូបភាព ហើយផ្នែកផ្សេងទៀតនៃខ្សែសង្វាក់ដំណើរការដូចការប្រើប្រាស់ធម្មតាទាំងស្រុង។</td></tr>
+<tr><td>ប្រព័ន្ធប្រតិបត្តិការ</td><td>មានតែ Linux ប៉ុណ្ណោះ កំណែ 0.1.0។ Windows និង macOS មិនទាន់បានអនុវត្តទេ៖ ការថតស្ថិតនៅពីក្រោយ trait ពីរ គឺ <code>ScreenSource</code> និង <code>AudioSource</code> ហើយ README គូសបញ្ជាក់ផែនការសម្រាប់ Windows (Windows.Graphics.Capture, WASAPI loopback)។</td></tr>
+<tr><td>ឯកសារ</td><td>README និង <code>docs/PIPELINE.md</code> ទាំងពីរជាភាសាបារាំង។ ឯកសារទីពីរពន្យល់ពីចំណុចកកស្ទះ timestamps ការធ្វើឱ្យសំឡេង និងរូបភាពស្របគ្នា ទំហំ buffer និងការជ្រើសរើស encoder ជាមួយលទ្ធផលវាស់វែង។</td></tr>
+<tr><td>អាជ្ញាប័ណ្ណ</td><td>MIT ឬ Apache-2.0 តាមជម្រើសរបស់អ្នក។</td></tr>
+</table></div>
+</section>
+
+<nav class="pager">
+<a href="yt-app.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>TubeGuard</b></a>
+<a href="xvideo.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>xvideo</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#projects">← <span data-l="en">Back to all projects</span><span data-l="fr">Retour aux projets</span><span data-l="km">ត្រឡប់ទៅគម្រោងទាំងអស់</span></a></div></footer>
+</body></html>

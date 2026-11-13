@@ -66,7 +66,7 @@ td:first-child{color:var(--text);font-weight:600;white-space:nowrap}
 table.kv td:first-child{font:11px "DM Mono","Noto Sans Khmer",monospace;color:var(--accent2);font-weight:400}
 
 /* Command-line examples: <pre class="term">, with <span class="p"> for the prompt and <span class="c"> for output or comments */
-pre.term{margin:0 0 14px;max-width:100%;padding:16px 18px;background:#05080d;border:1px solid var(--line);border-radius:12px;overflow-x:auto;font:12.5px/1.65 "DM Mono",monospace;color:var(--text);white-space:pre}
+pre.term{margin:0 0 14px;max-width:100%;padding:16px 18px;background:#05080d;border:1px solid var(--line);border-radius:12px;overflow-x:auto;font:12.5px/1.65 "DM Mono","Noto Sans Khmer",monospace;color:var(--text);white-space:pre}
 pre.term .p{color:var(--accent);user-select:none}pre.term .c{color:var(--muted)}
 
 .gallery{display:grid;gap:12px;align-items:start}

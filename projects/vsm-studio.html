@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="VSM Studio (Vintage Synth MIDI Studio): a desktop MIDI and audio workstation in C++ and JUCE, with a rack of 63 modelled synthesizers and instruments, and a Python chain that rebuilds a recorded song as an editable project.">
+<title data-en="VSM Studio, vintage synth MIDI studio — Stefan" data-fr="VSM Studio, studio MIDI de synthés vintage — Stefan" data-km="VSM Studio, ស្ទូឌីយោ MIDI synth vintage — Stefan">VSM Studio, vintage synth MIDI studio — Stefan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../"><span class="brand-mark">S.</span><span>STEFAN<span style="color:var(--accent)">_</span></span></a>
+<div class="nav-right"><a class="back" href="../#sound">← <span data-l="en">Sound lab</span><span data-l="fr">Sound lab</span><span data-l="km">មន្ទីរពិសោធន៍សំឡេង</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">Sound lab</span><span data-l="fr">Sound lab</span><span data-l="km">មន្ទីរពិសោធន៍សំឡេង</span> / 02</div>
+<h1>VSM Studio</h1>
+<div class="alias">Vintage Synth MIDI Studio</div>
+<p class="lead" data-l="en">A desktop studio for making music with modelled machines: a MIDI sequencer, audio tracks and a mixing console around a rack of 63 instruments — from a Minimoog, a TB-303 and a TR-808 to a bowed string, a sitar and a theremin. And a way back: give it a recorded song, and it tries to rebuild it as a project you can edit.</p>
+<p class="lead" data-l="fr">Un studio de bureau pour faire de la musique avec des machines modélisées : séquenceur MIDI, pistes audio et console de mixage autour d’un rack de 63 instruments — du Minimoog, de la TB-303 et de la TR-808 à la corde frottée, au sitar et au thérémine. Et le chemin inverse : donnez-lui un morceau enregistré, il tente de le reconstruire en projet modifiable.</p>
+<p class="lead" data-l="km">ស្ទូឌីយោតន្ត្រីលើកុំព្យូទ័រ សម្រាប់បង្កើតតន្ត្រីជាមួយម៉ាស៊ីនសំឡេងដែលធ្វើគំរូតាមឧបករណ៍ពិត៖ MIDI sequencer, track អូឌីយ៉ូ និងតុលាយសំឡេង នៅជុំវិញរ៉ាក់ឧបករណ៍តន្ត្រីចំនួន 63 — ចាប់ពី Minimoog, TB-303 និង TR-808 រហូតដល់ខ្សែដែលអូសដោយធ្នូ sitar និង theremin។ ហើយក៏មានផ្លូវត្រឡប់វិញដែរ៖ ផ្តល់បទភ្លេងដែលបានថតរួចឱ្យវា វានឹងព្យាយាមបង្កើតវាឡើងវិញជាគម្រោងដែលអ្នកអាចកែសម្រួលបាន។</p>
+<div class="tags"><span class="tag p">Desktop</span><span class="tag t" data-l="en">Sound</span><span class="tag t" data-l="fr">Son</span><span class="tag t" data-l="km">សំឡេង</span><span class="tag">C++20</span><span class="tag">JUCE</span><span class="tag">Python</span><span class="tag">CLAP · VST3</span></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/vsm-studio" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/vsm-studio/main-window.jpg" alt="The VSM Studio window: transport, tracks, arrangement, the Juno-106-style panel and the mixing console"></div>
+
+<div class="stats">
+<div class="stat"><strong>63</strong><span data-l="en">Machines in the rack</span><span data-l="fr">Machines au rack</span><span data-l="km">ម៉ាស៊ីននៅក្នុងរ៉ាក់</span></div>
+<div class="stat"><strong>19</strong><span data-l="en">Insert effects</span><span data-l="fr">Effets d’insert</span><span data-l="km">ប្រភេទ effect insert</span></div>
+<div class="stat"><strong>~2,400</strong><span data-l="en">Engine tests</span><span data-l="fr">Tests du moteur</span><span data-l="km">ការធ្វើតេស្ត engine</span></div>
+<div class="stat"><strong>3</strong><span data-l="en">DAW formats imported</span><span data-l="fr">Formats de DAW importés</span><span data-l="km">ទម្រង់ DAW ដែលអាចនាំចូល</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>A rack of machines, and a studio around it.</h2>
+<p>For a long time the application around the sound engine was only a demonstrator: no audio track, no recording, no clips, no way to save a project. That is no longer true. VSM Studio is now a complete desktop workstation in one window — the transport at the top, the tracks on the left, the arrangement or the piano roll in the centre, the panel of the selected instrument on the right, the mixing console at the bottom. Every border can be dragged, and any panel can float in its own window.</p>
+<p>The instruments are called machines, and each one is written from scratch in C++. Some follow famous synthesizers — the Minimoog, TB-303, Juno-106, Jupiter-8, Prophet, MS-20 and DX7, and the TR-808 and TR-909 drum machines. Others are synthesis methods: FM, wavetable, additive, granular, phase distortion, West Coast. The largest family is physical models: plucked and bowed strings, a hammered piano, winds and reeds, bells, a sitar with its buzzing bridge, a theremin, a voice.</p>
+<p>The other half of the project goes the other way. A Python chain takes a recorded song, separates it, transcribes it and searches the rack for the machines and settings that come closest — then opens the result as a project you can play, edit and mix.</p>
+</section>
+
+<section>
+<div class="kicker">The studio</div>
+<h2>From the first note to the export.</h2>
+<div class="table-wrap"><table>
+<tr><th>Area</th><th>What you get</th></tr>
+<tr><td>Instruments</td><td>63 machines, each with its own hardware-style panel, played from a MIDI keyboard or the computer keyboard. They answer pitch bend, modulation and aftertouch according to their nature: a piano or a drum machine refuses to bend a note, as the real one would.</td></tr>
+<tr><td>Editing</td><td>A piano roll with drawing tools, quantise and swing, scales, chords and arpeggios, a velocity lane and a logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>). Undo covers the whole project.</td></tr>
+<tr><td>Arranging</td><td>Clips you move, cut and duplicate, linked copies, markers, automation curves and track versions.</td></tr>
+<tr><td>Recording</td><td>MIDI and audio, with count-in and stacked takes. An audio clip can be quantised, follow the tempo or be turned into notes.</td></tr>
+<tr><td>Mixing</td><td>A console with faders in dB, RMS and peak meters, sends, group buses, sidechain, 19 insert effects, mix snapshots and a master bus with EQ, compressor and limiter.</td></tr>
+<tr><td>Plugins</td><td>Hosts CLAP and VST3 instruments and effects; the VSM machines can themselves be built as a CLAP plugin.</td></tr>
+<tr><td>Files</td><td>MIDI files in and out; projects from Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) and Cubase track archives (<code>.xml</code>); audio export to WAV, FLAC or Ogg, optionally normalised to −14 or −23 LUFS.</td></tr>
+<tr><td>Saving</td><td>Autosave every thirty seconds when the project has changed, crash recovery at the next start, and a self-contained project mode that carries its media along.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">The way back</div>
+<h2>From a recording to a project.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Separate</h3><p>Demucs splits the song into up to six stems: drums, bass, vocals, guitar, piano and the rest. A stem that carries almost nothing is not rebuilt, and the report gives the figure. On an Intel Arc integrated GPU this step runs 2.8× faster than on the CPU, with the same stems.</p></div>
+<div class="card"><span class="num">02</span><h3>Transcribe</h3><p>Each stem becomes notes (basic-pitch), and the tempo of the song is estimated and written into the project. Parts can be split further: a stem by register, the drums piece by piece, lead and backing vocals. Notes the transcription is unsure of are outlined in amber in the piano roll.</p></div>
+<div class="card"><span class="num">03</span><h3>Choose the sound</h3><p>Candidates are rendered by the real engine, so the patch that is found sounds the same in the studio. One note chooses the patch, the whole track chooses the machine, and the mix has the last word: a better track is kept only if it brings the whole song closer. For drums, the modelled kit competes with the TR-808 and TR-909.</p></div>
+<div class="card"><span class="num">04</span><h3>Compare</h3><p>The project comes with its report: an overall distance to the original, and one per track, the farthest one marked. Load the original as an A/B reference and switch with <code>R</code>; it never goes into the export. Vocals are not resynthesised: the vocal stem is carried over as audio.</p></div>
+</div>
+<p style="margin-top:16px">It is a research tool, and the repository treats it as one: results are published with their figures, and the ideas that failed are written down too — a model trained end to end from audio to settings, a modelled electric guitar. Cutting a track stays a human decision. The chain needs its own Python environment; without it, the command is greyed out and says why.</p>
+</section>
+
+<section>
+<div class="kicker">Highlights</div>
+<h2>Built to be measured.</h2>
+<div class="grid">
+<div class="card"><h3>Panels like the hardware</h3><p>Each of the 63 machines has its own panel, laid out like the original: the Minimoog’s signal path, the TB-303’s single row, the six DX7 operators, the organ’s drawbars. On the TR-808 and TB-303 the step sequencer is part of the panel and edits the same notes as the piano roll. Physical models, which never had a panel, show their signal path.</p></div>
+<div class="card"><h3>A sound that cannot drift</h3><p>Every machine has an audio fingerprint that freezes its render: if a change to shared DSP code alters the sound of any machine, a test fails. Rendering is deterministic — the same project gives the same WAV file, byte for byte.</p></div>
+<div class="card"><h3>Real-time rules, tested</h3><p>Tests check that the audio thread does not allocate memory, and a concurrency test runs under ThreadSanitizer. Vectorising across voices made a 16-track graph 1.40× faster, with every fingerprint unchanged.</p></div>
+<div class="card"><h3>Works with other software</h3><p>The machines build as a CLAP plugin, and a patch gives the same samples in a CLAP host as in the studio — a test checks it. The studio hosts CLAP and VST3 instruments and effects. <code>vsm-render</code> renders a project to WAV without a window, and Python can drive the engine.</p></div>
+<div class="card"><h3>Imports that say what they lost</h3><p>Projects from Ableton Live, FL Studio and Cubase arrive with their tempo, tracks, notes, names and colours, plus a report of what was kept, approximated or lost. Instruments do not travel: an Operator or Sytrus patch has no equivalent here, so none is invented. Cubase’s closed <code>.cpr</code> format is refused rather than guessed.</p></div>
+<div class="card"><h3>Nothing lost</h3><p>The project is saved every thirty seconds when it has changed, written next to the file before switching over. After a crash, the next start offers the session back, with its name, its date and what it contains.</p></div>
+</div>
+<p style="margin-top:16px">It is built from source: the engine needs only CMake and a C++20 compiler, the desktop application downloads JUCE when it is configured, and the reconstruction needs its own Python environment. The interface is in French or English; the manual is in French.</p>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">Le principe</div>
+<h2>Un rack de machines, et un studio autour.</h2>
+<p>Longtemps, l’application autour du moteur sonore n’a été qu’un démonstrateur : pas de piste audio, pas d’enregistrement, pas de clip, aucune sauvegarde de projet. Ce n’est plus vrai. VSM Studio est désormais un studio complet, dans une seule fenêtre — le transport en haut, les pistes à gauche, l’arrangement ou le piano roll au centre, la façade de l’instrument choisi à droite, la console en bas. Chaque frontière se tire à la souris, et chaque panneau peut devenir une fenêtre flottante.</p>
+<p>Les instruments s’appellent des machines, et chacune est écrite de zéro en C++. Certaines suivent des synthétiseurs célèbres — Minimoog, TB-303, Juno-106, Jupiter-8, Prophet, MS-20 et DX7, et les boîtes à rythmes TR-808 et TR-909. D’autres sont des méthodes de synthèse : FM, table d’ondes, additive, granulaire, distorsion de phase, West Coast. La famille la plus nombreuse est celle des modèles physiques : cordes pincées et frottées, piano à cordes frappées, vents et anches, cloches, un sitar et son chevalet qui grésille, un thérémine, une voix.</p>
+<p>L’autre moitié du projet va dans l’autre sens. Une chaîne en Python prend un morceau enregistré, le sépare, le transcrit et cherche dans le rack les machines et les réglages qui s’en approchent le plus — puis ouvre le résultat comme un projet qu’on peut jouer, modifier et mixer.</p>
+</section>
+
+<section>
+<div class="kicker">Le studio</div>
+<h2>De la première note à l’export.</h2>
+<div class="table-wrap"><table>
+<tr><th>Domaine</th><th>Ce qu’on y trouve</th></tr>
+<tr><td>Instruments</td><td>63 machines, chacune avec sa façade façon matériel, jouées au clavier MIDI ou au clavier de l’ordinateur. Elles répondent à la molette de hauteur, à la modulation et à l’aftertouch selon leur nature : un piano ou une boîte à rythmes refuse de plier la note, comme l’original.</td></tr>
+<tr><td>Édition</td><td>Un piano roll avec outils de dessin, quantification et swing, gammes, accords et arpèges, une lane de vélocité et un éditeur logique (<code>vélocité &lt; 30 et durée &lt; 1/32</code>). L’annulation couvre le projet entier.</td></tr>
+<tr><td>Arrangement</td><td>Des clips qu’on déplace, coupe et duplique, des copies liées, des repères, des courbes d’automation et des versions de piste.</td></tr>
+<tr><td>Enregistrement</td><td>MIDI et audio, avec décompte et prises empilées. Un clip audio peut être quantifié, suivre le tempo ou devenir des notes.</td></tr>
+<tr><td>Mixage</td><td>Une console aux faders gradués en dB, des vumètres RMS et crête, des départs, des bus de groupe, une chaîne latérale, 19 effets d’insert, des instantanés de mixage et un bus master avec égaliseur, compresseur et limiteur.</td></tr>
+<tr><td>Plugins</td><td>Hôte d’instruments et d’effets CLAP et VST3 ; les machines VSM peuvent elles-mêmes être compilées en plugin CLAP.</td></tr>
+<tr><td>Fichiers</td><td>Fichiers MIDI en entrée et en sortie ; projets Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) et archives de pistes Cubase (<code>.xml</code>) ; export audio en WAV, FLAC ou Ogg, au besoin normalisé à −14 ou −23 LUFS.</td></tr>
+<tr><td>Sauvegarde</td><td>Sauvegarde automatique toutes les trente secondes quand le projet a changé, récupération après plantage au démarrage suivant, et un mode « projet autonome » qui emporte ses médias.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Le chemin inverse</div>
+<h2>D’un enregistrement à un projet.</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>Séparer</h3><p>Demucs découpe le morceau en six stems au plus : batterie, basse, voix, guitare, piano et le reste. Un stem qui ne porte presque rien n’est pas reconstruit, et le rapport donne le chiffre. Sur le GPU intégré Intel Arc, cette étape est 2,8 fois plus rapide que sur le processeur, pour les mêmes stems.</p></div>
+<div class="card"><span class="num">02</span><h3>Transcrire</h3><p>Chaque stem devient des notes (basic-pitch), et le tempo du morceau est estimé puis écrit dans le projet. Les parties peuvent se découper davantage : un stem par registres, la batterie pièce par pièce, la voix principale et les chœurs. Les notes dont la transcription doute sont cerclées d’ambre dans le piano roll.</p></div>
+<div class="card"><span class="num">03</span><h3>Choisir le son</h3><p>Les candidats sont rendus par le vrai moteur : le patch trouvé sonne de la même façon dans le studio. Une note choisit le patch, la piste entière choisit la machine, et le mélange a le dernier mot : une piste améliorée n’est gardée que si elle rapproche le morceau entier. Pour la batterie, le kit modélisé concourt contre la TR-808 et la TR-909.</p></div>
+<div class="card"><span class="num">04</span><h3>Comparer</h3><p>Le projet arrive avec son rapport : une distance globale à l’original, et une par piste, la plus éloignée signalée. L’original se charge comme référence A/B, on bascule avec <code>R</code>, et il ne part jamais dans l’export. La voix n’est pas resynthétisée : le stem vocal est reporté tel quel, en audio.</p></div>
+</div>
+<p style="margin-top:16px">C’est un outil de recherche, et le dépôt le traite comme tel : les résultats sont publiés avec leurs chiffres, et les pistes abandonnées sont écrites aussi — un modèle appris de bout en bout, de l’audio aux réglages, une guitare électrique modélisée. Couper une piste reste une décision humaine. La chaîne demande son propre environnement Python ; sans lui, la commande est grisée et dit pourquoi.</p>
+</section>
+
+<section>
+<div class="kicker">Points forts</div>
+<h2>Fait pour être mesuré.</h2>
+<div class="grid">
+<div class="card"><h3>Des façades comme le matériel</h3><p>Chacune des 63 machines a sa façade, disposée comme l’original : le trajet du signal du Minimoog, la rangée unique de la TB-303, les six opérateurs du DX7, les tirettes de l’orgue. Sur la TR-808 et la TB-303, le séquenceur à pas fait partie de la façade et édite les mêmes notes que le piano roll. Les modèles physiques, qui n’ont jamais eu de façade, montrent leur trajet du signal.</p></div>
+<div class="card"><h3>Un son qui ne dérive pas</h3><p>Chaque machine a une empreinte audio qui fige son rendu : si une modification d’une brique DSP partagée change le son d’une machine, un test échoue. Le rendu est déterministe — le même projet donne le même fichier WAV, octet pour octet.</p></div>
+<div class="card"><h3>Le temps réel, vérifié</h3><p>Des tests vérifient que le fil audio n’alloue pas de mémoire, et un test de concurrence tourne sous ThreadSanitizer. Vectoriser entre les voix a rendu un graphe de 16 pistes 1,40 fois plus rapide, toutes empreintes inchangées.</p></div>
+<div class="card"><h3>Ouvert aux autres logiciels</h3><p>Les machines se compilent en plugin CLAP, et un patch donne les mêmes échantillons dans un hôte CLAP que dans le studio — un test le vérifie. Le studio accueille instruments et effets CLAP et VST3. <code>vsm-render</code> rend un projet en WAV sans fenêtre, et Python peut piloter le moteur.</p></div>
+<div class="card"><h3>Des imports qui disent ce qu’ils perdent</h3><p>Un projet Ableton Live, FL Studio ou Cubase arrive avec son tempo, ses pistes, ses notes, ses noms et ses couleurs, et un rapport de ce qui a été repris, approché ou perdu. Les instruments ne voyagent pas : un patch d’Operator ou de Sytrus n’a pas d’équivalent ici, et aucun n’est inventé. Le format fermé <code>.cpr</code> de Cubase est refusé plutôt que deviné.</p></div>
+<div class="card"><h3>Ne rien perdre</h3><p>Le projet est enregistré toutes les trente secondes quand il a changé, écrit à côté du fichier avant de basculer. Après un plantage, le démarrage suivant propose la session, avec son nom, sa date et ce qu’elle contient.</p></div>
+</div>
+<p style="margin-top:16px">Il se compile depuis les sources : le moteur ne demande que CMake et un compilateur C++20, l’application de bureau télécharge JUCE à la configuration, et la reconstruction a besoin de son propre environnement Python. L’interface est en français ou en anglais ; le manuel est en français.</p>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>រ៉ាក់ម៉ាស៊ីនសំឡេង និងស្ទូឌីយោនៅជុំវិញវា។</h2>
+<p>អស់រយៈពេលយូរ កម្មវិធីដែលនៅជុំវិញ engine សំឡេង គ្រាន់តែជាកម្មវិធីបង្ហាញសាកល្បងប៉ុណ្ណោះ៖ គ្មាន track អូឌីយ៉ូ គ្មានការថតសំឡេង គ្មាន clip ហើយក៏មិនអាចរក្សាទុកគម្រោងបានដែរ។ ឥឡូវនេះ វាលែងដូច្នោះទៀតហើយ។ VSM Studio បានក្លាយជាស្ទូឌីយោពេញលេញលើកុំព្យូទ័រ ក្នុងបង្អួចតែមួយ — transport នៅខាងលើ track នៅខាងឆ្វេង arrangement ឬ piano roll នៅកណ្តាល ផ្ទាំងបញ្ជារបស់ឧបករណ៍ដែលបានជ្រើសនៅខាងស្តាំ និងតុលាយសំឡេងនៅខាងក្រោម។ ព្រំដែននីមួយៗអាចអូសប្តូរទំហំបាន ហើយផ្ទាំងនីមួយៗអាចបំបែកចេញជាបង្អួចអណ្តែតដាច់ដោយឡែក។</p>
+<p>ឧបករណ៍តន្ត្រីនីមួយៗត្រូវបានហៅថា ម៉ាស៊ីន ហើយម៉ាស៊ីននីមួយៗត្រូវបានសរសេរឡើងពីសូន្យជាភាសា C++។ ខ្លះធ្វើតាម synth ល្បីៗ — Minimoog, TB-303, Juno-106, Jupiter-8, Prophet, MS-20 និង DX7 ព្រមទាំងម៉ាស៊ីនចង្វាក់ស្គរ TR-808 និង TR-909។ ខ្លះទៀតជាវិធីសំយោគសំឡេង៖ FM, wavetable, additive, granular, phase distortion, West Coast។ ក្រុមធំជាងគេគឺគំរូរូបវិទ្យា (physical models)៖ ខ្សែដែលដោត ឬអូសដោយធ្នូ ព្យ៉ាណូដែលញញួរវាយលើខ្សែ ឧបករណ៍ផ្លុំ និង reed កណ្តឹង sitar ជាមួយស្ពានដែលបន្លឺសំឡេងរំញ័រ theremin និងសំឡេងមនុស្ស។</p>
+<p>ពាក់កណ្តាលទៀតនៃគម្រោងដើរបញ្ច្រាសទិស។ ខ្សែសង្វាក់ Python មួយយកបទភ្លេងដែលបានថតរួច បំបែកវា សរសេរណោតចេញពីវា ហើយស្វែងរកក្នុងរ៉ាក់នូវម៉ាស៊ីន និងការកំណត់ដែលស្រដៀងបំផុត — រួចបើកលទ្ធផលជាគម្រោងដែលអ្នកអាចលេង កែសម្រួល និងលាយសំឡេងបាន។</p>
+</section>
+
+<section>
+<div class="kicker">ស្ទូឌីយោ</div>
+<h2>ពីណោតដំបូង រហូតដល់ការ export។</h2>
+<div class="table-wrap"><table>
+<tr><th>ផ្នែក</th><th>អ្វីដែលមាន</th></tr>
+<tr><td>ឧបករណ៍តន្ត្រី</td><td>ម៉ាស៊ីន 63 ដែលនីមួយៗមានផ្ទាំងបញ្ជាដូចឧបករណ៍ពិត អាចលេងតាមក្តារចុច MIDI ឬក្តារចុចកុំព្យូទ័រ។ ម៉ាស៊ីនទាំងនោះឆ្លើយតបនឹង pitch bend, modulation និង aftertouch តាមលក្ខណៈរបស់វា៖ ព្យ៉ាណូ ឬម៉ាស៊ីនចង្វាក់ស្គរមិនបត់កម្ពស់សំឡេងទេ ដូចឧបករណ៍ពិតដែរ។</td></tr>
+<tr><td>ការកែសម្រួល</td><td>piano roll ជាមួយឧបករណ៍គូរ, quantize និង swing, scales, chords និង arpeggios, velocity lane និង logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>)។ ការ undo គ្របដណ្តប់លើគម្រោងទាំងមូល។</td></tr>
+<tr><td>ការរៀបចំបទ</td><td>clip ដែលអាចផ្លាស់ទី កាត់ និងចម្លងបាន ច្បាប់ចម្លងដែលភ្ជាប់គ្នា markers ខ្សែកោង automation និងកំណែផ្សេងៗនៃ track។</td></tr>
+<tr><td>ការថតសំឡេង</td><td>MIDI និងអូឌីយ៉ូ ជាមួយការរាប់មុនចាប់ផ្តើម (count-in) និង takes ជាន់គ្នា។ clip អូឌីយ៉ូអាច quantize បាន ដើរតាម tempo ឬបម្លែងទៅជាណោត។</td></tr>
+<tr><td>ការលាយសំឡេង</td><td>តុលាយសំឡេងដែលមាន fader គិតជា dB, meters RMS និង peak, sends, group buses, sidechain, effects insert 19, snapshots នៃការលាយសំឡេង និង master bus ដែលមាន EQ, compressor និង limiter។</td></tr>
+<tr><td>Plugins</td><td>ដំណើរការឧបករណ៍ និង effects ប្រភេទ CLAP និង VST3 ហើយម៉ាស៊ីន VSM ខ្លួនឯងក៏អាច build ជា plugin CLAP បានដែរ។</td></tr>
+<tr><td>ឯកសារ</td><td>ឯកសារ MIDI ចូល និងចេញ គម្រោងពី Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) និង track archive របស់ Cubase (<code>.xml</code>) ព្រមទាំង export អូឌីយ៉ូជា WAV, FLAC ឬ Ogg ដែលអាចកំណត់កម្រិតសំឡេងនៅ −14 ឬ −23 LUFS។</td></tr>
+<tr><td>ការរក្សាទុក</td><td>រក្សាទុកដោយស្វ័យប្រវត្តិរៀងរាល់សាមសិបវិនាទី នៅពេលគម្រោងមានការផ្លាស់ប្តូរ ស្តារឡើងវិញក្រោយកម្មវិធីគាំង នៅពេលបើកលើកក្រោយ និងមានរបៀប «គម្រោងឯករាជ្យ» ដែលយកឯកសារមេឌៀទាំងអស់ទៅជាមួយ។</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">ផ្លូវត្រឡប់</div>
+<h2>ពីការថតសំឡេង ទៅជាគម្រោង។</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><h3>បំបែក</h3><p>Demucs បំបែកបទភ្លេងជា stems រហូតដល់ 6៖ ស្គរ bass សំឡេងច្រៀង ហ្គីតា ព្យ៉ាណូ និងផ្នែកដែលនៅសល់។ stem ដែលស្ទើរតែគ្មានអ្វីសោះ មិនត្រូវបានបង្កើតឡើងវិញទេ ហើយរបាយការណ៍បង្ហាញតួលេខនោះ។ នៅលើ GPU ដែលភ្ជាប់មកជាមួយ Intel Arc ជំហាននេះលឿនជាង CPU 2.8 ដង ហើយទទួលបាន stems ដូចគ្នា។</p></div>
+<div class="card"><span class="num">02</span><h3>សរសេរណោត</h3><p>stem នីមួយៗក្លាយជាណោត (basic-pitch) ហើយ tempo របស់បទភ្លេងត្រូវបានប៉ាន់ស្មាន រួចសរសេរចូលក្នុងគម្រោង។ ផ្នែកនានាអាចបំបែកបន្ថែមទៀត៖ stem មួយតាម register ស្គរតាមគ្រឿងនីមួយៗ សំឡេងច្រៀងនាំមុខ និងសំឡេងច្រៀងបន្ទរ។ ណោតដែលការសរសេរមិនប្រាកដ ត្រូវបានគូសគែមពណ៌លឿងទុំ (amber) នៅក្នុង piano roll។</p></div>
+<div class="card"><span class="num">03</span><h3>ជ្រើសរើសសំឡេង</h3><p>បេក្ខជននីមួយៗត្រូវបាន render ដោយ engine ពិតប្រាកដ ដូច្នេះ patch ដែលរកឃើញបន្លឺដូចគ្នានៅក្នុងស្ទូឌីយោ។ ណោតមួយជ្រើសរើស patch, track ទាំងមូលជ្រើសរើសម៉ាស៊ីន ហើយការលាយទាំងមូលជាអ្នកសម្រេចចុងក្រោយ៖ track ដែលប្រសើរជាង ត្រូវបានរក្សាទុកលុះត្រាតែវាធ្វើឱ្យបទភ្លេងទាំងមូលកាន់តែជិតច្បាប់ដើម។ សម្រាប់ស្គរ ឈុតស្គរដែលធ្វើគំរូប្រកួតប្រជែងជាមួយ TR-808 និង TR-909។</p></div>
+<div class="card"><span class="num">04</span><h3>ប្រៀបធៀប</h3><p>គម្រោងមកជាមួយរបាយការណ៍របស់វា៖ ចម្ងាយសរុបពីច្បាប់ដើម និងចម្ងាយសម្រាប់ track នីមួយៗ ដោយ track ដែលឆ្ងាយជាងគេត្រូវបានសម្គាល់។ អាចផ្ទុកច្បាប់ដើមជាឯកសារយោង A/B ហើយប្តូរដោយចុច <code>R</code> ដោយវាមិនដែលចូលទៅក្នុង export ឡើយ។ សំឡេងច្រៀងមិនត្រូវបានសំយោគឡើងវិញទេ៖ stem សំឡេងច្រៀងត្រូវបានយកមកដូចដើម ជាអូឌីយ៉ូ។</p></div>
+</div>
+<p style="margin-top:16px">នេះជាឧបករណ៍ស្រាវជ្រាវ ហើយឃ្លាំងកូដចាត់ទុកវាបែបនោះ៖ លទ្ធផលត្រូវបានផ្សព្វផ្សាយជាមួយតួលេខរបស់វា ហើយគំនិតដែលបរាជ័យក៏ត្រូវបានកត់ត្រាទុកដែរ — ម៉ូដែលដែលរៀនដោយផ្ទាល់ពីអូឌីយ៉ូទៅការកំណត់ និងហ្គីតាអគ្គិសនីដែលធ្វើគំរូ។ ការកាត់ track ចោល នៅតែជាការសម្រេចចិត្តរបស់មនុស្ស។ ខ្សែសង្វាក់នេះត្រូវការបរិស្ថាន Python ផ្ទាល់ខ្លួន ហើយបើគ្មាន ពាក្យបញ្ជានោះត្រូវបានបិទ (ពណ៌ប្រផេះ) ព្រមទាំងប្រាប់មូលហេតុ។</p>
+</section>
+
+<section>
+<div class="kicker">ចំណុចពិសេស</div>
+<h2>បង្កើតឡើងដើម្បីអាចវាស់វែងបាន។</h2>
+<div class="grid">
+<div class="card"><h3>ផ្ទាំងបញ្ជាដូចឧបករណ៍ពិត</h3><p>ម៉ាស៊ីនទាំង 63 នីមួយៗមានផ្ទាំងបញ្ជាផ្ទាល់ខ្លួន ដែលរៀបចំដូចឧបករណ៍ដើម៖ ផ្លូវសញ្ញារបស់ Minimoog ជួរតែមួយរបស់ TB-303 operators ទាំងប្រាំមួយរបស់ DX7 និង drawbars របស់ organ។ នៅលើ TR-808 និង TB-303 step sequencer គឺជាផ្នែកមួយនៃផ្ទាំងបញ្ជា ហើយកែណោតដូចគ្នានឹង piano roll។ គំរូរូបវិទ្យា ដែលមិនដែលមានផ្ទាំងបញ្ជាដើម បង្ហាញផ្លូវសញ្ញារបស់វាជំនួសវិញ។</p></div>
+<div class="card"><h3>សំឡេងដែលមិនប្រែប្រួល</h3><p>ម៉ាស៊ីននីមួយៗមានស្នាមម្រាមដៃអូឌីយ៉ូ (audio fingerprint) ដែលចាក់សោលទ្ធផលសំឡេងរបស់វា៖ បើការកែប្រែកូដ DSP ដែលប្រើរួមគ្នា ធ្វើឱ្យសំឡេងរបស់ម៉ាស៊ីនណាមួយប្រែប្រួល ការធ្វើតេស្តនឹងបរាជ័យ។ ការ render ផ្តល់លទ្ធផលដូចគ្នាជានិច្ច — គម្រោងដដែលផ្តល់ឯកសារ WAV ដដែល គ្រប់ byte ទាំងអស់។</p></div>
+<div class="card"><h3>ច្បាប់ real-time ដែលបានធ្វើតេស្ត</h3><p>ការធ្វើតេស្តពិនិត្យថា thread អូឌីយ៉ូមិនបម្រុង memory ថ្មីទេ ហើយការធ្វើតេស្ត concurrency មួយដំណើរការក្រោម ThreadSanitizer។ ការប្រើ SIMD ឆ្លងកាត់ voices បានធ្វើឱ្យ graph ដែលមាន 16 tracks លឿនជាងមុន 1.40 ដង ដោយ fingerprints ទាំងអស់នៅដដែល។</p></div>
+<div class="card"><h3>ធ្វើការជាមួយកម្មវិធីផ្សេងៗ</h3><p>ម៉ាស៊ីនទាំងនេះអាច build ជា plugin CLAP ហើយ patch មួយផ្តល់ samples ដូចគ្នាបេះបិទនៅក្នុង host CLAP និងនៅក្នុងស្ទូឌីយោ — មានការធ្វើតេស្តពិនិត្យរឿងនេះ។ ស្ទូឌីយោអាចដំណើរការឧបករណ៍ និង effects ប្រភេទ CLAP និង VST3។ <code>vsm-render</code> render គម្រោងទៅជា WAV ដោយមិនបាច់បើកបង្អួច ហើយ Python ក៏អាចបញ្ជា engine បានដែរ។</p></div>
+<div class="card"><h3>ការនាំចូលដែលប្រាប់ពីអ្វីដែលបាត់</h3><p>គម្រោងពី Ableton Live, FL Studio និង Cubase មកដល់ជាមួយ tempo, tracks, ណោត ឈ្មោះ និងពណ៌របស់វា ព្រមទាំងរបាយការណ៍អំពីអ្វីដែលបានយកមក អ្វីដែលប្រហាក់ប្រហែល និងអ្វីដែលបាត់។ ឧបករណ៍តន្ត្រីមិនអាចផ្ទេរបានទេ៖ patch របស់ Operator ឬ Sytrus គ្មានអ្វីស្មើនៅទីនេះទេ ដូច្នេះគ្មានអ្វីត្រូវបានប្រឌិតឡើងឡើយ។ ទម្រង់បិទ <code>.cpr</code> របស់ Cubase ត្រូវបានបដិសេធ ជាជាងការទាយ។</p></div>
+<div class="card"><h3>មិនបាត់បង់អ្វីទាំងអស់</h3><p>គម្រោងត្រូវបានរក្សាទុករៀងរាល់សាមសិបវិនាទី នៅពេលវាមានការផ្លាស់ប្តូរ ដោយសរសេរនៅក្បែរឯកសារសិន មុននឹងប្តូរជំនួស។ ក្រោយពេលកម្មវិធីគាំង ការបើកលើកក្រោយនឹងស្នើយក session នោះមកវិញ ជាមួយឈ្មោះ កាលបរិច្ឆេទ និងអ្វីដែលវាមាន។</p></div>
+</div>
+<p style="margin-top:16px">វាត្រូវបាន build ពីកូដប្រភព៖ engine ត្រូវការតែ CMake និង compiler C++20 កម្មវិធីលើកុំព្យូទ័រទាញយក JUCE នៅពេល configure ហើយការបង្កើតឡើងវិញត្រូវការបរិស្ថាន Python ផ្ទាល់ខ្លួន។ ផ្ទាំងប្រើប្រាស់មានជាភាសាបារាំង ឬអង់គ្លេស ចំណែកសៀវភៅណែនាំមានតែភាសាបារាំងប៉ុណ្ណោះ។</p>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">A look inside.</span><span data-l="fr">Le studio en images.</span><span data-l="km">ស្ទូឌីយោតាមរយៈរូបភាព។</span></h2>
+<div class="gallery landscape">
+<a href="../assets/screenshots/vsm-studio/arrangement-view.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/arrangement-view.jpg" alt="The arrangement view: clips, an automation curve, an audio take and a group track" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/piano-roll-window.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/piano-roll-window.jpg" alt="The piano roll in the main window, next to the Minimoog-style panel" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/reconstruction-dialog.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/reconstruction-dialog.jpg" alt="Rebuilding a song: the reconstruction window at step 3 of 5" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/import-report.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/import-report.jpg" alt="The report shown after importing an Ableton Live project" loading="lazy"></a>
+</div>
+<div class="gallery landscape">
+<a href="../assets/screenshots/vsm-studio/panel-tr808.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/panel-tr808.jpg" alt="The TR-808-style panel with its step sequencer" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/panel-dx7.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/panel-dx7.jpg" alt="The DX7-style panel: algorithm and six FM operators" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/panel-tonewheel.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/panel-tonewheel.jpg" alt="The tonewheel organ panel with its drawbars" loading="lazy"></a>
+<a href="../assets/screenshots/vsm-studio/panel-string.jpg" target="_blank"><img src="../assets/screenshots/vsm-studio/panel-string.jpg" alt="The panel of the String physical model: excitation, bow, string and body" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>The MIDI and sequencing engine: tempo map, clips, takes, piano-roll operations, project history. Plain C++20 with no dependencies, tested without any user interface.</td></tr>
+<tr><td>audio</td><td>The real-time audio engine: voices, the 63 machines, the 19 effects, the mixer, automation and offline rendering. It depends on nothing but core.</td></tr>
+<tr><td>interchange</td><td>Files and formats: stable parameter names such as <code>filter.1.cutoff</code>, <code>*.synth.json</code> presets, <code>project.json</code>, and the Ableton, FL Studio and Cubase readers — with its own JSON parser, XML parser and DEFLATE decompressor.</td></tr>
+<tr><td>panels</td><td>The layout of every hardware-style panel, kept as data and checked by tests: no control points to a missing parameter, and no parameter is left out of reach.</td></tr>
+<tr><td>app</td><td>The desktop application in JUCE: window, piano roll, arrangement, rack, console, browser.</td></tr>
+<tr><td>clap · vst3</td><td>The plugin layers: CLAP export and hosting (an optional build, the only part that downloads an SDK) and VST3 hosting.</td></tr>
+<tr><td>analyse</td><td>The Python reconstruction chain: Demucs, basic-pitch, librosa, and the patch search through the real engine.</td></tr>
+<tr><td>Tests</td><td>About 2,400 engine tests in five suites and about 320 Python tests, run together by <code>verifier.sh</code> with ruff and mypy; plus guards in <code>tools/</code> that check the interface from captures taken without a mouse.</td></tr>
+<tr><td>Docs</td><td>In French: an illustrated user manual, a 4,700-line architecture document, roadmaps, and specifications written before the work they describe.</td></tr>
+</table></div>
+<p style="margin-top:16px">A project folder renders to WAV without a window, through the same code as playback in the studio:</p>
+<pre class="term"><span class="p">$ </span>cmake --build build --target vsm-render
+<span class="p">$ </span>./build/tools/vsm-render docs/examples/demo-project out.wav --tail 1.5
+<span class="c">rendu 3.32692 s (159692 échantillons), 2/2 piste(s) sonorisée(s), pic 0.576647</span></pre>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>Le moteur MIDI et de séquence : carte de tempo, clips, prises, opérations du piano roll, historique du projet. C++20 pur, sans dépendance, testé sans aucune interface graphique.</td></tr>
+<tr><td>audio</td><td>Le moteur audio temps réel : voix, les 63 machines, les 19 effets, la console, l’automation et le rendu hors ligne. Il ne dépend que de core.</td></tr>
+<tr><td>interchange</td><td>Fichiers et formats : des noms de paramètres stables comme <code>filter.1.cutoff</code>, les presets <code>*.synth.json</code>, <code>project.json</code>, et les lecteurs Ableton, FL Studio et Cubase — avec son propre analyseur JSON, son analyseur XML et son décompresseur DEFLATE.</td></tr>
+<tr><td>panels</td><td>La disposition de chaque façade, tenue sous forme de données et vérifiée par des tests : aucune commande ne pointe vers un paramètre absent, aucun paramètre n’est hors d’atteinte.</td></tr>
+<tr><td>app</td><td>L’application de bureau en JUCE : fenêtre, piano roll, arrangement, rack, console, navigateur.</td></tr>
+<tr><td>clap · vst3</td><td>Les couches plugin : export et hôte CLAP (une compilation optionnelle, la seule partie qui télécharge un SDK) et hôte VST3.</td></tr>
+<tr><td>analyse</td><td>La chaîne de reconstruction en Python : Demucs, basic-pitch, librosa, et la recherche de patch par le vrai moteur.</td></tr>
+<tr><td>Tests</td><td>Environ 2 400 tests du moteur en cinq suites et environ 320 tests Python, lancés ensemble par <code>verifier.sh</code> avec ruff et mypy ; et des gardes dans <code>tools/</code> qui vérifient l’interface sur des captures faites sans souris.</td></tr>
+<tr><td>Docs</td><td>En français : un manuel illustré, un document d’architecture de 4 700 lignes, des feuilles de route, et des cahiers des charges écrits avant le travail qu’ils décrivent.</td></tr>
+</table></div>
+<p style="margin-top:16px">Un dossier de projet se rend en WAV sans fenêtre, par le même chemin de calcul que la lecture dans le studio :</p>
+<pre class="term"><span class="p">$ </span>cmake --build build --target vsm-render
+<span class="p">$ </span>./build/tools/vsm-render docs/examples/demo-project out.wav --tail 1.5
+<span class="c">rendu 3.32692 s (159692 échantillons), 2/2 piste(s) sonorisée(s), pic 0.576647</span></pre>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>core</td><td>engine MIDI និង sequencer៖ tempo map, clips, takes, ប្រតិបត្តិការរបស់ piano roll និងប្រវត្តិនៃគម្រោង។ C++20 សុទ្ធ គ្មាន dependency ហើយធ្វើតេស្តដោយមិនត្រូវការផ្ទាំងក្រាហ្វិកណាមួយឡើយ។</td></tr>
+<tr><td>audio</td><td>engine អូឌីយ៉ូ real-time៖ voices ម៉ាស៊ីនទាំង 63 effects ទាំង 19 តុលាយសំឡេង automation និងការ render ដោយមិនចាំបាច់ចាក់ផ្ទាល់ (offline)។ វាពឹងផ្អែកតែលើ core ប៉ុណ្ណោះ។</td></tr>
+<tr><td>interchange</td><td>ឯកសារ និងទម្រង់៖ ឈ្មោះប៉ារ៉ាម៉ែត្រថេរដូចជា <code>filter.1.cutoff</code>, presets <code>*.synth.json</code>, <code>project.json</code> និងកម្មវិធីអានគម្រោង Ableton, FL Studio និង Cubase — ជាមួយ parser JSON, parser XML និង decompressor DEFLATE ដែលសរសេរដោយខ្លួនឯង។</td></tr>
+<tr><td>panels</td><td>ការរៀបចំផ្ទាំងបញ្ជានីមួយៗ ដែលរក្សាទុកជាទិន្នន័យ និងពិនិត្យដោយការធ្វើតេស្ត៖ គ្មានប៊ូតុងណាចង្អុលទៅប៉ារ៉ាម៉ែត្រដែលមិនមាន ហើយគ្មានប៉ារ៉ាម៉ែត្រណាដែលមិនអាចចូលដល់បានឡើយ។</td></tr>
+<tr><td>app</td><td>កម្មវិធីលើកុំព្យូទ័រសរសេរដោយ JUCE៖ បង្អួច piano roll, arrangement, រ៉ាក់ តុលាយសំឡេង និង browser។</td></tr>
+<tr><td>clap · vst3</td><td>ស្រទាប់ plugin៖ export និង host CLAP (build ជាជម្រើស ហើយជាផ្នែកតែមួយគត់ដែលត្រូវទាញយក SDK) និង host VST3។</td></tr>
+<tr><td>analyse</td><td>ខ្សែសង្វាក់បង្កើតឡើងវិញជា Python៖ Demucs, basic-pitch, librosa និងការស្វែងរក patch តាមរយៈ engine ពិតប្រាកដ។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្ត engine ប្រហែល 2,400 ក្នុង 5 suites និងការធ្វើតេស្ត Python ប្រហែល 320 ដែលដំណើរការរួមគ្នាដោយ <code>verifier.sh</code> ជាមួយ ruff និង mypy ព្រមទាំង guards នៅក្នុង <code>tools/</code> ដែលពិនិត្យផ្ទាំងប្រើប្រាស់តាមរូបថតអេក្រង់ដែលថតដោយមិនប្រើកណ្តុរ។</td></tr>
+<tr><td>ឯកសារ</td><td>ជាភាសាបារាំង៖ សៀវភៅណែនាំអ្នកប្រើប្រាស់ដែលមានរូបភាព ឯកសារស្ថាបត្យកម្មប្រវែង 4,700 បន្ទាត់ ផែនទីបង្ហាញផ្លូវ (roadmaps) និងលក្ខខណ្ឌតម្រូវ (specifications) ដែលសរសេរមុនការងារដែលវាពិពណ៌នា។</td></tr>
+</table></div>
+<p style="margin-top:16px">ថតឯកសារគម្រោងមួយអាច render ទៅជា WAV ដោយមិនបាច់បើកបង្អួច តាមរយៈកូដដូចគ្នានឹងការចាក់នៅក្នុងស្ទូឌីយោ៖</p>
+<pre class="term"><span class="p">$ </span>cmake --build build --target vsm-render
+<span class="p">$ </span>./build/tools/vsm-render docs/examples/demo-project out.wav --tail 1.5
+<span class="c">rendu 3.32692 s (159692 échantillons), 2/2 piste(s) sonorisée(s), pic 0.576647</span></pre>
+</section>
+
+<nav class="pager">
+<a href="js-synth.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>Synth Rack</b></a>
+<a href="btcterm.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>BTC Terminal</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> STEFAN</span><a href="../#sound">← <span data-l="en">Back to the Sound lab</span><span data-l="fr">Retour au Sound lab</span><span data-l="km">ត្រឡប់ទៅមន្ទីរពិសោធន៍សំឡេង</span></a></div></footer>
+</body></html>
