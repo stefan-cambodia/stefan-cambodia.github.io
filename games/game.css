@@ -37,7 +37,9 @@ h1{font-size:clamp(40px,7vw,76px);line-height:1.04;letter-spacing:-.065em;margin
 .soon{font:11px "DM Mono","Noto Sans Khmer",monospace;color:var(--muted);border:1px dashed #34404e;border-radius:10px;padding:13px 16px}
 
 .shot{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:34px 0 0;background:#0a0e14}
-.shot img{display:block;width:100%;height:auto}
+.shot img,.shot video{display:block;width:100%;height:auto}
+/* A video clip inside a section, above a gallery: <div class="shot clip"><video controls preload="none" poster="…"> */
+.shot.clip{margin:6px 0 12px}
 
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 10px}
 .stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px}
