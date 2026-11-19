@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080b12">
-<meta name="description" content="VSM Studio (Vintage Synth MIDI Studio): a desktop MIDI and audio workstation in C++ and JUCE, with a rack of 64 modelled synthesizers and instruments, and a Python chain that rebuilds a recorded song as an editable project.">
+<meta name="description" content="VSM Studio (Vintage Synth MIDI Studio): a desktop MIDI and audio workstation in C++ and JUCE, with a rack of 64 modelled synthesizers and instruments, a piano roll with phrase tools, 15 MIDI effects, and a Python chain that rebuilds a recorded song as an editable project.">
 <title data-en="VSM Studio, vintage synth MIDI studio — Chantrea Systems" data-fr="VSM Studio, studio MIDI de synthés vintage — Chantrea Systems" data-km="VSM Studio, ស្ទូឌីយោ MIDI synth vintage — Chantrea Systems">VSM Studio, vintage synth MIDI studio — Chantrea Systems</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
 <div class="stat"><strong>64</strong><span data-l="en">Machines in the rack</span><span data-l="fr">Machines au rack</span><span data-l="km">ម៉ាស៊ីននៅក្នុងរ៉ាក់</span></div>
 <div class="stat"><strong>19</strong><span data-l="en">Insert effects</span><span data-l="fr">Effets d’insert</span><span data-l="km">ប្រភេទ effect insert</span></div>
 <div class="stat"><strong>~2,400</strong><span data-l="en">Engine tests</span><span data-l="fr">Tests du moteur</span><span data-l="km">ការធ្វើតេស្ត engine</span></div>
-<div class="stat"><strong>3</strong><span data-l="en">DAW formats imported</span><span data-l="fr">Formats de DAW importés</span><span data-l="km">ទម្រង់ DAW ដែលអាចនាំចូល</span></div>
+<div class="stat"><strong>15</strong><span data-l="en">MIDI effects</span><span data-l="fr">Effets MIDI</span><span data-l="km">ប្រភេទ effect MIDI</span></div>
 </div>
 
 <div data-l="en">
@@ -54,14 +54,30 @@
 <div class="table-wrap"><table>
 <tr><th>Area</th><th>What you get</th></tr>
 <tr><td>Instruments</td><td>64 machines, each with its own hardware-style panel, played from a MIDI keyboard or the computer keyboard. They answer pitch bend, modulation and aftertouch according to their nature: a piano or a drum machine refuses to bend a note, as the real one would.</td></tr>
-<tr><td>Editing</td><td>A piano roll with drawing tools, quantise and swing, scales, chords and arpeggios, a velocity lane and a logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>). Undo covers the whole project.</td></tr>
+<tr><td>Editing</td><td>A piano roll with drawing tools and a paint brush, quantise and swing, scales, chords and arpeggios, a velocity lane, a logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>) and a set of phrase tools, described below. Undo covers the whole project.</td></tr>
+<tr><td>MIDI effects</td><td>15 effects on each MIDI track, which change what plays without touching the written notes: transposition, velocity, arpeggiator, length, range, random, chance, quantise, echo, chords, compressor, chord gate, scale, note repeat, and a transformer driven by a logical-editor rule. The same notes play at every playback and every export, and one command bakes the effects into the notes.</td></tr>
 <tr><td>Arranging</td><td>Clips you move, cut and duplicate, linked copies, markers, automation curves and track versions.</td></tr>
 <tr><td>Recording</td><td>MIDI and audio, with count-in and stacked takes. An audio clip can be quantised, follow the tempo or be turned into notes.</td></tr>
 <tr><td>Mixing</td><td>A console with faders in dB, RMS and peak meters, sends, group buses, sidechain, 19 insert effects, mix snapshots and a master bus with EQ, compressor and limiter.</td></tr>
 <tr><td>Plugins</td><td>Hosts CLAP and VST3 instruments and effects; the VSM machines can themselves be built as a CLAP plugin.</td></tr>
-<tr><td>Files</td><td>MIDI files in and out; projects from Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) and Cubase track archives (<code>.xml</code>); audio export to WAV, FLAC or Ogg, optionally normalised to −14 or −23 LUFS.</td></tr>
+<tr><td>Files</td><td>MIDI files in and out (exported as format 0 on request, at 96 to 960 ticks per quarter note); projects from Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) and Cubase track archives (<code>.xml</code>); audio export to WAV, FLAC or Ogg, optionally normalised to −14 or −23 LUFS.</td></tr>
 <tr><td>Saving</td><td>Autosave every thirty seconds when the project has changed, crash recovery at the next start, and a self-contained project mode that carries its media along.</td></tr>
 </table></div>
+</section>
+
+<section>
+<div class="kicker">The piano roll</div>
+<h2>Tools that work on a whole phrase.</h2>
+<p>The piano roll has a growing set of phrase tools, many modelled on those of Ableton Live 12, FL Studio and Cubase. They act on the selected notes, from the Edit menu; each one is a single undo step, and the status line says what it did — or why it did nothing.</p>
+<div class="grid">
+<div class="card"><h3>Shape a phrase</h3><p>Strum a chord up or down; add a flam before each note; chop notes at every grid line; articulate each note to 25, 50, 75 or 90 % of the gap to the next; speed a phrase up (accelerando) or slow it down (ritardando), its start and end kept; transpose while keeping the notes inside a range.</p></div>
+<div class="card"><h3>Recombine</h3><p>Rotate the pitches, velocities or lengths of the selected notes forward or back, the rhythm kept; reverse their order or shuffle them — always the same way for the same selection. Positions rotate too: whole notes swap places on the same start times.</p></div>
+<div class="card"><h3>Add notes</h3><p>Stack a fifth, an octave, both, or a major or minor triad on each selected note; connect two notes with passing notes from the scale; insert a Euclidean rhythm at the playhead (3 in 8, the tresillo; 5 in 8, the cinquillo; 5, 7 or 9 in 16); paint one note per grid step with the brush. Stacks and the brush never double a note already there.</p></div>
+<div class="card"><h3>Generate</h3><p>A seed, from 1 to 4, draws a line in the scale between the locators, and the same seed always gives the same line: try one, undo, try the next. A shape — rise, fall, arch, wave — becomes a line of notes in the scale, with nothing left to chance.</p></div>
+<div class="card"><h3>Velocities</h3><p>Add or remove an amount, compress or expand the dynamics around their average (0 to 300 %) or hold them between two limits, with what saturates counted; Shift-drag in the velocity lane to draw a line, a parabola, a sine, a triangle or a square; five ready insert velocities for the pencil; delete the notes under a minimum length or velocity; keep one selected note in 2, 3 or 4 to thin out or accent a phrase.</p></div>
+<div class="card"><h3>Effects on what plays</h3><p>The 15 MIDI effects are adjusted while the song plays: chance thins out a dense pattern, echo follows each note with softer repeats — transposed and shortened if wanted —, chords turn each note into a stack, the chord gate lets through only chords of the chosen size, and the transformer applies a logical-editor rule (discard, transpose, set the velocity or the length, move). “Bake the MIDI effects into the notes” writes the result and says what was dropped.</p></div>
+</div>
+<p style="margin-top:16px">The new tools are checked twice: by an engine test, without any interface, and by a bench that launches the application, goes through the menu and reads back the result — run first against the previous build, where it has to fail. The 280 or so benches play as one series of more than two hours, through <code>verifier.sh --bancs</code>.</p>
 </section>
 
 <section>
@@ -73,7 +89,7 @@
 <div class="card"><span class="num">03</span><h3>Choose the sound</h3><p>Candidates are rendered by the real engine, so the patch that is found sounds the same in the studio. One note chooses the patch, the whole track chooses the machine, and the mix has the last word: a better track is kept only if it brings the whole song closer. For drums, the modelled kit competes with the TR-808 and TR-909.</p></div>
 <div class="card"><span class="num">04</span><h3>Compare</h3><p>The project comes with its report: an overall distance to the original, and one per track, the farthest one marked. Load the original as an A/B reference and switch with <code>R</code>; it never goes into the export. Vocals are not resynthesised: the vocal stem is carried over as audio.</p></div>
 </div>
-<p style="margin-top:16px">It is a research tool, and the repository treats it as one: results are published with their figures, and the ideas that failed are written down too — a model trained end to end from audio to settings, a modelled electric guitar. Cutting a track stays a human decision. The chain needs its own Python environment; without it, the command is greyed out and says why.</p>
+<p style="margin-top:16px">It is a research tool, and the repository treats it as one: results are published with their figures, and the ideas that failed are written down too — a model trained end to end from audio to settings, a modelled electric guitar. The latest measurements chase drums that come out too dull: the separation keeps the high frequencies to within 0.3 dB, and the loss comes afterwards, in the rebuilt drums, whose hi-hat comes out 5 to 9 dB too quiet. Cutting a track stays a human decision. The chain needs its own Python environment; without it, the command is greyed out and says why.</p>
 </section>
 
 <section>
@@ -106,14 +122,30 @@
 <div class="table-wrap"><table>
 <tr><th>Domaine</th><th>Ce qu’on y trouve</th></tr>
 <tr><td>Instruments</td><td>64 machines, chacune avec sa façade façon matériel, jouées au clavier MIDI ou au clavier de l’ordinateur. Elles répondent à la molette de hauteur, à la modulation et à l’aftertouch selon leur nature : un piano ou une boîte à rythmes refuse de plier la note, comme l’original.</td></tr>
-<tr><td>Édition</td><td>Un piano roll avec outils de dessin, quantification et swing, gammes, accords et arpèges, une lane de vélocité et un éditeur logique (<code>vélocité &lt; 30 et durée &lt; 1/32</code>). L’annulation couvre le projet entier.</td></tr>
+<tr><td>Édition</td><td>Un piano roll avec outils de dessin et pinceau, quantification et swing, gammes, accords et arpèges, une lane de vélocité, un éditeur logique (<code>vélocité &lt; 30 et durée &lt; 1/32</code>) et des gestes de phrase, décrits plus bas. L’annulation couvre le projet entier.</td></tr>
+<tr><td>Effets MIDI</td><td>15 effets par piste MIDI, qui changent ce qui joue sans toucher aux notes écrites : transposition, vélocité, arpégiateur, durée, plage, aléatoire, probabilité, quantification, écho, accords, compresseur, porte d’accords, gamme, roulement, et un transformateur mené par une règle de l’éditeur logique. Les mêmes notes jouent à chaque lecture et à chaque export, et une commande reporte les effets dans les notes.</td></tr>
 <tr><td>Arrangement</td><td>Des clips qu’on déplace, coupe et duplique, des copies liées, des repères, des courbes d’automation et des versions de piste.</td></tr>
 <tr><td>Enregistrement</td><td>MIDI et audio, avec décompte et prises empilées. Un clip audio peut être quantifié, suivre le tempo ou devenir des notes.</td></tr>
 <tr><td>Mixage</td><td>Une console aux faders gradués en dB, des vumètres RMS et crête, des départs, des bus de groupe, une chaîne latérale, 19 effets d’insert, des instantanés de mixage et un bus master avec égaliseur, compresseur et limiteur.</td></tr>
 <tr><td>Plugins</td><td>Hôte d’instruments et d’effets CLAP et VST3 ; les machines VSM peuvent elles-mêmes être compilées en plugin CLAP.</td></tr>
-<tr><td>Fichiers</td><td>Fichiers MIDI en entrée et en sortie ; projets Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) et archives de pistes Cubase (<code>.xml</code>) ; export audio en WAV, FLAC ou Ogg, au besoin normalisé à −14 ou −23 LUFS.</td></tr>
+<tr><td>Fichiers</td><td>Fichiers MIDI en entrée et en sortie (export en format 0 sur demande, de 96 à 960 tics par noire) ; projets Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) et archives de pistes Cubase (<code>.xml</code>) ; export audio en WAV, FLAC ou Ogg, au besoin normalisé à −14 ou −23 LUFS.</td></tr>
 <tr><td>Sauvegarde</td><td>Sauvegarde automatique toutes les trente secondes quand le projet a changé, récupération après plantage au démarrage suivant, et un mode « projet autonome » qui emporte ses médias.</td></tr>
 </table></div>
+</section>
+
+<section>
+<div class="kicker">Le piano roll</div>
+<h2>Des gestes qui travaillent une phrase entière.</h2>
+<p>Le piano roll a gagné toute une série de gestes de phrase, beaucoup sur le modèle de ceux d’Ableton Live 12, de FL Studio et de Cubase. Ils agissent sur les notes choisies, depuis le menu Édition ; chacun est un pas d’annulation, et la ligne d’état dit ce qu’il a fait — ou pourquoi il n’a rien fait.</p>
+<div class="grid">
+<div class="card"><h3>Façonner une phrase</h3><p>Égrener un accord vers le haut ou vers le bas ; poser un fla devant chaque note ; découper les notes à chaque ligne de la grille ; articuler chaque note à 25, 50, 75 ou 90 % de l’écart jusqu’à la suivante ; accélérer (accelerando) ou ralentir (ritardando) une phrase, son début et sa fin gardés ; transposer en gardant les notes dans une plage.</p></div>
+<div class="card"><h3>Recombiner</h3><p>Faire tourner les hauteurs, les vélocités ou les durées des notes choisies, vers l’avant ou vers l’arrière, le rythme gardé ; en inverser l’ordre ou les mélanger — toujours de la même façon pour la même sélection. Les positions tournent aussi : les notes entières changent de place sur les mêmes débuts.</p></div>
+<div class="card"><h3>Ajouter des notes</h3><p>Empiler une quinte, une octave, les deux, ou un accord majeur ou mineur sur chaque note choisie ; relier deux notes par des notes de passage de la gamme ; poser un rythme euclidien à la tête de lecture (3 sur 8, le tresillo ; 5 sur 8, le cinquillo ; 5, 7 ou 9 sur 16) ; peindre au pinceau une note par pas de grille. La pile et le pinceau ne doublent jamais une note déjà là.</p></div>
+<div class="card"><h3>Générer</h3><p>Une graine, de 1 à 4, tire une ligne dans la gamme entre les locateurs, et la même graine redonne toujours la même ligne : on essaie, on annule, on essaie la suivante. Une forme — montée, descente, arche, vague — devient une ligne de notes de la gamme, sans rien laisser au hasard.</p></div>
+<div class="card"><h3>Les vélocités</h3><p>Ajouter ou retrancher une quantité, comprimer ou étendre les nuances autour de leur moyenne (0 à 300 %) ou les tenir entre deux bornes, ce qui sature compté ; tracer à Maj+glisser, dans la lane de vélocité, une ligne, une parabole, un sinus, un triangle ou un carré ; cinq vélocités d’insertion prêtes pour le crayon ; supprimer les notes sous une durée ou une vélocité minimale ; ne garder choisie qu’une note sur 2, 3 ou 4 pour éclaircir ou accentuer une phrase.</p></div>
+<div class="card"><h3>Des effets sur ce qui joue</h3><p>Les 15 effets MIDI se règlent pendant que le morceau tourne : la probabilité éclaircit un motif dense, l’écho fait suivre chaque note de répétitions de plus en plus douces — transposées et raccourcies au besoin —, les accords font de chaque note une pile, la porte d’accords ne laisse passer que les accords de la taille choisie, et le transformateur applique une règle de l’éditeur logique (écarter, transposer, fixer la vélocité ou la durée, décaler). « Reporter les effets MIDI dans les notes » écrit le résultat et dit ce qui est tombé.</p></div>
+</div>
+<p style="margin-top:16px">Les nouveaux gestes sont vérifiés deux fois : par un test du moteur, sans interface, et par un banc qui lance l’application, passe par le menu et relit le résultat — joué d’abord sur la version précédente, où il doit échouer. Les quelque 280 bancs se jouent en une série de plus de deux heures, par <code>verifier.sh --bancs</code>.</p>
 </section>
 
 <section>
@@ -125,7 +157,7 @@
 <div class="card"><span class="num">03</span><h3>Choisir le son</h3><p>Les candidats sont rendus par le vrai moteur : le patch trouvé sonne de la même façon dans le studio. Une note choisit le patch, la piste entière choisit la machine, et le mélange a le dernier mot : une piste améliorée n’est gardée que si elle rapproche le morceau entier. Pour la batterie, le kit modélisé concourt contre la TR-808 et la TR-909.</p></div>
 <div class="card"><span class="num">04</span><h3>Comparer</h3><p>Le projet arrive avec son rapport : une distance globale à l’original, et une par piste, la plus éloignée signalée. L’original se charge comme référence A/B, on bascule avec <code>R</code>, et il ne part jamais dans l’export. La voix n’est pas resynthétisée : le stem vocal est reporté tel quel, en audio.</p></div>
 </div>
-<p style="margin-top:16px">C’est un outil de recherche, et le dépôt le traite comme tel : les résultats sont publiés avec leurs chiffres, et les pistes abandonnées sont écrites aussi — un modèle appris de bout en bout, de l’audio aux réglages, une guitare électrique modélisée. Couper une piste reste une décision humaine. La chaîne demande son propre environnement Python ; sans lui, la commande est grisée et dit pourquoi.</p>
+<p style="margin-top:16px">C’est un outil de recherche, et le dépôt le traite comme tel : les résultats sont publiés avec leurs chiffres, et les pistes abandonnées sont écrites aussi — un modèle appris de bout en bout, de l’audio aux réglages, une guitare électrique modélisée. Les dernières mesures traquent une batterie rendue trop sombre : la séparation garde les aigus à 0,3 dB près, et la perte vient après elle, dans la batterie reconstruite, dont le charleston sort 5 à 9 dB trop bas. Couper une piste reste une décision humaine. La chaîne demande son propre environnement Python ; sans lui, la commande est grisée et dit pourquoi.</p>
 </section>
 
 <section>
@@ -158,14 +190,30 @@
 <div class="table-wrap"><table>
 <tr><th>ផ្នែក</th><th>អ្វីដែលមាន</th></tr>
 <tr><td>ឧបករណ៍តន្ត្រី</td><td>ម៉ាស៊ីន 64 ដែលនីមួយៗមានផ្ទាំងបញ្ជាដូចឧបករណ៍ពិត អាចលេងតាមក្តារចុច MIDI ឬក្តារចុចកុំព្យូទ័រ។ ម៉ាស៊ីនទាំងនោះឆ្លើយតបនឹង pitch bend, modulation និង aftertouch តាមលក្ខណៈរបស់វា៖ ព្យ៉ាណូ ឬម៉ាស៊ីនចង្វាក់ស្គរមិនបត់កម្ពស់សំឡេងទេ ដូចឧបករណ៍ពិតដែរ។</td></tr>
-<tr><td>ការកែសម្រួល</td><td>piano roll ជាមួយឧបករណ៍គូរ, quantize និង swing, scales, chords និង arpeggios, velocity lane និង logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>)។ ការ undo គ្របដណ្តប់លើគម្រោងទាំងមូល។</td></tr>
+<tr><td>ការកែសម្រួល</td><td>piano roll ជាមួយឧបករណ៍គូរ និងជក់លាប (paint brush), quantize និង swing, scales, chords និង arpeggios, velocity lane, logical editor (<code>velocity &lt; 30 and length &lt; 1/32</code>) និងឧបករណ៍សម្រាប់កែឃ្លាភ្លេង ដែលពិពណ៌នានៅខាងក្រោម។ ការ undo គ្របដណ្តប់លើគម្រោងទាំងមូល។</td></tr>
+<tr><td>effects MIDI</td><td>effects ចំនួន 15 សម្រាប់ track MIDI នីមួយៗ ដែលផ្លាស់ប្តូរអ្វីដែលកំពុងចាក់ ដោយមិនប៉ះពាល់ណោតដែលបានសរសេរ៖ transposition, velocity, arpeggiator, length, range, random, chance, quantise, echo, chords, compressor, chord gate, scale, note repeat និង transformer ដែលដំណើរការតាមច្បាប់មួយរបស់ logical editor។ ណោតដដែលចាក់រាល់ពេលចាក់ និងរាល់ពេល export ហើយពាក្យបញ្ជាមួយអាចសរសេរ effects ទាំងនោះចូលទៅក្នុងណោតតែម្តង។</td></tr>
 <tr><td>ការរៀបចំបទ</td><td>clip ដែលអាចផ្លាស់ទី កាត់ និងចម្លងបាន ច្បាប់ចម្លងដែលភ្ជាប់គ្នា markers ខ្សែកោង automation និងកំណែផ្សេងៗនៃ track។</td></tr>
 <tr><td>ការថតសំឡេង</td><td>MIDI និងអូឌីយ៉ូ ជាមួយការរាប់មុនចាប់ផ្តើម (count-in) និង takes ជាន់គ្នា។ clip អូឌីយ៉ូអាច quantize បាន ដើរតាម tempo ឬបម្លែងទៅជាណោត។</td></tr>
 <tr><td>ការលាយសំឡេង</td><td>តុលាយសំឡេងដែលមាន fader គិតជា dB, meters RMS និង peak, sends, group buses, sidechain, effects insert 19, snapshots នៃការលាយសំឡេង និង master bus ដែលមាន EQ, compressor និង limiter។</td></tr>
 <tr><td>Plugins</td><td>ដំណើរការឧបករណ៍ និង effects ប្រភេទ CLAP និង VST3 ហើយម៉ាស៊ីន VSM ខ្លួនឯងក៏អាច build ជា plugin CLAP បានដែរ។</td></tr>
-<tr><td>ឯកសារ</td><td>ឯកសារ MIDI ចូល និងចេញ គម្រោងពី Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) និង track archive របស់ Cubase (<code>.xml</code>) ព្រមទាំង export អូឌីយ៉ូជា WAV, FLAC ឬ Ogg ដែលអាចកំណត់កម្រិតសំឡេងនៅ −14 ឬ −23 LUFS។</td></tr>
+<tr><td>ឯកសារ</td><td>ឯកសារ MIDI ចូល និងចេញ (អាច export ជា format 0 តាមការស្នើ និងក្នុងកម្រិត 96 ដល់ 960 ticks ក្នុងមួយ quarter note) គម្រោងពី Ableton Live (<code>.als</code>), FL Studio (<code>.flp</code>) និង track archive របស់ Cubase (<code>.xml</code>) ព្រមទាំង export អូឌីយ៉ូជា WAV, FLAC ឬ Ogg ដែលអាចកំណត់កម្រិតសំឡេងនៅ −14 ឬ −23 LUFS។</td></tr>
 <tr><td>ការរក្សាទុក</td><td>រក្សាទុកដោយស្វ័យប្រវត្តិរៀងរាល់សាមសិបវិនាទី នៅពេលគម្រោងមានការផ្លាស់ប្តូរ ស្តារឡើងវិញក្រោយកម្មវិធីគាំង នៅពេលបើកលើកក្រោយ និងមានរបៀប «គម្រោងឯករាជ្យ» ដែលយកឯកសារមេឌៀទាំងអស់ទៅជាមួយ។</td></tr>
 </table></div>
+</section>
+
+<section>
+<div class="kicker">piano roll</div>
+<h2>ឧបករណ៍ដែលធ្វើការលើឃ្លាភ្លេងទាំងមូល។</h2>
+<p>piano roll មានឧបករណ៍កាន់តែច្រើនឡើងសម្រាប់កែឃ្លាភ្លេង ដែលភាគច្រើនយកគំរូតាមឧបករណ៍របស់ Ableton Live 12, FL Studio និង Cubase។ ឧបករណ៍ទាំងនេះធ្វើការលើណោតដែលបានជ្រើស ពីម៉ឺនុយ Edit ហើយនីមួយៗជាជំហាន undo តែមួយ ព្រមទាំងបន្ទាត់ស្ថានភាព (status line) ប្រាប់ពីអ្វីដែលវាបានធ្វើ — ឬមូលហេតុដែលវាមិនបានធ្វើអ្វីសោះ។</p>
+<div class="grid">
+<div class="card"><h3>កែទម្រង់ឃ្លាភ្លេង</h3><p>strum chord ពីក្រោមឡើងលើ ឬពីលើចុះក្រោម ដាក់ flam នៅមុខណោតនីមួយៗ កាត់ណោតនៅគ្រប់បន្ទាត់នៃ grid កំណត់ប្រវែងណោតនីមួយៗឱ្យស្មើ 25, 50, 75 ឬ 90 % នៃគម្លាតទៅណោតបន្ទាប់ ពន្លឿន (accelerando) ឬពន្យឺត (ritardando) ឃ្លាភ្លេង ដោយរក្សាចំណុចចាប់ផ្តើម និងចំណុចបញ្ចប់ដដែល ព្រមទាំង transpose ដោយរក្សាណោតឱ្យនៅក្នុងចន្លោះដែលបានកំណត់។</p></div>
+<div class="card"><h3>ផ្សំឡើងវិញ</h3><p>បង្វិល pitch, velocity ឬ length នៃណោតដែលបានជ្រើស ទៅមុខ ឬថយក្រោយ ដោយរក្សាចង្វាក់ដដែល បញ្ច្រាសលំដាប់ ឬលាយឱ្យច្របូកច្របល់ — តែងតែដូចគ្នាសម្រាប់ការជ្រើសរើសដដែល។ ទីតាំងក៏អាចបង្វិលបានដែរ៖ ណោតទាំងមូលប្តូរកន្លែងគ្នា លើចំណុចចាប់ផ្តើមដដែល។</p></div>
+<div class="card"><h3>បន្ថែមណោត</h3><p>ដាក់ fifth, octave ឬទាំងពីរ ឬ triad major ឬ minor ពីលើណោតនីមួយៗដែលបានជ្រើស ភ្ជាប់ណោតពីរដោយណោតឆ្លងកាត់ (passing notes) ពី scale ដាក់ចង្វាក់ Euclidean នៅទីតាំង playhead (3 ក្នុង 8 គឺ tresillo, 5 ក្នុង 8 គឺ cinquillo, 5, 7 ឬ 9 ក្នុង 16) និងលាបណោតមួយក្នុងមួយជំហាន grid ដោយជក់លាប។ ការដាក់ជាន់ និងជក់លាប មិនដែលដាក់ណោតស្ទួនលើណោតដែលមានរួចហើយទេ។</p></div>
+<div class="card"><h3>បង្កើតដោយស្វ័យប្រវត្តិ</h3><p>seed មួយ (ពីលេខ 1 ដល់ 4) បង្កើតខ្សែបទភ្លេងមួយក្នុង scale នៅចន្លោះ locators ហើយ seed ដដែលតែងតែផ្តល់ខ្សែបទភ្លេងដដែល៖ សាកល្បង undo រួចសាក seed បន្ទាប់។ រាង (shape) មួយ — ឡើង ចុះ ធ្នូ រលក — ក្លាយជាខ្សែណោតក្នុង scale ដោយគ្មានអ្វីទុកឱ្យចៃដន្យឡើយ។</p></div>
+<div class="card"><h3>Velocity</h3><p>បន្ថែម ឬដក velocity តាមចំនួនដែលចង់បាន បង្រួម ឬពង្រីកកម្រិតខ្លាំងខ្សោយជុំវិញមធ្យមភាគ (0 ដល់ 300 %) ឬរក្សាវានៅចន្លោះព្រំដែនពីរ ដោយរាប់ចំនួនណោតដែលលើសព្រំដែន គូសបន្ទាត់ parabola, sine, triangle ឬ square ក្នុង velocity lane ដោយចុច Shift ហើយអូស មាន velocity ត្រៀមរួច 5 សម្រាប់ខ្មៅដៃ លុបណោតដែលខ្លី ឬខ្សោយជាងកម្រិតអប្បបរមា ហើយជ្រើសទុកតែណោតមួយក្នុងចំណោម 2, 3 ឬ 4 ដើម្បីសម្រួលឃ្លាភ្លេង ឬសង្កត់សំឡេងឱ្យខ្លាំង។</p></div>
+<div class="card"><h3>effects លើអ្វីដែលកំពុងចាក់</h3><p>effects MIDI ទាំង 15 អាចកែតម្រូវបាន ខណៈពេលបទភ្លេងកំពុងចាក់៖ chance ធ្វើឱ្យ pattern ដែលក្រាស់ស្រាលជាងមុន echo បន្ថែមការបន្លឺឡើងវិញដែលកាន់តែខ្សោយទៅតាមក្រោយណោតនីមួយៗ — ដែលអាច transpose និងធ្វើឱ្យខ្លីបាន — chords ប្រែណោតនីមួយៗទៅជា chord, chord gate អនុញ្ញាតឱ្យចាក់តែ chord ដែលមានទំហំតាមការជ្រើស ហើយ transformer អនុវត្តច្បាប់មួយរបស់ logical editor (បោះចោល transpose កំណត់ velocity ឬ length ឬផ្លាស់ទី)។ ពាក្យបញ្ជា «Bake the MIDI effects into the notes» សរសេរលទ្ធផលចូលក្នុងណោត ហើយប្រាប់ពីអ្វីដែលត្រូវបានទម្លាក់ចោល។</p></div>
+</div>
+<p style="margin-top:16px">ឧបករណ៍ថ្មីៗត្រូវបានពិនិត្យពីរដង៖ ដោយការធ្វើតេស្ត engine ដោយគ្មានផ្ទាំងប្រើប្រាស់ និងដោយ bench មួយដែលបើកកម្មវិធី ប្រើម៉ឺនុយ ហើយអានលទ្ធផលឡើងវិញ — ដោយដំណើរការលើកំណែមុនជាមុនសិន ដែលនៅទីនោះវាត្រូវតែបរាជ័យ។ benches ប្រហែល 280 ដំណើរការជាស៊េរីតែមួយដែលចំណាយពេលជាងពីរម៉ោង តាមរយៈ <code>verifier.sh --bancs</code>។</p>
 </section>
 
 <section>
@@ -177,7 +225,7 @@
 <div class="card"><span class="num">03</span><h3>ជ្រើសរើសសំឡេង</h3><p>បេក្ខជននីមួយៗត្រូវបាន render ដោយ engine ពិតប្រាកដ ដូច្នេះ patch ដែលរកឃើញបន្លឺដូចគ្នានៅក្នុងស្ទូឌីយោ។ ណោតមួយជ្រើសរើស patch, track ទាំងមូលជ្រើសរើសម៉ាស៊ីន ហើយការលាយទាំងមូលជាអ្នកសម្រេចចុងក្រោយ៖ track ដែលប្រសើរជាង ត្រូវបានរក្សាទុកលុះត្រាតែវាធ្វើឱ្យបទភ្លេងទាំងមូលកាន់តែជិតច្បាប់ដើម។ សម្រាប់ស្គរ ឈុតស្គរដែលធ្វើគំរូប្រកួតប្រជែងជាមួយ TR-808 និង TR-909។</p></div>
 <div class="card"><span class="num">04</span><h3>ប្រៀបធៀប</h3><p>គម្រោងមកជាមួយរបាយការណ៍របស់វា៖ ចម្ងាយសរុបពីច្បាប់ដើម និងចម្ងាយសម្រាប់ track នីមួយៗ ដោយ track ដែលឆ្ងាយជាងគេត្រូវបានសម្គាល់។ អាចផ្ទុកច្បាប់ដើមជាឯកសារយោង A/B ហើយប្តូរដោយចុច <code>R</code> ដោយវាមិនដែលចូលទៅក្នុង export ឡើយ។ សំឡេងច្រៀងមិនត្រូវបានសំយោគឡើងវិញទេ៖ stem សំឡេងច្រៀងត្រូវបានយកមកដូចដើម ជាអូឌីយ៉ូ។</p></div>
 </div>
-<p style="margin-top:16px">នេះជាឧបករណ៍ស្រាវជ្រាវ ហើយឃ្លាំងកូដចាត់ទុកវាបែបនោះ៖ លទ្ធផលត្រូវបានផ្សព្វផ្សាយជាមួយតួលេខរបស់វា ហើយគំនិតដែលបរាជ័យក៏ត្រូវបានកត់ត្រាទុកដែរ — ម៉ូដែលដែលរៀនដោយផ្ទាល់ពីអូឌីយ៉ូទៅការកំណត់ និងហ្គីតាអគ្គិសនីដែលធ្វើគំរូ។ ការកាត់ track ចោល នៅតែជាការសម្រេចចិត្តរបស់មនុស្ស។ ខ្សែសង្វាក់នេះត្រូវការបរិស្ថាន Python ផ្ទាល់ខ្លួន ហើយបើគ្មាន ពាក្យបញ្ជានោះត្រូវបានបិទ (ពណ៌ប្រផេះ) ព្រមទាំងប្រាប់មូលហេតុ។</p>
+<p style="margin-top:16px">នេះជាឧបករណ៍ស្រាវជ្រាវ ហើយឃ្លាំងកូដចាត់ទុកវាបែបនោះ៖ លទ្ធផលត្រូវបានផ្សព្វផ្សាយជាមួយតួលេខរបស់វា ហើយគំនិតដែលបរាជ័យក៏ត្រូវបានកត់ត្រាទុកដែរ — ម៉ូដែលដែលរៀនដោយផ្ទាល់ពីអូឌីយ៉ូទៅការកំណត់ និងហ្គីតាអគ្គិសនីដែលធ្វើគំរូ។ ការវាស់វែងចុងក្រោយកំពុងតាមរកមូលហេតុដែលស្គរដែលបង្កើតឡើងវិញស្តាប់ទៅស្រអាប់ពេក៖ ការបំបែករក្សាសំឡេងខ្ពស់ (highs) បានដោយខុសគ្នាមិនលើសពី 0.3 dB ហើយការបាត់បង់កើតឡើងនៅពេលក្រោយ ក្នុងស្គរដែលបង្កើតឡើងវិញ ដែល hi-hat របស់វាចេញមកខ្សោយពេក 5 ដល់ 9 dB។ ការកាត់ track ចោល នៅតែជាការសម្រេចចិត្តរបស់មនុស្ស។ ខ្សែសង្វាក់នេះត្រូវការបរិស្ថាន Python ផ្ទាល់ខ្លួន ហើយបើគ្មាន ពាក្យបញ្ជានោះត្រូវបានបិទ (ពណ៌ប្រផេះ) ព្រមទាំងប្រាប់មូលហេតុ។</p>
 </section>
 
 <section>
@@ -216,14 +264,14 @@
 <div class="kicker">Under the hood</div>
 <h2>How it is built.</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>core</td><td>The MIDI and sequencing engine: tempo map, clips, takes, piano-roll operations, project history. Plain C++20 with no dependencies, tested without any user interface.</td></tr>
+<tr><td>core</td><td>The MIDI and sequencing engine: tempo map, clips, takes, piano-roll operations, MIDI effects, project history. Plain C++20 with no dependencies, tested without any user interface.</td></tr>
 <tr><td>audio</td><td>The real-time audio engine: voices, the 64 machines, the 19 effects, the mixer, automation and offline rendering. It depends on nothing but core.</td></tr>
 <tr><td>interchange</td><td>Files and formats: stable parameter names such as <code>filter.1.cutoff</code>, <code>*.synth.json</code> presets, <code>project.json</code>, and the Ableton, FL Studio and Cubase readers — with its own JSON parser, XML parser and DEFLATE decompressor.</td></tr>
 <tr><td>panels</td><td>The layout of every hardware-style panel, kept as data and checked by tests: no control points to a missing parameter, and no parameter is left out of reach.</td></tr>
 <tr><td>app</td><td>The desktop application in JUCE: window, piano roll, arrangement, rack, console, browser.</td></tr>
 <tr><td>clap · vst3</td><td>The plugin layers: CLAP export and hosting (an optional build, the only part that downloads an SDK) and VST3 hosting.</td></tr>
 <tr><td>analyse</td><td>The Python reconstruction chain: Demucs, basic-pitch, librosa, and the patch search through the real engine.</td></tr>
-<tr><td>Tests</td><td>About 2,400 engine tests in five suites and about 320 Python tests, run together by <code>verifier.sh</code> with ruff and mypy; plus guards in <code>tools/</code> that check the interface from captures taken without a mouse.</td></tr>
+<tr><td>Tests</td><td>About 2,400 engine tests in five suites and about 320 Python tests, run together by <code>verifier.sh</code> with ruff and mypy; about 280 benches that launch the application itself (<code>verifier.sh --bancs</code>); plus guards in <code>tools/</code> that check the interface from captures taken without a mouse.</td></tr>
 <tr><td>Docs</td><td>In French: an illustrated user manual, a 4,700-line architecture document, roadmaps, and specifications written before the work they describe.</td></tr>
 </table></div>
 <p style="margin-top:16px">A project folder renders to WAV without a window, through the same code as playback in the studio:</p>
@@ -236,14 +284,14 @@
 <div class="kicker">Sous le capot</div>
 <h2>Comment c’est construit.</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>core</td><td>Le moteur MIDI et de séquence : carte de tempo, clips, prises, opérations du piano roll, historique du projet. C++20 pur, sans dépendance, testé sans aucune interface graphique.</td></tr>
+<tr><td>core</td><td>Le moteur MIDI et de séquence : carte de tempo, clips, prises, opérations du piano roll, effets MIDI, historique du projet. C++20 pur, sans dépendance, testé sans aucune interface graphique.</td></tr>
 <tr><td>audio</td><td>Le moteur audio temps réel : voix, les 64 machines, les 19 effets, la console, l’automation et le rendu hors ligne. Il ne dépend que de core.</td></tr>
 <tr><td>interchange</td><td>Fichiers et formats : des noms de paramètres stables comme <code>filter.1.cutoff</code>, les presets <code>*.synth.json</code>, <code>project.json</code>, et les lecteurs Ableton, FL Studio et Cubase — avec son propre analyseur JSON, son analyseur XML et son décompresseur DEFLATE.</td></tr>
 <tr><td>panels</td><td>La disposition de chaque façade, tenue sous forme de données et vérifiée par des tests : aucune commande ne pointe vers un paramètre absent, aucun paramètre n’est hors d’atteinte.</td></tr>
 <tr><td>app</td><td>L’application de bureau en JUCE : fenêtre, piano roll, arrangement, rack, console, navigateur.</td></tr>
 <tr><td>clap · vst3</td><td>Les couches plugin : export et hôte CLAP (une compilation optionnelle, la seule partie qui télécharge un SDK) et hôte VST3.</td></tr>
 <tr><td>analyse</td><td>La chaîne de reconstruction en Python : Demucs, basic-pitch, librosa, et la recherche de patch par le vrai moteur.</td></tr>
-<tr><td>Tests</td><td>Environ 2 400 tests du moteur en cinq suites et environ 320 tests Python, lancés ensemble par <code>verifier.sh</code> avec ruff et mypy ; et des gardes dans <code>tools/</code> qui vérifient l’interface sur des captures faites sans souris.</td></tr>
+<tr><td>Tests</td><td>Environ 2 400 tests du moteur en cinq suites et environ 320 tests Python, lancés ensemble par <code>verifier.sh</code> avec ruff et mypy ; environ 280 bancs qui lancent l’application elle-même (<code>verifier.sh --bancs</code>) ; et des gardes dans <code>tools/</code> qui vérifient l’interface sur des captures faites sans souris.</td></tr>
 <tr><td>Docs</td><td>En français : un manuel illustré, un document d’architecture de 4 700 lignes, des feuilles de route, et des cahiers des charges écrits avant le travail qu’ils décrivent.</td></tr>
 </table></div>
 <p style="margin-top:16px">Un dossier de projet se rend en WAV sans fenêtre, par le même chemin de calcul que la lecture dans le studio :</p>
@@ -256,14 +304,14 @@
 <div class="kicker">ផ្នែកបច្ចេកទេស</div>
 <h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>core</td><td>engine MIDI និង sequencer៖ tempo map, clips, takes, ប្រតិបត្តិការរបស់ piano roll និងប្រវត្តិនៃគម្រោង។ C++20 សុទ្ធ គ្មាន dependency ហើយធ្វើតេស្តដោយមិនត្រូវការផ្ទាំងក្រាហ្វិកណាមួយឡើយ។</td></tr>
+<tr><td>core</td><td>engine MIDI និង sequencer៖ tempo map, clips, takes, ប្រតិបត្តិការរបស់ piano roll, effects MIDI និងប្រវត្តិនៃគម្រោង។ C++20 សុទ្ធ គ្មាន dependency ហើយធ្វើតេស្តដោយមិនត្រូវការផ្ទាំងក្រាហ្វិកណាមួយឡើយ។</td></tr>
 <tr><td>audio</td><td>engine អូឌីយ៉ូ real-time៖ voices ម៉ាស៊ីនទាំង 64 effects ទាំង 19 តុលាយសំឡេង automation និងការ render ដោយមិនចាំបាច់ចាក់ផ្ទាល់ (offline)។ វាពឹងផ្អែកតែលើ core ប៉ុណ្ណោះ។</td></tr>
 <tr><td>interchange</td><td>ឯកសារ និងទម្រង់៖ ឈ្មោះប៉ារ៉ាម៉ែត្រថេរដូចជា <code>filter.1.cutoff</code>, presets <code>*.synth.json</code>, <code>project.json</code> និងកម្មវិធីអានគម្រោង Ableton, FL Studio និង Cubase — ជាមួយ parser JSON, parser XML និង decompressor DEFLATE ដែលសរសេរដោយខ្លួនឯង។</td></tr>
 <tr><td>panels</td><td>ការរៀបចំផ្ទាំងបញ្ជានីមួយៗ ដែលរក្សាទុកជាទិន្នន័យ និងពិនិត្យដោយការធ្វើតេស្ត៖ គ្មានប៊ូតុងណាចង្អុលទៅប៉ារ៉ាម៉ែត្រដែលមិនមាន ហើយគ្មានប៉ារ៉ាម៉ែត្រណាដែលមិនអាចចូលដល់បានឡើយ។</td></tr>
 <tr><td>app</td><td>កម្មវិធីលើកុំព្យូទ័រសរសេរដោយ JUCE៖ បង្អួច piano roll, arrangement, រ៉ាក់ តុលាយសំឡេង និង browser។</td></tr>
 <tr><td>clap · vst3</td><td>ស្រទាប់ plugin៖ export និង host CLAP (build ជាជម្រើស ហើយជាផ្នែកតែមួយគត់ដែលត្រូវទាញយក SDK) និង host VST3។</td></tr>
 <tr><td>analyse</td><td>ខ្សែសង្វាក់បង្កើតឡើងវិញជា Python៖ Demucs, basic-pitch, librosa និងការស្វែងរក patch តាមរយៈ engine ពិតប្រាកដ។</td></tr>
-<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្ត engine ប្រហែល 2,400 ក្នុង 5 suites និងការធ្វើតេស្ត Python ប្រហែល 320 ដែលដំណើរការរួមគ្នាដោយ <code>verifier.sh</code> ជាមួយ ruff និង mypy ព្រមទាំង guards នៅក្នុង <code>tools/</code> ដែលពិនិត្យផ្ទាំងប្រើប្រាស់តាមរូបថតអេក្រង់ដែលថតដោយមិនប្រើកណ្តុរ។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្ត engine ប្រហែល 2,400 ក្នុង 5 suites និងការធ្វើតេស្ត Python ប្រហែល 320 ដែលដំណើរការរួមគ្នាដោយ <code>verifier.sh</code> ជាមួយ ruff និង mypy benches ប្រហែល 280 ដែលបើកកម្មវិធីពិតប្រាកដ (<code>verifier.sh --bancs</code>) ព្រមទាំង guards នៅក្នុង <code>tools/</code> ដែលពិនិត្យផ្ទាំងប្រើប្រាស់តាមរូបថតអេក្រង់ដែលថតដោយមិនប្រើកណ្តុរ។</td></tr>
 <tr><td>ឯកសារ</td><td>ជាភាសាបារាំង៖ សៀវភៅណែនាំអ្នកប្រើប្រាស់ដែលមានរូបភាព ឯកសារស្ថាបត្យកម្មប្រវែង 4,700 បន្ទាត់ ផែនទីបង្ហាញផ្លូវ (roadmaps) និងលក្ខខណ្ឌតម្រូវ (specifications) ដែលសរសេរមុនការងារដែលវាពិពណ៌នា។</td></tr>
 </table></div>
 <p style="margin-top:16px">ថតឯកសារគម្រោងមួយអាច render ទៅជា WAV ដោយមិនបាច់បើកបង្អួច តាមរយៈកូដដូចគ្នានឹងការចាក់នៅក្នុងស្ទូឌីយោ៖</p>
