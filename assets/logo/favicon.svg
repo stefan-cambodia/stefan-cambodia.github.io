@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 6 158 158">
+  <!-- Chantrea favicon: logo 3b (light) by default, 3a (dark) when the browser is in dark mode. -->
+  <style>
+    .moon{fill:#1f6b3c}.ink{fill:#0f1412}.line{stroke:none}.belly{fill:#f3efe6}.gold{fill:#d9a441}
+    @media (prefers-color-scheme: dark){.moon{fill:#9fe0a8}.line{stroke:#9fe0a8}.gold{fill:#e8c27a}}
+  </style>
+  <defs>
+    <mask id="crescent">
+      <circle cx="85" cy="85" r="76" fill="#fff"/>
+      <circle cx="112" cy="62" r="64" fill="#000"/>
+    </mask>
+  </defs>
+  <circle class="moon" cx="85" cy="85" r="76" mask="url(#crescent)"/>
+  <g transform="translate(100 98) scale(.62)">
+    <ellipse class="ink line" cx="0" cy="10" rx="30" ry="42" stroke-width="5"/>
+    <circle class="ink line" cx="0" cy="-30" r="22" stroke-width="5"/>
+    <ellipse class="ink" cx="0" cy="12" rx="22" ry="32"/>
+    <ellipse class="belly" cx="0" cy="18" rx="19" ry="28"/>
+    <circle class="belly" cx="-8" cy="-34" r="5"/><circle class="belly" cx="8" cy="-34" r="5"/>
+    <circle class="ink" cx="-7" cy="-33" r="2.4"/><circle class="ink" cx="9" cy="-33" r="2.4"/>
+    <ellipse class="gold" cx="0" cy="-23" rx="9" ry="5"/>
+    <ellipse class="gold" cx="-14" cy="52" rx="13" ry="6"/><ellipse class="gold" cx="14" cy="52" rx="13" ry="6"/>
+  </g>
+</svg>
