@@ -16,7 +16,7 @@ html[lang=km] .kicker,html[lang=km] .stat span,html[lang=km] th,html[lang=km] .p
 header{position:sticky;top:0;z-index:10;background:rgba(8,11,18,.82);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
 .nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .brand{display:flex;align-items:center;gap:12px}
-.brand-logo{width:42px;height:42px;flex:none}
+.brand-logo{width:56px;height:43px;flex:none}
 .brand-name{display:flex;flex-direction:column;line-height:1}
 .brand-word{font:700 21px/1 "JetBrains Mono",monospace;color:#e9f3ea}
 .brand-word i{font-style:normal;color:#9fe0a8}
