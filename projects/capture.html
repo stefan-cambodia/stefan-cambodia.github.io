@@ -247,6 +247,42 @@ VERDICT
 </table></div>
 </section>
 
+<section class="changes" data-l="en">
+<div class="kicker">Last changes</div>
+<h2>A recorder, its window, and a build that checks itself.</h2>
+<p class="changes-note">A summary of the latest commits in the repository, up to 18 September 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-09-18">18 Sep 2026</time><div><b>FFmpeg 7.1 at the least, said plainly</b><p>Continuous integration showed that the README was wrong: the project does not build against FFmpeg 6, because the colour converter uses interfaces that appeared in 7.1. The requirement is now documented rather than worked around, and the build runs on Ubuntu 26.04, which ships FFmpeg 8.0.1, pinned so that a runner update cannot change the version underneath it.</p></div></li>
+<li><time datetime="2026-09-18">18 Sep 2026</time><div><b>Licences and continuous integration</b><p>The MIT and Apache-2.0 licences were declared but their texts were missing; both are now in the repository. Continuous integration builds and tests the recorder with and without the window, separately, and reports compiler errors in a form anyone can read. The README now links to the real repository and shows the state of the last run.</p></div></li>
+<li><time datetime="2026-09-17">17 Sep 2026</time><div><b>A GTK 4 window</b><p><code>rscap-gui</code> drives the same library as the command line: six pages cover every setting, with a live dashboard and a diagnostics page for the encoder probe and the benchmark. It loads and saves an <code>rscap.toml</code> that the command line can read. Closing the window during a recording waits until the file is finalised.</p></div></li>
+<li><time datetime="2026-09-17">17 Sep 2026</time><div><b>The first version, complete on Linux</b><p>Screen capture through the desktop portal and PipeWire, system sound from the PulseAudio monitor, encoding with VAAPI, QSV, NVENC or AMF and a <code>libx264</code> fallback, written to MP4 or MKV. On an Intel Core Ultra 7 155H at 2560×1440 and 60 FPS, it encoded 59.96 frames per second with no frame lost. The Windows backend is not implemented yet.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="fr">
+<div class="kicker">Derniers changements</div>
+<h2>Un enregistreur, sa fenêtre, et une compilation qui se vérifie.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 18 septembre 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-09-18">18 sept. 2026</time><div><b>FFmpeg 7.1 au minimum, dit clairement</b><p>L’intégration continue a montré que le README se trompait : le projet ne compile pas avec FFmpeg 6, car le convertisseur colorimétrique utilise des interfaces apparues en 7.1. L’exigence est désormais documentée plutôt que contournée, et la compilation tourne sur Ubuntu 26.04, qui fournit FFmpeg 8.0.1, épinglé pour qu’une mise à jour de l’exécuteur ne change pas la version sous ses pieds.</p></div></li>
+<li><time datetime="2026-09-18">18 sept. 2026</time><div><b>Licences et intégration continue</b><p>Les licences MIT et Apache-2.0 étaient déclarées mais leurs textes manquaient ; les deux sont maintenant dans le dépôt. L’intégration continue compile et teste l’enregistreur avec et sans la fenêtre, séparément, et rapporte les erreurs de compilation sous une forme lisible par tous. Le README pointe vers le vrai dépôt et affiche l’état de la dernière exécution.</p></div></li>
+<li><time datetime="2026-09-17">17 sept. 2026</time><div><b>Une fenêtre GTK 4</b><p><code>rscap-gui</code> pilote la même bibliothèque que la ligne de commande : six pages couvrent tous les réglages, avec un tableau de bord en temps réel et une page de diagnostic pour le sondage des encodeurs et le banc d’essai. Elle charge et enregistre un <code>rscap.toml</code> que la ligne de commande sait relire. Fermer la fenêtre pendant un enregistrement attend que le fichier soit finalisé.</p></div></li>
+<li><time datetime="2026-09-17">17 sept. 2026</time><div><b>La première version, complète sous Linux</b><p>Capture de l’écran par le portail du bureau et PipeWire, son du système par le moniteur PulseAudio, encodage VAAPI, QSV, NVENC ou AMF avec repli sur <code>libx264</code>, écriture en MP4 ou MKV. Sur un Intel Core Ultra 7 155H, en 2560×1440 à 60 images/s, il a encodé 59,96 images par seconde sans en perdre une. Le backend Windows n’est pas encore écrit.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="km">
+<div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
+<h2>កម្មវិធីថត បង្អួចរបស់វា និងការ build ដែលពិនិត្យខ្លួនឯង។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 18 ខែកញ្ញា ឆ្នាំ 2026។</p>
+<ol class="changelog">
+<li><time datetime="2026-09-18">18 កញ្ញា 2026</time><div><b>FFmpeg 7.1 យ៉ាងហោចណាស់ និយាយឱ្យច្បាស់</b><p>continuous integration បានបង្ហាញថា README និយាយខុស៖ គម្រោងនេះមិនអាច build ជាមួយ FFmpeg 6 បានទេ ព្រោះកម្មវិធីបម្លែងពណ៌ប្រើ interfaces ដែលទើបមានក្នុងកំណែ 7.1។ តម្រូវការនេះឥឡូវត្រូវបានសរសេរក្នុងឯកសារ ជំនួសឱ្យការរកវិធីជៀស ហើយការ build ដំណើរការលើ Ubuntu 26.04 ដែលមាន FFmpeg 8.0.1 ដោយកំណត់ជាប់ ដើម្បីកុំឱ្យការធ្វើបច្ចុប្បន្នភាព runner ប្តូរកំណែនោះដោយមិនដឹងខ្លួន។</p></div></li>
+<li><time datetime="2026-09-18">18 កញ្ញា 2026</time><div><b>អាជ្ញាប័ណ្ណ និង continuous integration</b><p>អាជ្ញាប័ណ្ណ MIT និង Apache-2.0 ត្រូវបានប្រកាស ប៉ុន្តែខ្វះអត្ថបទរបស់វា ឥឡូវអត្ថបទទាំងពីរមាននៅក្នុង repository ហើយ។ continuous integration build និងធ្វើតេស្តកម្មវិធីថត ទាំងមានបង្អួច និងគ្មានបង្អួច ដាច់ដោយឡែកពីគ្នា ហើយរាយការណ៍កំហុស compile ក្នុងទម្រង់ដែលអ្នកណាក៏អានបាន។ README ឥឡូវភ្ជាប់ទៅ repository ពិតប្រាកដ ហើយបង្ហាញស្ថានភាពនៃការដំណើរការចុងក្រោយ។</p></div></li>
+<li><time datetime="2026-09-17">17 កញ្ញា 2026</time><div><b>បង្អួច GTK 4</b><p><code>rscap-gui</code> ប្រើ library ដដែលនឹង command line៖ ទំព័រ 6 គ្របដណ្តប់ការកំណត់ទាំងអស់ ជាមួយផ្ទាំងតាមដានផ្ទាល់ និងទំព័រវិនិច្ឆ័យសម្រាប់ការសាកល្បង encoder និង benchmark។ វាផ្ទុក និងរក្សាទុក <code>rscap.toml</code> ដែល command line អាចអានបាន។ ការបិទបង្អួចពេលកំពុងថត នឹងរង់ចាំរហូតដល់ឯកសារត្រូវបានបញ្ចប់។</p></div></li>
+<li><time datetime="2026-09-17">17 កញ្ញា 2026</time><div><b>កំណែដំបូង ពេញលេញលើ Linux</b><p>ការថតអេក្រង់តាមរយៈ desktop portal និង PipeWire សំឡេងប្រព័ន្ធពី monitor របស់ PulseAudio ការ encode ជាមួយ VAAPI, QSV, NVENC ឬ AMF និង <code>libx264</code> ជាជម្រើសបម្រុង ហើយសរសេរជា MP4 ឬ MKV។ នៅលើ Intel Core Ultra 7 155H ក្នុង 2560×1440 និង 60 FPS វាបាន encode 59.96 រូបភាពក្នុងមួយវិនាទី ដោយគ្មានរូបភាពបាត់សោះ។ backend សម្រាប់ Windows មិនទាន់ត្រូវបានអនុវត្តនៅឡើយទេ។</p></div></li>
+</ol>
+</section>
+
 <nav class="pager">
 <a href="yt-app.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>TubeGuard</b></a>
 <a href="xvideo.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>xvideo</b></a>

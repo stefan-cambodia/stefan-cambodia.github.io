@@ -286,6 +286,48 @@
 <span class="c"># http://localhost:8080/classic/  ឬ  http://localhost:8080/mixer/</span></pre>
 </section>
 
+<section class="changes" data-l="en">
+<div class="kicker">Last changes</div>
+<h2>The mixer edition, repaired and levelled.</h2>
+<p class="changes-note">A summary of the latest commits in the repository, up to 28 August 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-08-28">28 Aug 2026</time><div><b>A new home page</b><p>The demo’s home page was redesigned: an animated rack front drawn in CSS, a table comparing the two editions, the list of the 26 machines with a direct link to each, and a layout for phones.</p></div></li>
+<li><time datetime="2026-08-23">23 Aug 2026</time><div><b>Every machine at the same level</b><p>Output levels spread over about twenty decibels, from a peak of 0.063 on the D-50 to 0.945 on the GX-1, so playing several machines together meant moving the faders straight away. In the mixer edition each strip now applies a calibration gain before its fader, measured machine by machine: the 26 machines peak between 0.28 and 0.38 with the faders at 100. The MiniNova and the DX100, which clipped the shared bus, were turned down.</p></div></li>
+<li><time datetime="2026-08-23">23 Aug 2026</time><div><b>Nine silent machines fixed</b><p>A test bench in an automated browser sent a twelve-note MIDI file to each machine on its own and read its meter: nine of the 26 made no sound in the mixer edition, among them the Prophet-5, the Polysix, the MicroFreak, the CS-50, the CS-60, the GAIA 2 and the DX100. All nine play again, and the CS-60’s filter envelope now moves the cutoff instead of acting as a gain on the sound.</p></div></li>
+<li><time datetime="2026-08-23">23 Aug 2026</time><div><b>MIDI files and takes</b><p>A format 0 file, where the whole song sits in one track, is now split by channel, so drums and melody can go to different machines and the drum channel reaches the TR-909 on its own. A take played with the tempo slider moved stays in time with the song, a take played across several machines comes back as one track per machine, and every drum machine is sent on channel 10. A reading error that could throw a track out of step after a meta event was fixed.</p></div></li>
+<li><time datetime="2026-08-23">23 Aug 2026</time><div><b>Recording and the console</b><p>The master-bus recorder never produced a file; it now does. Re-routing a track during playback no longer leaves notes hanging on the previous machine, the meters catch short transients, and a machine loading in the background no longer rebuilds the strips under a fader being dragged. Switching machines on no longer depends on a 60 ms timer: the hub waits for the machine’s power light, and no longer turns the OB-Xa off.</p></div></li>
+<li><time datetime="2026-08-23">23 Aug 2026</time><div><b>The rack goes online</b><p>The first commit brought the 26 machines and the MIDI sequencer in their two editions, classic and mixer. A home page presenting both editions was added for the live demo on GitHub Pages, and the README links to it.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="fr">
+<div class="kicker">Derniers changements</div>
+<h2>L’édition mixer réparée, ses niveaux égalisés.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 28 août 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-08-28">28 août 2026</time><div><b>Une nouvelle page d’accueil</b><p>La page d’accueil de la démo a été redessinée : une façade de rack animée en CSS, un tableau qui compare les deux éditions, la liste des 26 machines avec un lien direct vers chacune, et une mise en page pour téléphone.</p></div></li>
+<li><time datetime="2026-08-23">23 août 2026</time><div><b>Toutes les machines au même niveau</b><p>Les niveaux de sortie s’étalaient sur une vingtaine de décibels, d’une crête de 0,063 sur la D-50 à 0,945 sur la GX-1 : faire jouer plusieurs machines ensemble obligeait à retoucher les faders d’emblée. Dans l’édition mixer, chaque tranche applique désormais un gain d’étalonnage avant son fader, mesuré machine par machine : les 26 machines tiennent entre 0,28 et 0,38 en crête, faders à 100. La MiniNova et la DX100, qui saturaient le bus commun, ont été baissées.</p></div></li>
+<li><time datetime="2026-08-23">23 août 2026</time><div><b>Neuf machines muettes réparées</b><p>Un banc de test dans un navigateur piloté a envoyé un fichier MIDI de douze notes à chaque machine seule, en relevant son vu-mètre : neuf des 26 ne sonnaient pas dans l’édition mixer, dont le Prophet-5, la Polysix, la MicroFreak, la CS-50, la CS-60, la GAIA 2 et la DX100. Toutes les neuf jouent de nouveau, et l’enveloppe de filtre de la CS-60 module la fréquence de coupure au lieu d’agir comme un gain sur le son.</p></div></li>
+<li><time datetime="2026-08-23">23 août 2026</time><div><b>Fichiers MIDI et prises</b><p>Un fichier au format 0, où tout le morceau tient dans une seule piste, est désormais scindé par canal : batterie et mélodie peuvent partir vers des machines différentes, et le canal de batterie rejoint seul la TR-909. Une prise jouée avec le curseur de tempo déplacé reste calée sur le morceau, une prise jouée sur plusieurs machines revient en une piste par machine, et toutes les boîtes à rythmes partent sur le canal 10. Une erreur de lecture qui pouvait décaler la suite d’une piste après un événement méta est corrigée.</p></div></li>
+<li><time datetime="2026-08-23">23 août 2026</time><div><b>Enregistrement et console</b><p>L’enregistreur du bus maître ne produisait jamais de fichier ; c’est réparé. Rerouter une piste pendant la lecture ne laisse plus de notes bloquées sur l’ancienne machine, les vu-mètres saisissent les transitoires brefs, et une machine qui se charge en arrière-plan ne reconstruit plus les tranches sous le fader qu’on fait glisser. L’allumage ne dépend plus d’une minuterie de 60 ms : le hub attend le voyant de la machine, et n’éteint plus l’OB-Xa.</p></div></li>
+<li><time datetime="2026-08-23">23 août 2026</time><div><b>Le rack en ligne</b><p>Le premier commit apporte les 26 machines et le séquenceur MIDI, dans leurs deux éditions, classic et mixer. Une page d’accueil qui présente les deux éditions a été ajoutée pour la démo sur GitHub Pages, et le README y renvoie.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="km">
+<div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
+<h2>កំណែ mixer ត្រូវបានជួសជុល និងតម្រឹមកម្រិតសំឡេង។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 28 ខែសីហា ឆ្នាំ 2026។</p>
+<ol class="changelog">
+<li><time datetime="2026-08-28">28 សីហា 2026</time><div><b>ទំព័រដើមថ្មី</b><p>ទំព័រដើមនៃការបង្ហាញផ្ទាល់ត្រូវបានរចនាឡើងវិញ៖ ផ្ទាំងមុខរ៉ាក់ដែលមានចលនា គូរដោយ CSS តារាងប្រៀបធៀបកំណែទាំងពីរ បញ្ជីម៉ាស៊ីនទាំង 26 ជាមួយតំណផ្ទាល់ទៅម៉ាស៊ីននីមួយៗ និងប្លង់សម្រាប់ទូរស័ព្ទ។</p></div></li>
+<li><time datetime="2026-08-23">23 សីហា 2026</time><div><b>ម៉ាស៊ីនទាំងអស់នៅកម្រិតសំឡេងដូចគ្នា</b><p>កម្រិតសំឡេងចេញរបស់ម៉ាស៊ីនខុសគ្នាប្រហែល 20 dB ពី peak 0.063 លើ D-50 ដល់ 0.945 លើ GX-1 ដូច្នេះការលេងម៉ាស៊ីនច្រើនជាមួយគ្នា តម្រូវឱ្យកែ fader ភ្លាមៗ។ នៅក្នុងកំណែ mixer ឥឡូវ strip នីមួយៗអនុវត្ត gain តម្រឹមមួយនៅមុន fader ដែលវាស់សម្រាប់ម៉ាស៊ីននីមួយៗ៖ ម៉ាស៊ីនទាំង 26 មាន peak នៅចន្លោះ 0.28 និង 0.38 ដោយ fader នៅត្រឹម 100។ MiniNova និង DX100 ដែលធ្លាប់ធ្វើឱ្យ bus រួមលើសកម្រិត (clip) ត្រូវបានបន្ថយសំឡេង។</p></div></li>
+<li><time datetime="2026-08-23">23 សីហា 2026</time><div><b>ម៉ាស៊ីនស្ងាត់ប្រាំបួនត្រូវបានជួសជុល</b><p>bench តេស្តមួយនៅក្នុង browser ដែលបញ្ជាដោយស្វ័យប្រវត្តិ បានបញ្ជូនឯកសារ MIDI 12 ណូតទៅម៉ាស៊ីននីមួយៗតែឯង ហើយអានម៉ែត្ររបស់វា៖ ម៉ាស៊ីន 9 ក្នុងចំណោម 26 មិនបន្លឺសំឡេងសោះនៅក្នុងកំណែ mixer ក្នុងនោះមាន Prophet-5, Polysix, MicroFreak, CS-50, CS-60, GAIA 2 និង DX100។ ម៉ាស៊ីនទាំងប្រាំបួនបន្លឺសំឡេងវិញហើយ ហើយ filter envelope របស់ CS-60 ឥឡូវកែប្រែប្រេកង់ cutoff ជំនួសឱ្យការដើរតួជា gain លើសំឡេង។</p></div></li>
+<li><time datetime="2026-08-23">23 សីហា 2026</time><div><b>ឯកសារ MIDI និង takes</b><p>ឯកសារ format 0 ដែលបទទាំងមូលស្ថិតនៅក្នុង track តែមួយ ឥឡូវត្រូវបានបំបែកតាម channel៖ ស្គរ និងបទភ្លេងអាចទៅកាន់ម៉ាស៊ីនផ្សេងគ្នា ហើយ channel ស្គរទៅដល់ TR-909 ដោយស្វ័យប្រវត្តិ។ take ដែលលេងពេលរំកិល tempo នៅតែត្រូវចង្វាក់ជាមួយបទ take ដែលលេងលើម៉ាស៊ីនច្រើន ត្រឡប់មកវិញជា track មួយក្នុងមួយម៉ាស៊ីន ហើយម៉ាស៊ីនស្គរទាំងអស់ត្រូវបានបញ្ជូនតាម channel 10។ កំហុសក្នុងការអាន ដែលអាចធ្វើឱ្យផ្នែកបន្តនៃ track មួយខុសលំដាប់ក្រោយ meta event ត្រូវបានកែ។</p></div></li>
+<li><time datetime="2026-08-23">23 សីហា 2026</time><div><b>ការថតសំឡេង និងតុលាយសំឡេង</b><p>ឧបករណ៍ថតសំឡេងរបស់ master bus មិនដែលបង្កើតឯកសារសោះ ឥឡូវវាដំណើរការហើយ។ ការប្តូរផ្លូវ track ពេលកំពុងចាក់ លែងទុកណូតឱ្យបន្លឺជាប់លើម៉ាស៊ីនចាស់ទៀតហើយ ម៉ែត្រចាប់បានសំឡេងខ្លីៗ (transients) ហើយម៉ាស៊ីនដែលកំពុងផ្ទុកនៅខាងក្រោយ លែងសង់ strips ឡើងវិញ ខណៈពេលអ្នកកំពុងអូស fader ទៀតហើយ។ ការបើកម៉ាស៊ីនលែងពឹងលើ timer 60 ms ទៀតហើយ៖ hub រង់ចាំភ្លើង LED របស់ម៉ាស៊ីន ហើយលែងបិទ OB-Xa ទៀត។</p></div></li>
+<li><time datetime="2026-08-23">23 សីហា 2026</time><div><b>រ៉ាក់ឡើងលើអ៊ីនធឺណិត</b><p>commit ដំបូងបាននាំមកនូវម៉ាស៊ីនទាំង 26 និង MIDI sequencer ក្នុងកំណែទាំងពីរ គឺ classic និង mixer។ ទំព័រដើមមួយដែលណែនាំកំណែទាំងពីរ ត្រូវបានបន្ថែមសម្រាប់ការបង្ហាញផ្ទាល់នៅលើ GitHub Pages ហើយ README មានតំណទៅកាន់វា។</p></div></li>
+</ol>
+</section>
+
 <nav class="pager">
 <a href="portfolio.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b><span data-l="en">This website</span><span data-l="fr">Ce site</span><span data-l="km">គេហទំព័រនេះ</span></b></a>
 <a href="vsm-studio.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>VSM Studio</b></a>

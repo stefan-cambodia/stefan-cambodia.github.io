@@ -218,6 +218,42 @@
 </table></div>
 </section>
 
+<section class="changes" data-l="en">
+<div class="kicker">Last changes</div>
+<h2>Picture-in-picture that holds, and a Share button that works.</h2>
+<p class="changes-note">A summary of the latest commits in the repository, up to 17 October 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-10-17">17 Oct 2026</time><div><b>The Share button opens the Android share sheet</b><p>GeckoView was silently refusing YouTube’s Share button, so it did nothing. It now opens the Android share sheet, without TubeGuard in the list and without dropping into picture-in-picture. <code>intent:</code>, <code>mailto:</code>, <code>sms:</code> and <code>whatsapp:</code> links go to Android instead of ending on an error page. Checked on a Galaxy A56.</p></div></li>
+<li><time datetime="2026-09-03">3 Sep 2026</time><div><b>Picture-in-picture keeps playing</b><p>In picture-in-picture, YouTube’s mobile player kept pausing itself, and restarting it after each pause never held. Its pause requests on the main video are now ignored while playback should go on, and a pause or play from the media controls is still obeyed. Checked on a Galaxy A56.</p></div></li>
+<li><time datetime="2026-09-03">3 Sep 2026</time><div><b>The video alone in the floating window</b><p>The floating window showed a video of zero height under YouTube’s header bar. The video now fills it edge to edge, and going back to full screen restores the normal page with playback still running. If Android stops the page engine in the background, the app reopens it instead of staying on a blank page.</p></div></li>
+<li><time datetime="2026-08-31">31 Aug 2026</time><div><b>The first version, and reliable background audio</b><p>A full-screen YouTube browser on GeckoView, with its own ad-blocking extension, a persistent session, YouTube links opening in the app, and background audio. Tests on a Galaxy A56 led to fixes the same day: the sound no longer cuts out after a while in the background, and a crashed page comes back on the same tab. The code is under the GPLv3.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="fr">
+<div class="kicker">Derniers changements</div>
+<h2>Une vignette qui tient, et un bouton Partager qui marche.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 17 octobre 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-10-17">17 oct. 2026</time><div><b>Le bouton Partager ouvre la feuille de partage Android</b><p>GeckoView refusait en silence le bouton Partager de YouTube, qui ne faisait donc rien. Il ouvre désormais la feuille de partage Android, sans TubeGuard dans la liste et sans basculer en vignette. Les liens <code>intent:</code>, <code>mailto:</code>, <code>sms:</code> et <code>whatsapp:</code> sont confiés à Android au lieu de finir sur une page d’erreur. Vérifié sur un Galaxy A56.</p></div></li>
+<li><time datetime="2026-09-03">3 sept. 2026</time><div><b>La vignette continue de jouer</b><p>En picture-in-picture, le lecteur mobile de YouTube se remettait sans cesse en pause, et le relancer après chaque pause ne tenait jamais. Ses demandes de pause sur la vidéo principale sont désormais ignorées tant que la lecture doit continuer, et une pause ou une reprise depuis les contrôles média reste obéie. Vérifié sur un Galaxy A56.</p></div></li>
+<li><time datetime="2026-09-03">3 sept. 2026</time><div><b>La vidéo seule dans la vignette</b><p>La vignette montrait une vidéo de hauteur nulle sous la barre d’en-tête de YouTube. La vidéo la remplit maintenant bord à bord, et le retour au plein écran rend la page normale, lecture en cours. Si Android arrête le moteur de la page en arrière-plan, l’application le rouvre au lieu de rester sur une page blanche.</p></div></li>
+<li><time datetime="2026-08-31">31 août 2026</time><div><b>La première version, et un son fiable en arrière-plan</b><p>Un navigateur YouTube plein écran sur GeckoView, avec sa propre extension anti-pub, une session persistante, l’ouverture des liens YouTube dans l’application et le son en arrière-plan. Les essais sur un Galaxy A56 ont donné des correctifs le jour même : le son ne se coupe plus au bout d’un moment en arrière-plan, et une page qui plante revient sur le même onglet. Le code est sous GPLv3.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="km">
+<div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
+<h2>Picture-in-picture ដែលចាក់មិនឈប់ និងប៊ូតុង Share ដែលដំណើរការ។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 17 ខែតុលា ឆ្នាំ 2026។</p>
+<ol class="changelog">
+<li><time datetime="2026-10-17">17 តុលា 2026</time><div><b>ប៊ូតុង Share បើក share sheet របស់ Android</b><p>GeckoView ធ្លាប់បដិសេធប៊ូតុង Share របស់ YouTube ដោយស្ងាត់ៗ ដូច្នេះវាមិនធ្វើអ្វីសោះ។ ឥឡូវវាបើក share sheet របស់ Android ដោយគ្មាន TubeGuard ក្នុងបញ្ជី និងមិនប្តូរទៅ picture-in-picture។ links <code>intent:</code>, <code>mailto:</code>, <code>sms:</code> និង <code>whatsapp:</code> ត្រូវបានបញ្ជូនទៅ Android ជំនួសឱ្យការបញ្ចប់នៅលើទំព័រកំហុស។ បានផ្ទៀងផ្ទាត់លើ Galaxy A56។</p></div></li>
+<li><time datetime="2026-09-03">3 កញ្ញា 2026</time><div><b>Picture-in-picture បន្តចាក់</b><p>ក្នុង picture-in-picture player mobile របស់ YouTube ធ្លាប់ផ្អាកខ្លួនឯងម្តងហើយម្តងទៀត ហើយការចាក់ឡើងវិញក្រោយការផ្អាកនីមួយៗ មិនដែលនៅជាប់ទេ។ ឥឡូវការស្នើសុំផ្អាករបស់វាលើវីដេអូចម្បង ត្រូវបានមិនអើពើ ខណៈដែលការចាក់ត្រូវតែបន្ត ហើយការផ្អាក ឬការចាក់ពីប៊ូតុងបញ្ជា media នៅតែត្រូវបានគោរព។ បានផ្ទៀងផ្ទាត់លើ Galaxy A56។</p></div></li>
+<li><time datetime="2026-09-03">3 កញ្ញា 2026</time><div><b>មានតែវីដេអូក្នុងផ្ទាំងតូចអណ្តែត</b><p>ផ្ទាំងតូចអណ្តែតធ្លាប់បង្ហាញវីដេអូដែលមានកម្ពស់សូន្យ នៅក្រោមរបារក្បាលរបស់ YouTube។ ឥឡូវវីដេអូពេញផ្ទាំងពីគែមម្ខាងទៅគែមម្ខាង ហើយការត្រឡប់ទៅពេញអេក្រង់ នាំទំព័រធម្មតាមកវិញ ដោយវីដេអូនៅតែចាក់។ បើ Android បញ្ឈប់ម៉ាស៊ីនទំព័រនៅផ្ទៃខាងក្រោយ កម្មវិធីបើកវាឡើងវិញ ជំនួសឱ្យការនៅលើទំព័រទទេ។</p></div></li>
+<li><time datetime="2026-08-31">31 សីហា 2026</time><div><b>កំណែដំបូង និងសំឡេងនៅផ្ទៃខាងក្រោយដែលអាចទុកចិត្តបាន</b><p>browser YouTube ពេញអេក្រង់លើ GeckoView ជាមួយ extension រារាំងពាណិជ្ជកម្មផ្ទាល់ខ្លួន session ដែលនៅជាប់ links YouTube ដែលបើកក្នុងកម្មវិធី និងសំឡេងនៅផ្ទៃខាងក្រោយ។ ការសាកល្បងលើ Galaxy A56 នាំឱ្យមានការកែតម្រូវនៅថ្ងៃដដែល៖ សំឡេងលែងដាច់ក្រោយពេលមួយរយៈនៅផ្ទៃខាងក្រោយ ហើយទំព័រដែលគាំង ត្រឡប់មកវិញនៅលើ tab ដដែល។ កូដស្ថិតក្រោមអាជ្ញាប័ណ្ណ GPLv3។</p></div></li>
+</ol>
+</section>
+
 <nav class="pager">
 <a href="hms.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>HMS</b></a>
 <a href="capture.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>rscap</b></a>

@@ -163,6 +163,45 @@
 </table></div>
 </section>
 
+<section class="changes" data-l="en">
+<div class="kicker">Last changes</div>
+<h2>A 3D board, two new worlds and Khmer.</h2>
+<p class="changes-note">A summary of the latest commits in the repository, up to 9 October 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-10-09">8–9 Oct 2026</time><div><b>A faster 3D board, with a 2D fallback</b><p>All boards now share one Filament engine instead of starting their own: on the emulator, opening a level after the first costs about 12 ms on the main thread instead of 40 to 80 ms, with no slow frames afterwards. Phones without OpenGL ES 3.0 get the 2D board and no 3D switch. The README and store screenshots were retaken with the 3D board, with a Khmer set.</p></div></li>
+<li><time datetime="2026-10-08">8 Oct 2026</time><div><b>The game in Khmer</b><p>Every screen, dialog and screen-reader description is translated, along with world names, level names and tutorial hints. Khmer titles and buttons drop the letter spacing that tore syllables apart, and hints get a taller slot so two lines are not cut off. The Khmer store listing texts are written.</p></div></li>
+<li><time datetime="2026-10-03">3 Oct 2026</time><div><b>The board in 3D</b><p>A perspective camera looks down on the level, with soft shadows and darker corners. Walls are bevelled stone blocks, crates turn green on a target and red-tinged when stuck, and the hero turns to face where it walks and leans into pushes. The 3D board follows the same moves as the 2D one, so undo and restart behave the same.</p></div></li>
+<li><time datetime="2026-10-03">3 Oct 2026</time><div><b>Zoom, dust and a lighter frame rate in 3D</b><p>Two fingers zoom and slide the 3D camera, which then follows the hero; the dust and sparks of the 2D board appear in 3D too, as does the hero pushing a crate on the home screen. The 3D board draws at most 60 frames a second while something moves, 30 when only the hero breathes, and nothing in the background.</p></div></li>
+<li><time datetime="2026-10-03">2–3 Oct 2026</time><div><b>Docklands and Labyrinth</b><p>Two worlds of ten big rooms each bring the game to 70 levels in seven worlds; rooms can now be up to 14 by 12 tiles, and the board can be pinched to zoom and pan. Level cards show a miniature map of each room, and levels added later open for players who had already finished the campaign.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="fr">
+<div class="kicker">Derniers changements</div>
+<h2>Un plateau en 3D, deux nouveaux mondes et le khmer.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 9 octobre 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-10-09">8–9 oct. 2026</time><div><b>Un plateau 3D plus rapide, avec repli en 2D</b><p>Tous les plateaux partagent désormais un seul moteur Filament au lieu de démarrer chacun le sien : sur l’émulateur, ouvrir un niveau après le premier coûte environ 12 ms au fil principal au lieu de 40 à 80 ms, sans image ralentie ensuite. Les téléphones sans OpenGL ES 3.0 reçoivent le plateau 2D, sans interrupteur 3D. Les captures du README et du store ont été refaites avec le plateau 3D, avec une série en khmer.</p></div></li>
+<li><time datetime="2026-10-08">8 oct. 2026</time><div><b>Le jeu en khmer</b><p>Chaque écran, chaque boîte de dialogue et chaque description pour lecteur d’écran est traduit, avec les noms des mondes et des niveaux et les conseils du tutoriel. En khmer, titres et boutons perdent l’espacement des lettres qui disloquait les syllabes, et les conseils ont une zone plus haute pour que deux lignes ne soient pas coupées. Les textes de la fiche du store en khmer sont rédigés.</p></div></li>
+<li><time datetime="2026-10-03">3 oct. 2026</time><div><b>Le plateau en 3D</b><p>Une caméra en perspective domine le niveau, avec des ombres douces et des coins assombris. Les murs sont des blocs de pierre biseautés, les caisses virent au vert sur une cible et au rouge quand elles sont bloquées, et le héros se tourne vers sa direction et pèse dans ses poussées. Le plateau 3D suit les mêmes mouvements que le 2D : annulation et recommencement se comportent de la même façon.</p></div></li>
+<li><time datetime="2026-10-03">3 oct. 2026</time><div><b>Zoom, poussière et cadence allégée en 3D</b><p>Deux doigts zooment et font glisser la caméra 3D, qui suit ensuite le héros ; la poussière et les étincelles du plateau 2D apparaissent aussi en 3D, tout comme le héros qui pousse une caisse sur l’écran d’accueil. Le plateau 3D dessine au plus 60 images par seconde quand quelque chose bouge, 30 quand seul le héros respire, et rien en arrière-plan.</p></div></li>
+<li><time datetime="2026-10-03">2–3 oct. 2026</time><div><b>Docklands et Labyrinth</b><p>Deux mondes de dix grandes salles portent le jeu à 70 niveaux répartis en sept mondes ; une salle peut désormais mesurer jusqu’à 14 cases sur 12, et le plateau se zoome et se déplace en pinçant. Les cartes de niveau montrent une carte miniature de la salle, et les niveaux ajoutés plus tard s’ouvrent pour les joueurs qui avaient déjà fini la campagne.</p></div></li>
+</ol>
+</section>
+
+<section class="changes" data-l="km">
+<div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
+<h2>board 3D ពិភពថ្មីពីរ និងភាសាខ្មែរ។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 9 ខែតុលា ឆ្នាំ 2026។</p>
+<ol class="changelog">
+<li><time datetime="2026-10-09">8–9 តុលា 2026</time><div><b>board 3D លឿនជាងមុន ជាមួយការត្រឡប់ទៅ 2D</b><p>board ទាំងអស់ឥឡូវប្រើម៉ាស៊ីន Filament តែមួយរួមគ្នា ជំនួសឱ្យការចាប់ផ្តើមម៉ាស៊ីនរៀងៗខ្លួន៖ នៅលើ emulator ការបើកកម្រិតមួយបន្ទាប់ពីកម្រិតដំបូង ចំណាយប្រហែល 12 ms លើ main thread ជំនួសឱ្យ 40 ដល់ 80 ms ដោយគ្មានស៊ុមយឺតបន្ទាប់ពីនោះ។ ទូរស័ព្ទដែលគ្មាន OpenGL ES 3.0 ប្រើ board 2D ហើយគ្មានកុងតាក់ 3D។ រូបថតអេក្រង់ក្នុង README និងហាងត្រូវបានថតឡើងវិញជាមួយ board 3D រួមទាំងឈុតជាភាសាខ្មែរ។</p></div></li>
+<li><time datetime="2026-10-08">8 តុលា 2026</time><div><b>ហ្គេមជាភាសាខ្មែរ</b><p>រាល់អេក្រង់ ប្រអប់សន្ទនា និងការពិពណ៌នាសម្រាប់កម្មវិធីអានអេក្រង់ ត្រូវបានបកប្រែ រួមទាំងឈ្មោះពិភព ឈ្មោះកម្រិត និងការណែនាំក្នុងមេរៀន។ ចំណងជើង និងប៊ូតុងជាភាសាខ្មែរ លែងមានគម្លាតអក្សរដែលធ្វើឱ្យព្យាង្គបែកពីគ្នា ហើយការណែនាំមានកន្លែងខ្ពស់ជាងមុន ដើម្បីកុំឱ្យបន្ទាត់ពីរត្រូវកាត់។ អត្ថបទសម្រាប់ទំព័រហាងជាភាសាខ្មែរ ត្រូវបានសរសេររួច។</p></div></li>
+<li><time datetime="2026-10-03">3 តុលា 2026</time><div><b>board ជា 3D</b><p>កាមេរ៉ាទស្សនវិស័យមើលចុះមកលើកម្រិត ជាមួយស្រមោលទន់ និងជ្រុងងងឹតជាងមុន។ ជញ្ជាំងជាដុំថ្មមានគែមកាត់ ប្រអប់ប្រែជាពណ៌បៃតងនៅលើគោលដៅ និងមានពណ៌ក្រហមស្រាលនៅពេលជាប់គាំង ហើយតួឯកបែរមុខទៅទិសដែលវាដើរ និងផ្អៀងខ្លួនពេលរុញ។ board 3D ធ្វើតាមចលនាដូចគ្នានឹង board 2D ដូច្នេះ undo និងការចាប់ផ្តើមឡើងវិញ ដំណើរការដូចគ្នា។</p></div></li>
+<li><time datetime="2026-10-03">3 តុលា 2026</time><div><b>ការពង្រីក ធូលី និងអត្រាស៊ុមស្រាលជាងមុនក្នុង 3D</b><p>ម្រាមដៃពីរពង្រីក និងរំកិលកាមេរ៉ា 3D ដែលបន្ទាប់មកតាមតួឯក។ ធូលី និងផ្កាភ្លើងរបស់ board 2D លេចឡើងក្នុង 3D ផងដែរ ដូចជាតួឯកដែលរុញប្រអប់នៅលើអេក្រង់ដើមដែរ។ board 3D គូរអតិបរមា 60 ស៊ុមក្នុងមួយវិនាទី ពេលមានអ្វីមួយកំពុងផ្លាស់ទី 30 ពេលមានតែតួឯកដកដង្ហើម ហើយមិនគូរអ្វីសោះពេលនៅផ្ទៃខាងក្រោយ។</p></div></li>
+<li><time datetime="2026-10-03">2–3 តុលា 2026</time><div><b>Docklands និង Labyrinth</b><p>ពិភពពីរ ដែលនីមួយៗមានបន្ទប់ធំៗចំនួន 10 ធ្វើឱ្យហ្គេមមាន 70 កម្រិតក្នុង 7 ពិភព។ បន្ទប់មួយឥឡូវអាចធំរហូតដល់ 14 គុណ 12 ក្រឡា ហើយ board អាចច្បិចដើម្បីពង្រីក និងរំកិលបាន។ កាតកម្រិតបង្ហាញផែនទីតូចនៃបន្ទប់នីមួយៗ ហើយកម្រិតដែលបន្ថែមនៅពេលក្រោយ ត្រូវបានដោះសោសម្រាប់អ្នកលេងដែលបានបញ្ចប់ campaign រួចហើយ។</p></div></li>
+</ol>
+</section>
+
 <nav class="pager">
 <a href="acpc.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>Acpc</b></a>
 <a href="fluxline.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>Fluxline</b></a>

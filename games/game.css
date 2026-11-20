@@ -95,7 +95,18 @@ pre.term .p{color:var(--accent);user-select:none}pre.term .c{color:var(--muted)}
 footer{border-top:1px solid var(--line);padding:25px 0;margin-top:44px;color:var(--muted);font:11px "DM Mono","Noto Sans Khmer",monospace}
 .foot{display:flex;justify-content:space-between;gap:20px}
 
+/* Last changes: <ol class="changelog">, one <li> per group of commits: <time> then <div><b>title</b><p>summary</p></div> */
+.changes-note{color:var(--muted);font-size:13.5px;margin:-4px 0 16px}
+.changelog{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.changelog li{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.changelog li:last-child{border-bottom:0}
+.changelog time{font:11px/1.9 "DM Mono","Noto Sans Khmer",monospace;color:var(--accent2);letter-spacing:.04em}
+.changelog b{display:block;font-size:14.5px;color:var(--text);letter-spacing:-.01em}
+.changelog p{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.65}
+html[lang=km] .changelog time{font-size:12.5px;letter-spacing:0}
+
 @media(max-width:760px){
+.changelog li{grid-template-columns:1fr;gap:4px}
 .stats{grid-template-columns:1fr 1fr}.grid,.grid.three{grid-template-columns:1fr}
 .gallery.portrait{grid-template-columns:1fr 1fr}.gallery.landscape{grid-template-columns:1fr}
 .hero{padding-top:38px}.back span{display:none}.foot{flex-direction:column}
