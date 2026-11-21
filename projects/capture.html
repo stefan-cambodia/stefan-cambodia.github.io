@@ -28,7 +28,7 @@
 <p class="lead" data-l="fr">Un enregistreur d’écran pour Linux, écrit en Rust. Il enregistre un écran entier avec le son que joue l’ordinateur, encode la vidéo sur le processeur graphique quand il le peut, et vise 60 images par seconde — 30 au minimum. Quand la machine ne suit pas, il le dit.</p>
 <p class="lead" data-l="km">កម្មវិធីថតអេក្រង់សម្រាប់ Linux សរសេរដោយ Rust។ វាថតអេក្រង់ទាំងមូល រួមជាមួយសំឡេងដែលកុំព្យូទ័រកំពុងចាក់ encode វីដេអូនៅលើ GPU នៅពេលដែលអាចធ្វើបាន ហើយមានគោលដៅ 60 រូបភាពក្នុងមួយវិនាទី — យ៉ាងហោចណាស់ 30។ នៅពេលដែលម៉ាស៊ីនមិនអាចតាមទាន់ វាប្រាប់អ្នកដោយត្រង់ៗ។</p>
 <div class="tags"><span class="tag p">Linux</span><span class="tag t" data-l="en">Tools</span><span class="tag t" data-l="fr">Outils</span><span class="tag t" data-l="km">ឧបករណ៍</span><span class="tag">Rust</span><span class="tag">FFmpeg</span><span class="tag">PipeWire</span><span class="tag">GTK 4</span></div>
-<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/capture" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a></div>
+<div class="actions"><a class="btn primary" href="https://github.com/stefan-cambodia/capture" target="_blank" rel="noopener noreferrer"><span data-l="en">View repository</span><span data-l="fr">Voir le dépôt</span><span data-l="km">មើលឃ្លាំងកូដ</span> ↗</a><a class="btn secondary" href="../history/capture.html"><span data-l="en">History</span><span data-l="fr">Historique</span><span data-l="km">ប្រវត្តិ</span> →</a></div>
 </div>
 
 <div class="stats">
@@ -257,6 +257,7 @@ VERDICT
 <li><time datetime="2026-09-17">17 Sep 2026</time><div><b>A GTK 4 window</b><p><code>rscap-gui</code> drives the same library as the command line: six pages cover every setting, with a live dashboard and a diagnostics page for the encoder probe and the benchmark. It loads and saves an <code>rscap.toml</code> that the command line can read. Closing the window during a recording waits until the file is finalised.</p></div></li>
 <li><time datetime="2026-09-17">17 Sep 2026</time><div><b>The first version, complete on Linux</b><p>Screen capture through the desktop portal and PipeWire, system sound from the PulseAudio monitor, encoding with VAAPI, QSV, NVENC or AMF and a <code>libx264</code> fallback, written to MP4 or MKV. On an Intel Core Ultra 7 155H at 2560×1440 and 60 FPS, it encoded 59.96 frames per second with no frame lost. The Windows backend is not implemented yet.</p></div></li>
 </ol>
+<p class="changes-more">Earlier versions of this page, with their captures and videos: <a href="../history/capture.html">History →</a></p>
 </section>
 
 <section class="changes" data-l="fr">
@@ -269,6 +270,7 @@ VERDICT
 <li><time datetime="2026-09-17">17 sept. 2026</time><div><b>Une fenêtre GTK 4</b><p><code>rscap-gui</code> pilote la même bibliothèque que la ligne de commande : six pages couvrent tous les réglages, avec un tableau de bord en temps réel et une page de diagnostic pour le sondage des encodeurs et le banc d’essai. Elle charge et enregistre un <code>rscap.toml</code> que la ligne de commande sait relire. Fermer la fenêtre pendant un enregistrement attend que le fichier soit finalisé.</p></div></li>
 <li><time datetime="2026-09-17">17 sept. 2026</time><div><b>La première version, complète sous Linux</b><p>Capture de l’écran par le portail du bureau et PipeWire, son du système par le moniteur PulseAudio, encodage VAAPI, QSV, NVENC ou AMF avec repli sur <code>libx264</code>, écriture en MP4 ou MKV. Sur un Intel Core Ultra 7 155H, en 2560×1440 à 60 images/s, il a encodé 59,96 images par seconde sans en perdre une. Le backend Windows n’est pas encore écrit.</p></div></li>
 </ol>
+<p class="changes-more">Les versions antérieures de cette page, avec leurs captures et leurs vidéos : <a href="../history/capture.html">Historique →</a></p>
 </section>
 
 <section class="changes" data-l="km">
@@ -281,6 +283,7 @@ VERDICT
 <li><time datetime="2026-09-17">17 កញ្ញា 2026</time><div><b>បង្អួច GTK 4</b><p><code>rscap-gui</code> ប្រើ library ដដែលនឹង command line៖ ទំព័រ 6 គ្របដណ្តប់ការកំណត់ទាំងអស់ ជាមួយផ្ទាំងតាមដានផ្ទាល់ និងទំព័រវិនិច្ឆ័យសម្រាប់ការសាកល្បង encoder និង benchmark។ វាផ្ទុក និងរក្សាទុក <code>rscap.toml</code> ដែល command line អាចអានបាន។ ការបិទបង្អួចពេលកំពុងថត នឹងរង់ចាំរហូតដល់ឯកសារត្រូវបានបញ្ចប់។</p></div></li>
 <li><time datetime="2026-09-17">17 កញ្ញា 2026</time><div><b>កំណែដំបូង ពេញលេញលើ Linux</b><p>ការថតអេក្រង់តាមរយៈ desktop portal និង PipeWire សំឡេងប្រព័ន្ធពី monitor របស់ PulseAudio ការ encode ជាមួយ VAAPI, QSV, NVENC ឬ AMF និង <code>libx264</code> ជាជម្រើសបម្រុង ហើយសរសេរជា MP4 ឬ MKV។ នៅលើ Intel Core Ultra 7 155H ក្នុង 2560×1440 និង 60 FPS វាបាន encode 59.96 រូបភាពក្នុងមួយវិនាទី ដោយគ្មានរូបភាពបាត់សោះ។ backend សម្រាប់ Windows មិនទាន់ត្រូវបានអនុវត្តនៅឡើយទេ។</p></div></li>
 </ol>
+<p class="changes-more">កំណែមុនៗនៃទំព័រនេះ ជាមួយរូបថតអេក្រង់ និងវីដេអូរបស់វា៖ <a href="../history/capture.html">ប្រវត្តិ →</a></p>
 </section>
 
 <nav class="pager">

@@ -1,0 +1,734 @@
+{
+ "_about": "Texts of the history pages (history/<slug>.html), built by tools/history/build.py. 'common' and 'pages.<slug>' are keyed by the short hash (7 characters) of the site's commit; a page's own text wins over a common one. 'aliases' points a commit to another one's text. 'pages.<slug>.retired.<hash>' keeps the Last changes summaries that commit took off the page, in the three languages. 'pages.<slug>.note' adds a line under the history's introduction. A commit that changes a page's media but has no text here still appears, with its English subject.",
+ "common": {
+  "32cbc0d": {
+   "en": [
+    "A capture on the home page card",
+    "The project’s card on the home page shows a screenshot for the first time."
+   ],
+   "fr": [
+    "Une capture sur la carte de l’accueil",
+    "La carte du projet sur la page d’accueil affiche une capture d’écran pour la première fois."
+   ],
+   "km": [
+    "រូបថតអេក្រង់លើកាតនៅទំព័រដើម",
+    "កាតរបស់គម្រោងនៅលើទំព័រដើម បង្ហាញរូបថតអេក្រង់ជាលើកដំបូង។"
+   ]
+  },
+  "f8c0ef4": {
+   "en": [
+    "Its own presentation page",
+    "The game gets a page of its own, in English and French, with a gallery of captures from its repository; its card on the home page now opens it."
+   ],
+   "fr": [
+    "Sa page de présentation",
+    "Le jeu reçoit sa propre page, en anglais et en français, avec une galerie de captures tirées de son dépôt ; sa carte sur l’accueil y mène désormais."
+   ],
+   "km": [
+    "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+    "ហ្គេមនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស និងបារាំង ជាមួយវិចិត្រសាលរូបថតអេក្រង់ពី repository របស់វា។ ឥឡូវនេះ កាតរបស់វានៅលើទំព័រដើម បើកទៅទំព័រនេះ។"
+   ]
+  },
+  "e7abbe0": {
+   "en": [
+    "The page in Khmer",
+    "The page now reads in Khmer as well as English and French; the language button cycles EN / FR / KM and follows the choice made on the home page."
+   ],
+   "fr": [
+    "La page en khmer",
+    "La page se lit désormais aussi en khmer ; le bouton de langue passe d’EN à FR puis KM et suit le choix fait sur l’accueil."
+   ],
+   "km": [
+    "ទំព័រជាភាសាខ្មែរ",
+    "ឥឡូវនេះ ទំព័រនេះអាចអានជាភាសាខ្មែរ បន្ថែមលើភាសាអង់គ្លេស និងបារាំង។ ប៊ូតុងភាសាប្តូរវេន EN / FR / KM ហើយធ្វើតាមជម្រើសដែលបានធ្វើនៅទំព័រដើម។"
+   ]
+  },
+  "c09dd56": {
+   "en": [
+    "Its own presentation page",
+    "The project gets a page of its own, in English, French and Khmer. The facts come from its repository, and the page says plainly what is unfinished."
+   ],
+   "fr": [
+    "Sa page de présentation",
+    "Le projet reçoit sa propre page, en anglais, en français et en khmer. Les faits viennent de son dépôt, et la page dit clairement ce qui n’est pas terminé."
+   ],
+   "km": [
+    "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+    "គម្រោងនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។ ព័ត៌មានមកពី repository របស់វា ហើយទំព័រនេះប្រាប់យ៉ាងច្បាស់ថា អ្វីខ្លះមិនទាន់បញ្ចប់។"
+   ]
+  },
+  "14062d5": {
+   "en": [
+    "Last changes",
+    "The page now ends with a summary of the repository’s latest commits, in English, French and Khmer."
+   ],
+   "fr": [
+    "Derniers changements",
+    "La page se termine désormais par un résumé des derniers commits du dépôt, en anglais, en français et en khmer."
+   ],
+   "km": [
+    "ការផ្លាស់ប្តូរចុងក្រោយ",
+    "ឥឡូវនេះ ទំព័របញ្ចប់ដោយសេចក្តីសង្ខេបនៃ commit ចុងក្រោយរបស់ repository ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។"
+   ]
+  }
+ },
+ "aliases": {
+  "129eb1d": "32cbc0d",
+  "ca957f5": "32cbc0d"
+ },
+ "pages": {
+  "3d-buggy": {
+   "88b88c8": {
+    "en": [
+     "Added to the site",
+     "3D Buggy gets a card in the Games section and its own page, with the captures of its five stages from the game’s repository; in Projects it is tagged Android / Games."
+    ],
+    "fr": [
+     "Arrivée sur le site",
+     "3D Buggy reçoit une carte dans la section Jeux et sa propre page, avec les captures de ses cinq étapes tirées du dépôt du jeu ; dans Projets, il est classé Android / Jeux."
+    ],
+    "km": [
+     "ចូលមកក្នុងគេហទំព័រ",
+     "3D Buggy ទទួលបានកាតមួយក្នុងផ្នែកហ្គេម និងទំព័រផ្ទាល់ខ្លួន ជាមួយរូបថតអេក្រង់នៃដំណាក់កាលទាំងប្រាំ ពី repository របស់ហ្គេម។ ក្នុងផ្នែកគម្រោង វាត្រូវបានចាត់ជា Android / Games។"
+    ]
+   },
+   "23f3c23": {
+    "en": [
+     "The Angkor circuits",
+     "Seven stages now: the Petit and Grand Circuits join the stage table, with a section on Angkor (roads traced from OpenStreetMap at 1:2.5, the photographic look, the aerial flyover) and six captures. The header becomes the causeway to the South Gate of Angkor Thom, and the strip of stage captures leaves the page."
+    ],
+    "fr": [
+     "Les circuits d’Angkor",
+     "Sept étapes désormais : le Petit et le Grand Circuit entrent dans le tableau des étapes, avec une section sur Angkor (routes tracées d’après OpenStreetMap au 1:2,5, rendu photographique, survol aérien) et six captures. L’image d’en-tête devient la chaussée de la porte Sud d’Angkor Thom, et le bandeau des captures d’étapes quitte la page."
+    ],
+    "km": [
+     "សៀគ្វីអង្គរ",
+     "ឥឡូវនេះមានដំណាក់កាលប្រាំពីរ៖ Petit Circuit និង Grand Circuit ចូលក្នុងតារាងដំណាក់កាល ជាមួយផ្នែកស្តីពីអង្គរ (ផ្លូវគូរតាម OpenStreetMap មាត្រដ្ឋាន 1:2.5 រូបរាងដូចរូបថត និងការហោះពីលើ) និងរូបថតអេក្រង់ប្រាំមួយ។ រូបភាពក្បាលទំព័រ ក្លាយជាផ្លូវឆ្ពោះទៅទ្វារខាងត្បូងនៃអង្គរធំ ហើយបន្ទះរូបថតដំណាក់កាល ត្រូវបានដកចេញពីទំព័រ។"
+    ]
+   },
+   "26d76ac": {
+    "en": [
+     "The Grand Circuit flyover",
+     "The Angkor section plays the aerial intro of the Grand Circuit, from the game’s own recording: 30 seconds over Angkor Wat, the Bayon, Preah Khan and Pre Rup, then down to the start line."
+    ],
+    "fr": [
+     "Le survol du Grand Circuit",
+     "La section Angkor diffuse l’introduction aérienne du Grand Circuit, tirée de l’enregistrement du jeu lui-même : 30 secondes au-dessus d’Angkor Vat, du Bayon, de Preah Khan et de Pre Rup, puis la descente vers la ligne de départ."
+    ],
+    "km": [
+     "ការហោះពីលើ Grand Circuit",
+     "ផ្នែកអង្គរ ចាក់វីដេអូណែនាំពីលើអាកាសនៃ Grand Circuit ដែលថតដោយហ្គេមខ្លួនឯង៖ 30 វិនាទី ពីលើអង្គរវត្ត បាយ័ន ព្រះខ័ន និងប្រែរូប រួចចុះមកខ្សែចាប់ផ្តើម។"
+    ]
+   },
+   "582f498": {
+    "en": [
+     "The living Angkor, and the film",
+     "The circuits are now planted from a satellite map, with jungle, rice fields, villages and moving elephants and macaques. The 30-second flyover gives way to the Grand Circuit’s full film (87 s, ten monuments), the Angkor gallery is renewed, and the game is featured on the home page."
+    ],
+    "fr": [
+     "Angkor vivant, et le film",
+     "Les circuits sont désormais plantés d’après une carte satellite, avec jungle, rizières, villages, éléphants et macaques en mouvement. Le survol de 30 secondes laisse la place au film complet du Grand Circuit (87 s, dix monuments), la galerie d’Angkor est renouvelée, et le jeu est mis en avant sur l’accueil."
+    ],
+    "km": [
+     "អង្គរដែលមានជីវិត និងភាពយន្ត",
+     "ឥឡូវនេះ សៀគ្វីត្រូវបានដាំដើមឈើតាមផែនទីផ្កាយរណប មានព្រៃ វាលស្រែ ភូមិ ហើយមានដំរី និងស្វាដែលធ្វើចលនា។ វីដេអូហោះពីលើ 30 វិនាទី ត្រូវបានជំនួសដោយភាពយន្តពេញលេញនៃ Grand Circuit (87 វិនាទី វិមានដប់) វិចិត្រសាលអង្គរត្រូវបានធ្វើថ្មី ហើយហ្គេមនេះត្រូវបានលើកបង្ហាញនៅទំព័រដើម។"
+    ]
+   }
+  },
+  "3d-snake": {
+   "091196b": {
+    "en": [
+     "Version 2.1.0",
+     "The page catches up with the repository: version 2.1.0 and nine sanctuaries."
+    ],
+    "fr": [
+     "Version 2.1.0",
+     "La page rattrape le dépôt : version 2.1.0 et neuf sanctuaires."
+    ],
+    "km": [
+     "កំណែ 2.1.0",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ កំណែ 2.1.0 និងទីសក្ការៈប្រាំបួន។"
+    ]
+   }
+  },
+  "aboulder": {
+   "f8c0ef4": {
+    "en": [
+     "Into Games, with its own page",
+     "Gemstone Caverns joins the Games section and gets a page of its own, in English and French, with captures from its repository."
+    ],
+    "fr": [
+     "Dans les Jeux, avec sa page",
+     "Gemstone Caverns entre dans la section Jeux et reçoit sa propre page, en anglais et en français, avec des captures tirées de son dépôt."
+    ],
+    "km": [
+     "ចូលក្នុងផ្នែកហ្គេម ជាមួយទំព័រផ្ទាល់ខ្លួន",
+     "Gemstone Caverns ចូលក្នុងផ្នែកហ្គេម ហើយទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស និងបារាំង ជាមួយរូបថតអេក្រង់ពី repository របស់វា។"
+    ]
+   }
+  },
+  "cambo-rally": {
+   "9f6083f": {
+    "en": [
+     "Its own page",
+     "Cambo Rally, the multiplayer buggy race round Angkor, gets its page: two to eight phones on the same Wi-Fi or hotspot, no server, no internet; how a race goes, the two Angkor circuits, the visual effects levels with the sunrise, the Galaxy A56 measurements, and seventeen screenshots."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Cambo Rally, la course de buggys multijoueur autour d’Angkor, reçoit sa page : deux à huit téléphones sur le même Wi-Fi ou partage de connexion, sans serveur ni internet ; le déroulement d’une course, les deux circuits d’Angkor, les niveaux d’effets avec le lever du soleil, les mesures sur Galaxy A56 et dix-sept captures."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "Cambo Rally ការប្រណាំងប៊ុកហ្គីច្រើននាក់ជុំវិញអង្គរ ទទួលបានទំព័ររបស់ខ្លួន៖ ទូរស័ព្ទពីរដល់ប្រាំបី នៅលើ Wi-Fi ឬ hotspot តែមួយ គ្មានម៉ាស៊ីនមេ គ្មានអ៊ីនធឺណិត។ របៀបនៃការប្រណាំង សៀគ្វីអង្គរទាំងពីរ កម្រិតបែបផែនរូបភាព រួមទាំងពេលថ្ងៃរះ ការវាស់វែងលើ Galaxy A56 និងរូបថតអេក្រង់ដប់ប្រាំពីរ។"
+    ]
+   },
+   "4af2e96": {
+    "en": [
+     "Now Cambodia Rally",
+     "The game is renamed Cambodia Rally. New sections: the eight vehicles, with the garage and five race screenshots, and the films, with the game’s 52-second intro as a video. The effects gain light shafts, tyre smoke, sunrise headlights and car damage; the home and lobby screenshots are retaken in English with the new name."
+    ],
+    "fr": [
+     "Désormais Cambodia Rally",
+     "Le jeu s’appelle désormais Cambodia Rally. Nouvelles sections : les huit véhicules, avec le garage et cinq captures de course, et les films, avec l’introduction de 52 secondes du jeu en vidéo. Les effets gagnent les rais de lumière, la fumée des pneus, les phares au lever du soleil et les dégâts ; les captures de l’accueil et du salon sont reprises en anglais avec le nouveau nom."
+    ],
+    "km": [
+     "ឥឡូវជា Cambodia Rally",
+     "ហ្គេមនេះប្តូរឈ្មោះជា Cambodia Rally។ ផ្នែកថ្មី៖ យានយន្តទាំងប្រាំបី ជាមួយយានដ្ឋាន និងរូបថតអេក្រង់ការប្រណាំងប្រាំ និងភាពយន្ត ដោយមានវីដេអូណែនាំ 52 វិនាទីរបស់ហ្គេម។ បែបផែនបន្ថែមកាំរស្មីពន្លឺ ផ្សែងកង់ ភ្លើងហ្វាពេលថ្ងៃរះ និងការខូចខាតរថយន្ត។ រូបថតអេក្រង់ទំព័រដើម និង lobby ត្រូវបានថតឡើងវិញជាភាសាអង់គ្លេស ជាមួយឈ្មោះថ្មី។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "Music, spectators and a new intro",
+     "A Music section, the damage, spectators, sponsor gantries and new films; the intro is re-rendered, now 72 seconds long, and four captures are added."
+    ],
+    "fr": [
+     "Musique, spectateurs et nouvelle introduction",
+     "Une section Musique, les dégâts, les spectateurs, les portiques des sponsors et de nouveaux films ; l’introduction est refaite, désormais de 72 secondes, et quatre captures s’ajoutent."
+    ],
+    "km": [
+     "តន្ត្រី អ្នកទស្សនា និងវីដេអូណែនាំថ្មី",
+     "ផ្នែកតន្ត្រី ការខូចខាត អ្នកទស្សនា ស្លាកអ្នកឧបត្ថម្ភ និងភាពយន្តថ្មីៗ។ វីដេអូណែនាំត្រូវបានធ្វើឡើងវិញ ឥឡូវមានរយៈពេល 72 វិនាទី ហើយរូបថតអេក្រង់បួនត្រូវបានបន្ថែម។"
+    ]
+   },
+   "091196b": {
+    "en": [
+     "Music and sponsors",
+     "The page catches up with the repository: the music cut from a reference track, and sponsors on every roadside board."
+    ],
+    "fr": [
+     "Musique et sponsors",
+     "La page rattrape le dépôt : la musique découpée d’après un morceau de référence, et des sponsors sur chaque panneau du bord de route."
+    ],
+    "km": [
+     "តន្ត្រី និងអ្នកឧបត្ថម្ភ",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ តន្ត្រីដែលកាត់ចេញពីបទយោង និងអ្នកឧបត្ថម្ភនៅលើផ្ទាំងគ្រប់ផ្ទាំងតាមផ្លូវ។"
+    ]
+   }
+  },
+  "velocity": {
+   "289a953": {
+    "en": [
+     "Added to the site",
+     "The anti-gravity racer gets a card in Games and its own page in English, French and Khmer: the idea, the five circuits, the game modes and career, highlights, controls and a gallery of captures from the game’s repository."
+    ],
+    "fr": [
+     "Arrivée sur le site",
+     "Le jeu de course antigravité reçoit une carte dans Jeux et sa propre page en anglais, en français et en khmer : l’idée, les cinq circuits, les modes de jeu et la carrière, les points forts, les commandes et une galerie de captures tirées du dépôt du jeu."
+    ],
+    "km": [
+     "ចូលមកក្នុងគេហទំព័រ",
+     "ហ្គេមប្រណាំងប្រឆាំងទំនាញ ទទួលបានកាតមួយក្នុងផ្នែកហ្គេម និងទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ៖ គំនិត សៀគ្វីប្រាំ របៀបលេង និងអាជីព ចំណុចលេចធ្លោ ការបញ្ជា និងវិចិត្រសាលរូបថតអេក្រង់ ពី repository របស់ហ្គេម។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "Twelve circuits",
+     "Twelve circuits, 47 career events, 60 fps on the Galaxy A56, and eight captures of the new circuits."
+    ],
+    "fr": [
+     "Douze circuits",
+     "Douze circuits, 47 épreuves de carrière, 60 images/s sur le Galaxy A56, et huit captures des nouveaux circuits."
+    ],
+    "km": [
+     "សៀគ្វីដប់ពីរ",
+     "សៀគ្វីដប់ពីរ ការប្រកួតអាជីព 47 ល្បឿន 60 fps លើ Galaxy A56 និងរូបថតអេក្រង់ប្រាំបីនៃសៀគ្វីថ្មី។"
+    ]
+   }
+  },
+  "angkor": {
+   "f8bc4ca": {
+    "en": [
+     "Its own page",
+     "Angkor World Engine gets its page: the Angkor region rebuilt at 1:1 from open geographic data, nothing placed by hand; its layers and their sources, the 37 × 45 km region streamed, nine temple models, five vehicles from real figures, weather and night, the geographic editor, the Galaxy A56 measurements, and fourteen screenshots."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Angkor World Engine reçoit sa page : la région d’Angkor reconstruite à l’échelle 1:1 à partir de données géographiques ouvertes, sans rien placer à la main ; ses couches et leurs sources, la région de 37 × 45 km chargée à la volée, neuf temples modélisés, cinq véhicules aux caractéristiques réelles, la météo et la nuit, l’éditeur géographique, les mesures sur Galaxy A56 et quatorze captures."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "Angkor World Engine ទទួលបានទំព័ររបស់ខ្លួន៖ តំបន់អង្គរ ដែលបង្កើតឡើងវិញតាមមាត្រដ្ឋាន 1:1 ពីទិន្នន័យភូមិសាស្ត្របើកចំហ ដោយគ្មានអ្វីដាក់ដោយដៃ។ ស្រទាប់ និងប្រភពរបស់វា តំបន់ 37 × 45 គីឡូម៉ែត្រ ដែលផ្ទុកបន្តិចម្តងៗ គំរូប្រាសាទប្រាំបួន យានយន្តប្រាំតាមតួលេខពិត អាកាសធាតុ និងពេលយប់ កម្មវិធីកែសម្រួលភូមិសាស្ត្រ ការវាស់វែងលើ Galaxy A56 និងរូបថតអេក្រង់ដប់បួន។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "Angkor Wat from the EFEO’s drawings",
+     "Angkor Wat rebuilt from the survey drawings of the École française d’Extrême-Orient, the automated temple checks, nine captures and a new cover. The central tower is 57.4 m on the drawings, not 65 m."
+    ],
+    "fr": [
+     "Angkor Vat d’après les relevés de l’EFEO",
+     "Angkor Vat reconstruit d’après les relevés de l’École française d’Extrême-Orient, les contrôles automatiques des temples, neuf captures et une nouvelle image de couverture. La tour centrale mesure 57,4 m sur les relevés, et non 65 m."
+    ],
+    "km": [
+     "អង្គរវត្ត ពីប្លង់របស់ EFEO",
+     "អង្គរវត្តត្រូវបានសាងសង់ឡើងវិញពីប្លង់វាស់វែងរបស់ École française d’Extrême-Orient ការត្រួតពិនិត្យប្រាសាទដោយស្វ័យប្រវត្តិ រូបថតអេក្រង់ប្រាំបួន និងរូបគម្របថ្មី។ ប្រាង្គកណ្តាលមានកម្ពស់ 57.4 ម៉ែត្រ នៅលើប្លង់ មិនមែន 65 ម៉ែត្រទេ។"
+    ]
+   },
+   "091196b": {
+    "en": [
+     "Twelve temples, traffic and towns",
+     "The page catches up with the repository: twelve temples modelled, traffic, the towns, and where the prototype stands."
+    ],
+    "fr": [
+     "Douze temples, circulation et villes",
+     "La page rattrape le dépôt : douze temples modélisés, la circulation, les villes, et l’état du prototype."
+    ],
+    "km": [
+     "ប្រាសាទដប់ពីរ ចរាចរណ៍ និងទីក្រុង",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ ប្រាសាទដប់ពីរដែលមានគំរូ ចរាចរណ៍ ទីក្រុង និងស្ថានភាពនៃគំរូសាកល្បង។"
+    ]
+   },
+   "c04cc3b": {
+    "en": [
+     "In development, and followed",
+     "Angkor World Engine moves to the new In development section of the home page, with the date of its last push read live from GitHub. Its Last changes now run to 21 November; the four oldest summaries leave the page and are kept below."
+    ],
+    "fr": [
+     "En développement, et suivi",
+     "Angkor World Engine passe dans la nouvelle section En développement de l’accueil, avec la date de son dernier envoi lue en direct sur GitHub. Ses derniers changements vont désormais jusqu’au 21 novembre ; les quatre résumés les plus anciens quittent la page et sont gardés ci-dessous."
+    ],
+    "km": [
+     "កំពុងអភិវឌ្ឍ និងតាមដាន",
+     "Angkor World Engine ផ្លាស់ទៅផ្នែកថ្មី «កំពុងអភិវឌ្ឍ» នៃទំព័រដើម ជាមួយកាលបរិច្ឆេទនៃការបញ្ជូនចុងក្រោយរបស់វា ដែលអានផ្ទាល់ពី GitHub។ ការផ្លាស់ប្តូរចុងក្រោយរបស់វា ឥឡូវនេះរហូតដល់ថ្ងៃទី 21 ខែវិច្ឆិកា។ សេចក្តីសង្ខេបចាស់ជាងគេទាំងបួន ចេញពីទំព័រ ហើយត្រូវបានរក្សាទុកខាងក្រោម។"
+    ]
+   },
+   "retired": {
+    "c04cc3b": {
+     "en": [
+      {
+       "time": "2026-11-19",
+       "label": "19 Nov 2026",
+       "title": "Siem Reap’s old quarter and the towns",
+       "text": "The colonial quarter round the Old Market is drawn as published sources describe it: two-storey shophouses in white, pastel or brighter renovated colours under shared terracotta tiled roofs, with colonnaded galleries opening in arches, balconies, and round-headed windows with louvred shutters. The Old Market is a one-floor hall, the Grand Hotel d’Angkor has four floors under a hipped tiled roof, and the quarter’s restaurants and bars put tables out on the pavement. Across the towns, shophouses now line only the main roads and named streets; the 17,915 buildings inside the blocks are two-storey detached houses."
+      },
+      {
+       "time": "2026-11-19",
+       "label": "19 Nov 2026",
+       "title": "The Bayon from its survey drawings",
+       "text": "The Bayon now has a model built from the EFEO’s drawings: the 108 written spot heights of its levelling plan set each platform and court at its level, and a 1/50 axial section gives the towers, the central one 29.6 m above the sanctuary’s floor. It holds the central tower and the axial towers, the inner gallery’s sixteen towers and the twelve towers of the courts, the outer gallery’s 375 free-standing pillars, the axial stairs, the outer gopuras with their porches, stairs and walls, the four corner pavilions and the two libraries. The towers’ faces are not modelled yet."
+      },
+      {
+       "time": "2026-11-19",
+       "label": "18–19 Nov 2026",
+       "title": "Angkor Wat, part by part",
+       "text": "Angkor Wat rebuilt from the EFEO’s survey drawings: the central massif, the second level, the gallery of the bas-reliefs, the west entrance and the causeways, and the fourth enclosure with its north and south gopuras, its stone drawn to the measured sizes of its courses. The last additions are the cloister’s stair halls with their piers and stepped roofs. Automated checks now catch flights hidden in the stone or blocked at their foot, pillars that carry nothing and roofs that rest on nothing; 40 flights were cleared at their foot."
+      },
+      {
+       "time": "2026-11-17",
+       "label": "16–17 Nov 2026",
+       "title": "Modelled vehicles, traffic and weather",
+       "text": "The world is now built at 1:1 everywhere. The car, two-wheelers, auto-rickshaw and remorque are modelled, with their drivers, riders and passengers and speedometers that work, and traffic drives the roads round the player, two-wheelers leaning into bends and vehicles taking turns at junctions. Clouds and their shadows, rain rings on water, spray from the wheels, street and vehicle lamps, road markings, pavements, bridges and the everyday objects of streets and villages were added."
+      }
+     ],
+     "fr": [
+      {
+       "time": "2026-11-19",
+       "label": "19 nov. 2026",
+       "title": "Le vieux quartier de Siem Reap et les villes",
+       "text": "Le quartier colonial autour du Vieux Marché est dessiné tel que le décrivent les sources publiées : compartiments à deux niveaux, blancs, pastel ou repeints de couleurs vives, sous des toits de tuiles en terre cuite partagés, avec galeries à colonnes ouvertes en arcs, balcons et hautes fenêtres cintrées à persiennes. Le Vieux Marché est une halle de plain-pied, le Grand Hotel d’Angkor compte quatre niveaux sous un toit de tuiles à croupes, et les restaurants et bars du quartier sortent leurs tables sur le trottoir. Dans les villes, les compartiments ne bordent plus que les grands axes et les rues nommées ; les 17 915 bâtiments du cœur des îlots sont devenus des maisons individuelles à deux niveaux."
+      },
+      {
+       "time": "2026-11-19",
+       "label": "19 nov. 2026",
+       "title": "Le Bayon d’après ses relevés",
+       "text": "Le Bayon a désormais un modèle tiré des dessins de l’EFEO : les 108 cotes écrites de son plan de nivellement placent chaque terrasse et chaque cour à sa hauteur, et une coupe axiale au 1/50 donne les tours, la tour centrale à 29,6 m au-dessus du sol du sanctuaire. On y trouve la tour centrale et les tours axiales, les seize tours de la galerie intérieure et les douze tours des cours, les 375 piliers isolés de la galerie extérieure, les escaliers axiaux, les gopuras extérieurs avec leurs porches, leurs escaliers et leurs murs, les quatre pavillons d’angle et les deux bibliothèques. Les visages des tours ne sont pas encore modélisés."
+      },
+      {
+       "time": "2026-11-19",
+       "label": "18–19 nov. 2026",
+       "title": "Angkor Vat, partie par partie",
+       "text": "Angkor Vat reconstruit d’après les relevés de l’EFEO : le massif central, le deuxième niveau, la galerie des bas-reliefs, l’entrée ouest et les chaussées, et la quatrième enceinte avec ses gopuras nord et sud, la pierre dessinée aux dimensions mesurées de ses assises. Derniers ajouts : les salles d’escalier du cloître, avec leurs piles et leurs toits en gradins. Des contrôles automatiques repèrent désormais les volées enfouies dans la pierre ou bloquées à leur pied, les piliers qui ne portent rien et les toits qui ne reposent sur rien ; 40 volées ont été dégagées à leur pied."
+      },
+      {
+       "time": "2026-11-17",
+       "label": "16–17 nov. 2026",
+       "title": "Véhicules modélisés, circulation et météo",
+       "text": "Le monde est désormais construit à l’échelle 1:1 partout. La voiture, les deux-roues, le tricycle motorisé et la remorque sont modélisés, avec conducteurs, pilotes et passagers et des compteurs de vitesse qui fonctionnent, et une circulation parcourt les routes autour du joueur : les deux-roues se penchent dans les virages, les véhicules passent chacun leur tour aux carrefours. S’y ajoutent les nuages et leurs ombres, les ronds de pluie sur l’eau, les gerbes d’eau derrière les roues, les réverbères et les feux des véhicules, le marquage au sol, les trottoirs, les ponts et les objets du quotidien des rues et des villages."
+      }
+     ],
+     "km": [
+      {
+       "time": "2026-11-19",
+       "label": "19 វិច្ឆិកា 2026",
+       "title": "សង្កាត់ចាស់ក្រុងសៀមរាប និងទីក្រុងនានា",
+       "text": "សង្កាត់សម័យអាណានិគម នៅជុំវិញផ្សារចាស់ ត្រូវបានគូរតាមការពិពណ៌នានៃឯកសារដែលបានបោះពុម្ព៖ ផ្ទះល្វែងពីរជាន់ ពណ៌ស ពណ៌ស្រាល ឬពណ៌ភ្លឺៗ ដែលទើបជួសជុល ក្រោមដំបូលក្បឿងដីដុតរួមគ្នា ជាមួយច្រកដើរមានសសរ ដែលបើកជាក្លោងធ្នូ យ៉ និងបង្អួចខ្ពស់ក្បាលមូល មានស្លឹកបង្អួចជាបន្ទះៗ។ ផ្សារចាស់ ជាសាលមួយជាន់ សណ្ឋាគារ Grand Hotel d’Angkor មានបួនជាន់ ក្រោមដំបូលក្បឿងជម្រាលបួនទិស ហើយភោជនីយដ្ឋាន និងបារនៃសង្កាត់នេះ ដាក់តុនៅលើចិញ្ចើមផ្លូវ។ នៅក្នុងទីក្រុងនានា ឥឡូវផ្ទះល្វែងមានតែតាមបណ្តោយផ្លូវធំៗ និងផ្លូវដែលមានឈ្មោះប៉ុណ្ណោះ ហើយអគារ 17 915 នៅខាងក្នុងប្លុក បានក្លាយជាផ្ទះពីរជាន់ដាច់ដោយឡែក។"
+      },
+      {
+       "time": "2026-11-19",
+       "label": "19 វិច្ឆិកា 2026",
+       "title": "ប្រាសាទបាយ័ន ពីប្លង់វាស់វែងរបស់វា",
+       "text": "ឥឡូវនេះ ប្រាសាទបាយ័នមានគំរូ ដែលសាងសង់ពីប្លង់របស់ EFEO៖ ចំណុចកម្ពស់ដែលសរសេរ 108 នៃប្លង់វាស់កម្ពស់របស់វា កំណត់កម្រិតនៃរាន និងទីធ្លានីមួយៗ ហើយផ្នែកកាត់តាមអ័ក្ស មាត្រដ្ឋាន 1/50 ផ្តល់កំពូលទាំងឡាយ ដែលកំពូលកណ្តាលមានកម្ពស់ 29.6 ម៉ែត្រ ពីលើកម្រាលនៃប្រាសាទកណ្តាល។ គំរូនេះមាន៖ កំពូលកណ្តាល និងកំពូលតាមអ័ក្ស កំពូលដប់ប្រាំមួយនៃរោងខាងក្នុង និងកំពូលដប់ពីរនៃទីធ្លា សសរឈរដាច់ដោយឡែក 375 នៃរោងខាងក្រៅ ជណ្តើរតាមអ័ក្ស ខ្លោងទ្វារខាងក្រៅ ជាមួយរានហាល ជណ្តើរ និងជញ្ជាំងរបស់វា អាគារនៅជ្រុងទាំងបួន និងបណ្ណាល័យទាំងពីរ។ ព្រះភក្ត្រនៅលើកំពូល មិនទាន់មាននៅក្នុងគំរូនៅឡើយទេ។"
+      },
+      {
+       "time": "2026-11-19",
+       "label": "18–19 វិច្ឆិកា 2026",
+       "title": "អង្គរវត្ត មួយផ្នែកម្តងៗ",
+       "text": "ប្រាសាទអង្គរវត្ត ត្រូវបានសាងសង់ឡើងវិញពីប្លង់វាស់វែងរបស់ EFEO៖ តួប្រាសាទកណ្តាល ជាន់ទីពីរ រោងចម្លាក់ ច្រកចូលខាងលិច និងផ្លូវថ្ម និងកំពែងទីបួន ជាមួយខ្លោងទ្វារខាងជើង និងខាងត្បូង ដោយថ្មត្រូវបានគូរតាមទំហំស្រទាប់ថ្មដែលបានវាស់។ ការបន្ថែមចុងក្រោយ គឺសាលជណ្តើរនៃព្រះពាន់ ជាមួយសសរទ្រ និងដំបូលជាថ្នាក់ៗ។ ការត្រួតពិនិត្យស្វ័យប្រវត្តិ ឥឡូវរកឃើញជណ្តើរដែលលាក់ក្នុងថ្ម ឬត្រូវបានរាំងនៅជើង សសរដែលមិនទ្រអ្វី និងដំបូលដែលមិនសង្កត់លើអ្វី ហើយជណ្តើរ 40 ត្រូវបានដោះការរាំងនៅជើងរបស់វា។"
+      },
+      {
+       "time": "2026-11-17",
+       "label": "16–17 វិច្ឆិកា 2026",
+       "title": "គំរូយានយន្ត ចរាចរណ៍ និងអាកាសធាតុ",
+       "text": "ឥឡូវនេះ ពិភពលោកត្រូវបានសាងសង់តាមមាត្រដ្ឋាន 1:1 គ្រប់ទីកន្លែង។ រថយន្ត ម៉ូតូ ម៉ូតូស្កូទ័រ រ៉ឺម៉កកង់បី និងរ៉ឺម៉កខ្មែរ មានគំរូរបស់វា ជាមួយអ្នកបើកបរ អ្នកជិះ អ្នកដំណើរ និងនាឡិកាល្បឿនដែលដំណើរការ ហើយចរាចរណ៍បើកបរនៅលើផ្លូវជុំវិញអ្នកលេង ដោយម៉ូតូផ្អៀងពេលបត់ និងយានយន្តផ្លាស់វេនគ្នានៅផ្លូវប្រសព្វ។ ពពក និងស្រមោលរបស់វា រង្វង់ភ្លៀងលើទឹក ទឹកខ្ទាតពីកង់ ចង្កៀងផ្លូវ និងចង្កៀងយានយន្ត គំនូសសញ្ញាលើផ្លូវ ចិញ្ចើមផ្លូវ ស្ពាន និងវត្ថុប្រចាំថ្ងៃតាមផ្លូវ និងក្នុងភូមិ ក៏ត្រូវបានបន្ថែមផងដែរ។"
+      }
+     ]
+    }
+   }
+  },
+  "blogsdg": {
+   "05d940d": {
+    "en": [
+     "Its own page",
+     "The blog on setting up the company step by step gets its page in English, French and Khmer, with its journey of numbered steps, the posts so far and screenshots."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Le blog qui raconte la création de la société étape par étape reçoit sa page en anglais, en français et en khmer, avec son parcours d’étapes numérotées, les articles parus et des captures."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "ប្លុកដែលរៀបរាប់អំពីការបង្កើតក្រុមហ៊ុនមួយជំហានម្តងៗ ទទួលបានទំព័ររបស់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយដំណើរនៃជំហានដែលមានលេខរៀង អត្ថបទដែលបានចេញផ្សាយ និងរូបថតអេក្រង់។"
+    ]
+   }
+  },
+  "chantrea": {
+   "05d940d": {
+    "en": [
+     "Its own page",
+     "The Chantrea Systems website gets its page in English, French and Khmer: the static Astro site in five languages, without cookies or trackers, its moonlit light and dark theme and its logo, with screenshots."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Le site de Chantrea Systems reçoit sa page en anglais, en français et en khmer : le site statique Astro en cinq langues, sans cookies ni traceurs, son thème clair et sombre au clair de lune et son logo, avec des captures."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "គេហទំព័រ Chantrea Systems ទទួលបានទំព័ររបស់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ៖ គេហទំព័រ Astro ឋិតិវន្តជាប្រាំភាសា គ្មាន cookies ឬកម្មវិធីតាមដាន ស្បែកភ្លឺ និងងងឹតក្រោមពន្លឺព្រះចន្ទ និងនិមិត្តសញ្ញារបស់វា ជាមួយរូបថតអេក្រង់។"
+    ]
+   }
+  },
+  "nautica": {
+   "05d940d": {
+    "en": [
+     "Its own page",
+     "Cambodia Nautic gets its page in English, French and Khmer: the boating platform for South-East Asia, its API, its portal in five languages and its mobile app, and where each phase stands; not online yet."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Cambodia Nautic reçoit sa page en anglais, en français et en khmer : la plateforme nautique pour l’Asie du Sud-Est, son API, son portail en cinq langues et son application mobile, et l’état de chaque phase ; pas encore en ligne."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "Cambodia Nautic ទទួលបានទំព័ររបស់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ៖ វេទិកាទូកសម្រាប់អាស៊ីអាគ្នេយ៍ API របស់វា វិបផតថលជាប្រាំភាសា និងកម្មវិធីទូរស័ព្ទ ព្រមទាំងស្ថានភាពនៃដំណាក់កាលនីមួយៗ។ មិនទាន់ដាក់ឱ្យប្រើលើអ៊ីនធឺណិតនៅឡើយទេ។"
+    ]
+   },
+   "091196b": {
+    "en": [
+     "Status by phase",
+     "The page catches up with the repository: the status by phase, coverage and figures."
+    ],
+    "fr": [
+     "L’état par phase",
+     "La page rattrape le dépôt : l’état par phase, la couverture et les chiffres."
+    ],
+    "km": [
+     "ស្ថានភាពតាមដំណាក់កាល",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ ស្ថានភាពតាមដំណាក់កាល វិសាលភាព និងតួលេខ។"
+    ]
+   }
+  },
+  "portfolio": {
+   "c09dd56": {
+    "en": [
+     "Its own page",
+     "This website gets a page of its own, in English, French and Khmer, with screenshots captured locally from the site."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Ce site reçoit sa propre page, en anglais, en français et en khmer, avec des captures prises en local sur le site."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "គេហទំព័រនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយរូបថតអេក្រង់ដែលថតនៅលើកុំព្យូទ័រ ពីគេហទំព័រ។"
+    ]
+   },
+   "05d940d": {
+    "en": [
+     "Nine games, 23 pages",
+     "The page now counts nine games and 23 presentation pages."
+    ],
+    "fr": [
+     "Neuf jeux, 23 pages",
+     "La page compte désormais neuf jeux et 23 pages de présentation."
+    ],
+    "km": [
+     "ហ្គេមប្រាំបួន ទំព័រ 23",
+     "ឥឡូវនេះ ទំព័ររាប់បានហ្គេមប្រាំបួន និងទំព័របង្ហាញ 23។"
+    ]
+   }
+  },
+  "btcterm": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "The project gets a page of its own, in English, French and Khmer, with screenshots from its repository."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Le projet reçoit sa propre page, en anglais, en français et en khmer, avec des captures tirées de son dépôt."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "គម្រោងនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយរូបថតអេក្រង់ពី repository របស់វា។"
+    ]
+   }
+  },
+  "vsm-studio": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "VSM Studio gets a page of its own, in English, French and Khmer, with screenshots from its repository; the Sound Lab card on the home page now opens it."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "VSM Studio reçoit sa propre page, en anglais, en français et en khmer, avec des captures tirées de son dépôt ; la carte du Sound Lab sur l’accueil y mène désormais."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "VSM Studio ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយរូបថតអេក្រង់ពី repository របស់វា។ ឥឡូវនេះ កាត Sound Lab នៅលើទំព័រដើម បើកទៅទំព័រនេះ។"
+    ]
+   },
+   "e43e113": {
+    "en": [
+     "64 instruments",
+     "The page said 63 instruments while the home page, the README and the GitHub description said 64; it now says 64 throughout."
+    ],
+    "fr": [
+     "64 instruments",
+     "La page indiquait 63 instruments alors que l’accueil, le README et la description GitHub en annonçaient 64 ; elle dit désormais 64 partout."
+    ],
+    "km": [
+     "ឧបករណ៍ភ្លេង 64",
+     "ទំព័រនេះធ្លាប់សរសេរថា ឧបករណ៍ភ្លេង 63 ខណៈដែលទំព័រដើម README និងការពិពណ៌នានៅ GitHub សរសេរថា 64។ ឥឡូវនេះ វាសរសេរថា 64 គ្រប់កន្លែង។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "Phrase tools and MIDI effects",
+     "The page catches up with the repository: the piano roll’s phrase tools and 15 MIDI effects."
+    ],
+    "fr": [
+     "Outils de phrase et effets MIDI",
+     "La page rattrape le dépôt : les outils de phrase du piano roll et 15 effets MIDI."
+    ],
+    "km": [
+     "ឧបករណ៍ឃ្លា និងបែបផែន MIDI",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ ឧបករណ៍ឃ្លានៃ piano roll និងបែបផែន MIDI 15។"
+    ]
+   },
+   "091196b": {
+    "en": [
+     "Sixteen MIDI effects",
+     "The page catches up with the repository: sixteen MIDI effects."
+    ],
+    "fr": [
+     "Seize effets MIDI",
+     "La page rattrape le dépôt : seize effets MIDI."
+    ],
+    "km": [
+     "បែបផែន MIDI ដប់ប្រាំមួយ",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ បែបផែន MIDI ដប់ប្រាំមួយ។"
+    ]
+   }
+  },
+  "hms": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "HMS gets a page of its own, in English, French and Khmer, with screenshots from its repository and a card image on the home page. The page states plainly that HMS has not yet been installed in a hotel."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "HMS reçoit sa propre page, en anglais, en français et en khmer, avec des captures tirées de son dépôt et une image sur sa carte de l’accueil. La page dit clairement que HMS n’a pas encore été installé dans un hôtel."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "HMS ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយរូបថតអេក្រង់ពី repository របស់វា និងរូបភាពលើកាតនៅទំព័រដើម។ ទំព័រនេះប្រាប់យ៉ាងច្បាស់ថា HMS មិនទាន់ត្រូវបានដំឡើងនៅក្នុងសណ្ឋាគារណាមួយនៅឡើយទេ។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "New modules, new demo hotel",
+     "Company accounts, end of day, restaurant stock and QR ordering, vehicles with GPS, PayWay payment links and desktop auto-update. Every screenshot is retaken with The Moon Kampot Boutique demo hotel, which replaces Lotus Riverside Hotel in the repository."
+    ],
+    "fr": [
+     "Nouveaux modules, nouvel hôtel de démonstration",
+     "Comptes entreprises, clôture de journée, stock du restaurant et commande par QR, véhicules avec GPS, liens de paiement PayWay et mise à jour automatique de l’application de bureau. Toutes les captures sont refaites avec l’hôtel de démonstration The Moon Kampot Boutique, qui remplace le Lotus Riverside Hotel dans le dépôt."
+    ],
+    "km": [
+     "ម៉ូឌុលថ្មី សណ្ឋាគារសាកល្បងថ្មី",
+     "គណនីក្រុមហ៊ុន ការបិទបញ្ជីចុងថ្ងៃ ស្តុកភោជនីយដ្ឋាន និងការកុម្ម៉ង់តាម QR យានយន្តជាមួយ GPS តំណបង់ប្រាក់ PayWay និងការធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិនៃកម្មវិធីកុំព្យូទ័រ។ រូបថតអេក្រង់ទាំងអស់ត្រូវបានថតឡើងវិញ ជាមួយសណ្ឋាគារសាកល្បង The Moon Kampot Boutique ដែលជំនួស Lotus Riverside Hotel នៅក្នុង repository។"
+    ]
+   }
+  },
+  "immo": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "Khmer Estate gets a page of its own, in English, French and Khmer. The page states plainly that the site is not online yet."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Khmer Estate reçoit sa propre page, en anglais, en français et en khmer. La page dit clairement que le site n’est pas encore en ligne."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "Khmer Estate ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។ ទំព័រនេះប្រាប់យ៉ាងច្បាស់ថា គេហទំព័រនេះមិនទាន់ដាក់ឱ្យប្រើលើអ៊ីនធឺណិតនៅឡើយទេ។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "3,937 listings",
+     "The page catches up with the repository: 3,937 listings and the daily collection of new ones."
+    ],
+    "fr": [
+     "3 937 annonces",
+     "La page rattrape le dépôt : 3 937 annonces et la collecte quotidienne des nouvelles."
+    ],
+    "km": [
+     "ការផ្សាយលក់ 3 937",
+     "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាម repository៖ ការផ្សាយលក់ 3 937 និងការប្រមូលការផ្សាយថ្មីៗជារៀងរាល់ថ្ងៃ។"
+    ]
+   }
+  },
+  "js-synth": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "Synth Rack gets a page of its own, in English, French and Khmer, with screenshots captured locally from the static site; the home page now says its sequencer plays .mid files across the machines, not steps."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Synth Rack reçoit sa propre page, en anglais, en français et en khmer, avec des captures prises en local sur le site statique ; l’accueil dit désormais que son séquenceur joue des fichiers .mid sur les machines, et non des pas."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "Synth Rack ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ ជាមួយរូបថតអេក្រង់ដែលថតនៅលើកុំព្យូទ័រ ពីគេហទំព័រឋិតិវន្ត។ ឥឡូវនេះ ទំព័រដើមសរសេរថា sequencer របស់វាចាក់ឯកសារ .mid លើម៉ាស៊ីនទាំងឡាយ មិនមែនជាជំហានទេ។"
+    ]
+   }
+  },
+  "learn-kh": {
+   "8f59ed5": {
+    "en": [
+     "Its own page",
+     "The daily French, English and Khmer course gets its page: a lesson of under ten minutes a day for a French-Khmer couple, the five parts of a lesson, every line spoken, role play, flashcards, the two alphabets, offline on the phone, and eleven screenshots of the site."
+    ],
+    "fr": [
+     "Sa propre page",
+     "Le cours quotidien de français, d’anglais et de khmer reçoit sa page : une leçon de moins de dix minutes par jour pour un couple franco-khmer, les cinq parties d’une leçon, chaque phrase prononcée, jeux de rôle, cartes mémoire, les deux alphabets, hors ligne sur le téléphone, et onze captures du site."
+    ],
+    "km": [
+     "ទំព័រផ្ទាល់ខ្លួន",
+     "វគ្គសិក្សាប្រចាំថ្ងៃ ភាសាបារាំង អង់គ្លេស និងខ្មែរ ទទួលបានទំព័ររបស់ខ្លួន៖ មេរៀនតិចជាងដប់នាទីក្នុងមួយថ្ងៃ សម្រាប់គូស្វាមីភរិយាបារាំង-ខ្មែរ ផ្នែកប្រាំនៃមេរៀន គ្រប់ឃ្លាត្រូវបានអានឮ ការសម្តែងតួនាទី ប័ណ្ណចងចាំ អក្ខរក្រមទាំងពីរ ប្រើបានដោយគ្មានអ៊ីនធឺណិតលើទូរស័ព្ទ និងរូបថតអេក្រង់ដប់មួយនៃគេហទំព័រ។"
+    ]
+   },
+   "ad81805": {
+    "en": [
+     "Seven languages",
+     "Seven languages and the language selector, FR / ENG / KH profiles, 60 lessons and 9,668 MP3 clips; the screenshots are retaken."
+    ],
+    "fr": [
+     "Sept langues",
+     "Sept langues et le sélecteur de langue, les profils FR / ENG / KH, 60 leçons et 9 668 extraits MP3 ; les captures sont refaites."
+    ],
+    "km": [
+     "ប្រាំពីរភាសា",
+     "ប្រាំពីរភាសា និងកម្មវិធីជ្រើសរើសភាសា ប្រវត្តិរូប FR / ENG / KH មេរៀន 60 និងឯកសារសំឡេង MP3 9 668។ រូបថតអេក្រង់ត្រូវបានថតឡើងវិញ។"
+    ]
+   }
+  },
+  "capture": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "The project gets a page of its own, in English, French and Khmer. Its repository has no screenshots, so the page shows command-line examples instead."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Le projet reçoit sa propre page, en anglais, en français et en khmer. Son dépôt n’a pas de captures d’écran : la page montre à la place des exemples en ligne de commande."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "គម្រោងនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។ repository របស់វាគ្មានរូបថតអេក្រង់ទេ ដូច្នេះទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជាជំនួសវិញ។"
+    ]
+   },
+   "note": {
+    "en": "Its repository has no screenshots: the page shows command-line examples, so there is no capture to keep.",
+    "fr": "Son dépôt n’a pas de captures d’écran : la page montre des exemples en ligne de commande, il n’y a donc pas de capture à garder.",
+    "km": "repository របស់វាគ្មានរូបថតអេក្រង់ទេ៖ ទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជា ដូច្នេះគ្មានរូបថតអេក្រង់ត្រូវរក្សាទុកទេ។"
+   }
+  },
+  "xvideo": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "The project gets a page of its own, in English, French and Khmer. Its repository has no screenshots, so the page shows command-line examples instead."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Le projet reçoit sa propre page, en anglais, en français et en khmer. Son dépôt n’a pas de captures d’écran : la page montre à la place des exemples en ligne de commande."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "គម្រោងនេះទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។ repository របស់វាគ្មានរូបថតអេក្រង់ទេ ដូច្នេះទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជាជំនួសវិញ។"
+    ]
+   },
+   "note": {
+    "en": "Its repository has no screenshots: the page shows command-line examples, so there is no capture to keep.",
+    "fr": "Son dépôt n’a pas de captures d’écran : la page montre des exemples en ligne de commande, il n’y a donc pas de capture à garder.",
+    "km": "repository របស់វាគ្មានរូបថតអេក្រង់ទេ៖ ទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជា ដូច្នេះគ្មានរូបថតអេក្រង់ត្រូវរក្សាទុកទេ។"
+   }
+  },
+  "yt-app": {
+   "c09dd56": {
+    "en": [
+     "Its own presentation page",
+     "TubeGuard gets a page of its own, in English, French and Khmer. It is for personal use and not distributed, and its built-in ad blocking cannot be guaranteed, as its repository says. The repository has no screenshots, so the page shows command-line examples."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "TubeGuard reçoit sa propre page, en anglais, en français et en khmer. Il est réservé à un usage personnel et n’est pas distribué, et son blocage intégré des publicités ne peut pas être garanti, comme le dit son dépôt. Le dépôt n’a pas de captures : la page montre des exemples en ligne de commande."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "TubeGuard ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។ វាសម្រាប់ប្រើផ្ទាល់ខ្លួន មិនត្រូវបានចែកចាយទេ ហើយការរារាំងការផ្សាយពាណិជ្ជកម្មដែលភ្ជាប់មកជាមួយ មិនអាចធានាបានទេ ដូចដែល repository របស់វាបានសរសេរ។ repository គ្មានរូបថតអេក្រង់ទេ ដូច្នេះទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជា។"
+    ]
+   },
+   "note": {
+    "en": "Its repository has no screenshots: the page shows command-line examples, so there is no capture to keep.",
+    "fr": "Son dépôt n’a pas de captures d’écran : la page montre des exemples en ligne de commande, il n’y a donc pas de capture à garder.",
+    "km": "repository របស់វាគ្មានរូបថតអេក្រង់ទេ៖ ទំព័របង្ហាញឧទាហរណ៍បន្ទាត់ពាក្យបញ្ជា ដូច្នេះគ្មានរូបថតអេក្រង់ត្រូវរក្សាទុកទេ។"
+   }
+  }
+ }
+}

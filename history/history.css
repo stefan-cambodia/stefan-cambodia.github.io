@@ -1,0 +1,36 @@
+/* History pages (history/*.html), on top of games/game.css. Generated pages: see tools/history/build.py */
+.hist-note{margin-top:28px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.hist-note p{font-size:13.5px;color:var(--muted);margin:0;max-width:none}.hist-note p + p{margin-top:8px;color:var(--body)}
+
+/* One version per <li class="ver">, newest first, on a vertical line */
+.timeline{list-style:none;margin:8px 0 0;padding:0;position:relative}
+.timeline:before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:1px;background:var(--line)}
+.ver{position:relative;padding:0 0 38px 34px}
+.ver:last-child{padding-bottom:4px}
+.ver:before{content:"";position:absolute;left:0;top:7px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--accent2)}
+.ver.now:before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(167,243,107,.55)}
+.ver-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font:11px "DM Mono","Noto Sans Khmer",monospace;color:var(--accent2);letter-spacing:.04em}
+.ver-badge{background:var(--accent);color:#0b1209;border-radius:4px;padding:2px 7px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase}
+.ver-commit{margin-left:auto;color:var(--muted)}.ver-commit:hover{color:var(--accent)}
+.ver h3{margin:6px 0 6px;font-size:19px;letter-spacing:-.03em;line-height:1.3}
+.ver p{font-size:14.5px;margin:0 0 10px}
+.ver-auto{font:11px "DM Mono","Noto Sans Khmer",monospace;color:var(--muted)}
+.ver-media-head{margin:14px 0 10px;font:10px "DM Mono","Noto Sans Khmer",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ver-retired{margin:14px 0 6px}.ver-retired .kicker{margin-bottom:10px;color:#e0b070}
+.ver-retired .changelog{background:#0b0f16}
+
+/* Captures and videos of a version: columns keep phone (portrait) and screen (landscape) captures together */
+.hgallery{columns:3 220px;column-gap:12px}
+.hshot{break-inside:avoid;margin:0 0 12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a0e14;transition:border-color .25s}
+.hshot a{display:block}.hshot:hover{border-color:rgba(167,243,107,.45)}
+.hshot img,.hshot video{display:block;width:100%;height:auto;background:#05080d}
+.hshot figcaption{padding:7px 10px;border-top:1px solid var(--line);font:10px "DM Mono","Noto Sans Khmer",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.hshot.old{border-color:#4a3a28}.hshot.old figcaption{color:#e0b070}
+
+table.hist-index td a{color:var(--text);border-bottom:1px solid var(--line)}table.hist-index td a:hover{color:var(--accent);border-color:var(--accent)}
+table.hist-index td:not(:first-child){font:12px "DM Mono","Noto Sans Khmer",monospace;color:var(--muted)}
+
+html[lang=km] .ver-meta,html[lang=km] .ver-media-head,html[lang=km] .hshot figcaption,html[lang=km] .ver-auto{font-size:12.5px;letter-spacing:.02em}
+html[lang=km] .ver h3{letter-spacing:0;line-height:1.5}
+@media(max-width:760px){.ver{padding-left:26px}.ver-commit{margin-left:0}.hgallery{columns:2 140px}}
+.hist-index{margin:0}section > .kicker + .table-wrap{margin-top:12px}

@@ -104,6 +104,9 @@ footer{border-top:1px solid var(--line);padding:25px 0;margin-top:44px;color:var
 .changelog b{display:block;font-size:14.5px;color:var(--text);letter-spacing:-.01em}
 .changelog p{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.65}
 html[lang=km] .changelog time{font-size:12.5px;letter-spacing:0}
+/* Under Last changes: the way to the page's history (history/<slug>.html) */
+.changes-more{margin:14px 0 0;font:12px/1.7 "DM Mono","Noto Sans Khmer",monospace;color:var(--muted);max-width:none}.changes-more a{color:var(--accent2)}.changes-more a:hover{color:var(--accent)}
+html[lang=km] .changes-more{font-size:13px}
 
 @media(max-width:760px){
 .changelog li{grid-template-columns:1fr;gap:4px}
