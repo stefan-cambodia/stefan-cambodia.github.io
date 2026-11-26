@@ -1248,6 +1248,32 @@
        "text": "ហ្គេមនីមួយៗទទួលបានទំព័របង្ហាញផ្ទាល់ខ្លួន ដែលបើកពីកាតរបស់វា ហើយនៅថ្ងៃបន្ទាប់ ទំព័រហ្គេមត្រូវបានបកប្រែជាភាសាខ្មែរ។ ទំព័រដើមបន្ថែមផ្នែក «ការផ្លាស់ប្ដូរចុងក្រោយ» ដែលបង្ហាញ commits ចុងក្រោយបំផុតចំនួន 20 ដាក់ជាក្រុមតាមថ្ងៃ ហើយផ្នែកនានាឥឡូវរៀបតាមលំដាប់៖ អំពីខ្ញុំ ហ្គេម មន្ទីរពិសោធន៍សំឡេង គម្រោង រូបថត ការផ្លាស់ប្ដូរចុងក្រោយ ទំនាក់ទំនង។"
       }
      ]
+    },
+    "f6ceb38": {
+     "en": [
+      {
+       "time": "2026-11-19",
+       "label": "15–19 Nov 2026",
+       "title": "Pages that follow their repositories",
+       "text": "The 3D Buggy page follows the game to Angkor, with its circuits laid out from map data, a 12-capture gallery and the Grand Circuit’s 87-second film, and the game gets a featured band on the home page. Cambodia Rally gains its eight vehicles and its films, and on 19 November seven pages, from Angkor World Engine to Khmer Estate, caught up with the work pushed since they were written."
+      }
+     ],
+     "fr": [
+      {
+       "time": "2026-11-19",
+       "label": "15–19 nov. 2026",
+       "title": "Des pages qui suivent leurs dépôts",
+       "text": "La page de 3D Buggy suit le jeu jusqu’à Angkor, avec ses circuits tracés d’après les données cartographiques, une galerie de 12 captures et le film de 87 secondes du Grand Circuit, et le jeu a droit à un bandeau en vedette sur l’accueil. Cambodia Rally gagne ses huit véhicules et ses films, et le 19 novembre, sept pages, d’Angkor World Engine à Khmer Estate, rattrapent le travail poussé depuis leur rédaction."
+      }
+     ],
+     "km": [
+      {
+       "time": "2026-11-19",
+       "label": "15–19 វិច្ឆិកា 2026",
+       "title": "ទំព័រដែលតាមទាន់ឃ្លាំងកូដរបស់វា",
+       "text": "ទំព័រ 3D Buggy តាមហ្គេមទៅដល់អង្គរ ជាមួយសៀគ្វីដែលគូសតាមទិន្នន័យផែនទី វិចិត្រសាលរូបថត 12 និងភាពយន្ត 87 វិនាទីនៃ Grand Circuit ហើយហ្គេមនេះទទួលបានផ្នែកពិសេសមួយនៅលើទំព័រដើម។ Cambodia Rally បន្ថែមយានជំនិះទាំងប្រាំបី និងភាពយន្តរបស់វា ហើយនៅថ្ងៃទី 19 ខែវិច្ឆិកា ទំព័រប្រាំពីរ ចាប់ពី Angkor World Engine ដល់ Khmer Estate បានតាមទាន់ការងារដែលបាន push ចាប់តាំងពីពេលវាត្រូវបានសរសេរ។"
+      }
+     ]
     }
    },
    "dae72f8": {
@@ -1262,6 +1288,20 @@
     "km": [
      "ធ្វើបច្ចុប្បន្នភាពជាមួយទំព័រប្រវត្តិ",
      "ទំព័រនេះធ្វើបច្ចុប្បន្នភាពតាមគេហទំព័រ៖ ទំព័របង្ហាញ 24 ផ្នែកកំពុងអភិវឌ្ឍ ជាមួយ Angkor World Engine និង Vigie ចំណុចពិសេសអំពីទំព័រប្រវត្តិ និងការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 26 ខែវិច្ឆិកា។"
+    ]
+   },
+   "f6ceb38": {
+    "en": [
+     "Private projects in the grid",
+     "The page explains how the Projects grid now shows the private repositories too, from a list in the page, with a padlock and a link to their presentation page; its Last changes gain that item."
+    ],
+    "fr": [
+     "Les projets privés dans la grille",
+     "La page explique comment la grille Projets montre désormais aussi les dépôts privés, depuis une liste dans la page, avec un cadenas et un lien vers leur page de présentation ; ses Derniers changements gagnent cet élément."
+    ],
+    "km": [
+     "គម្រោងឯកជនក្នុងក្រឡា",
+     "ទំព័រនេះពន្យល់ពីរបៀបដែលក្រឡាគម្រោង ឥឡូវបង្ហាញឃ្លាំងកូដឯកជនផងដែរ ពីបញ្ជីមួយក្នុងទំព័រ ជាមួយរូបសោ និងតំណទៅទំព័របង្ហាញរបស់វា ហើយការផ្លាស់ប្តូរចុងក្រោយរបស់វាបន្ថែមធាតុនេះ។"
     ]
    }
   },
