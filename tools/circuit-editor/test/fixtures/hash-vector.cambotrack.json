@@ -1,0 +1,25 @@
+{
+  "format": "cambotrack",
+  "version": 1,
+  "id": "hash-vector",
+  "hash": "eb6a9aeb021735b6d3eff4da4accb618bf690e777a5a1e91edb11a0088ebfcbe",
+  "name": "Hash vector",
+  "kind": "stage",
+  "scale": 2.5,
+  "vertical_scale": 2.5,
+  "road_width": 11,
+  "spacing": 5,
+  "surfaces": ["asphalt","dirt"],
+  "points": [
+    [0,0,0,11,0,0],
+    [0,0,-5,11,0,0],
+    [0.12,0.25,-10,11,0,0],
+    [0.12,0.5,-15,9.5,1,0],
+    [0,0.75,-20,8,1,1],
+    [-0.07,1,-25,8,1,1],
+    [0,1.25,-30,9.5,1,2],
+    [0,1.5,-35,11,0,0]
+  ],
+  "checkpoints": [3],
+  "gates": []
+}

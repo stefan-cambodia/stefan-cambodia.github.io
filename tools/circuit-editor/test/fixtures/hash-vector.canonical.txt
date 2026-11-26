@@ -1,0 +1,12 @@
+cambotrack/1
+kind=stage
+laps=1
+scale=2500
+vertical_scale=2500
+road_width=1100
+spacing=500
+surfaces=asphalt,dirt
+points=8
+0,0,0,1100,0,0;0,0,-500,1100,0,0;12,25,-1000,1100,0,0;12,50,-1500,950,1,0;0,75,-2000,800,1,1;-7,100,-2500,800,1,1;0,125,-3000,950,1,2;0,150,-3500,1100,0,0
+checkpoints=3
+gates=
