@@ -56,6 +56,9 @@ test('q2 and q3 are floor(v × 100 + 0.5) and floor(v × 1000 + 0.5)', () => {
 });
 
 test('hash vector: the canonical text, written out by hand', () => {
+  // fixtures/hash-vector.cambotrack.json: twelve points heading north, 40 m apart.
+  // Every value below is the file's value times 100 (x, y, z, width) or 1000
+  // (scales), as an integer; surface index and flags are copied as they are.
   const track = readJsonFixture('hash-vector.cambotrack.json');
   const expected =
     'cambotrack/1\n' +
@@ -64,16 +67,17 @@ test('hash vector: the canonical text, written out by hand', () => {
     'scale=2500\n' +
     'vertical_scale=2500\n' +
     'road_width=1100\n' +
-    'spacing=500\n' +
+    'spacing=2000\n' +
     'surfaces=asphalt,dirt\n' +
-    'points=8\n' +
-    '0,0,0,1100,0,0;0,0,-500,1100,0,0;12,25,-1000,1100,0,0;12,50,-1500,950,1,0;' +
-    '0,75,-2000,800,1,1;-7,100,-2500,800,1,1;0,125,-3000,950,1,2;0,150,-3500,1100,0,0\n' +
-    'checkpoints=3\n' +
-    'gates=\n';
+    'points=12\n' +
+    '0,0,0,1100,0,0;0,0,-4000,1100,0,0;12,25,-8000,1100,0,0;12,50,-12000,950,1,0;' +
+    '0,75,-16000,800,1,1;-7,100,-20000,800,1,1;0,125,-24000,950,1,2;0,150,-28000,1100,0,3;' +
+    '50,125,-32000,1100,0,0;101,100,-36000,1100,0,0;50,50,-40000,1100,0,0;0,0,-44000,1100,0,0\n' +
+    'checkpoints=3,7\n' +
+    'gates=5\n';
   assert.equal(C.canonicalText(track), expected);
   assert.equal(readFixture('hash-vector.canonical.txt'), expected);
-  const hash = 'eb6a9aeb021735b6d3eff4da4accb618bf690e777a5a1e91edb11a0088ebfcbe';
+  const hash = '2cc3ca236a70c0fe7b9cee0b30a6196a4832c144b5910dd491356916e626b3a0';
   assert.equal(nodeSha(expected), hash);
   assert.equal(C.trackHash(track), hash);
   assert.equal(track.hash, hash);
@@ -96,13 +100,16 @@ test('hash: what it covers and what it leaves out', () => {
     ['kind', { ...base, kind: 'loop' }], ['laps', { ...base, laps: 2 }], ['scale', { ...base, scale: 2.501 }],
     ['vertical_scale', { ...base, vertical_scale: 3 }], ['road_width', { ...base, road_width: 10.99 }],
     ['spacing', { ...base, spacing: 5.01 }], ['surfaces', { ...base, surfaces: ['asphalt', 'sand'] }],
-    ['checkpoints', { ...base, checkpoints: [4] }], ['gates', { ...base, gates: [2] }]]) {
+    ['checkpoints', { ...base, checkpoints: [4] }], ['gates', { ...base, gates: [2] }], ['no gates', { ...base, gates: [] }]]) {
     assert.notEqual(C.trackHash(t), h, `${what} did not change the hash`);
   }
   // laps absent is laps = 1; gates absent is gates empty (FORMAT.md, section Hash).
   assert.equal(C.trackHash({ ...base, laps: 1 }), h);
   const noGates = { ...base }; delete noGates.gates;
-  assert.equal(C.trackHash(noGates), h);
+  assert.equal(C.trackHash(noGates), C.trackHash({ ...base, gates: [] }));
+  assert.ok(C.canonicalText(noGates).endsWith('checkpoints=3,7\ngates=\n'));
+  // No checkpoint at all: the line is there, empty.
+  assert.ok(C.canonicalText({ ...base, checkpoints: [], gates: [] }).endsWith('\ncheckpoints=\ngates=\n'));
 });
 
 test('hash: the core and the second implementation agree on the samples', () => {

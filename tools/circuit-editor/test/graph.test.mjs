@@ -145,6 +145,9 @@ test('class families for the map', () => {
   assert.equal(C.classFamily('track'), 'track');
   assert.equal(C.classFamily('service'), 'other');
   assert.equal(C.classFamily('path'), 'other');
+  // What is drawn as a road or a track is what the router may use, and nothing else.
+  for (const c of C.DEFAULT_ALLOWED) assert.notEqual(C.classFamily(c), 'other', c);
+  for (const c of ['motorway', 'living_street', 'service', 'path', 'cycleway', 'bridleway', 'road']) assert.equal(C.classFamily(c), 'other', c);
 });
 
 test('snap: the nearest point of the nearest segment', () => {

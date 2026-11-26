@@ -24,7 +24,7 @@ test('sample files fit the schema, the rules and their own hash', () => {
   for (const name of [SAMPLES.loop.file, SAMPLES.stage.file, 'hash-vector.cambotrack.json']) {
     const text = readFixture(name), t = JSON.parse(text);
     assert.deepEqual(validateSchema(schema, t), [], name);
-    assert.deepEqual(formatRuleErrors(t).errors.filter((e) => name.startsWith('hash-vector') ? !/under 400 m/.test(e) : true), [], name);
+    assert.deepEqual(formatRuleErrors(t).errors, [], name);
     assert.equal(t.hash, crypto.createHash('sha256').update(C.canonicalText(t), 'utf8').digest('hex'), name);
     assert.ok(Buffer.byteLength(text) <= 4194304);
     assert.ok(text.endsWith('}\n') && !text.endsWith('\n\n'), 'ends with one newline');

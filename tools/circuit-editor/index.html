@@ -47,8 +47,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 small { color: var(--ink-soft); font-size: .86em; }
 
 /* ---------------------------------------------------------------- Layout */
-/* Phone first: the map on top, the panel as a sheet under it. The map is a flex
-   sibling of the panel, so opening the sheet resizes the map instead of hiding
+/* The editor is meant for a desktop browser: from 900 px the panel is a column
+   on the right. In a narrower window the panel folds under the map; the map is
+   a flex sibling of it, so opening the panel resizes the map instead of hiding
    its attribution. */
 .app { position: fixed; inset: 0; display: flex; flex-direction: column; }
 .stage { position: relative; flex: 1 1 auto; min-height: 0; }
@@ -195,7 +196,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   .top { right: auto; width: 380px; }
   .load { align-self: flex-start; }
 }
-/* A short phone with the sheet open: the map keeps the room. */
+/* A small window with the panel open: the map keeps the room. */
 @media (max-width: 899px) and (max-height: 760px) {
   .app.open .top { display: none; }
 }
@@ -209,7 +210,7 @@ small { color: var(--ink-soft); font-size: .86em; }
 .leaflet-touch .leaflet-control-layers-toggle { width: 44px; height: 44px; }
 .leaflet-control-layers label { min-height: 30px; display: flex; align-items: center; }
 
-/* Waypoints: numbered discs, large enough for a thumb. */
+/* Waypoints: numbered discs, easy to grab. */
 .wp { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%;
   border: 2px solid #fff; background: var(--route); color: #fff; font-weight: 700; font-size: 13px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, .5); cursor: grab; touch-action: none; }
@@ -311,7 +312,7 @@ small { color: var(--ink-soft); font-size: .86em; }
             <li><b>Ajouter</b> : un clic sur une route pose un point de passage ; le tracé suit les routes entre deux points.</li>
             <li><b>Déplacer</b> : faites glisser un point, il se recale sur la route la plus proche.</li>
             <li><b>Insérer</b> : outil « Modifier », puis un clic sur le tracé.</li>
-            <li><b>Supprimer</b> : clic droit ou appui long sur un point (ou un clic dessus, puis « Supprimer »).</li>
+            <li><b>Supprimer</b> : clic droit sur un point (ou un clic dessus, puis « Supprimer ce point »).</li>
             <li><b>Annuler, rétablir</b> : Ctrl+Z, Ctrl+Y ou les flèches sous la carte.</li>
           </ul>
           <p class="legend"><span class="dot cp"></span> checkpoint <span class="dot gate"></span> porte bonus <span class="dot warn"></span> avertissement</p>
@@ -710,13 +711,14 @@ small { color: var(--ink-soft); font-size: .86em; }
   };
 
   // Display family of a highway class: one polyline per family on the map.
+  // "major" and "minor" are the classes the router uses by default, "track" the
+  // one the « Autoriser les pistes » box controls, "other" everything it never uses.
   C.classFamily = function (cls) {
     switch (cls) {
-      case 'motorway': case 'motorway_link': case 'trunk': case 'trunk_link':
-      case 'primary': case 'primary_link': case 'secondary': case 'secondary_link':
+      case 'trunk': case 'trunk_link': case 'primary': case 'primary_link':
+      case 'secondary': case 'secondary_link':
         return 'major';
       case 'tertiary': case 'tertiary_link': case 'unclassified': case 'residential':
-      case 'living_street': case 'road':
         return 'minor';
       case 'track':
         return 'track';
@@ -2431,7 +2433,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       del.addEventListener('click', () => deleteWaypoint(i));
       pop.appendChild(del);
       marker.bindPopup(pop, { closeButton: false, offset: [0, -8] });
-      // Right click, or a long press on a touch screen.
+      // Right click deletes.
       marker.on('contextmenu', () => deleteWaypoint(i));
       marker.on('dragstart', () => { map.closePopup(); layers.ghost.addTo(map); });
       marker.on('drag', (ev) => {
@@ -2928,6 +2930,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   // the roads of its area are loaded and the route rebuilt from its waypoints.
   async function onOpenFile(file) {
     if (!file) return;
+    if (roads.busy) { exportStatus('Des routes sont en cours de chargement : rouvrez le fichier quand ce sera fini.', true); return; }
     if (file.size > C.LIMITS.maxBytes) { exportStatus('Ce fichier dépasse 4 Mio : ce n\'est pas un circuit.', true); return; }
     let text;
     try { text = await file.text(); } catch (e) { exportStatus('Lecture du fichier impossible.', true); return; }

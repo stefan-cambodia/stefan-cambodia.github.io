@@ -51,18 +51,20 @@ for (const which of ['loop', 'stage']) {
   console.log(`  ${result.track.points.length} points, ${result.track.length_game_m} game m, hash ${result.track.hash}`);
 }
 
-// A tiny track that can be checked by hand: eight points on a straight line
-// heading north, 5 m apart, climbing 25 cm a point from the third one.
+// A small track that can be checked by hand, and that a game accepts: twelve
+// points heading north, 40 m apart (440 m), a little climb, three widths, two
+// surfaces, every flag value, negative and fractional coordinates.
 const vector = {
   format: 'cambotrack', version: 1, id: 'hash-vector', hash: '', name: 'Hash vector', kind: 'stage',
-  scale: 2.5, vertical_scale: 2.5, road_width: 11, spacing: 5,
+  scale: 2.5, vertical_scale: 2.5, road_width: 11, spacing: 20,
   surfaces: ['asphalt', 'dirt'],
   points: [
-    [0, 0, 0, 11, 0, 0], [0, 0, -5, 11, 0, 0], [0.12, 0.25, -10, 11, 0, 0], [0.12, 0.5, -15, 9.5, 1, 0],
-    [0, 0.75, -20, 8, 1, 1], [-0.07, 1, -25, 8, 1, 1], [0, 1.25, -30, 9.5, 1, 2], [0, 1.5, -35, 11, 0, 0],
+    [0, 0, 0, 11, 0, 0], [0, 0, -40, 11, 0, 0], [0.12, 0.25, -80, 11, 0, 0], [0.12, 0.5, -120, 9.5, 1, 0],
+    [0, 0.75, -160, 8, 1, 1], [-0.07, 1, -200, 8, 1, 1], [0, 1.25, -240, 9.5, 1, 2], [0, 1.5, -280, 11, 0, 3],
+    [0.5, 1.25, -320, 11, 0, 0], [1.01, 1, -360, 11, 0, 0], [0.5, 0.5, -400, 11, 0, 0], [0, 0, -440, 11, 0, 0],
   ],
-  checkpoints: [3],
-  gates: [],
+  checkpoints: [3, 7],
+  gates: [5],
 };
 vector.hash = referenceHash(vector);
 if (C.trackHash(vector) !== vector.hash) throw new Error('the core and node:crypto disagree on the hash vector');
