@@ -992,6 +992,32 @@
        "text": "គេហទំព័រចាប់ផ្តើមជាគម្រោង Astro ជាមួយឯកសារកំណត់រចនាសម្ព័ន្ធតែមួយ និងអត្ថបទជាភាសាបារាំង៖ ទំព័រដើមជាមួយផ្ទៃភ្លឺ និងផ្ទៃងងឹត ការជ្រើសរើសភាសា និងម៉ឺនុយលើទូរស័ព្ទដែលមិនត្រូវការ JavaScript បន្ទាប់មកទំព័រមួយសម្រាប់សេវាកម្មនីមួយៗ HMS ស្នាដៃ អំពីខ្ញុំ និងទំនាក់ទំនង។ GitHub Pages បោះផ្សាយវាពី <code>main</code>។ README ពន្យល់ពីរបៀបកែអត្ថបទ បន្ថែមស្នាដៃ និងបោះផ្សាយ ហើយជំហានសម្រាប់ឈ្មោះដែនផ្ទាល់ខ្លួន ត្រូវបានសរសេរទុករួចហើយ។"
       }
      ]
+    },
+    "c5e256f": {
+     "en": [
+      {
+       "time": "2026-11-24",
+       "label": "21–24 Nov 2026",
+       "title": "Four domains, new offers and a Jobs page",
+       "text": "The services are rewritten around four domains: software and digital solutions, AI and automation, infrastructure and systems, cybersecurity and IT asset management. Infrastructure now covers new hardware from official distributors, cabling, Xen, XCP-ng, Xen Orchestra and XenServer, monitoring with Zabbix and a maintenance contract; AI can be installed on the client’s premises with Ollama. New offers appear: Odoo, Nextcloud and Mattermost, Odoo module development, and Odoo in Khmer for Cambodia. A Jobs page looks for a certified English or French ↔ Khmer translator; the texts no longer say that one person runs the company or that the client always deals with the same person; a Client area link waits in the header until its address is set."
+      }
+     ],
+     "fr": [
+      {
+       "time": "2026-11-24",
+       "label": "21–24 nov. 2026",
+       "title": "Quatre domaines, de nouvelles offres et une page Recrutement",
+       "text": "Les services sont réécrits autour de quatre domaines : logiciels et solutions numériques, IA et automatisation, infrastructure et systèmes, cybersécurité et gestion du parc. L’infrastructure couvre désormais le matériel neuf des distributeurs officiels, le câblage, Xen, XCP-ng, Xen Orchestra et XenServer, la supervision avec Zabbix et un contrat de maintenance ; l’IA peut être installée chez le client avec Ollama. De nouvelles offres apparaissent : Odoo, Nextcloud et Mattermost, le développement de modules Odoo, et Odoo en khmer pour le Cambodge. Une page Recrutement cherche un traducteur agréé anglais ou français ↔ khmer ; les textes ne disent plus qu’une seule personne fait tourner l’entreprise ni que le client parle toujours à la même personne ; un lien « Espace client » attend dans l’en-tête que son adresse soit renseignée."
+      }
+     ],
+     "km": [
+      {
+       "time": "2026-11-24",
+       "label": "21–24 វិច្ឆិកា 2026",
+       "title": "វិស័យបួន សេវាកម្មថ្មី និងទំព័រឱកាសការងារ",
+       "text": "សេវាកម្មត្រូវបានសរសេរឡើងវិញ ជុំវិញវិស័យបួន៖ កម្មវិធី និងដំណោះស្រាយឌីជីថល បញ្ញាសិប្បនិម្មិត និងស្វ័យប្រវត្តិកម្ម ហេដ្ឋារចនាសម្ព័ន្ធ និងប្រព័ន្ធ និងសន្តិសុខសាយប័រ និងការគ្រប់គ្រងឧបករណ៍ព័ត៌មានវិទ្យា។ ហេដ្ឋារចនាសម្ព័ន្ធឥឡូវគ្របដណ្តប់លើសម្ភារៈថ្មីពីអ្នកចែកចាយផ្លូវការ ការតភ្ជាប់ខ្សែ Xen, XCP-ng, Xen Orchestra និង XenServer ការឃ្លាំមើលជាមួយ Zabbix និងកិច្ចសន្យាថែទាំ ហើយ AI អាចដំឡើងនៅទីតាំងរបស់អតិថិជនជាមួយ Ollama។ សេវាកម្មថ្មីៗបានលេចឡើង៖ Odoo, Nextcloud និង Mattermost ការអភិវឌ្ឍ module Odoo និង Odoo ជាភាសាខ្មែរសម្រាប់កម្ពុជា។ ទំព័រឱកាសការងារមួយ ស្វែងរកអ្នកបកប្រែដែលមានការទទួលស្គាល់ ភាសាអង់គ្លេស ឬបារាំង ↔ ខ្មែរ។ អត្ថបទលែងនិយាយថា មនុស្សតែម្នាក់ដំណើរការក្រុមហ៊ុន ឬថាអតិថិជនតែងតែនិយាយជាមួយមនុស្សតែម្នាក់ដដែលទៀតហើយ។ តំណ «តំបន់អតិថិជន» រង់ចាំនៅក្នុងផ្នែកក្បាល រហូតដល់អាសយដ្ឋានរបស់វាត្រូវបានកំណត់។"
+      }
+     ]
     }
    },
    "dae72f8": {
@@ -1006,6 +1032,20 @@
     "km": [
      "វិស័យបួន Odoo និង Vigie",
      "ទំព័រនេះតាមទាន់ឃ្លាំងកូដ៖ សេវាកម្មដែលបានរៀបចំឡើងវិញជុំវិញវិស័យបួន និងសេវាកម្មលម្អិតប្រាំពីរ (Odoo, Nextcloud, Mattermost, module Odoo, Odoo ជាភាសាខ្មែរ, Vigie) HMS លើការសាកល្បងរបស់សណ្ឋាគារពិត ទំព័រស្នាដៃជាបីក្រុម ជាមួយទំព័រសម្រាប់ Acpc, ASokoban, 3D Snake និង Velocity ទំព័រឱកាសការងារ និងទំព័រចំនួន 122 ដែលបានបង្កើត។ ក្រុមហ៊ុនលែងត្រូវបានពិពណ៌នាថាជាមនុស្សតែម្នាក់ទៀតហើយ។ ការផ្លាស់ប្តូរចុងក្រោយរបស់វា ឥឡូវនេះរហូតដល់ថ្ងៃទី 25 ខែវិច្ឆិកា។ រូបថតអេក្រង់ត្រូវបានថតឡើងវិញពីគេហទំព័រផ្ទាល់ នៅថ្ងៃទី 26 ខែវិច្ឆិកា រួមទាំងទំព័រថ្មីបី៖ សេវាកម្ម Vigie និង Odoo ជាភាសាខ្មែរ។"
+    ]
+   },
+   "c5e256f": {
+    "en": [
+     "A What’s new page",
+     "The page follows the site’s commit of 26 November 2026, which adds a What’s new page: the twenty latest commits of the public repositories, read from GitHub while the site is built and not in the visitor’s browser, a schedule that rebuilds the site four times a day, and a full menu that now shows from 1,100 px wide. The figures move to 127 pages, 25 in each language, and 87 commits, and a capture of the new page, taken on the site online, joins the gallery."
+    ],
+    "fr": [
+     "Une page « Quoi de neuf ? »",
+     "La page suit le commit du site du 26 novembre 2026, qui ajoute une page « Quoi de neuf ? » : les vingt derniers commits des dépôts publics, lus sur GitHub pendant la construction du site et non dans le navigateur du visiteur, une tâche programmée qui reconstruit le site quatre fois par jour, et un menu complet qui s’affiche désormais à partir de 1 100 px de large. Les chiffres passent à 127 pages, 25 par langue, et 87 commits, et une capture de la nouvelle page, prise sur le site en ligne, rejoint la galerie."
+    ],
+    "km": [
+     "ទំព័រ «មានអ្វីថ្មី?»",
+     "ទំព័រនេះធ្វើតាម commit របស់គេហទំព័រ នៅថ្ងៃទី 26 ខែវិច្ឆិកា ឆ្នាំ 2026 ដែលបន្ថែមទំព័រ «មានអ្វីថ្មី?»៖ commit ចុងក្រោយម្ភៃនៃឃ្លាំងកូដសាធារណៈ ដែលអានពី GitHub នៅពេល build គេហទំព័រ មិនមែននៅក្នុង browser របស់អ្នកទស្សនាទេ កាលវិភាគមួយដែល build គេហទំព័រឡើងវិញបួនដងក្នុងមួយថ្ងៃ និងម៉ឺនុយពេញលេញដែលឥឡូវបង្ហាញចាប់ពីទទឹង 1,100 px។ តួលេខប្តូរទៅ 127 ទំព័រ គឺ 25 ក្នុងមួយភាសា និង 87 commits ហើយរូបថតអេក្រង់នៃទំព័រថ្មី ដែលថតលើគេហទំព័រដែលកំពុងដំណើរការ ត្រូវបានបន្ថែមទៅក្នុងវិចិត្រសាល។"
     ]
    }
   },
