@@ -1768,6 +1768,20 @@
      "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
      "Chantrea Odoo ទទួលបានទំព័រផ្ទាល់ខ្លួន នៅក្នុងផ្នែកគម្រោង ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ៖ គំនិតដើម module របស់ Odoo, OCA និង module ផ្ទាល់ខ្លួន តំបន់អតិថិជន អ្វីដែលពិសេសសម្រាប់កម្ពុជា (ប្រាក់រៀល KHQR ដែលផ្ទៀងផ្ទាត់ជាមួយ Bakong លេខខ្មែរ និងការពិនិត្យភាសាខ្មែរ) សុវត្ថិភាព និងប្រតិបត្តិការ និងស្ថានភាពបច្ចុប្បន្ន ជាមួយការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 25 ខែវិច្ឆិកា ឆ្នាំ 2026។ ឃ្លាំងកូដមិនផ្សព្វផ្សាយរូបថតអេក្រង់ទេ ដូច្នេះដ្យាក្រាមនៃស្ថាបត្យកម្មរបស់វា ត្រូវបានប្រើជំនួស។"
     ]
+   },
+   "febb663": {
+    "en": [
+     "Nine captures",
+     "Nine captures on the demo data, taken on a local installation on 26 November: the client area in Khmer on a computer and a phone, its requests and equipment, an English invoice with its riel totals and KHQR code, a Khmer and English tax invoice, and the French back office."
+    ],
+    "fr": [
+     "Neuf captures",
+     "Neuf captures sur les données de démonstration, prises sur une installation locale le 26 novembre : l’espace client en khmer sur ordinateur et sur téléphone, ses demandes et son matériel, une facture en anglais avec ses totaux en riels et son code KHQR, une facture de TVA en khmer et en anglais, et le back-office en français."
+    ],
+    "km": [
+     "រូបថតអេក្រង់ប្រាំបួន",
+     "រូបថតអេក្រង់ប្រាំបួនលើទិន្នន័យសាកល្បង ដែលថតលើការដំឡើងក្នុងម៉ាស៊ីន នៅថ្ងៃទី 26 ខែវិច្ឆិកា៖ តំបន់អតិថិជនជាភាសាខ្មែរ លើកុំព្យូទ័រ និងទូរស័ព្ទ សំណើ និងឧបករណ៍របស់វា វិក្កយបត្រជាភាសាអង់គ្លេស ជាមួយសរុបជាប្រាក់រៀល និងកូដ KHQR វិក្កយបត្រអាករជាភាសាខ្មែរ និងអង់គ្លេស និងផ្នែកគ្រប់គ្រងជាភាសាបារាំង។"
+    ]
    }
   }
  }
