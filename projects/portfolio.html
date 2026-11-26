@@ -35,7 +35,7 @@
 
 <div class="stats">
 <div class="stat"><strong>3</strong><span data-l="en">Languages</span><span data-l="fr">Langues</span><span data-l="km">ភាសា</span></div>
-<div class="stat"><strong>23</strong><span data-l="en">Presentation pages</span><span data-l="fr">Pages de présentation</span><span data-l="km">ទំព័របង្ហាញ</span></div>
+<div class="stat"><strong>24</strong><span data-l="en">Presentation pages</span><span data-l="fr">Pages de présentation</span><span data-l="km">ទំព័របង្ហាញ</span></div>
 <div class="stat"><strong>0</strong><span data-l="en">Build steps</span><span data-l="fr">Étape de compilation</span><span data-l="km">ដំណាក់កាល build</span></div>
 <div class="stat"><strong>20</strong><span data-l="en">Latest commits shown</span><span data-l="fr">Derniers commits affichés</span><span data-l="km">commits ចុងក្រោយដែលបង្ហាញ</span></div>
 </div>
@@ -56,9 +56,10 @@
 <tr><td>About</td><td>A short introduction, with the number of public repositories and followers read from GitHub.</td></tr>
 <tr><td>Games</td><td>Nine games, each with its own presentation page.</td></tr>
 <tr><td>Sound Lab</td><td>Synth Rack, playable right in the page, and VSM Studio.</td></tr>
+<tr><td>In development</td><td>Projects still being built and followed version by version, Angkor World Engine and Vigie, each with its page and its history.</td></tr>
 <tr><td>Projects</td><td>The other repositories, live from GitHub, with a search box and filters by platform, theme and language.</td></tr>
 <tr><td>Pictures</td><td>Photo albums on Google Photos.</td></tr>
-<tr><td>Last changes</td><td>The 20 latest commits across all the public repositories, grouped by day.</td></tr>
+<tr><td>Last changes</td><td>The 20 latest commits across all the public repositories, grouped by day, and a link to the version history of every page.</td></tr>
 <tr><td>Contact</td><td>A link to GitHub.</td></tr>
 </table></div>
 </section>
@@ -72,7 +73,8 @@
 <div class="card"><h3>Three languages</h3><p>English, French and Khmer, for the interface and for the description of every game and project. The choice is remembered and carried over to the presentation pages.</p></div>
 <div class="card"><h3>Khmer set properly</h3><p>Manrope and DM Mono have no Khmer glyphs, so Noto Sans Khmer takes over for Khmer text. On the presentation pages, letter-spacing is reset and the smallest labels are enlarged, so stacked vowels and subscript consonants stay readable.</p></div>
 <div class="card"><h3>The latest commits</h3><p>The 20 most recent commits, grouped by day, with “today” and “yesterday” in the visitor’s language. Repositories are walked from the most recently pushed, and the walk stops once an older one cannot hold a newer commit. The result is kept for ten minutes.</p></div>
-<div class="card"><h3>A page per game and project</h3><p>Twenty-three presentation pages share one small stylesheet and one script, and follow the same plan: the idea, highlights, screenshots and how it is built, with links to the previous and next page.</p></div>
+<div class="card"><h3>A page per game and project</h3><p>Twenty-four presentation pages share one small stylesheet and one script, and follow the same plan: the idea, highlights, screenshots and how it is built, with links to the previous and next page.</p></div>
+<div class="card"><h3>A history for every page</h3><p>Every page with a Last changes section has a history page: each earlier version, with what changed and the captures and videos it showed at the time. They are copied out of the site’s own Git history by <code>tools/history/build.py</code>, never regenerated.</p></div>
 </div>
 </section>
 </div>
@@ -93,9 +95,10 @@
 <tr><td>À propos</td><td>Une courte présentation, avec le nombre de dépôts publics et d’abonnés lu sur GitHub.</td></tr>
 <tr><td>Jeux</td><td>Neuf jeux, chacun avec sa page de présentation.</td></tr>
 <tr><td>Sound Lab</td><td>Synth Rack, jouable directement dans la page, et VSM Studio.</td></tr>
+<tr><td>En développement</td><td>Les projets encore en chantier, suivis version par version, Angkor World Engine et Vigie, chacun avec sa page et son historique.</td></tr>
 <tr><td>Projets</td><td>Les autres dépôts, en direct de GitHub, avec une recherche et des filtres par plateforme, thème et langage.</td></tr>
 <tr><td>Photos</td><td>Des albums sur Google Photos.</td></tr>
-<tr><td>Derniers changements</td><td>Les 20 derniers commits de tous les dépôts publics, regroupés par jour.</td></tr>
+<tr><td>Derniers changements</td><td>Les 20 derniers commits de tous les dépôts publics, regroupés par jour, et un lien vers l’historique des versions de chaque page.</td></tr>
 <tr><td>Contact</td><td>Un lien vers GitHub.</td></tr>
 </table></div>
 </section>
@@ -109,7 +112,8 @@
 <div class="card"><h3>Trois langues</h3><p>Anglais, français et khmer, pour l’interface comme pour la description de chaque jeu et de chaque projet. Le choix est mémorisé et suit le visiteur sur les pages de présentation.</p></div>
 <div class="card"><h3>Le khmer bien composé</h3><p>Manrope et DM Mono n’ont pas de glyphes khmers : Noto Sans Khmer prend le relais pour le texte khmer. Sur les pages de présentation, l’espacement des lettres est remis à zéro et les plus petites étiquettes sont agrandies, pour que voyelles et consonnes souscrites restent lisibles.</p></div>
 <div class="card"><h3>Les derniers commits</h3><p>Les 20 commits les plus récents, regroupés par jour, avec « aujourd’hui » et « hier » dans la langue du visiteur. Les dépôts sont parcourus du plus récemment modifié au plus ancien, et le parcours s’arrête dès qu’un dépôt plus ancien ne peut plus contenir de commit plus récent. Le résultat est gardé dix minutes.</p></div>
-<div class="card"><h3>Une page par jeu et par projet</h3><p>Vingt-trois pages de présentation partagent une petite feuille de style et un script, et suivent le même plan : l’idée, les points forts, des captures et la construction, avec des liens vers la page précédente et la suivante.</p></div>
+<div class="card"><h3>Une page par jeu et par projet</h3><p>Vingt-quatre pages de présentation partagent une petite feuille de style et un script, et suivent le même plan : l’idée, les points forts, des captures et la construction, avec des liens vers la page précédente et la suivante.</p></div>
+<div class="card"><h3>Un historique pour chaque page</h3><p>Chaque page dotée de Derniers changements a sa page d’historique : chaque version antérieure, avec ce qui a changé et les captures et vidéos qu’elle montrait alors. Elles sont tirées de l’historique Git du site par <code>tools/history/build.py</code>, jamais régénérées.</p></div>
 </div>
 </section>
 </div>
@@ -130,9 +134,10 @@
 <tr><td>អំពីខ្ញុំ</td><td>ការណែនាំខ្លីមួយ ជាមួយចំនួនឃ្លាំងកូដសាធារណៈ និងអ្នកតាមដាន ដែលអានពី GitHub។</td></tr>
 <tr><td>ហ្គេម</td><td>ហ្គេមចំនួន 9 ដែលនីមួយៗមានទំព័របង្ហាញផ្ទាល់ខ្លួន។</td></tr>
 <tr><td>មន្ទីរពិសោធន៍សំឡេង</td><td>Synth Rack ដែលអាចលេងបានដោយផ្ទាល់នៅក្នុងទំព័រ និង VSM Studio។</td></tr>
+<tr><td>កំពុងអភិវឌ្ឍ</td><td>គម្រោងដែលកំពុងសាងសង់នៅឡើយ ហើយត្រូវបានតាមដានមួយកំណែម្តងៗ គឺ Angkor World Engine និង Vigie ដែលនីមួយៗមានទំព័រ និងប្រវត្តិរបស់ខ្លួន។</td></tr>
 <tr><td>គម្រោង</td><td>ឃ្លាំងកូដផ្សេងទៀត ទាញយកផ្ទាល់ពី GitHub ជាមួយប្រអប់ស្វែងរក និងតម្រងតាមវេទិកា ប្រធានបទ និងភាសាសរសេរកូដ។</td></tr>
 <tr><td>រូបថត</td><td>អាល់ប៊ុមរូបថតនៅលើ Google Photos។</td></tr>
-<tr><td>ការផ្លាស់ប្ដូរចុងក្រោយ</td><td>commits ចុងក្រោយបំផុតចំនួន 20 ពីឃ្លាំងកូដសាធារណៈទាំងអស់ ដាក់ជាក្រុមតាមថ្ងៃ។</td></tr>
+<tr><td>ការផ្លាស់ប្ដូរចុងក្រោយ</td><td>commits ចុងក្រោយបំផុតចំនួន 20 ពីឃ្លាំងកូដសាធារណៈទាំងអស់ ដាក់ជាក្រុមតាមថ្ងៃ និងតំណទៅប្រវត្តិកំណែនៃទំព័រនីមួយៗ។</td></tr>
 <tr><td>ទំនាក់ទំនង</td><td>តំណទៅកាន់ GitHub។</td></tr>
 </table></div>
 </section>
@@ -146,7 +151,8 @@
 <div class="card"><h3>បីភាសា</h3><p>អង់គ្លេស បារាំង និងខ្មែរ សម្រាប់ផ្ទាំងប្រើប្រាស់ និងសម្រាប់ការពិពណ៌នាហ្គេម និងគម្រោងនីមួយៗ។ ភាសាដែលបានជ្រើសរើសត្រូវបានចងចាំ ហើយប្រើបន្តនៅលើទំព័របង្ហាញទាំងអស់។</p></div>
 <div class="card"><h3>អក្សរខ្មែរបង្ហាញបានត្រឹមត្រូវ</h3><p>ពុម្ពអក្សរ Manrope និង DM Mono គ្មានតួអក្សរខ្មែរទេ ដូច្នេះ Noto Sans Khmer ត្រូវបានប្រើជំនួសសម្រាប់អត្ថបទខ្មែរ។ នៅលើទំព័របង្ហាញ គម្លាតរវាងតួអក្សរត្រូវបានដកចេញ ហើយស្លាកតូចៗបំផុតត្រូវបានពង្រីក ដើម្បីឱ្យស្រៈ និងជើងអក្សរដែលនៅជាន់គ្នា នៅតែអានបានច្បាស់។</p></div>
 <div class="card"><h3>commits ចុងក្រោយបំផុត</h3><p>commits ថ្មីបំផុតចំនួន 20 ដាក់ជាក្រុមតាមថ្ងៃ ជាមួយពាក្យ «ថ្ងៃនេះ» និង «ម្សិលមិញ» ជាភាសារបស់អ្នកទស្សនា។ ឃ្លាំងកូដត្រូវបានពិនិត្យចាប់ពីឃ្លាំងដែលទើបតែ push ថ្មីបំផុត ហើយការពិនិត្យឈប់ភ្លាម នៅពេលឃ្លាំងចាស់ជាងនេះមិនអាចមាន commit ថ្មីជាងបានទៀត។ លទ្ធផលត្រូវបានរក្សាទុករយៈពេល 10 នាទី។</p></div>
-<div class="card"><h3>ទំព័រមួយសម្រាប់ហ្គេម និងគម្រោងនីមួយៗ</h3><p>ទំព័របង្ហាញចំនួន 23 ប្រើ stylesheet តូចមួយ និង script មួយរួមគ្នា ហើយមានរចនាសម្ព័ន្ធដូចគ្នា៖ គំនិតដើម ចំណុចពិសេស រូបថតអេក្រង់ និងរបៀបដែលវាត្រូវបានបង្កើត ព្រមទាំងតំណទៅទំព័រមុន និងទំព័របន្ទាប់។</p></div>
+<div class="card"><h3>ទំព័រមួយសម្រាប់ហ្គេម និងគម្រោងនីមួយៗ</h3><p>ទំព័របង្ហាញចំនួន 24 ប្រើ stylesheet តូចមួយ និង script មួយរួមគ្នា ហើយមានរចនាសម្ព័ន្ធដូចគ្នា៖ គំនិតដើម ចំណុចពិសេស រូបថតអេក្រង់ និងរបៀបដែលវាត្រូវបានបង្កើត ព្រមទាំងតំណទៅទំព័រមុន និងទំព័របន្ទាប់។</p></div>
+<div class="card"><h3>ប្រវត្តិសម្រាប់ទំព័រនីមួយៗ</h3><p>ទំព័រនីមួយៗដែលមានផ្នែកការផ្លាស់ប្តូរចុងក្រោយ មានទំព័រប្រវត្តិរបស់ខ្លួន៖ កំណែមុនៗនីមួយៗ ជាមួយអ្វីដែលបានផ្លាស់ប្តូរ និងរូបថតអេក្រង់ និងវីដេអូដែលវាបានបង្ហាញនៅពេលនោះ។ ពួកវាត្រូវបានចម្លងចេញពីប្រវត្តិ Git របស់គេហទំព័រ ដោយ <code>tools/history/build.py</code> ដោយមិនដែលបង្កើតឡើងវិញទេ។</p></div>
 </div>
 </section>
 </div>
@@ -166,8 +172,8 @@
 <div class="kicker">Under the hood</div>
 <h2>How it is built.</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>index.html</td><td>The whole home page in one file of about 135 KB: markup, styles, the texts in three languages and the script.</td></tr>
-<tr><td>game.css · game.js</td><td>Shared by the twenty-three presentation pages under <code>games/</code> and <code>projects/</code>: about ninety lines of CSS and twenty of JavaScript, for the layout and the language switch.</td></tr>
+<tr><td>index.html</td><td>The whole home page in one file of about 150 KB: markup, styles, the texts in three languages and the script.</td></tr>
+<tr><td>game.css · game.js</td><td>Shared by the twenty-four presentation pages under <code>games/</code> and <code>projects/</code>: about ninety lines of CSS and twenty of JavaScript, for the layout and the language switch.</td></tr>
 <tr><td>Data</td><td>The GitHub REST API, called without a key from the visitor’s browser: the profile, the repositories and their commits.</td></tr>
 <tr><td>Fonts</td><td>Manrope, DM Mono and Noto Sans Khmer, from Google Fonts.</td></tr>
 <tr><td>Hosting</td><td>GitHub Pages, published from the <code>main</code> branch on every push.</td></tr>
@@ -178,8 +184,8 @@
 <div class="kicker">Sous le capot</div>
 <h2>Comment c’est construit.</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>index.html</td><td>Toute la page d’accueil en un fichier d’environ 135 Ko : balisage, styles, textes en trois langues et script.</td></tr>
-<tr><td>game.css · game.js</td><td>Partagés par les vingt-trois pages de présentation de <code>games/</code> et <code>projects/</code> : environ quatre-vingt-dix lignes de CSS et vingt de JavaScript, pour la mise en page et le choix de la langue.</td></tr>
+<tr><td>index.html</td><td>Toute la page d’accueil en un fichier d’environ 150 Ko : balisage, styles, textes en trois langues et script.</td></tr>
+<tr><td>game.css · game.js</td><td>Partagés par les vingt-quatre pages de présentation de <code>games/</code> et <code>projects/</code> : environ quatre-vingt-dix lignes de CSS et vingt de JavaScript, pour la mise en page et le choix de la langue.</td></tr>
 <tr><td>Données</td><td>L’API REST de GitHub, appelée sans clé depuis le navigateur du visiteur : le profil, les dépôts et leurs commits.</td></tr>
 <tr><td>Polices</td><td>Manrope, DM Mono et Noto Sans Khmer, depuis Google Fonts.</td></tr>
 <tr><td>Hébergement</td><td>GitHub Pages, publié depuis la branche <code>main</code> à chaque push.</td></tr>
@@ -190,8 +196,8 @@
 <div class="kicker">ផ្នែកបច្ចេកទេស</div>
 <h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
 <div class="table-wrap"><table class="kv">
-<tr><td>index.html</td><td>ទំព័រដើមទាំងមូលនៅក្នុងឯកសារតែមួយ ទំហំប្រហែល 135 KB៖ markup, styles អត្ថបទជាបីភាសា និង script។</td></tr>
-<tr><td>game.css · game.js</td><td>ប្រើរួមគ្នាដោយទំព័របង្ហាញទាំង 23 នៅក្នុង <code>games/</code> និង <code>projects/</code>៖ CSS ប្រហែល 90 បន្ទាត់ និង JavaScript ប្រហែល 20 បន្ទាត់ សម្រាប់ប្លង់ទំព័រ និងការប្តូរភាសា។</td></tr>
+<tr><td>index.html</td><td>ទំព័រដើមទាំងមូលនៅក្នុងឯកសារតែមួយ ទំហំប្រហែល 150 KB៖ markup, styles អត្ថបទជាបីភាសា និង script។</td></tr>
+<tr><td>game.css · game.js</td><td>ប្រើរួមគ្នាដោយទំព័របង្ហាញទាំង 24 នៅក្នុង <code>games/</code> និង <code>projects/</code>៖ CSS ប្រហែល 90 បន្ទាត់ និង JavaScript ប្រហែល 20 បន្ទាត់ សម្រាប់ប្លង់ទំព័រ និងការប្តូរភាសា។</td></tr>
 <tr><td>ទិន្នន័យ</td><td>GitHub REST API ដែលហៅដោយគ្មាន key ពី browser របស់អ្នកទស្សនា៖ ប្រវត្តិរូប ឃ្លាំងកូដ និង commits របស់វា។</td></tr>
 <tr><td>ពុម្ពអក្សរ</td><td>Manrope, DM Mono និង Noto Sans Khmer ពី Google Fonts។</td></tr>
 <tr><td>ការដាក់ឱ្យដំណើរការ</td><td>GitHub Pages បោះផ្សាយពី branch <code>main</code> រាល់ពេល push។</td></tr>
@@ -200,45 +206,45 @@
 
 <section class="changes" data-l="en">
 <div class="kicker">Last changes</div>
-<h2>A page for every project, and a new name.</h2>
-<p class="changes-note">A summary of the latest commits in the repository, up to 20 November 2026.</p>
+<h2>A history for every page, and Vigie.</h2>
+<p class="changes-note">A summary of the latest commits in the repository, up to 26 November 2026.</p>
 <ol class="changelog">
+<li><time datetime="2026-11-26">26 Nov 2026</time><div><b>Ten pages catch up, and Vigie</b><p>Ten pages catch up with the work pushed since they were written, among them 3D Buggy and Cambodia Rally with their two Kampot stages, Angkor World Engine with the Bayon and Angkor Thom, and the Chantrea Systems site with captures retaken on the live site. Vigie, the security watch portal, gets its page and a card in In development, and the presentation pages now number 24.</p></div></li>
+<li><time datetime="2026-11-21">21 Nov 2026</time><div><b>In development, and a history for every page</b><p>The home page gains an In development section, where Angkor World Engine is followed with the date of its last push read from GitHub. Every page with Last changes gets a history page listing its earlier versions with the captures and videos of the time, copied out of the site’s Git history, never regenerated.</p></div></li>
+<li><time datetime="2026-11-20">20 Nov 2026</time><div><b>Last changes on every page, and the albums</b><p>Every game and project page ends with a summary of its repository’s latest commits, in the three languages, and five pages catch up with their repositories. The five Google Photos albums get their own covers, titles and dates.</p></div></li>
 <li><time datetime="2026-11-20">20 Nov 2026</time><div><b>The terminal-window logo</b><p>The Chantrea terminal-window logo now sits in the header of every page and serves as the favicon. On the home page it replaces the orb at the top.</p></div></li>
 <li><time datetime="2026-11-19">16–19 Nov 2026</time><div><b>Six new presentation pages</b><p>FR - ENG - Khmer Learning, Angkor World Engine, Cambodia Rally, Cambodia Nautic, the Chantrea Systems website and the From Zero to Chantrea blog each get a page in the three languages, with screenshots. The home page gains their cards and summaries and two new themes, Tourism and Blog, and the presentation pages now number 23.</p></div></li>
 <li><time datetime="2026-11-19">15–19 Nov 2026</time><div><b>Pages that follow their repositories</b><p>The 3D Buggy page follows the game to Angkor, with its circuits laid out from map data, a 12-capture gallery and the Grand Circuit’s 87-second film, and the game gets a featured band on the home page. Cambodia Rally gains its eight vehicles and its films, and on 19 November seven pages, from Angkor World Engine to Khmer Estate, caught up with the work pushed since they were written.</p></div></li>
-<li><time datetime="2026-11-18">18 Nov 2026</time><div><b>Renamed Chantrea Systems</b><p>The site took a new name on every page: the brand, the footer and the page titles. First renamed The Moon Studio, it became Chantrea Systems later the same day.</p></div></li>
-<li><time datetime="2026-11-13">13 Nov 2026</time><div><b>A page for each project</b><p>Nine projects get a presentation page, from Synth Rack and VSM Studio to HMS and this website, on the model of the game pages; each states plainly what is unfinished. Projects without screenshots show command-line examples instead, and Velocity joins the Games.</p></div></li>
-<li><time datetime="2026-11-12">11–12 Nov 2026</time><div><b>Game pages, in Khmer too</b><p>Each game gets its own presentation page, opened from its card, and the next day the game pages are translated into Khmer. The home page gains the Last changes section, with the 20 latest commits grouped by day, and its sections now run About, Games, Sound Lab, Projects, Pictures, Last changes, Contact.</p></div></li>
 </ol>
 <p class="changes-more">Earlier versions of this page, with their captures and videos: <a href="../history/portfolio.html">History →</a></p>
 </section>
 
 <section class="changes" data-l="fr">
 <div class="kicker">Derniers changements</div>
-<h2>Une page pour chaque projet, et un nouveau nom.</h2>
-<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 20 novembre 2026.</p>
+<h2>Un historique pour chaque page, et Vigie.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt, jusqu’au 26 novembre 2026.</p>
 <ol class="changelog">
+<li><time datetime="2026-11-26">26 nov. 2026</time><div><b>Dix pages rattrapent leur dépôt, et Vigie</b><p>Dix pages rattrapent le travail poussé depuis leur rédaction, parmi elles 3D Buggy et Cambodia Rally avec leurs deux étapes de Kampot, Angkor World Engine avec le Bayon et Angkor Thom, et le site de Chantrea Systems avec des captures refaites sur le site en ligne. Vigie, le portail de veille de sécurité, reçoit sa page et une carte dans En développement, et les pages de présentation sont désormais 24.</p></div></li>
+<li><time datetime="2026-11-21">21 nov. 2026</time><div><b>En développement, et un historique pour chaque page</b><p>L’accueil gagne une section En développement, où Angkor World Engine est suivi avec la date de son dernier envoi, lue sur GitHub. Chaque page dotée de Derniers changements reçoit une page d’historique qui liste ses versions antérieures avec les captures et les vidéos de l’époque, tirées de l’historique Git du site, jamais régénérées.</p></div></li>
+<li><time datetime="2026-11-20">20 nov. 2026</time><div><b>Derniers changements sur chaque page, et les albums</b><p>Chaque page de jeu et de projet se termine par un résumé des derniers commits de son dépôt, dans les trois langues, et cinq pages rattrapent leur dépôt. Les cinq albums Google Photos reçoivent leur couverture, leur titre et leurs dates.</p></div></li>
 <li><time datetime="2026-11-20">20 nov. 2026</time><div><b>Le logo en fenêtre de terminal</b><p>Le logo Chantrea en fenêtre de terminal figure désormais dans l’en-tête de chaque page et sert de favicon. Sur la page d’accueil, il remplace l’orbe du haut de page.</p></div></li>
 <li><time datetime="2026-11-19">16–19 nov. 2026</time><div><b>Six nouvelles pages de présentation</b><p>FR - ENG - Khmer Learning, Angkor World Engine, Cambodia Rally, Cambodia Nautic, le site de Chantrea Systems et le blog De zéro à Chantrea ont chacun leur page dans les trois langues, avec des captures. L’accueil reçoit leurs cartes et leurs résumés, et deux nouveaux thèmes, Tourisme et Blog ; les pages de présentation sont désormais 23.</p></div></li>
 <li><time datetime="2026-11-19">15–19 nov. 2026</time><div><b>Des pages qui suivent leurs dépôts</b><p>La page de 3D Buggy suit le jeu jusqu’à Angkor, avec ses circuits tracés d’après les données cartographiques, une galerie de 12 captures et le film de 87 secondes du Grand Circuit, et le jeu a droit à un bandeau en vedette sur l’accueil. Cambodia Rally gagne ses huit véhicules et ses films, et le 19 novembre, sept pages, d’Angkor World Engine à Khmer Estate, rattrapent le travail poussé depuis leur rédaction.</p></div></li>
-<li><time datetime="2026-11-18">18 nov. 2026</time><div><b>Le site devient Chantrea Systems</b><p>Le site prend un nouveau nom sur toutes les pages : la marque, le pied de page et les titres. Renommé d’abord The Moon Studio, il devient Chantrea Systems plus tard le même jour.</p></div></li>
-<li><time datetime="2026-11-13">13 nov. 2026</time><div><b>Une page pour chaque projet</b><p>Neuf projets reçoivent une page de présentation, de Synth Rack et VSM Studio à HMS et ce site, sur le modèle des pages de jeux ; chacune dit clairement ce qui n’est pas terminé. Les projets sans captures montrent à la place des exemples en ligne de commande, et Velocity rejoint les jeux.</p></div></li>
-<li><time datetime="2026-11-12">11–12 nov. 2026</time><div><b>Les pages de jeux, en khmer aussi</b><p>Chaque jeu reçoit sa page de présentation, ouverte depuis sa carte, et le lendemain les pages de jeux sont traduites en khmer. L’accueil gagne la section Derniers changements, avec les 20 derniers commits groupés par jour, et ses sections se suivent désormais ainsi : À propos, Jeux, Sound Lab, Projets, Photos, Derniers changements, Contact.</p></div></li>
 </ol>
 <p class="changes-more">Les versions antérieures de cette page, avec leurs captures et leurs vidéos : <a href="../history/portfolio.html">Historique →</a></p>
 </section>
 
 <section class="changes" data-l="km">
 <div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
-<h2>ទំព័រមួយសម្រាប់គម្រោងនីមួយៗ និងឈ្មោះថ្មី។</h2>
-<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 20 ខែវិច្ឆិកា ឆ្នាំ 2026។</p>
+<h2>ប្រវត្តិសម្រាប់ទំព័រនីមួយៗ និង Vigie។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository រហូតដល់ថ្ងៃទី 26 ខែវិច្ឆិកា ឆ្នាំ 2026។</p>
 <ol class="changelog">
+<li><time datetime="2026-11-26">26 វិច្ឆិកា 2026</time><div><b>ទំព័រដប់ធ្វើបច្ចុប្បន្នភាព និង Vigie</b><p>ទំព័រដប់ធ្វើបច្ចុប្បន្នភាពតាមការងារដែលបាន push ចាប់តាំងពីពួកវាត្រូវបានសរសេរ ក្នុងនោះមាន 3D Buggy និង Cambodia Rally ជាមួយដំណាក់កាលកំពតទាំងពីរ Angkor World Engine ជាមួយប្រាសាទបាយ័ន និងអង្គរធំ និងគេហទំព័រ Chantrea Systems ជាមួយរូបថតអេក្រង់ដែលថតឡើងវិញពីគេហទំព័រផ្ទាល់។ Vigie ដែលជាវិបផតថលតាមដានសុវត្ថិភាព ទទួលបានទំព័ររបស់វា និងកាតមួយក្នុងផ្នែកកំពុងអភិវឌ្ឍ ហើយឥឡូវនេះមានទំព័របង្ហាញចំនួន 24។</p></div></li>
+<li><time datetime="2026-11-21">21 វិច្ឆិកា 2026</time><div><b>កំពុងអភិវឌ្ឍ និងប្រវត្តិសម្រាប់ទំព័រនីមួយៗ</b><p>ទំព័រដើមបន្ថែមផ្នែកកំពុងអភិវឌ្ឍ ដែល Angkor World Engine ត្រូវបានតាមដាន ជាមួយកាលបរិច្ឆេទ push ចុងក្រោយរបស់វា ដែលអានពី GitHub។ ទំព័រនីមួយៗដែលមានការផ្លាស់ប្តូរចុងក្រោយ ទទួលបានទំព័រប្រវត្តិ ដែលរាយបញ្ជីកំណែមុនៗរបស់វា ជាមួយរូបថតអេក្រង់ និងវីដេអូនៅពេលនោះ ដែលចម្លងចេញពីប្រវត្តិ Git របស់គេហទំព័រ ដោយមិនដែលបង្កើតឡើងវិញទេ។</p></div></li>
+<li><time datetime="2026-11-20">20 វិច្ឆិកា 2026</time><div><b>ការផ្លាស់ប្តូរចុងក្រោយលើទំព័រនីមួយៗ និងអាល់ប៊ុម</b><p>ទំព័រហ្គេម និងគម្រោងនីមួយៗ បញ្ចប់ដោយសេចក្តីសង្ខេបនៃ commit ចុងក្រោយរបស់ repository របស់វា ជាបីភាសា ហើយទំព័រប្រាំធ្វើបច្ចុប្បន្នភាពតាម repository របស់វា។ អាល់ប៊ុម Google Photos ទាំងប្រាំ ទទួលបានរូបគម្រប ចំណងជើង និងកាលបរិច្ឆេទរបស់វា។</p></div></li>
 <li><time datetime="2026-11-20">20 វិច្ឆិកា 2026</time><div><b>ឡូហ្គោជារូបផ្ទាំង terminal</b><p>ឡូហ្គោ Chantrea ជារូបផ្ទាំង terminal ឥឡូវនេះស្ថិតនៅលើផ្នែកក្បាលនៃគ្រប់ទំព័រ ហើយប្រើជា favicon។ នៅលើទំព័រដើម វាជំនួសរង្វង់ពន្លឺ (orb) នៅខាងលើ។</p></div></li>
 <li><time datetime="2026-11-19">16–19 វិច្ឆិកា 2026</time><div><b>ទំព័របង្ហាញថ្មីប្រាំមួយ</b><p>FR - ENG - Khmer Learning, Angkor World Engine, Cambodia Rally, Cambodia Nautic, គេហទំព័រ Chantrea Systems និងប្លុក ពីសូន្យដល់ Chantrea ទទួលបានទំព័រមួយរៀងៗខ្លួនជាបីភាសា ជាមួយរូបថតអេក្រង់។ ទំព័រដើមបន្ថែមកាត និងសេចក្តីសង្ខេបរបស់វា ព្រមទាំងប្រធានបទថ្មីពីរ គឺ ទេសចរណ៍ និង ប្លុក ហើយឥឡូវនេះមានទំព័របង្ហាញចំនួន 23។</p></div></li>
 <li><time datetime="2026-11-19">15–19 វិច្ឆិកា 2026</time><div><b>ទំព័រដែលតាមទាន់ឃ្លាំងកូដរបស់វា</b><p>ទំព័រ 3D Buggy តាមហ្គេមទៅដល់អង្គរ ជាមួយសៀគ្វីដែលគូសតាមទិន្នន័យផែនទី វិចិត្រសាលរូបថត 12 និងភាពយន្ត 87 វិនាទីនៃ Grand Circuit ហើយហ្គេមនេះទទួលបានផ្នែកពិសេសមួយនៅលើទំព័រដើម។ Cambodia Rally បន្ថែមយានជំនិះទាំងប្រាំបី និងភាពយន្តរបស់វា ហើយនៅថ្ងៃទី 19 ខែវិច្ឆិកា ទំព័រប្រាំពីរ ចាប់ពី Angkor World Engine ដល់ Khmer Estate បានតាមទាន់ការងារដែលបាន push ចាប់តាំងពីពេលវាត្រូវបានសរសេរ។</p></div></li>
-<li><time datetime="2026-11-18">18 វិច្ឆិកា 2026</time><div><b>ប្តូរឈ្មោះជា Chantrea Systems</b><p>គេហទំព័រទទួលបានឈ្មោះថ្មីនៅលើគ្រប់ទំព័រ៖ ម៉ាក ផ្នែកបាតទំព័រ និងចំណងជើងទំព័រ។ ដំបូងវាត្រូវបានប្តូរឈ្មោះជា The Moon Studio ហើយនៅថ្ងៃដដែលនោះ វាបានក្លាយជា Chantrea Systems។</p></div></li>
-<li><time datetime="2026-11-13">13 វិច្ឆិកា 2026</time><div><b>ទំព័រមួយសម្រាប់គម្រោងនីមួយៗ</b><p>គម្រោងប្រាំបួនទទួលបានទំព័របង្ហាញ ចាប់ពី Synth Rack និង VSM Studio រហូតដល់ HMS និងគេហទំព័រនេះ តាមគំរូនៃទំព័រហ្គេម ហើយទំព័រនីមួយៗប្រាប់យ៉ាងច្បាស់ពីអ្វីដែលមិនទាន់បញ្ចប់។ គម្រោងដែលគ្មានរូបថតអេក្រង់ បង្ហាញឧទាហរណ៍ command-line ជំនួសវិញ ហើយ Velocity ចូលរួមក្នុងផ្នែកហ្គេម។</p></div></li>
-<li><time datetime="2026-11-12">11–12 វិច្ឆិកា 2026</time><div><b>ទំព័រហ្គេម ជាភាសាខ្មែរផងដែរ</b><p>ហ្គេមនីមួយៗទទួលបានទំព័របង្ហាញផ្ទាល់ខ្លួន ដែលបើកពីកាតរបស់វា ហើយនៅថ្ងៃបន្ទាប់ ទំព័រហ្គេមត្រូវបានបកប្រែជាភាសាខ្មែរ។ ទំព័រដើមបន្ថែមផ្នែក «ការផ្លាស់ប្ដូរចុងក្រោយ» ដែលបង្ហាញ commits ចុងក្រោយបំផុតចំនួន 20 ដាក់ជាក្រុមតាមថ្ងៃ ហើយផ្នែកនានាឥឡូវរៀបតាមលំដាប់៖ អំពីខ្ញុំ ហ្គេម មន្ទីរពិសោធន៍សំឡេង គម្រោង រូបថត ការផ្លាស់ប្ដូរចុងក្រោយ ទំនាក់ទំនង។</p></div></li>
 </ol>
 <p class="changes-more">កំណែមុនៗនៃទំព័រនេះ ជាមួយរូបថតអេក្រង់ និងវីដេអូរបស់វា៖ <a href="../history/portfolio.html">ប្រវត្តិ →</a></p>
 </section>
