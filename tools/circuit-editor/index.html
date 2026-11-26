@@ -1,0 +1,3255 @@
+<!doctype html>
+<html lang="fr">
+<!--
+  Éditeur de circuits : trace un circuit sur les routes d'OpenStreetMap et l'exporte
+  au format .cambotrack.json pour 3D Buggy / Dustline Rally et Cambodia Rally.
+
+  One file, no build step. Three scripts:
+    - Leaflet 1.9.4 from cdnjs, pinned by its SRI hash;
+    - the "core" script: pure computation (CircuitCore), tested under Node;
+    - the "ui" script: the interface, in French.
+  See README.md and FORMAT.md in this folder.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Éditeur de circuits — 3D Buggy et Cambodia Rally</title>
+<meta name="description" content="Tracez un circuit sur les routes d'OpenStreetMap et envoyez-le à 3D Buggy et Cambodia Rally.">
+<meta name="theme-color" content="#0b7285">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b7285'/%3E%3Cpath d='M8 22c0-9 3-13 8-13s8 3 8 7-3 6-6 6-4-2-4-4' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='23' r='3' fill='%23fcc419'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+/* ---------------------------------------------------------------- Tokens */
+:root {
+  --ink: #1b2430;
+  --ink-soft: #5c6773;
+  --paper: #ffffff;
+  --paper-soft: #f3f5f7;
+  --line: #d5dae0;
+  --accent: #0b7285;
+  --accent-ink: #ffffff;
+  --route: #1864ab;
+  --ok: #2b8a3e;
+  --warn: #c2410c;
+  --bad: #c92a2a;
+  --radius: 10px;
+  --shadow: 0 2px 10px rgba(15, 25, 40, .22);
+  --panel-w: 400px;
+  --head-h: 56px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  color: var(--ink);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--paper-soft); font-size: 15px; line-height: 1.4; overscroll-behavior: none; }
+[hidden] { display: none !important; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+small { color: var(--ink-soft); font-size: .86em; }
+
+/* ---------------------------------------------------------------- Layout */
+/* Phone first: the map on top, the panel as a sheet under it. The map is a flex
+   sibling of the panel, so opening the sheet resizes the map instead of hiding
+   its attribution. */
+.app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.stage { position: relative; flex: 1 1 auto; min-height: 0; }
+.map { position: absolute; inset: 0; background: #dfe6ec; }
+.panel { flex: 0 0 auto; display: flex; flex-direction: column; background: var(--paper);
+  border-top: 1px solid var(--line); box-shadow: 0 -2px 10px rgba(15, 25, 40, .12); z-index: 1100;
+  height: calc(var(--head-h) + env(safe-area-inset-bottom, 0px)); transition: height .18s ease; }
+.app.open .panel { height: min(62vh, 560px); height: min(62dvh, 560px); }
+.panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 14px calc(18px + env(safe-area-inset-bottom, 0px)); visibility: hidden; }
+.app.open .panel-body { visibility: visible; }
+
+@media (min-width: 900px) {
+  .app { flex-direction: row; }
+  .panel, .app.open .panel { width: var(--panel-w); height: auto; border-top: 0; border-left: 1px solid var(--line);
+    box-shadow: -2px 0 10px rgba(15, 25, 40, .10); transition: none; }
+  .panel-body { visibility: visible; }
+  .panel-head { cursor: default; }
+  .panel-head .chev { display: none; }
+}
+
+/* ----------------------------------------------------------- Panel head */
+.panel-head { flex: 0 0 var(--head-h); display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 0 14px; border: 0; background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.panel-head:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.summary { flex: 1 1 auto; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.summary .badge { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; font-size: .82em;
+  background: #ffe8cc; color: var(--warn); }
+.summary .badge.bad { background: #ffe3e3; color: var(--bad); }
+.chev { flex: 0 0 22px; width: 22px; height: 22px; fill: none; stroke: var(--ink-soft); stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round; transition: transform .18s ease; }
+.app.open .chev { transform: rotate(180deg); }
+
+/* ------------------------------------------------------------------ Tabs */
+.tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; margin: 0 -14px 12px; padding: 0 10px;
+  background: var(--paper); border-bottom: 1px solid var(--line); }
+.tab { flex: 1 1 0; min-height: 44px; padding: 8px 4px; border: 0; border-bottom: 3px solid transparent; background: none;
+  color: var(--ink-soft); font: inherit; font-weight: 600; cursor: pointer; }
+.tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.tabpanel h2 { margin: 20px 0 8px; font-size: 1.05rem; }
+
+/* --------------------------------------------------------------- Controls */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 14px;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink);
+  font: inherit; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn:hover:not(:disabled) { background: var(--paper-soft); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:focus-visible, .seg-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover:not(:disabled) { background: #095c6b; }
+.btn.wide { width: 100%; }
+.btn.icon { width: 44px; padding: 0; }
+.btn.icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+.btn.danger { color: var(--bad); }
+.btn.busy { cursor: progress; }
+
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); overflow: hidden; }
+.seg.wide { display: flex; width: 100%; }
+.seg-btn { flex: 1 1 0; min-height: 44px; padding: 8px 12px; border: 0; background: none; color: var(--ink); font: inherit;
+  font-weight: 600; cursor: pointer; white-space: nowrap; }
+.seg-btn + .seg-btn { border-left: 1px solid var(--line); }
+.seg-btn.on { background: var(--accent); color: var(--accent-ink); }
+
+.row { display: flex; gap: 8px; margin: 0 0 10px; }
+.field { margin: 0 0 12px; padding: 0; border: 0; min-width: 0; }
+.field > label, .field > legend { display: block; margin: 0 0 4px; padding: 0; font-weight: 600; font-size: .93em; }
+.field input[type=text], .field input[type=number], .field input[type=password], .search input {
+  width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--paper); color: var(--ink); font: inherit; font-size: 16px; }
+.field input:focus-visible, .search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.field input.invalid { border-color: var(--bad); }
+.field small { display: block; margin-top: 3px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.check { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 9px 0; cursor: pointer; }
+.check input { flex: 0 0 auto; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--accent); }
+.buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+/* --------------------------------------------------------- Figures, notes */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 12px; }
+.stats > div { padding: 8px 10px; border-radius: 8px; background: var(--paper-soft); min-width: 0; }
+.stats > div.span { grid-column: 1 / -1; }
+.stats dt { color: var(--ink-soft); font-size: .82em; }
+.stats dd { margin: 2px 0 0; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.messages { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.messages li { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border-radius: 8px; border-left: 4px solid var(--warn);
+  background: #fff4e6; }
+.messages li.bad { border-left-color: var(--bad); background: #fff0f0; }
+.messages li.info { border-left-color: var(--accent); background: #e6f6f8; }
+.messages li span { flex: 1 1 auto; min-width: 0; }
+.messages li button { flex: 0 0 auto; min-height: 32px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--paper); font: inherit; font-size: .9em; cursor: pointer; }
+.note { margin: 0 0 12px; color: var(--ink-soft); font-size: .93em; }
+.note.bad { color: var(--bad); }
+.help { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
+.help summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; cursor: pointer; }
+.help ul, .help ol { margin: 0 0 12px; padding-left: 20px; }
+.help li { margin-bottom: 5px; }
+.legend { color: var(--ink-soft); font-size: .9em; }
+.dot { display: inline-block; width: 11px; height: 11px; margin: 0 3px 0 8px; border-radius: 50%; vertical-align: -1px; }
+.dot.cp { background: #fff; border: 3px solid var(--route); }
+.dot.gate { background: #fcc419; border: 2px solid #5f3dc4; }
+.dot.warn { background: var(--bad); }
+.profile { display: block; width: 100%; height: 170px; margin: 0 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.send-status { margin: 12px 0; font-size: .95em; overflow-wrap: anywhere; }
+.send-status.bad { color: var(--bad); }
+.send-status a { color: var(--accent); }
+.send-status ul { margin: 6px 0; padding-left: 18px; }
+.send-status .done { padding: 10px 12px; border-radius: 8px; background: #ebfbee; border-left: 4px solid var(--ok); }
+
+/* ------------------------------------------------------- Map overlays */
+.top { position: absolute; z-index: 1000; top: calc(8px + env(safe-area-inset-top, 0px)); left: 8px; right: 8px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px; pointer-events: none; }
+.top > * { pointer-events: auto; }
+.search { display: flex; gap: 6px; }
+.search input { flex: 1 1 auto; min-width: 0; box-shadow: var(--shadow); border-color: transparent; }
+.search .btn { box-shadow: var(--shadow); border-color: transparent; }
+.load { align-self: center; box-shadow: var(--shadow); min-height: 40px; border-radius: 999px; padding: 6px 16px; }
+.load.far { background: var(--paper); color: var(--ink-soft); border-color: transparent; }
+.menu, .results { margin: 0; padding: 6px; list-style: none; border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
+.menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.menu .btn { min-height: 40px; padding: 6px 8px; font-weight: 500; }
+.results { max-height: 46vh; overflow-y: auto; }
+.results button { display: block; width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 8px; background: none;
+  color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.results button:hover, .results button:focus-visible { background: var(--paper-soft); outline: none; }
+.results .empty { padding: 10px; color: var(--ink-soft); }
+
+.tools { position: absolute; z-index: 1000; left: 8px; right: 8px; bottom: 8px; display: flex; justify-content: center; gap: 6px;
+  pointer-events: none; }
+.tools > * { pointer-events: auto; box-shadow: var(--shadow); border-color: transparent; }
+.tools .seg-btn { padding: 8px 10px; }
+@media (max-width: 400px) {
+  .tools { gap: 5px; left: 6px; right: 6px; }
+  .tools .btn.icon { width: 40px; }
+  .tools .seg-btn { padding: 8px 8px; }
+}
+
+.toast { position: absolute; z-index: 1001; left: 12px; right: 12px; bottom: 96px; margin: 0 auto; max-width: 460px; padding: 10px 14px;
+  border-radius: var(--radius); background: rgba(27, 36, 48, .94); color: #fff; box-shadow: var(--shadow); text-align: center; }
+.toast.bad { background: rgba(160, 30, 30, .96); }
+
+@media (min-width: 900px) {
+  .top { right: auto; width: 380px; }
+  .load { align-self: flex-start; }
+}
+/* A short phone with the sheet open: the map keeps the room. */
+@media (max-width: 899px) and (max-height: 760px) {
+  .app.open .top { display: none; }
+}
+
+/* --------------------------------------------------------------- Leaflet */
+.leaflet-container { font: inherit; font-size: 13px; }
+.leaflet-bottom { bottom: 58px; }
+.leaflet-top.leaflet-right { top: calc(112px + env(safe-area-inset-top, 0px)); }
+@media (min-width: 900px) { .leaflet-top.leaflet-right { top: 0; } }
+.leaflet-control-attribution { max-width: 100%; font-size: 10.5px; }
+.leaflet-touch .leaflet-control-layers-toggle { width: 44px; height: 44px; }
+.leaflet-control-layers label { min-height: 30px; display: flex; align-items: center; }
+
+/* Waypoints: numbered discs, large enough for a thumb. */
+.wp { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid #fff; background: var(--route); color: #fff; font-weight: 700; font-size: 13px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .5); cursor: grab; touch-action: none; }
+.wp.start { background: var(--ok); }
+.wp.finish { background: #212529; }
+.wp.lost { background: var(--bad); }
+.wp-arrow { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-bottom: 13px solid var(--route); filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff); }
+.wp-pop { display: grid; gap: 6px; min-width: 150px; }
+.wp-pop .btn { min-height: 40px; }
+
+.fatal { position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: var(--paper); }
+.fatal div { max-width: 460px; }
+</style>
+</head>
+<body>
+<div id="app" class="app">
+
+  <!-- ============================== Map and its overlays ============================== -->
+  <div class="stage">
+    <div id="map" class="map" role="application" aria-label="Carte : cliquez sur une route pour placer un point de passage"></div>
+
+    <div class="top">
+      <form id="search-form" class="search" role="search" autocomplete="off">
+        <input id="search-input" type="search" inputmode="search" enterkeyhint="search"
+               placeholder="Chercher un lieu, puis Entrée" aria-label="Chercher un lieu">
+        <button type="button" id="places-btn" class="btn" aria-expanded="false" aria-controls="places-menu">Lieux</button>
+      </form>
+      <div id="places-menu" class="menu" hidden></div>
+      <ul id="search-results" class="results" hidden></ul>
+      <button type="button" id="load-roads" class="btn primary load">Charger les routes de la zone</button>
+    </div>
+
+    <div class="tools" role="toolbar" aria-label="Outils de tracé">
+      <div class="seg" role="group" aria-label="Outil">
+        <button type="button" id="tool-add" class="seg-btn on" aria-pressed="true" title="Un clic sur une route ajoute un point à la fin du tracé">Ajouter</button>
+        <button type="button" id="tool-edit" class="seg-btn" aria-pressed="false" title="Un clic sur le tracé y insère un point">Modifier</button>
+      </div>
+      <button type="button" id="undo" class="btn icon" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      </button>
+      <button type="button" id="redo" class="btn icon" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      </button>
+      <button type="button" id="reverse" class="btn icon" title="Inverser le sens du parcours" aria-label="Inverser le sens" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 12 4 4-4 4"/><path d="M21 16H7"/></svg>
+      </button>
+      <button type="button" id="clear" class="btn icon danger" title="Tout effacer" aria-label="Tout effacer" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>
+      </button>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+
+  <!-- ===================================== Panel ===================================== -->
+  <aside id="panel" class="panel" aria-label="Circuit">
+    <button type="button" id="panel-toggle" class="panel-head" aria-expanded="false" aria-controls="panel-body">
+      <span id="summary" class="summary">Aucun tracé</span>
+      <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+    </button>
+
+    <div id="panel-body" class="panel-body">
+      <div class="tabs" role="tablist" aria-label="Rubriques">
+        <button type="button" role="tab" class="tab on" id="tabbtn-trace" data-tab="trace" aria-selected="true" aria-controls="tab-trace">Tracé</button>
+        <button type="button" role="tab" class="tab" id="tabbtn-settings" data-tab="settings" aria-selected="false" aria-controls="tab-settings">Réglages</button>
+        <button type="button" role="tab" class="tab" id="tabbtn-relief" data-tab="relief" aria-selected="false" aria-controls="tab-relief">Relief</button>
+        <button type="button" role="tab" class="tab" id="tabbtn-send" data-tab="send" aria-selected="false" aria-controls="tab-send">Envoi</button>
+      </div>
+
+      <!-- Tracé -->
+      <section id="tab-trace" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-trace">
+        <div class="row">
+          <div class="seg wide" role="group" aria-label="Type de parcours">
+            <button type="button" id="kind-loop" class="seg-btn on" aria-pressed="true">Boucle</button>
+            <button type="button" id="kind-stage" class="seg-btn" aria-pressed="false">Spéciale (A → B)</button>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="allow-tracks" checked>
+          <span>Autoriser les pistes <small>(chemins carrossables, <code>highway=track</code>)</small></span></label>
+
+        <dl class="stats">
+          <div><dt>Longueur réelle</dt><dd id="st-real">—</dd></div>
+          <div><dt>Longueur de jeu</dt><dd id="st-game">—</dd></div>
+          <div class="span"><dt>Temps estimé</dt><dd id="st-time">—</dd></div>
+          <div><dt>Checkpoints</dt><dd id="st-cp">—</dd></div>
+          <div><dt>Portes bonus</dt><dd id="st-gates">—</dd></div>
+          <div><dt>Points du fichier</dt><dd id="st-points">—</dd></div>
+          <div><dt>Dénivelé positif</dt><dd id="st-climb">—</dd></div>
+        </dl>
+
+        <ul id="messages" class="messages" aria-label="Avertissements"></ul>
+        <p id="roads-info" class="note">Aucune route chargée : cadrez la carte sur la zone voulue, puis « Charger les routes de la zone ».</p>
+
+        <details class="help">
+          <summary>Comment tracer</summary>
+          <ul>
+            <li><b>Ajouter</b> : un clic sur une route pose un point de passage ; le tracé suit les routes entre deux points.</li>
+            <li><b>Déplacer</b> : faites glisser un point, il se recale sur la route la plus proche.</li>
+            <li><b>Insérer</b> : outil « Modifier », puis un clic sur le tracé.</li>
+            <li><b>Supprimer</b> : clic droit ou appui long sur un point (ou un clic dessus, puis « Supprimer »).</li>
+            <li><b>Annuler, rétablir</b> : Ctrl+Z, Ctrl+Y ou les flèches sous la carte.</li>
+          </ul>
+          <p class="legend"><span class="dot cp"></span> checkpoint <span class="dot gate"></span> porte bonus <span class="dot warn"></span> avertissement</p>
+        </details>
+      </section>
+
+      <!-- Réglages -->
+      <section id="tab-settings" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-settings" hidden>
+        <div class="field"><label for="f-name">Nom du circuit</label>
+          <input id="f-name" type="text" maxlength="80" placeholder="Petit Circuit perso" autocomplete="off"></div>
+        <div class="field"><label for="f-id">Identifiant</label>
+          <input id="f-id" type="text" maxlength="64" placeholder="petit-circuit-perso" autocomplete="off" autocapitalize="none" spellcheck="false">
+          <small id="f-id-hint">Nom du fichier publié ; minuscules, chiffres et tirets.</small></div>
+        <div class="field"><label for="f-author">Auteur</label>
+          <input id="f-author" type="text" maxlength="60" autocomplete="off"></div>
+        <fieldset class="field"><legend>Jeux visés</legend>
+          <label class="check"><input type="checkbox" id="f-game-buggy" checked><span>3D Buggy</span></label>
+          <label class="check"><input type="checkbox" id="f-game-rally" checked><span>Cambodia Rally</span></label>
+        </fieldset>
+        <div class="grid2">
+          <div class="field"><label for="f-laps">Tours</label>
+            <input id="f-laps" type="number" inputmode="numeric" min="1" max="20" step="1" value="3">
+            <small id="f-laps-hint">Pour une boucle.</small></div>
+          <div class="field"><label for="f-scale">Échelle</label>
+            <input id="f-scale" type="number" inputmode="decimal" min="1" max="10" step="0.1" value="2.5">
+            <small>Mètres réels pour 1 m de jeu.</small></div>
+          <div class="field"><label for="f-width">Largeur de base</label>
+            <input id="f-width" type="number" inputmode="decimal" min="3" max="30" step="0.5" value="11">
+            <small>En mètres de jeu.</small></div>
+          <div class="field"><label for="f-spacing">Espacement des points</label>
+            <input id="f-spacing" type="number" inputmode="decimal" min="1" max="20" step="0.5" value="4">
+            <small>En mètres de jeu.</small></div>
+          <div class="field"><label for="f-cp">Un checkpoint tous les</label>
+            <input id="f-cp" type="number" inputmode="numeric" min="150" max="20000" step="50" placeholder="auto">
+            <small>Mètres de jeu. Vide : 1 000 m jusqu'à 12 km, 2 000 m au-delà.</small></div>
+          <div class="field"><label for="f-smooth">Rayon de lissage</label>
+            <input id="f-smooth" type="number" inputmode="decimal" min="0" max="100" step="1" value="15">
+            <small>Mètres de jeu ; arrondit les angles.</small></div>
+        </div>
+        <label class="check"><input type="checkbox" id="f-narrow" checked><span>Pistes plus étroites <small>(8 m au lieu de la largeur de base)</small></span></label>
+        <label class="check"><input type="checkbox" id="f-bridges" checked><span>Largeur des ponts d'après la carte <small>(1,4 × la largeur indiquée, de 6 m à la largeur de base)</small></span></label>
+        <label class="check"><input type="checkbox" id="f-gates" checked><span>Portes bonus sur les lignes droites <small>(environ une par kilomètre)</small></span></label>
+      </section>
+
+      <!-- Relief -->
+      <section id="tab-relief" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-relief" hidden>
+        <label class="check"><input type="checkbox" id="f-relief" checked><span>Relief <small>(Copernicus GLO-90, par Open-Meteo)</small></span></label>
+        <div class="field"><label for="f-vscale">Échelle verticale</label>
+          <input id="f-vscale" type="number" inputmode="decimal" min="0.5" max="50" step="0.1" placeholder="comme l'échelle">
+          <small>Mètres réels pour 1 m de jeu, en hauteur. Vide : la même que l'échelle, les pentes sont alors les vraies. Plus petite : relief accentué.</small></div>
+        <p id="relief-status" class="note" role="status" aria-live="polite">Le relief sera chargé quand un tracé existera.</p>
+        <button type="button" id="relief-retry" class="btn" hidden>Réessayer</button>
+        <canvas id="profile" class="profile" width="600" height="180" aria-label="Profil d'altitude du circuit"></canvas>
+        <dl class="stats">
+          <div><dt>Dénivelé positif</dt><dd id="rl-climb">—</dd></div>
+          <div><dt>Altitudes</dt><dd id="rl-range">—</dd></div>
+        </dl>
+        <p class="note">C'est un modèle de <b>surface</b> à 90 m : la canopée et les bâtiments y font des bosses qui
+          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé sur 90 m, et les pentes sont limitées à 30 %.</p>
+      </section>
+
+      <!-- Envoi -->
+      <section id="tab-send" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-send" hidden>
+        <div class="buttons">
+          <button type="button" id="download" class="btn" disabled>Télécharger</button>
+          <button type="button" id="copy" class="btn" disabled>Copier</button>
+          <button type="button" id="open" class="btn">Ouvrir…</button>
+          <input type="file" id="open-file" accept=".json,application/json" hidden>
+        </div>
+        <p id="export-status" class="note" role="status" aria-live="polite"></p>
+
+        <h2>Envoyer au jeu</h2>
+        <div class="field"><label for="f-token">Jeton GitHub</label>
+          <input id="f-token" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="github_pat_…">
+          <small>Il reste dans ce navigateur : il n'est écrit ni dans le circuit, ni ailleurs.</small></div>
+        <label class="check"><input type="checkbox" id="f-remember"><span>Mémoriser le jeton sur cet appareil</span></label>
+        <button type="button" id="send" class="btn primary wide" disabled>Envoyer au jeu</button>
+        <div id="send-status" class="send-status" role="status" aria-live="polite"></div>
+
+        <details class="help">
+          <summary>Créer le jeton</summary>
+          <ol>
+            <li>Sur GitHub : <i>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</i>.</li>
+            <li><i>Repository access</i> : « Only select repositories », et seulement <code id="repo-name"></code>.</li>
+            <li><i>Permissions → Repository permissions → Contents</i> : « Read and write ». Rien d'autre.</li>
+            <li>Copiez le jeton (il commence par <code>github_pat_</code>) et collez-le ci-dessus.</li>
+          </ol>
+          <p><a id="readme-link" href="#" target="_blank" rel="noopener">Mode d'emploi complet</a></p>
+        </details>
+      </section>
+    </div>
+  </aside>
+</div>
+
+<noscript><p style="padding:1rem">Cet éditeur a besoin de JavaScript.</p></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script id="core">
+/* ==========================================================================
+   CircuitCore: pure computation, no DOM, no network, no host API.
+   Everything here runs unchanged under Node (the tests extract this block
+   and evaluate it in an empty node:vm context).
+
+   Sections
+     1. Constants
+     2. SHA-256 and the canonical hash of FORMAT.md
+     3. Geodesy: WGS84, ECEF, local tangent plane (ENU) and its inverse
+     4. OSM tags: classes, surfaces, widths
+     5. Road graph, spatial grid, snapping
+     6. Routing: Dijkstra on a binary heap, legs, whole route
+     7. Polyline tools: resampling, smoothing, slope limiting
+     8. Elevation sampling plan and profile
+     9. The export chain: buildTrack()
+    10. Checking, serialising and reading a track
+    11. Catalogue (tracks/index.json)
+   ========================================================================== */
+(function (root) {
+  'use strict';
+
+  var C = {};
+
+  /* ---------------------------------------------------------------- 1. Constants */
+
+  C.FORMAT = 'cambotrack';
+  C.VERSION = 1;
+  C.CATALOG_FORMAT = 'cambotrack-catalog';
+
+  // Fixed surface table, in this order (FORMAT.md, Surfaces).
+  C.SURFACES = ['asphalt', 'concrete', 'paved', 'gravel', 'dirt', 'sand', 'unknown'];
+
+  // highway=* values never loaded into the graph.
+  C.EXCLUDED_CLASSES = ['footway', 'steps', 'pedestrian', 'construction', 'proposed', 'abandoned'];
+
+  // Classes the router may use by default. "track" is the one the
+  // « Autoriser les pistes » checkbox removes.
+  C.DEFAULT_ALLOWED = ['trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
+    'tertiary', 'tertiary_link', 'unclassified', 'residential', 'track'];
+  C.TRACK_CLASS = 'track';
+
+  C.GAMES = ['3d_buggy', 'cambodia_rally'];
+
+  // Reference speed of the games: the 21.3 km stage takes 20 minutes.
+  C.REF_SPEED = 17.75;
+
+  C.ELEVATION_SOURCE = 'copernicus-glo90/open-meteo';
+  C.ATTRIBUTION = '© OpenStreetMap contributors (ODbL 1.0)';
+  C.ATTRIBUTION_RELIEF = ' ; relief : Copernicus DEM GLO-90 via Open-Meteo';
+
+  // Limits of the format (FORMAT.md, « Limites vérifiées par les jeux »).
+  C.LIMITS = {
+    maxBytes: 4194304, minPoints: 8, maxPoints: 20000, maxXZ: 60000, maxY: 3000,
+    minWidth: 3, maxWidth: 30, minGap: 0.5, maxGap: 50, maxSlope: 0.6, minLength: 400,
+    maxTotalLength: 300000, maxCheckpoints: 200, maxGates: 400, maxLaps: 20,
+    minSpacing: 1, maxSpacing: 20, maxWaypoints: 2000
+  };
+
+  // The editor's own rules and defaults.
+  C.RULES = {
+    warnShort: 1500, warnLong: 40000,       // game metres
+    hairpinRadius: 8,                        // game metres
+    exportSlope: 0.30,                       // slope kept in the file, half the format's limit
+    checkpointShort: 1000, checkpointLong: 2000, checkpointSwitch: 12000,
+    checkpointClear: 150,                    // from the start and the finish
+    gateEvery: 1000, gateCurvature: 1 / 300, gateStraight: 60, gateApart: 600, gateClear: 150,
+    bridgeFactor: 1.4, bridgeMin: 6, trackWidth: 8, widthTaper: 0.25,
+    spikeMax: 30,                            // real metres: shorter U-turns at a waypoint are dropped
+    elevationStep: 30, elevationSmooth: 90,  // real metres
+    elevationLattice: 0.00025                // degrees (about 28 m): cache key of an elevation sample
+  };
+
+  C.DEFAULTS = {
+    kind: 'loop', laps: 3, scale: 2.5, vertical_scale: 2.5, road_width: 11, spacing: 4,
+    smooth_m: 15, narrow_tracks: true, bridge_widths: true, checkpoint_every_m: 0, gates_auto: true,
+    relief: true
+  };
+
+  /* ------------------------------------------------- 2. SHA-256 and canonical hash */
+
+  var SHA_K = new Uint32Array([
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]);
+
+  // UTF-8 bytes of a string (lone surrogates become U+FFFD, as TextEncoder does).
+  C.utf8 = function (str) {
+    var out = [], i, c, d;
+    for (i = 0; i < str.length; i++) {
+      c = str.charCodeAt(i);
+      if (c >= 0xd800 && c <= 0xdbff) {
+        d = i + 1 < str.length ? str.charCodeAt(i + 1) : 0;
+        if (d >= 0xdc00 && d <= 0xdfff) { c = 0x10000 + ((c - 0xd800) << 10) + (d - 0xdc00); i++; }
+        else c = 0xfffd;
+      } else if (c >= 0xdc00 && c <= 0xdfff) c = 0xfffd;
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) out.push(0xc0 | (c >> 6), 0x80 | (c & 63));
+      else if (c < 0x10000) out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+      else out.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    }
+    return Uint8Array.from(out);
+  };
+
+  // SHA-256 of a byte array, as 64 lowercase hexadecimal characters.
+  C.sha256Bytes = function (bytes) {
+    var n = bytes.length, total = ((n + 9 + 63) >> 6) << 6;
+    var msg = new Uint8Array(total), w = new Uint32Array(64);
+    var h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a,
+      h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+    var i, o, a, b, c, d, e, f, g, h, s0, s1, t1, t2, bits = n * 8, hex = '', hs, k;
+    msg.set(bytes);
+    msg[n] = 0x80;
+    // Message length in bits, big endian, on 64 bits.
+    var hi = Math.floor(bits / 4294967296), lo = bits >>> 0;
+    msg[total - 8] = hi >>> 24; msg[total - 7] = (hi >>> 16) & 255; msg[total - 6] = (hi >>> 8) & 255; msg[total - 5] = hi & 255;
+    msg[total - 4] = lo >>> 24; msg[total - 3] = (lo >>> 16) & 255; msg[total - 2] = (lo >>> 8) & 255; msg[total - 1] = lo & 255;
+    for (o = 0; o < total; o += 64) {
+      for (i = 0; i < 16; i++) {
+        w[i] = (msg[o + i * 4] << 24) | (msg[o + i * 4 + 1] << 16) | (msg[o + i * 4 + 2] << 8) | msg[o + i * 4 + 3];
+      }
+      for (i = 16; i < 64; i++) {
+        s0 = w[i - 15]; s0 = ((s0 >>> 7) | (s0 << 25)) ^ ((s0 >>> 18) | (s0 << 14)) ^ (s0 >>> 3);
+        s1 = w[i - 2]; s1 = ((s1 >>> 17) | (s1 << 15)) ^ ((s1 >>> 19) | (s1 << 13)) ^ (s1 >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+      }
+      a = h0; b = h1; c = h2; d = h3; e = h4; f = h5; g = h6; h = h7;
+      for (i = 0; i < 64; i++) {
+        s1 = ((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7));
+        t1 = (h + s1 + ((e & f) ^ (~e & g)) + SHA_K[i] + w[i]) | 0;
+        s0 = ((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10));
+        t2 = (s0 + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0;
+      h4 = (h4 + e) | 0; h5 = (h5 + f) | 0; h6 = (h6 + g) | 0; h7 = (h7 + h) | 0;
+    }
+    hs = [h0, h1, h2, h3, h4, h5, h6, h7];
+    for (k = 0; k < 8; k++) hex += ('00000000' + (hs[k] >>> 0).toString(16)).slice(-8);
+    return hex;
+  };
+
+  C.sha256 = function (str) { return C.sha256Bytes(C.utf8(str)); };
+
+  // q2 and q3 of FORMAT.md: integers, in centimetres and in thousandths.
+  function q2(v) { return Math.floor(v * 100 + 0.5); }
+  function q3(v) { return Math.floor(v * 1000 + 0.5); }
+  // A value rounded to the centimetre, as written in the file.
+  function cm(v) { var q = q2(v); return q === 0 ? 0 : q / 100; }
+  function round1(v) { return Math.round(v * 10) / 10; }
+  C.q2 = q2;
+  C.q3 = q3;
+
+  // The canonical text of FORMAT.md (section Hash). Every line ends with \n.
+  C.canonicalText = function (t) {
+    var pts = t.points, blocks = new Array(pts.length), i, p;
+    for (i = 0; i < pts.length; i++) {
+      p = pts[i];
+      blocks[i] = q2(p[0]) + ',' + q2(p[1]) + ',' + q2(p[2]) + ',' + q2(p[3]) + ',' + p[4] + ',' + p[5];
+    }
+    return 'cambotrack/1\n' +
+      'kind=' + t.kind + '\n' +
+      'laps=' + (t.laps === undefined || t.laps === null ? 1 : t.laps) + '\n' +
+      'scale=' + q3(t.scale) + '\n' +
+      'vertical_scale=' + q3(t.vertical_scale) + '\n' +
+      'road_width=' + q2(t.road_width) + '\n' +
+      'spacing=' + q2(t.spacing) + '\n' +
+      'surfaces=' + t.surfaces.join(',') + '\n' +
+      'points=' + pts.length + '\n' +
+      blocks.join(';') + '\n' +
+      'checkpoints=' + t.checkpoints.join(',') + '\n' +
+      'gates=' + (t.gates ? t.gates.join(',') : '') + '\n';
+  };
+
+  C.trackHash = function (t) { return C.sha256(C.canonicalText(t)); };
+
+  /* ------------------------------------------------------------------ 3. Geodesy */
+
+  var WGS84_A = 6378137.0, WGS84_F = 1 / 298.257223563;
+  var WGS84_E2 = WGS84_F * (2 - WGS84_F);
+  var D2R = Math.PI / 180;
+
+  // Geodetic coordinates (degrees, metres above the ellipsoid) to Earth-centred metres.
+  C.geodeticToEcef = function (lat, lon, h) {
+    var phi = lat * D2R, lam = lon * D2R, s = Math.sin(phi), c = Math.cos(phi);
+    var n = WGS84_A / Math.sqrt(1 - WGS84_E2 * s * s);
+    return [(n + h) * c * Math.cos(lam), (n + h) * c * Math.sin(lam), (n * (1 - WGS84_E2) + h) * s];
+  };
+
+  // The inverse, by fixed-point iteration on the latitude (converges in 3 or 4 rounds).
+  C.ecefToGeodetic = function (x, y, z) {
+    var lon = Math.atan2(y, x), p = Math.sqrt(x * x + y * y);
+    var lat = Math.atan2(z, p * (1 - WGS84_E2)), h = 0, i, s, n, next;
+    for (i = 0; i < 12; i++) {
+      s = Math.sin(lat);
+      n = WGS84_A / Math.sqrt(1 - WGS84_E2 * s * s);
+      h = Math.abs(lat) < 1.4 ? p / Math.cos(lat) - n : z / s - n * (1 - WGS84_E2);
+      next = Math.atan2(z, p * (1 - WGS84_E2 * n / (n + h)));
+      if (Math.abs(next - lat) < 1e-15) { lat = next; break; }
+      lat = next;
+    }
+    return [lat / D2R, lon / D2R, h];
+  };
+
+  // Local tangent plane at (lat0, lon0) on the ellipsoid: east, north, up in metres.
+  // forward() takes points on the ellipsoid; inverse() returns the point of the
+  // ellipsoid whose east and north are the ones given.
+  C.makeEnu = function (lat0, lon0) {
+    var o = C.geodeticToEcef(lat0, lon0, 0);
+    var sp = Math.sin(lat0 * D2R), cp = Math.cos(lat0 * D2R), sl = Math.sin(lon0 * D2R), cl = Math.cos(lon0 * D2R);
+    return {
+      lat0: lat0, lon0: lon0,
+      forward: function (lat, lon) {
+        var q = C.geodeticToEcef(lat, lon, 0), dx = q[0] - o[0], dy = q[1] - o[1], dz = q[2] - o[2];
+        return [-sl * dx + cl * dy, -sp * cl * dx - sp * sl * dy + cp * dz, cp * cl * dx + cp * sl * dy + sp * dz];
+      },
+      inverse: function (e, n) {
+        // The up coordinate is the unknown: start from the drop of a sphere and
+        // correct it until the point sits on the ellipsoid.
+        var u = -(e * e + n * n) / (2 * WGS84_A), i, g;
+        for (i = 0; i < 8; i++) {
+          g = C.ecefToGeodetic(
+            o[0] - sl * e - sp * cl * n + cp * cl * u,
+            o[1] + cl * e - sp * sl * n + cp * sl * u,
+            o[2] + cp * n + sp * u);
+          if (Math.abs(g[2]) < 1e-5) break;
+          u -= g[2];
+        }
+        return [g[0], g[1]];
+      }
+    };
+  };
+
+  // Metres per degree of latitude and of longitude at a latitude (WGS84).
+  C.metersPerDegree = function (lat) {
+    var s = Math.sin(lat * D2R), w = 1 - WGS84_E2 * s * s;
+    return {
+      lat: WGS84_A * (1 - WGS84_E2) / Math.pow(w, 1.5) * D2R,
+      lon: WGS84_A / Math.sqrt(w) * Math.cos(lat * D2R) * D2R
+    };
+  };
+
+  // Distance in metres between two close points (flat approximation at their latitude).
+  C.distance = function (lat1, lon1, lat2, lon2) {
+    var m = C.metersPerDegree((lat1 + lat2) / 2);
+    var dx = (lon2 - lon1) * m.lon, dy = (lat2 - lat1) * m.lat;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Area of a latitude/longitude rectangle, in km².
+  C.bboxAreaKm2 = function (south, west, north, east) {
+    var m = C.metersPerDegree((south + north) / 2);
+    return Math.abs((north - south) * m.lat * (east - west) * m.lon) / 1e6;
+  };
+
+  /* ---------------------------------------------------------------- 4. OSM tags */
+
+  var EXCLUDED = {};
+  C.EXCLUDED_CLASSES.forEach(function (c) { EXCLUDED[c] = true; });
+
+  var SURFACE_OF = {
+    asphalt: 0,
+    concrete: 1, 'concrete:plates': 1, 'concrete:lanes': 1,
+    paved: 2, paving_stones: 2, sett: 2, cobblestone: 2, 'cobblestone:flattened': 2, unhewn_cobblestone: 2,
+    bricks: 2, brick: 2, chipseal: 2, metal: 2, wood: 2, grass_paver: 2,
+    gravel: 3, fine_gravel: 3, compacted: 3, pebblestone: 3,
+    dirt: 4, earth: 4, ground: 4, unpaved: 4, mud: 4, laterite: 4, clay: 4, soil: 4, grass: 4,
+    sand: 5
+  };
+  var PAVED_BY_DEFAULT = {
+    motorway: 1, motorway_link: 1, trunk: 1, trunk_link: 1, primary: 1, primary_link: 1,
+    secondary: 1, secondary_link: 1, tertiary: 1, tertiary_link: 1
+  };
+
+  // Index in C.SURFACES for a surface=* value and a highway class.
+  C.surfaceIndex = function (surface, cls) {
+    var s = typeof surface === 'string' ? surface.split(';')[0].trim().toLowerCase() : '';
+    if (Object.prototype.hasOwnProperty.call(SURFACE_OF, s)) return SURFACE_OF[s];
+    if (PAVED_BY_DEFAULT[cls]) return 0;
+    if (cls === 'track') return 4;
+    return 6;
+  };
+
+  // width=* in metres, or null. Accepts "4", "4.5", "4,5", "4 m", "12 ft", "12'".
+  C.parseWidth = function (v) {
+    if (typeof v === 'number') return isFinite(v) && v > 0 ? v : null;
+    if (typeof v !== 'string') return null;
+    var m = /^\s*([0-9]+(?:[.,][0-9]+)?)\s*(m|meter|metre|meters|metres|ft|feet|')?\s*$/i.exec(v);
+    if (!m) return null;
+    var x = parseFloat(m[1].replace(',', '.'));
+    if (m[2] && /^(ft|feet|')$/i.test(m[2])) x *= 0.3048;
+    return isFinite(x) && x > 0 ? x : null;
+  };
+
+  // Display family of a highway class: one polyline per family on the map.
+  C.classFamily = function (cls) {
+    switch (cls) {
+      case 'motorway': case 'motorway_link': case 'trunk': case 'trunk_link':
+      case 'primary': case 'primary_link': case 'secondary': case 'secondary_link':
+        return 'major';
+      case 'tertiary': case 'tertiary_link': case 'unclassified': case 'residential':
+      case 'living_street': case 'road':
+        return 'minor';
+      case 'track':
+        return 'track';
+      default:
+        return 'other';
+    }
+  };
+  C.FAMILIES = ['major', 'minor', 'track', 'other'];
+
+  function isSet(v) { return v !== undefined && v !== null && v !== '' && v !== 'no'; }
+
+  /* ------------------------------------------ 5. Road graph, grid index, snapping */
+
+  var GRID_CELL = 0.002;   // degrees: about 220 m
+
+  // Nodes are numbered in order of arrival and never renumbered, edges likewise:
+  // a waypoint can keep the number of its edge while more roads are loaded.
+  C.createGraph = function () {
+    return {
+      nodeIndex: new Map(), nodeId: [], lat: [], lon: [],
+      ways: [], wayIndex: new Map(),
+      edgeA: [], edgeB: [], edgeWay: [], edgeLen: [],
+      adjStart: new Int32Array(1), adjEdge: new Int32Array(0),
+      grid: new Map(), version: 0, scratch: null, allowKey: null, allowWay: null
+    };
+  };
+
+  function gridKey(ix, iy) { return ix * 100000 + iy; }
+  function cellX(lon) { return Math.floor((lon + 180) / GRID_CELL); }
+  function cellY(lat) { return Math.floor((lat + 90) / GRID_CELL); }
+
+  // Merges an Overpass answer (way[highway] + their nodes) into the graph.
+  // Returns what was added; ways already there (same OSM id) are skipped.
+  C.addOverpass = function (g, data) {
+    var els = data && data.elements, i, j, el, tags, cls, idx, a, b, e, way, nodes, first;
+    if (!Array.isArray(els)) throw new Error('bad_overpass');
+    var res = { ways: [], nodes: 0, edges: 0, known: 0, excluded: 0 };
+    for (i = 0; i < els.length; i++) {
+      el = els[i];
+      if (el && el.type === 'node' && isFinite(el.lat) && isFinite(el.lon) && !g.nodeIndex.has(el.id)) {
+        g.nodeIndex.set(el.id, g.lat.length);
+        g.nodeId.push(el.id); g.lat.push(el.lat); g.lon.push(el.lon);
+        res.nodes++;
+      }
+    }
+    first = g.edgeA.length;
+    for (i = 0; i < els.length; i++) {
+      el = els[i];
+      if (!el || el.type !== 'way' || !Array.isArray(el.nodes)) continue;
+      tags = el.tags || {};
+      cls = tags.highway;
+      if (typeof cls !== 'string' || !cls) continue;
+      if (EXCLUDED[cls] || tags.area === 'yes') { res.excluded++; continue; }
+      if (g.wayIndex.has(el.id)) { res.known++; continue; }
+      // "out geom" answers carry the coordinates on the way itself.
+      if (Array.isArray(el.geometry)) {
+        for (j = 0; j < el.nodes.length; j++) {
+          if (el.geometry[j] && !g.nodeIndex.has(el.nodes[j])) {
+            g.nodeIndex.set(el.nodes[j], g.lat.length);
+            g.nodeId.push(el.nodes[j]); g.lat.push(el.geometry[j].lat); g.lon.push(el.geometry[j].lon);
+            res.nodes++;
+          }
+        }
+      }
+      nodes = [];
+      for (j = 0; j < el.nodes.length; j++) {
+        idx = g.nodeIndex.get(el.nodes[j]);
+        nodes.push(idx === undefined ? -1 : idx);
+      }
+      way = {
+        id: el.id, cls: cls, family: C.classFamily(cls), nodes: nodes,
+        surface: C.surfaceIndex(tags.surface, cls),
+        flags: (isSet(tags.bridge) ? 1 : 0) | (isSet(tags.tunnel) ? 2 : 0),
+        width: C.parseWidth(tags.width),
+        name: typeof tags.name === 'string' ? tags.name : ''
+      };
+      g.wayIndex.set(el.id, g.ways.length);
+      g.ways.push(way);
+      res.ways.push(g.ways.length - 1);
+      for (j = 0; j + 1 < nodes.length; j++) {
+        a = nodes[j]; b = nodes[j + 1];
+        if (a < 0 || b < 0 || a === b) continue;   // a missing node breaks the way there
+        g.edgeA.push(a); g.edgeB.push(b); g.edgeWay.push(g.ways.length - 1);
+        g.edgeLen.push(C.distance(g.lat[a], g.lon[a], g.lat[b], g.lon[b]));
+        res.edges++;
+      }
+    }
+    // Spatial grid: every new edge goes into the cells its bounding box covers.
+    for (e = first; e < g.edgeA.length; e++) {
+      a = g.edgeA[e]; b = g.edgeB[e];
+      var x0 = cellX(Math.min(g.lon[a], g.lon[b])), x1 = cellX(Math.max(g.lon[a], g.lon[b]));
+      var y0 = cellY(Math.min(g.lat[a], g.lat[b])), y1 = cellY(Math.max(g.lat[a], g.lat[b]));
+      for (var ix = x0; ix <= x1; ix++) {
+        for (var iy = y0; iy <= y1; iy++) {
+          var k = gridKey(ix, iy), cell = g.grid.get(k);
+          if (cell) cell.push(e); else g.grid.set(k, [e]);
+        }
+      }
+    }
+    // Adjacency in compressed rows, rebuilt whole: node -> its edges.
+    var n = g.lat.length, m = g.edgeA.length, start = new Int32Array(n + 1), fill, adj = new Int32Array(m * 2);
+    for (e = 0; e < m; e++) { start[g.edgeA[e] + 1]++; start[g.edgeB[e] + 1]++; }
+    for (i = 0; i < n; i++) start[i + 1] += start[i];
+    fill = start.slice(0, n);
+    for (e = 0; e < m; e++) { adj[fill[g.edgeA[e]]++] = e; adj[fill[g.edgeB[e]]++] = e; }
+    g.adjStart = start; g.adjEdge = adj;
+    g.version++;
+    g.scratch = null; g.allowKey = null;
+    return res;
+  };
+
+  // Per-way flag "the router may use it", cached for the last class list seen.
+  function allowFlags(g, allowed) {
+    var key = allowed ? allowed.join(',') : '*', i, set;
+    if (g.allowKey === key && g.allowWay && g.allowWay.length === g.ways.length) return g.allowWay;
+    g.allowWay = new Uint8Array(g.ways.length);
+    if (!allowed) g.allowWay.fill(1);
+    else {
+      set = {};
+      for (i = 0; i < allowed.length; i++) set[allowed[i]] = true;
+      for (i = 0; i < g.ways.length; i++) g.allowWay[i] = set[g.ways[i].cls] === true ? 1 : 0;
+    }
+    g.allowKey = key;
+    return g.allowWay;
+  }
+
+  // Nearest road segment within maxDist metres of a point, among the allowed
+  // classes (allowed: array of classes, or null for all). Returns null or
+  // { edge, t, lat, lon, dist, cls }: t runs from 0 at edgeA to 1 at edgeB.
+  C.snap = function (g, lat, lon, maxDist, allowed) {
+    var m = C.metersPerDegree(lat), mx = m.lon, my = m.lat;
+    var cellM = GRID_CELL * Math.min(mx, my);
+    var cx = cellX(lon), cy = cellY(lat), rings = Math.ceil(maxDist / cellM) + 1;
+    var allow = allowFlags(g, allowed), best = null, bestD = maxDist, r, ix, iy;
+    function scan(kx, ky) {
+      var cell = g.grid.get(gridKey(kx, ky)), i, e, a, b, ax, ay, bx, by, dx, dy, len2, t, px, py, d;
+      if (!cell) return;
+      for (i = 0; i < cell.length; i++) {
+        e = cell[i];
+        if (!allow[g.edgeWay[e]]) continue;
+        a = g.edgeA[e]; b = g.edgeB[e];
+        ax = (g.lon[a] - lon) * mx; ay = (g.lat[a] - lat) * my;
+        bx = (g.lon[b] - lon) * mx; by = (g.lat[b] - lat) * my;
+        dx = bx - ax; dy = by - ay; len2 = dx * dx + dy * dy;
+        t = len2 > 0 ? -(ax * dx + ay * dy) / len2 : 0;
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        px = ax + dx * t; py = ay + dy * t;
+        d = Math.sqrt(px * px + py * py);
+        if (d <= bestD && (best === null || d < bestD)) { bestD = d; best = { edge: e, t: t }; }
+      }
+    }
+    for (r = 0; r <= rings; r++) {
+      if (r === 0) scan(cx, cy);
+      else {
+        for (ix = cx - r; ix <= cx + r; ix++) { scan(ix, cy - r); scan(ix, cy + r); }
+        for (iy = cy - r + 1; iy <= cy + r - 1; iy++) { scan(cx - r, iy); scan(cx + r, iy); }
+      }
+      // Every cell not yet seen is at least r cells away.
+      if (best !== null && bestD <= r * cellM) break;
+    }
+    if (best === null) return null;
+    // t on a fixed grid of 1e-9: snapping the point returned gives the same t
+    // again, so a circuit reopened from its waypoints is rebuilt bit for bit.
+    best.t = Math.round(best.t * 1e9) / 1e9;
+    var p = C.edgePoint(g, best.edge, best.t);
+    return { edge: best.edge, t: best.t, lat: p[0], lon: p[1], dist: bestD, cls: g.ways[g.edgeWay[best.edge]].cls };
+  };
+
+  C.edgePoint = function (g, e, t) {
+    var a = g.edgeA[e], b = g.edgeB[e];
+    return [g.lat[a] + (g.lat[b] - g.lat[a]) * t, g.lon[a] + (g.lon[b] - g.lon[a]) * t];
+  };
+
+  // Position of a point along an edge, from 0 at edgeA to 1 at edgeB.
+  function edgeParam(g, e, lat, lon) {
+    var a = g.edgeA[e], b = g.edgeB[e], m = C.metersPerDegree(lat);
+    var ax = (g.lon[a] - lon) * m.lon, ay = (g.lat[a] - lat) * m.lat;
+    var dx = (g.lon[b] - g.lon[a]) * m.lon, dy = (g.lat[b] - g.lat[a]) * m.lat, len2 = dx * dx + dy * dy;
+    var t = len2 > 0 ? -(ax * dx + ay * dy) / len2 : 0;
+    return t < 0 ? 0 : t > 1 ? 1 : t;
+  }
+
+  /* -------------------------------------------------------------- 6. Routing */
+
+  // Binary min-heap of (key, value) pairs.
+  function Heap() { this.k = []; this.v = []; }
+  Heap.prototype.push = function (key, val) {
+    var k = this.k, v = this.v, i = k.length, p;
+    k.push(key); v.push(val);
+    while (i > 0) {
+      p = (i - 1) >> 1;
+      if (k[p] <= key) break;
+      k[i] = k[p]; v[i] = v[p]; i = p;
+    }
+    k[i] = key; v[i] = val;
+  };
+  Heap.prototype.pop = function () {
+    var k = this.k, v = this.v, n = k.length - 1, top = v[0], key = k[n], val = v[n], i = 0, c;
+    this.topKey = k[0];
+    k.pop(); v.pop();
+    if (n > 0) {
+      for (;;) {
+        c = 2 * i + 1;
+        if (c >= n) break;
+        if (c + 1 < n && k[c + 1] < k[c]) c++;
+        if (k[c] >= key) break;
+        k[i] = k[c]; v[i] = v[c]; i = c;
+      }
+      k[i] = key; v[i] = val;
+    }
+    return top;
+  };
+
+  // Shortest path between two snapped points, each { edge, t }.
+  // Dijkstra starts from both ends of the first segment with the partial
+  // lengths, and reaches a virtual target through both ends of the last one.
+  // Returns { ok: true, length, lat[], lon[], seg[] } where seg[i] is the edge
+  // of the stretch from point i to point i + 1, or { ok: false, reason }.
+  C.route = function (g, from, to, allowed) {
+    var allow = allowFlags(g, allowed), n = g.lat.length;
+    if (!from || !to || from.edge < 0 || to.edge < 0 || from.edge >= g.edgeA.length || to.edge >= g.edgeA.length) {
+      return { ok: false, reason: 'unsnapped' };
+    }
+    if (!allow[g.edgeWay[from.edge]] || !allow[g.edgeWay[to.edge]]) return { ok: false, reason: 'class' };
+    var pf = C.edgePoint(g, from.edge, from.t), pt = C.edgePoint(g, to.edge, to.t);
+    // Both points on the same segment: the segment itself is the shortest way.
+    if (from.edge === to.edge) {
+      return {
+        ok: true, length: Math.abs(to.t - from.t) * g.edgeLen[from.edge],
+        lat: [pf[0], pt[0]], lon: [pf[1], pt[1]], seg: [from.edge]
+      };
+    }
+    var sc = g.scratch;
+    if (!sc || sc.dist.length !== n + 1) {
+      sc = g.scratch = { dist: new Float64Array(n + 1), prev: new Int32Array(n + 1), stamp: new Int32Array(n + 1), run: 0 };
+    }
+    var dist = sc.dist, prev = sc.prev, stamp = sc.stamp, run = ++sc.run;
+    var heap = new Heap(), T = n, lenF = g.edgeLen[from.edge], lenT = g.edgeLen[to.edge];
+    var ta = g.edgeA[to.edge], tb = g.edgeB[to.edge], u, d, i, e, v, nd, s;
+    function relax(node, cost, via) {
+      if (stamp[node] !== run || cost < dist[node]) {
+        stamp[node] = run; dist[node] = cost; prev[node] = via; heap.push(cost, node);
+      }
+    }
+    relax(g.edgeA[from.edge], from.t * lenF, -1);
+    relax(g.edgeB[from.edge], (1 - from.t) * lenF, -1);
+    var found = false;
+    while (heap.k.length) {
+      u = heap.pop(); d = heap.topKey;
+      if (d > dist[u]) continue;           // stale entry
+      if (u === T) { found = true; break; }
+      if (u === ta) relax(T, d + to.t * lenT, ta);
+      if (u === tb) relax(T, d + (1 - to.t) * lenT, tb);
+      for (i = g.adjStart[u], s = g.adjStart[u + 1]; i < s; i++) {
+        e = g.adjEdge[i];
+        if (!allow[g.edgeWay[e]]) continue;
+        v = g.edgeA[e] === u ? g.edgeB[e] : g.edgeA[e];
+        nd = d + g.edgeLen[e];
+        if (stamp[v] !== run || nd < dist[v]) {
+          stamp[v] = run; dist[v] = nd; prev[v] = e; heap.push(nd, v);
+        }
+      }
+    }
+    if (!found) return { ok: false, reason: 'no_path' };
+    // Walk back from the last segment's end to one of the first segment's ends.
+    var nodes = [], edges = [];
+    u = prev[T];
+    for (;;) {
+      nodes.push(u);
+      e = prev[u];
+      if (e < 0) break;
+      edges.push(e);
+      u = g.edgeA[e] === u ? g.edgeB[e] : g.edgeA[e];
+    }
+    nodes.reverse(); edges.reverse();
+    var lat = [pf[0]], lon = [pf[1]], seg = [from.edge];
+    for (i = 0; i < nodes.length; i++) {
+      lat.push(g.lat[nodes[i]]); lon.push(g.lon[nodes[i]]);
+      seg.push(i < edges.length ? edges[i] : to.edge);
+    }
+    lat.push(pt[0]); lon.push(pt[1]);
+    return { ok: true, length: dist[T], lat: lat, lon: lon, seg: seg };
+  };
+
+  C.createLegCache = function () { return new Map(); };
+
+  // All the legs of a course through its waypoints ({ edge, t } each), and the
+  // line they make together. A loop gets a closing leg back to the first one.
+  // cache (optional) keeps each leg until the graph or the classes change.
+  C.buildRoute = function (g, wps, kind, allowed, cache) {
+    var n = wps.length, legs = [], i, a, b, key, leg, ok = n >= 2, length = 0;
+    var pairs = n < 2 ? 0 : (kind === 'loop' ? n : n - 1);
+    var tag = '|' + g.version + '|' + (allowed ? allowed.join(',') : '*');
+    for (i = 0; i < pairs; i++) {
+      a = wps[i]; b = wps[(i + 1) % n];
+      key = a.edge + ':' + a.t + '>' + b.edge + ':' + b.t + tag;
+      leg = cache ? cache.get(key) : undefined;
+      if (!leg) {
+        leg = C.route(g, a, b, allowed);
+        if (cache) {
+          if (cache.size > 4000) cache.clear();
+          cache.set(key, leg);
+        }
+      }
+      legs.push(leg);
+      if (leg.ok) length += leg.length; else ok = false;
+    }
+    var line = null;
+    if (ok) {
+      var lat = [], lon = [], seg = [], j;
+      for (i = 0; i < legs.length; i++) {
+        leg = legs[i];
+        for (j = i === 0 ? 0 : 1; j < leg.lat.length; j++) { lat.push(leg.lat[j]); lon.push(leg.lon[j]); }
+        for (j = 0; j < leg.seg.length; j++) seg.push(leg.seg[j]);
+      }
+      // seg[i] belongs to the stretch i -> i + 1; a loop's last point repeats its first.
+      line = { lat: lat, lon: lon, seg: seg, closed: kind === 'loop' };
+    }
+    return { ok: ok, legs: legs, line: line, length: length };
+  };
+
+  /* ------------------------------------------------------ 7. Polyline tools */
+
+  // Step 1 of the export chain: drop duplicate points, then the short U-turns a
+  // waypoint snapped beside a junction leaves behind (out and back on the same
+  // few metres). For a loop the repeated last point is dropped: the line closes
+  // implicitly and seg has one entry per point.
+  C.cleanLine = function (line, spikeMax) {
+    var lat = [], lon = [], seg = [], n = line.lat.length, i, k, len, trimmed = 0;
+    function near(a, b) { return C.distance(lat[a], lon[a], lat[b], lon[b]) < 0.01; }
+    for (i = 0; i < n; i++) {
+      k = lat.length;
+      if (k > 0 && C.distance(lat[k - 1], lon[k - 1], line.lat[i], line.lon[i]) < 0.01) continue;
+      lat.push(line.lat[i]); lon.push(line.lon[i]);
+      // seg[k - 1] is the edge of the stretch reaching kept point k: the last one
+      // walked, the stretches of no length before it went with their duplicates.
+      if (k > 0) seg.push(line.seg[Math.min(i - 1, line.seg.length - 1)]);
+    }
+    i = 1;
+    while (i + 1 < lat.length) {
+      if (near(i - 1, i + 1)) {
+        // Point i is the tip of an out-and-back; k counts the mirrored points.
+        k = 1; len = C.distance(lat[i - 1], lon[i - 1], lat[i], lon[i]);
+        while (i - k - 1 >= 0 && i + k + 1 < lat.length && near(i - k - 1, i + k + 1)) {
+          len += C.distance(lat[i - k - 1], lon[i - k - 1], lat[i - k], lon[i - k]);
+          k++;
+        }
+        if (len <= spikeMax) {
+          lat.splice(i - k + 1, 2 * k); lon.splice(i - k + 1, 2 * k); seg.splice(i - k, 2 * k);
+          trimmed++;
+          i = Math.max(1, i - k);
+          continue;
+        }
+      }
+      i++;
+    }
+    if (line.closed) {
+      if (lat.length > 1 && near(0, lat.length - 1)) { lat.pop(); lon.pop(); }
+      else if (seg.length) seg.push(seg[seg.length - 1]);
+    }
+    return { lat: lat, lon: lon, seg: seg, closed: !!line.closed, trimmed: trimmed };
+  };
+
+  // Cumulative length along a polyline; a closed one gets its closing stretch.
+  function cumulative(x, y, closed) {
+    var n = x.length, m = closed ? n : n - 1, cum = new Float64Array(m + 1), i, j, dx, dy;
+    for (i = 0; i < m; i++) {
+      j = i + 1 === n ? 0 : i + 1;
+      dx = x[j] - x[i]; dy = y[j] - y[i];
+      cum[i + 1] = cum[i] + Math.sqrt(dx * dx + dy * dy);
+    }
+    return cum;
+  }
+
+  // count points at 0, step, 2 step… along the polyline. pos[k] is the position
+  // of point k in the source, as "stretch index + fraction".
+  function resample(x, y, cum, count, step) {
+    var n = x.length, m = cum.length - 1, total = cum[m];
+    var ox = new Float64Array(count), oy = new Float64Array(count), pos = new Float64Array(count);
+    var j = 0, k, s, d, t, b;
+    for (k = 0; k < count; k++) {
+      s = k * step;
+      if (s > total) s = total;
+      while (j < m - 1 && cum[j + 1] < s) j++;
+      d = cum[j + 1] - cum[j];
+      t = d > 0 ? (s - cum[j]) / d : 0;
+      if (t > 1) t = 1;
+      b = j + 1 === n ? 0 : j + 1;
+      ox[k] = x[j] + (x[b] - x[j]) * t;
+      oy[k] = y[j] + (y[b] - y[j]) * t;
+      pos[k] = j + t;
+    }
+    return { x: ox, y: oy, pos: pos };
+  }
+
+  // Moving average over h points either side. Open line: the window shrinks
+  // towards the ends, which stay where they are. Closed line: it wraps.
+  function movingAverage(v, closed, h) {
+    var n = v.length, out = new Float64Array(n), P = new Float64Array(n + 1), i, lo, hi, w, sum;
+    if (h < 1 || n < 3) { out.set(v); return out; }
+    for (i = 0; i < n; i++) P[i + 1] = P[i] + v[i];
+    if (closed) {
+      h = Math.min(h, Math.floor((n - 1) / 2));
+      for (i = 0; i < n; i++) {
+        lo = i - h; hi = i + h;
+        if (lo < 0) sum = P[n] - P[lo + n] + P[hi + 1];
+        else if (hi >= n) sum = P[n] - P[lo] + P[hi - n + 1];
+        else sum = P[hi + 1] - P[lo];
+        out[i] = sum / (2 * h + 1);
+      }
+    } else {
+      for (i = 0; i < n; i++) {
+        w = Math.min(h, i, n - 1 - i);
+        out[i] = (P[i + w + 1] - P[i - w]) / (2 * w + 1);
+      }
+    }
+    return out;
+  }
+
+  // The highest function under v whose step from i to i + 1 never exceeds
+  // lim[i] (closed: lim[n - 1] is the step from the last point back to the
+  // first). Forward pass then backward pass; twice round for a closed line.
+  function envelopeBelow(v, lim, closed) {
+    var n = v.length, o = Float64Array.from(v), rounds = closed ? 2 : 1, r, i;
+    for (r = 0; r < rounds; r++) {
+      for (i = 1; i < n; i++) if (o[i] > o[i - 1] + lim[i - 1]) o[i] = o[i - 1] + lim[i - 1];
+      if (closed && o[0] > o[n - 1] + lim[n - 1]) o[0] = o[n - 1] + lim[n - 1];
+    }
+    for (r = 0; r < rounds; r++) {
+      if (closed && o[n - 1] > o[0] + lim[n - 1]) o[n - 1] = o[0] + lim[n - 1];
+      for (i = n - 2; i >= 0; i--) if (o[i] > o[i + 1] + lim[i]) o[i] = o[i + 1] + lim[i];
+    }
+    return o;
+  }
+
+  // Slope limiting: halfway between the highest admissible profile under v and
+  // the lowest one over it, so summits are cut as much as hollows are filled.
+  function limitSlope(v, lim, closed) {
+    var n = v.length, neg = new Float64Array(n), lo, up, out = new Float64Array(n), i;
+    for (i = 0; i < n; i++) neg[i] = -v[i];
+    lo = envelopeBelow(v, lim, closed);
+    up = envelopeBelow(neg, lim, closed);
+    for (i = 0; i < n; i++) out[i] = (lo[i] - up[i]) / 2;
+    return out;
+  }
+  C.limitSlope = limitSlope;
+  C.movingAverage = movingAverage;
+
+  // Curvature (1 / radius) of the circle through three points.
+  function curvature(ax, ay, bx, by, cx, cy) {
+    var ab = Math.sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+    var bc = Math.sqrt((cx - bx) * (cx - bx) + (cy - by) * (cy - by));
+    var ca = Math.sqrt((ax - cx) * (ax - cx) + (ay - cy) * (ay - cy));
+    var den = ab * bc * ca;
+    if (den < 1e-12) return ab + bc > 1e-9 && ca < 1e-9 ? Infinity : 0;
+    return 2 * Math.abs((bx - ax) * (cy - ay) - (by - ay) * (cx - ax)) / den;
+  }
+
+  /* ------------------------------------------------ 8. Elevation plan, profile */
+
+  // Where to ask for elevations along a cleaned line: one sample about every
+  // `step` real metres. Each sample is moved to a fixed lattice (about 28 m) so
+  // that editing the course asks again only for the new ground. Returns
+  // { chain[], key[], lat[], lon[], length }.
+  C.elevationPlan = function (line, step) {
+    var n = line.lat.length, closed = !!line.closed, m = closed ? n : n - 1;
+    var cum = new Float64Array(m + 1), i, j;
+    for (i = 0; i < m; i++) {
+      j = i + 1 === n ? 0 : i + 1;
+      cum[i + 1] = cum[i] + C.distance(line.lat[i], line.lon[i], line.lat[j], line.lon[j]);
+    }
+    var total = cum[m], count = Math.max(1, Math.round(total / (step || C.RULES.elevationStep)));
+    var q = C.RULES.elevationLattice, plan = { chain: [], key: [], lat: [], lon: [], length: total, closed: closed };
+    var samples = closed ? count : count + 1, k, s, t, la, lo, a, b, d;
+    j = 0;
+    for (k = 0; k < samples; k++) {
+      s = Math.min(k * total / count, total);
+      while (j < m - 1 && cum[j + 1] < s) j++;
+      d = cum[j + 1] - cum[j];
+      t = d > 0 ? (s - cum[j]) / d : 0;
+      a = j; b = j + 1 === n ? 0 : j + 1;
+      la = Math.round((line.lat[a] + (line.lat[b] - line.lat[a]) * t) / q);
+      lo = Math.round((line.lon[a] + (line.lon[b] - line.lon[a]) * t) / q);
+      plan.chain.push(s);
+      plan.key.push(la + '_' + lo);
+      plan.lat.push(Math.round(la * q * 1e5) / 1e5);
+      plan.lon.push(Math.round(lo * q * 1e5) / 1e5);
+    }
+    return plan;
+  };
+
+  // The plan's keys that `store` (a Map key -> metres) does not hold yet, without
+  // repeats: { key[], lat[], lon[] }.
+  C.elevationMissing = function (plan, store) {
+    var out = { key: [], lat: [], lon: [] }, seen = {}, i, k;
+    for (i = 0; i < plan.key.length; i++) {
+      k = plan.key[i];
+      if (seen[k] || store.has(k)) continue;
+      seen[k] = true;
+      out.key.push(k); out.lat.push(plan.lat[i]); out.lon.push(plan.lon[i]);
+    }
+    return out;
+  };
+
+  // Raw samples for buildTrack(): { chain[], ele[] } or null when a value is missing.
+  C.elevationSamples = function (plan, store) {
+    var ele = [], i, v;
+    for (i = 0; i < plan.key.length; i++) {
+      v = store.get(plan.key[i]);
+      if (typeof v !== 'number' || !isFinite(v)) return null;
+      ele.push(v);
+    }
+    return { chain: plan.chain.slice(), ele: ele, length: plan.length, closed: plan.closed };
+  };
+
+  /* ---------------------------------------------------- 9. The export chain */
+
+  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+
+  // Width of the road on a way, in game metres, before tapering.
+  C.wayWidth = function (way, s) {
+    var w = s.road_width;
+    if (s.narrow_tracks && way.cls === C.TRACK_CLASS) w = Math.min(w, C.RULES.trackWidth);
+    if (s.bridge_widths && (way.flags & 1) && way.width !== null) {
+      w = Math.min(Math.max(C.RULES.bridgeFactor * way.width, C.RULES.bridgeMin), s.road_width);
+    }
+    return clamp(w, C.LIMITS.minWidth, C.LIMITS.maxWidth);
+  };
+
+  // Settings with every default filled in and every number in its range.
+  // The four numbers the hash quantises (scale and vertical scale to the
+  // thousandth, width and spacing to the hundredth) are rounded here, once:
+  // the file then holds values that sit in the middle of their quantisation
+  // step, and no reader can hash them differently.
+  C.normalizeSettings = function (s) {
+    var d = C.DEFAULTS, o = {};
+    function num(v, def, lo, hi, digits) {
+      v = Number(v);
+      if (!isFinite(v)) v = def;
+      if (digits !== undefined) { var k = Math.pow(10, digits); v = Math.round(v * k) / k; }
+      return clamp(v, lo, hi);
+    }
+    // Cut by characters, not by UTF-16 units: half a surrogate pair is not a character.
+    function text(v, max) { return typeof v === 'string' ? Array.from(v.trim()).slice(0, max).join('') : ''; }
+    o.id = typeof s.id === 'string' ? s.id : '';
+    o.name = text(s.name, 80);
+    o.author = text(s.author, 60);
+    o.created = typeof s.created === 'string' ? s.created : '';
+    o.games = Array.isArray(s.games) ? C.GAMES.filter(function (g) { return s.games.indexOf(g) >= 0; }) : C.GAMES.slice();
+    o.kind = s.kind === 'stage' ? 'stage' : 'loop';
+    o.laps = Math.round(num(s.laps, d.laps, 1, C.LIMITS.maxLaps));
+    o.scale = num(s.scale, d.scale, 1, 10, 3);
+    o.vertical_scale = num(s.vertical_scale, o.scale, 0.5, 50, 3);
+    o.road_width = num(s.road_width, d.road_width, C.LIMITS.minWidth, C.LIMITS.maxWidth, 2);
+    o.spacing = num(s.spacing, d.spacing, C.LIMITS.minSpacing, C.LIMITS.maxSpacing, 2);
+    o.smooth_m = num(s.smooth_m, d.smooth_m, 0, 100);
+    o.narrow_tracks = s.narrow_tracks === undefined ? d.narrow_tracks : !!s.narrow_tracks;
+    o.bridge_widths = s.bridge_widths === undefined ? d.bridge_widths : !!s.bridge_widths;
+    o.checkpoint_every_m = num(s.checkpoint_every_m, 0, 0, 20000);
+    o.gates_auto = s.gates_auto === undefined ? d.gates_auto : !!s.gates_auto;
+    o.relief = s.relief === undefined ? d.relief : !!s.relief;
+    o.allowed_classes = Array.isArray(s.allowed_classes) ? s.allowed_classes.slice() : C.DEFAULT_ALLOWED.slice();
+    o.waypoints = Array.isArray(s.waypoints) ? s.waypoints : [];
+    return o;
+  };
+
+  // The whole export chain, from the routed line to a .cambotrack.json object.
+  //   g        the road graph (attributes of the source edges)
+  //   line     buildRoute().line
+  //   settings see normalizeSettings()
+  //   ele      elevationSamples() or null
+  // Returns { ok, errors[], notes[], warnings[], track, stats, profile, bbox, frame }.
+  // errors, notes and warnings are { code, … } records: the interface words them.
+  C.buildTrack = function (g, line, settings, ele) {
+    var S = C.normalizeSettings(settings), R = C.RULES, L = C.LIMITS;
+    var out = { ok: false, errors: [], notes: [], warnings: [], track: null, stats: null, profile: null, bbox: null, frame: null };
+    var closed = S.kind === 'loop', i, j, k;
+    function fail(code, data) { var e = data || {}; e.code = code; out.errors.push(e); return out; }
+
+    if (!line || !line.lat || line.lat.length < 2) return fail('no_route');
+    if (S.waypoints.length > L.maxWaypoints) return fail('too_many_waypoints', { max: L.maxWaypoints });
+
+    // 1. Concatenated legs without duplicate points.
+    var cl = C.cleanLine({ lat: line.lat, lon: line.lon, seg: line.seg, closed: closed }, R.spikeMax);
+    if (cl.trimmed) out.notes.push({ code: 'spike_trimmed', count: cl.trimmed });
+    var n0 = cl.lat.length;
+    if (n0 < (closed ? 3 : 2)) return fail('no_route');
+
+    // 2. Local tangent plane centred on the start.
+    var enu = C.makeEnu(cl.lat[0], cl.lon[0]);
+    var ex = new Float64Array(n0), ny = new Float64Array(n0), p;
+    var south = 90, north = -90, west = 180, east = -180;
+    for (i = 0; i < n0; i++) {
+      p = enu.forward(cl.lat[i], cl.lon[i]);
+      ex[i] = p[0]; ny[i] = p[1];
+      if (cl.lat[i] < south) south = cl.lat[i];
+      if (cl.lat[i] > north) north = cl.lat[i];
+      if (cl.lon[i] < west) west = cl.lon[i];
+      if (cl.lon[i] > east) east = cl.lon[i];
+    }
+    out.bbox = [south, west, north, east];
+
+    // 3. One point every real metre.
+    var cum0 = cumulative(ex, ny, closed), realLen = cum0[cum0.length - 1];
+    if (realLen < 1) return fail('no_route');
+    var n1 = Math.max(4, Math.round(realLen)), step1 = realLen / n1;
+    var fine = resample(ex, ny, cum0, closed ? n1 : n1 + 1, step1);
+    if (!closed) { fine.x[n1] = ex[n0 - 1]; fine.y[n1] = ny[n0 - 1]; fine.pos[n1] = n0 - 1; }
+
+    // 4. Moving average; the smoothing radius is in game metres.
+    var half = Math.round(S.smooth_m * S.scale / step1);
+    var sx = movingAverage(fine.x, closed, half), sy = movingAverage(fine.y, closed, half);
+    // A loop's start moves with the smoothing: the origin follows it, so that
+    // point 0 is exactly (0, 0).
+    var shiftE = sx[0], shiftN = sy[0];
+    var originLL = closed ? enu.inverse(shiftE, shiftN) : [cl.lat[0], cl.lon[0]];
+    var ns = sx.length;
+    // To game metres: x east, z south.
+    var gx = new Float64Array(ns), gz = new Float64Array(ns);
+    for (i = 0; i < ns; i++) { gx[i] = (sx[i] - shiftE) / S.scale; gz[i] = -(sy[i] - shiftN) / S.scale; }
+
+    // 5. Points every `spacing` game metres; a loop's closing stretch like the others.
+    var cum1 = cumulative(gx, gz, closed), gameLen = cum1[cum1.length - 1];
+    var spacing = S.spacing, count = closed ? Math.round(gameLen / spacing) : Math.round(gameLen / spacing) + 1;
+    if (count > L.maxPoints) {
+      spacing = Math.ceil(gameLen / (closed ? L.maxPoints : L.maxPoints - 1) * 100) / 100;
+      if (spacing > L.maxSpacing) return fail('too_many_points', { length: gameLen });
+      out.notes.push({ code: 'spacing_raised', from: S.spacing, to: spacing });
+      count = closed ? Math.floor(gameLen / spacing) : Math.floor(gameLen / spacing) + 1;
+    }
+    if (count < L.minPoints) return fail('too_short', { length: gameLen, min: L.minLength });
+    var stepG = closed ? gameLen / count : gameLen / (count - 1);
+    var fin = resample(gx, gz, cum1, count, stepG);
+    if (!closed) { fin.x[count - 1] = gx[ns - 1]; fin.y[count - 1] = gz[ns - 1]; fin.pos[count - 1] = ns - 1; }
+    var X = new Array(count), Z = new Array(count), chain = new Float64Array(count);
+    for (k = 0; k < count; k++) {
+      X[k] = cm(fin.x[k]); Z[k] = cm(fin.y[k]);
+      chain[k] = fin.pos[k] * step1;             // real metres along the unsmoothed line
+    }
+    X[0] = 0; Z[0] = 0;
+    for (k = 0; k < count; k++) {
+      if (Math.abs(X[k]) > L.maxXZ || Math.abs(Z[k]) > L.maxXZ) return fail('extent_rule', { index: k, max: L.maxXZ });
+    }
+    // Gaps between the points as written (closure included for a loop).
+    var m = closed ? count : count - 1, gap = new Float64Array(m), dist = new Float64Array(m + 1), length = 0;
+    for (k = 0; k < m; k++) {
+      j = k + 1 === count ? 0 : k + 1;
+      gap[k] = Math.sqrt((X[j] - X[k]) * (X[j] - X[k]) + (Z[j] - Z[k]) * (Z[j] - Z[k]));
+      length += gap[k];
+      dist[k + 1] = length;
+      if (gap[k] < L.minGap || gap[k] > L.maxGap) {
+        return fail('gap_rule', { index: k, gap: gap[k], at: frameLatLon(k) });
+      }
+    }
+    if (length < L.minLength) return fail('too_short', { length: length, min: L.minLength });
+
+    function frameLatLon(idx) {
+      return enu.inverse(fin.x[idx] * S.scale + shiftE, -fin.y[idx] * S.scale + shiftN);
+    }
+
+    // 6. Elevation: smoothed samples, read at each point, slope limited to 30 %.
+    var Y = new Array(count), eleReal = null, elevation = null, originEle = null;
+    for (k = 0; k < count; k++) Y[k] = 0;
+    if (S.relief) {
+      if (!ele || !ele.chain || ele.chain.length < 2) return fail('no_elevation');
+      var es = ele.ele, ec = ele.chain, ne = es.length;
+      var eStep = ne > 1 ? (ec[ne - 1] - ec[0]) / (ne - 1) : R.elevationStep;
+      var eHalf = Math.max(1, Math.floor(R.elevationSmooth / 2 / Math.max(eStep, 1)));
+      var sm = movingAverage(Float64Array.from(es), closed, eHalf);
+      // Samples run along the line the plan saw; rescale in case it differs a little.
+      var eTotal = ele.length > 0 ? ele.length : realLen, ratio = eTotal / realLen;
+      var raw = new Float64Array(count), c, a, b, t;
+      j = 0;
+      for (k = 0; k < count; k++) {
+        c = chain[k] * ratio;
+        while (j < ne - 1 && ec[j + 1] <= c) j++;
+        if (j >= ne - 1) {
+          // Past the last sample: a loop runs on to the first one, a stage stops.
+          if (closed) { a = sm[ne - 1]; b = sm[0]; t = clamp((c - ec[ne - 1]) / Math.max(eTotal - ec[ne - 1], 1e-9), 0, 1); }
+          else { a = b = sm[ne - 1]; t = 0; }
+        } else { a = sm[j]; b = sm[j + 1]; t = clamp((c - ec[j]) / Math.max(ec[j + 1] - ec[j], 1e-9), 0, 1); }
+        raw[k] = a + (b - a) * t;
+      }
+      var lim = new Float64Array(closed ? count : count - 1);
+      for (k = 0; k < lim.length; k++) lim[k] = R.exportSlope * gap[k] * S.vertical_scale;
+      eleReal = limitSlope(raw, lim, closed);
+      var eMin = Infinity, eMax = -Infinity, climb = 0, dy;
+      for (k = 0; k < count; k++) {
+        Y[k] = cm((eleReal[k] - eleReal[0]) / S.vertical_scale);
+        if (Math.abs(Y[k]) > L.maxY) return fail('height_rule', { index: k });
+        if (eleReal[k] < eMin) eMin = eleReal[k];
+        if (eleReal[k] > eMax) eMax = eleReal[k];
+      }
+      Y[0] = 0;
+      for (k = 0; k < m; k++) {
+        j = k + 1 === count ? 0 : k + 1;
+        dy = eleReal[j] - eleReal[k];
+        if (dy > 0) climb += dy;
+        if (Math.abs(Y[j] - Y[k]) > L.maxSlope * gap[k]) return fail('slope_rule', { index: k });
+      }
+      elevation = { source: C.ELEVATION_SOURCE, min: round1(eMin), max: round1(eMax), climb_m: round1(climb) };
+      originEle = round1(eleReal[0]);
+    }
+
+    // 7. Attributes of the source edge: width, surface, bridge and tunnel.
+    var cumReal = cum0, segCount = cumReal.length - 1;
+    var width = new Float64Array(count), surf = new Array(count), flags = new Array(count), way, e;
+    j = 0;
+    for (k = 0; k < count; k++) {
+      var cr = chain[k];
+      if (cr < cumReal[j]) j = 0;
+      while (j < segCount - 1 && cumReal[j + 1] <= cr) j++;
+      e = cl.seg[Math.min(j, cl.seg.length - 1)];
+      way = g.ways[g.edgeWay[e]];
+      width[k] = C.wayWidth(way, S);
+      surf[k] = way.surface;
+      flags[k] = way.flags;
+    }
+    // A narrow stretch opens out gradually: at most widthTaper metres per metre.
+    var wlim = new Float64Array(closed ? count : count - 1);
+    for (k = 0; k < wlim.length; k++) wlim[k] = R.widthTaper * gap[k];
+    width = envelopeBelow(width, wlim, closed);
+
+    // 8. Checkpoints, then bonus gates on the straights.
+    var cps = placeCheckpoints(S, dist, count, closed, out.notes);
+    var gates = S.gates_auto ? placeGates(fin.x, fin.y, dist, count, closed, cps) : [];
+
+    var points = new Array(count);
+    for (k = 0; k < count; k++) points[k] = [X[k], Y[k], Z[k], cm(width[k]), surf[k], flags[k]];
+
+    // 9. The file, fields in the order of FORMAT.md, and its hash.
+    var t = {};
+    t.format = C.FORMAT; t.version = C.VERSION; t.id = S.id; t.hash = '';
+    t.name = S.name; t.author = S.author;
+    if (S.created) t.created = S.created;
+    t.games = S.games; t.kind = S.kind;
+    if (closed) t.laps = S.laps;
+    t.scale = S.scale; t.vertical_scale = S.vertical_scale; t.road_width = S.road_width; t.spacing = spacing;
+    t.origin = { lat: Math.round(originLL[0] * 1e7) / 1e7, lon: Math.round(originLL[1] * 1e7) / 1e7 };
+    if (originEle !== null) t.origin.ele = originEle;
+    t.length_real_m = round1(realLen);
+    t.length_game_m = round1(length);
+    t.elevation = elevation;
+    t.surfaces = C.SURFACES.slice();
+    t.points = points;
+    t.checkpoints = cps;
+    t.gates = gates;
+    // Waypoints at full precision: « Ouvrir » snaps them back on the same spot.
+    t.waypoints = S.waypoints.map(function (w) { return [w[0], w[1]]; });
+    t.allowed_classes = S.allowed_classes.slice();
+    t.attribution = C.ATTRIBUTION + (S.relief ? C.ATTRIBUTION_RELIEF : '');
+    // Editor-only settings, ignored by the games (unknown field), read back by « Ouvrir ».
+    t.editor = {
+      smooth_m: S.smooth_m, narrow_tracks: S.narrow_tracks, bridge_widths: S.bridge_widths,
+      checkpoint_every_m: S.checkpoint_every_m, gates_auto: S.gates_auto
+    };
+    t.hash = C.trackHash(t);
+
+    // Figures and warnings for the interface.
+    var laps = closed ? S.laps : 1;
+    out.stats = {
+      length_real_m: realLen, length_game_m: length, lap_time_s: length / C.REF_SPEED,
+      total_time_s: length * laps / C.REF_SPEED, laps: laps, points: count, spacing: spacing,
+      checkpoints: cps.length, gates: gates.length, step: stepG,
+      climb_m: elevation ? elevation.climb_m : 0
+    };
+    if (eleReal) {
+      out.profile = { dist: Array.from(dist.subarray(0, count)), ele: Array.from(eleReal), length: length };
+    }
+    out.frame = { originLat: originLL[0], originLon: originLL[1], scale: S.scale };
+    collectWarnings(out, g, cl, fin, count, closed, length, laps, frameLatLon);
+    if (length * laps > L.maxTotalLength) return fail('total_too_long', { length: length * laps });
+    out.track = t;
+    out.ok = true;
+    return out;
+  };
+
+  // Checkpoints at even intervals; none within checkpointClear of the start or finish.
+  function placeCheckpoints(S, dist, count, closed, notes) {
+    var R = C.RULES, total = dist[dist.length - 1];
+    var every = S.checkpoint_every_m > 0 ? S.checkpoint_every_m
+      : (total <= R.checkpointSwitch ? R.checkpointShort : R.checkpointLong);
+    var parts = Math.max(1, Math.round(total / every));
+    if (parts - 1 > C.LIMITS.maxCheckpoints) {
+      parts = C.LIMITS.maxCheckpoints + 1;
+      notes.push({ code: 'checkpoints_capped', max: C.LIMITS.maxCheckpoints });
+    }
+    var out = [], last = closed ? count - 1 : count - 2, j = 0, k, target, idx;
+    for (k = 1; k < parts; k++) {
+      target = k * total / parts;
+      if (target < R.checkpointClear || target > total - R.checkpointClear) continue;
+      while (j < count - 1 && dist[j] < target) j++;
+      idx = j > 0 && target - dist[j - 1] < dist[j] - target ? j - 1 : j;
+      idx = Math.min(Math.max(idx, 1), last);
+      if (out.length && idx <= out[out.length - 1]) continue;
+      if (idx >= 1) out.push(idx);
+    }
+    return out;
+  }
+
+  // Bonus gates: about one per gateEvery metres, each on a straight (curvature
+  // under gateCurvature for gateStraight metres either side), gateApart metres
+  // from the previous one, gateClear metres from a checkpoint, the start and
+  // the finish.
+  function placeGates(x, z, dist, count, closed, cps) {
+    var R = C.RULES, total = dist[dist.length - 1], out = [], k, a, b;
+    var want = Math.min(Math.round(total / R.gateEvery), C.LIMITS.maxGates);
+    if (want < 1 || count < 8) return out;
+    var step = total / (closed ? count : count - 1);
+    // Curvature over a base of about 8 m, to stay clear of sampling noise.
+    var reach = Math.max(1, Math.round(4 / step)), bent = new Int32Array(count + 1);
+    for (k = 0; k < count; k++) {
+      a = k - reach; b = k + reach;
+      var kappa = 0;
+      if (closed) { a = (a + count) % count; b = b % count; kappa = curvature(x[a], z[a], x[k], z[k], x[b], z[b]); }
+      else if (a >= 0 && b < count) kappa = curvature(x[a], z[a], x[k], z[k], x[b], z[b]);
+      bent[k + 1] = bent[k] + (kappa >= R.gateCurvature ? 1 : 0);
+    }
+    var win = Math.ceil(R.gateStraight / step);
+    function straight(i) {
+      var lo = i - win, hi = i + win;
+      if (!closed) return lo >= 0 && hi < count && bent[hi + 1] - bent[lo] === 0;
+      if (2 * win + 1 >= count) return bent[count] === 0;
+      if (lo < 0) return bent[count] - bent[lo + count] + bent[hi + 1] === 0;
+      if (hi >= count) return bent[count] - bent[lo] + bent[hi - count + 1] === 0;
+      return bent[hi + 1] - bent[lo] === 0;
+    }
+    function clear(i) {
+      var d = dist[i], c;
+      if (d < R.gateClear || d > total - R.gateClear) return false;
+      for (c = 0; c < cps.length; c++) if (Math.abs(dist[cps[c]] - d) < R.gateClear) return false;
+      if (out.length && d - dist[out[out.length - 1]] < R.gateApart) return false;
+      if (closed && out.length && total - d + dist[out[0]] < R.gateApart) return false;
+      return true;
+    }
+    var slot = total / want, last = closed ? count - 1 : count - 2, j = 0, s, ideal, best, bestD, i;
+    for (s = 0; s < want; s++) {
+      ideal = (s + 0.5) * slot;
+      best = -1; bestD = slot / 2;
+      while (j < count - 1 && dist[j] < ideal - slot / 2) j++;
+      for (i = j; i <= last && dist[i] <= ideal + slot / 2; i++) {
+        if (i < 1) continue;
+        if (Math.abs(dist[i] - ideal) < bestD && straight(i) && clear(i)) { best = i; bestD = Math.abs(dist[i] - ideal); }
+      }
+      if (best > 0) out.push(best);
+    }
+    return out;
+  }
+
+  // The warnings of the brief: same road twice, self-crossing, hairpins, length.
+  function collectWarnings(out, g, cl, fin, count, closed, length, laps, latLonOf) {
+    var R = C.RULES, k, a, b, i, j;
+    if (length < R.warnShort) out.warnings.push({ code: 'short', length: length, limit: R.warnShort });
+    if (length > R.warnLong) out.warnings.push({ code: 'long', length: length, limit: R.warnLong });
+
+    // Same road twice: two stretches of the course lying on the same part of the
+    // same edge. Each stretch covers an interval of its edge (0 at one end, 1 at
+    // the other); intervals that overlap are road driven twice.
+    var spans = new Map(), n0 = cl.lat.length, e, t0, t1, list, twice = 0, twiceLen = 0, where = null;
+    for (k = 0; k < cl.seg.length; k++) {
+      e = cl.seg[k]; j = k + 1 === n0 ? 0 : k + 1;
+      t0 = edgeParam(g, e, cl.lat[k], cl.lon[k]); t1 = edgeParam(g, e, cl.lat[j], cl.lon[j]);
+      list = spans.get(e);
+      if (!list) spans.set(e, list = []);
+      list.push(t0 < t1 ? [t0, t1] : [t1, t0]);
+    }
+    spans.forEach(function (ivs, edge) {
+      if (ivs.length < 2) return;
+      ivs.sort(function (p, q) { return p[0] - q[0]; });
+      var reach = ivs[0][1], over = 0, q, lo;
+      for (q = 1; q < ivs.length; q++) {
+        lo = ivs[q][0];
+        if (lo < reach) {
+          over += Math.min(reach, ivs[q][1]) - lo;
+          if (!where) where = C.edgePoint(g, edge, (lo + Math.min(reach, ivs[q][1])) / 2);
+        }
+        if (ivs[q][1] > reach) reach = ivs[q][1];
+      }
+      if (over * g.edgeLen[edge] > 0.5) { twice++; twiceLen += over * g.edgeLen[edge]; }
+    });
+    if (twice && twiceLen >= 2) out.warnings.push({ code: 'road_twice', count: twice, length: twiceLen, at: where ? [where] : [] });
+
+    // Hairpins: radius of the circle through three consecutive points.
+    var x = fin.x, z = fin.y, tight = [], minR = Infinity, inside = false, kappa, r;
+    for (k = 0; k < count; k++) {
+      a = k - 1; b = k + 1;
+      if (closed) { a = (a + count) % count; b = b % count; }
+      else if (a < 0 || b >= count) continue;
+      kappa = curvature(x[a], z[a], x[k], z[k], x[b], z[b]);
+      r = kappa > 0 ? 1 / kappa : Infinity;
+      if (r < R.hairpinRadius) {
+        if (!inside) tight.push(k);
+        inside = true;
+        if (r < minR) minR = r;
+      } else inside = false;
+    }
+    if (tight.length) {
+      out.warnings.push({ code: 'hairpin', count: tight.length, radius: minR, limit: R.hairpinRadius,
+        at: tight.slice(0, 20).map(latLonOf) });
+    }
+
+    // The course crossing itself: proper intersections between stretches that
+    // are not neighbours, found through a grid of the final points.
+    var m = closed ? count : count - 1, cell = Math.max(2 * length / Math.max(m, 1), 1), grid = new Map();
+    var crossings = [], key, list, sj, ci, cj, c;
+    function orient(ax, ay, bx, by, cx, cy) { return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax); }
+    for (i = 0; i < m; i++) {
+      j = i + 1 === count ? 0 : i + 1;
+      var x0 = Math.floor(Math.min(x[i], x[j]) / cell), x1 = Math.floor(Math.max(x[i], x[j]) / cell);
+      var z0 = Math.floor(Math.min(z[i], z[j]) / cell), z1 = Math.floor(Math.max(z[i], z[j]) / cell);
+      var hit = {};
+      for (ci = x0; ci <= x1; ci++) {
+        for (cj = z0; cj <= z1; cj++) {
+          key = ci + ':' + cj;
+          list = grid.get(key);
+          if (!list) { grid.set(key, [i]); continue; }
+          for (c = 0; c < list.length; c++) {
+            sj = list[c];
+            if (hit[sj]) continue;
+            hit[sj] = true;
+            var gapIdx = i - sj;
+            if (gapIdx < 3 || (closed && m - gapIdx < 3)) continue;
+            var sk = sj + 1 === count ? 0 : sj + 1;
+            var d1 = orient(x[sj], z[sj], x[sk], z[sk], x[i], z[i]), d2 = orient(x[sj], z[sj], x[sk], z[sk], x[j], z[j]);
+            var d3 = orient(x[i], z[i], x[j], z[j], x[sj], z[sj]), d4 = orient(x[i], z[i], x[j], z[j], x[sk], z[sk]);
+            if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) crossings.push(i);
+          }
+          list.push(i);
+        }
+      }
+    }
+    if (crossings.length) {
+      // Crossings a few points apart are one place (a road used twice crosses itself all along).
+      var places = [], near = Math.ceil(30 / Math.max(length / Math.max(m, 1), 0.1));
+      crossings.sort(function (p, q) { return p - q; });
+      for (k = 0; k < crossings.length; k++) {
+        if (!places.length || crossings[k] - places[places.length - 1] > near) places.push(crossings[k]);
+      }
+      out.warnings.push({ code: 'self_cross', count: places.length, at: places.slice(0, 20).map(latLonOf) });
+    }
+  }
+
+  /* ------------------------------ 10. Checking, serialising and reading a track */
+
+  var ID_RE = /^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$/;
+  C.isValidId = function (id) { return typeof id === 'string' && ID_RE.test(id); };
+
+  // A file name safe identifier from a display name ("Petit Circuit été" -> "petit-circuit-ete").
+  C.slugify = function (name) {
+    var s = String(name === undefined || name === null ? '' : name);
+    if (s.normalize) s = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    s = s.toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae').replace(/ß/g, 'ss').replace(/đ/g, 'd');
+    s = s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64).replace(/-+$/, '');
+    return s;
+  };
+
+  // The rules a game checks before building (FORMAT.md). Returns
+  // { ok, errors: [{ code, … }], hash, length }.
+  C.checkTrack = function (t) {
+    var L = C.LIMITS, errors = [], i, j, p, n, closed, length = 0, d, list, prev, name;
+    function bad(code, data) { var e = data || {}; e.code = code; errors.push(e); }
+    function done() { return { ok: errors.length === 0, errors: errors, hash: null, length: length }; }
+    if (!t || typeof t !== 'object' || Array.isArray(t)) { bad('not_object'); return done(); }
+    if (t.format !== C.FORMAT) { bad('format'); return done(); }
+    if (typeof t.version !== 'number' || Math.floor(t.version) !== t.version || t.version < 1) { bad('version'); return done(); }
+    if (t.version > C.VERSION) { bad('version_newer', { version: t.version }); return done(); }
+    if (!C.isValidId(t.id)) bad('id');
+    if (typeof t.name !== 'string' || t.name.length < 1 || t.name.length > 80) bad('name');
+    if (t.kind !== 'loop' && t.kind !== 'stage') { bad('kind'); return done(); }
+    closed = t.kind === 'loop';
+    if (t.laps !== undefined && (typeof t.laps !== 'number' || Math.floor(t.laps) !== t.laps || t.laps < 1 || t.laps > L.maxLaps)) bad('laps');
+    if (!(t.scale >= 1 && t.scale <= 10)) bad('scale');
+    if (!(t.vertical_scale >= 0.5 && t.vertical_scale <= 50)) bad('vertical_scale');
+    if (!(t.road_width >= L.minWidth && t.road_width <= L.maxWidth)) bad('road_width');
+    if (!(t.spacing >= L.minSpacing && t.spacing <= L.maxSpacing)) bad('spacing');
+    if (!Array.isArray(t.surfaces) || t.surfaces.length < 1 || t.surfaces.length > 32) { bad('surfaces'); return done(); }
+    if (!Array.isArray(t.points) || t.points.length < L.minPoints || t.points.length > L.maxPoints) { bad('points_count'); return done(); }
+    n = t.points.length;
+    for (i = 0; i < n; i++) {
+      p = t.points[i];
+      if (!Array.isArray(p) || p.length < 6) { bad('point', { index: i }); return done(); }
+      for (j = 0; j < 6; j++) if (typeof p[j] !== 'number' || !isFinite(p[j])) { bad('point', { index: i }); return done(); }
+      if (Math.abs(p[0]) > L.maxXZ || Math.abs(p[2]) > L.maxXZ || Math.abs(p[1]) > L.maxY) { bad('point_range', { index: i }); return done(); }
+      if (p[3] < L.minWidth || p[3] > L.maxWidth) { bad('point_width', { index: i }); return done(); }
+      if (Math.floor(p[4]) !== p[4] || p[4] < 0 || p[4] >= t.surfaces.length) { bad('point_surface', { index: i }); return done(); }
+      if (Math.floor(p[5]) !== p[5] || p[5] < 0 || p[5] > 255) { bad('point_flags', { index: i }); return done(); }
+    }
+    if (t.points[0][0] !== 0 || t.points[0][1] !== 0 || t.points[0][2] !== 0) bad('origin');
+    var gapAt = -1, slopeAt = -1;
+    for (i = 0; i < (closed ? n : n - 1); i++) {
+      j = i + 1 === n ? 0 : i + 1;
+      d = Math.sqrt(Math.pow(t.points[j][0] - t.points[i][0], 2) + Math.pow(t.points[j][2] - t.points[i][2], 2));
+      length += d;
+      if (gapAt < 0 && (d < L.minGap || d > L.maxGap)) gapAt = i;
+      if (slopeAt < 0 && Math.abs(t.points[j][1] - t.points[i][1]) > L.maxSlope * d + 1e-9) slopeAt = i;
+    }
+    if (gapAt >= 0) bad('gap_rule', { index: gapAt });
+    else if (slopeAt >= 0) bad('slope_rule', { index: slopeAt });
+    if (length < L.minLength) bad('too_short', { length: length });
+    if (length * (closed && t.laps ? t.laps : 1) > L.maxTotalLength) bad('total_too_long');
+    var lists = [['checkpoints', L.maxCheckpoints, true], ['gates', L.maxGates, false]];
+    for (i = 0; i < lists.length; i++) {
+      name = lists[i][0]; list = t[name];
+      if (list === undefined && !lists[i][2]) continue;
+      if (!Array.isArray(list) || list.length > lists[i][1]) { bad(name); continue; }
+      prev = 0;
+      for (j = 0; j < list.length; j++) {
+        if (typeof list[j] !== 'number' || Math.floor(list[j]) !== list[j] || list[j] <= prev || list[j] > (closed ? n - 1 : n - 2)) { bad(name, { index: j }); break; }
+        prev = list[j];
+      }
+    }
+    var res = done();
+    if (errors.length === 0 || errors.every(function (e) { return e.code === 'id' || e.code === 'name'; })) {
+      res.hash = C.trackHash(t);
+      if (res.hash !== t.hash) { bad('hash', { expected: res.hash, found: t.hash }); res.ok = false; }
+    }
+    return res;
+  };
+
+  // JSON text of a track: one field per line in the order of FORMAT.md, one
+  // point per line. Compact enough for 20 000 points to stay far under 4 MiB.
+  C.serializeTrack = function (t) {
+    var keys = Object.keys(t), lines = [], i, k, v, rows, j;
+    for (i = 0; i < keys.length; i++) {
+      k = keys[i]; v = t[k];
+      if (v === undefined) continue;
+      if (k === 'points') {
+        rows = new Array(v.length);
+        for (j = 0; j < v.length; j++) rows[j] = '    ' + JSON.stringify(v[j]);
+        lines.push('  "points": [\n' + rows.join(',\n') + '\n  ]');
+      } else if (k === 'waypoints') {
+        rows = v.map(function (w) { return JSON.stringify(w); });
+        lines.push('  "waypoints": [' + rows.join(', ') + ']');
+      } else lines.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(v));
+    }
+    return '{\n' + lines.join(',\n') + '\n}\n';
+  };
+
+  // Reads a .cambotrack.json text. Returns { ok, track, check, error }.
+  C.parseTrack = function (text) {
+    var t;
+    try { t = JSON.parse(text); } catch (err) { return { ok: false, error: 'json', track: null, check: null }; }
+    if (!t || typeof t !== 'object' || Array.isArray(t) || t.format !== C.FORMAT) return { ok: false, error: 'format', track: null, check: null };
+    var check = C.checkTrack(t);
+    var fatal = check.errors.some(function (e) { return e.code !== 'hash' && e.code !== 'id' && e.code !== 'name'; });
+    return { ok: !fatal, error: fatal ? check.errors[0].code : null, track: t, check: check };
+  };
+
+  // The points of a track back on the Earth: [[lat, lon], …], by inverse
+  // projection from its origin. null when the file has no origin.
+  C.trackToLatLon = function (t) {
+    if (!t.origin || typeof t.origin.lat !== 'number' || typeof t.origin.lon !== 'number') return null;
+    var enu = C.makeEnu(t.origin.lat, t.origin.lon), out = new Array(t.points.length), i;
+    for (i = 0; i < t.points.length; i++) out[i] = enu.inverse(t.points[i][0] * t.scale, -t.points[i][2] * t.scale);
+    return out;
+  };
+
+  /* ------------------------------------------------------------ 11. Catalogue */
+
+  C.emptyCatalog = function (updated) {
+    return { format: C.CATALOG_FORMAT, version: 1, updated: updated, tracks: [] };
+  };
+
+  // The catalogue line of a track. bbox is [south, west, north, east] in degrees.
+  C.catalogEntry = function (t, bbox, updated) {
+    var e = {
+      id: t.id, name: t.name, file: t.id + '.cambotrack.json', hash: t.hash, kind: t.kind,
+      laps: t.kind === 'loop' ? (t.laps || 1) : 1,
+      length_game_m: t.length_game_m, climb_m: t.elevation ? t.elevation.climb_m : 0,
+      games: t.games && t.games.length ? t.games.slice() : C.GAMES.slice(),
+      author: t.author || '', updated: updated
+    };
+    if (bbox) e.bbox = bbox.map(function (v) { return Math.round(v * 1e5) / 1e5; });
+    return e;
+  };
+
+  // A catalogue with the entry added, or put in place of the one with the same
+  // id. Throws when what is there is not a catalogue: it is never overwritten blind.
+  C.updateCatalog = function (catalog, entry, updated) {
+    var cat = catalog === null || catalog === undefined ? C.emptyCatalog(updated) : catalog, i, found = false;
+    if (typeof cat !== 'object' || cat.format !== C.CATALOG_FORMAT || !Array.isArray(cat.tracks)) throw new Error('bad_catalog');
+    var tracks = cat.tracks.slice();
+    for (i = 0; i < tracks.length; i++) if (tracks[i] && tracks[i].id === entry.id) { tracks[i] = entry; found = true; }
+    if (!found) tracks.push(entry);
+    return { format: C.CATALOG_FORMAT, version: 1, updated: updated, tracks: tracks };
+  };
+
+  C.serializeCatalog = function (cat) {
+    var rows = cat.tracks.map(function (e) { return '  ' + JSON.stringify(e); });
+    return '{"format": ' + JSON.stringify(cat.format) + ', "version": ' + cat.version + ', "updated": ' +
+      JSON.stringify(cat.updated) + ', "tracks": [' + (rows.length ? '\n' + rows.join(',\n') + '\n' : '') + ']}\n';
+  };
+
+  root.CircuitCore = C;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+
+<script id="ui">
+/* ==========================================================================
+   The interface. Everything that touches the page, the map or the network.
+   The computation lives in CircuitCore (the script above).
+
+   Sections
+     1. Configuration (where the circuits are published, the services used)
+     2. Small helpers: DOM, text, numbers, network
+     3. State
+     4. Map and layers
+     5. Roads: Overpass
+     6. Search (Nominatim) and places
+     7. Drawing: waypoints, tools, undo
+     8. Route, export chain and what the panel shows
+     9. Relief: Open-Meteo
+    10. Files: download, copy, open
+    11. Sending to the games (GitHub)
+    12. Panel, tabs and the settings form
+    13. Start
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------- 1. Configuration */
+
+  // Where « Envoyer au jeu » writes: one repository, one branch, one folder.
+  const GITHUB_OWNER = 'stefan-cambodia';
+  const GITHUB_REPO = 'stefan-cambodia.github.io';
+  const GITHUB_BRANCH = 'main';
+  const TRACKS_DIR = 'tracks';
+  const CATALOG_FILE = 'index.json';
+
+  const GITHUB_API = 'https://api.github.com';
+  // Where the games read (README, section Publication): raw first, the site as a fallback.
+  const RAW_BASE = 'https://raw.githubusercontent.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/' + GITHUB_BRANCH + '/' + TRACKS_DIR + '/';
+  const PAGES_BASE = 'https://' + GITHUB_REPO + '/' + TRACKS_DIR + '/';
+  const README_URL = 'https://github.com/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/blob/' + GITHUB_BRANCH + '/tools/circuit-editor/README.md';
+
+  // Overpass: the main instance, then two mirrors (checked on 2026-11-26, see README).
+  const OVERPASS_ENDPOINTS = [
+    'https://overpass-api.de/api/interpreter',
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass.openstreetmap.fr/api/interpreter'
+  ];
+  const OVERPASS_QUERY_TIMEOUT_S = 60;   // what the server may spend on the query
+  const OVERPASS_WAIT_MS = 25000;        // how long the page waits before trying the next server (the last one: three times that)
+  const OVERPASS_MAX_KM2 = 1500;
+
+  const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
+  const NOMINATIM_MIN_GAP_MS = 1000;     // usage policy: one request a second at most
+
+  const ELEVATION_URL = 'https://api.open-meteo.com/v1/elevation';
+  const ELEVATION_BATCH = 100;           // coordinates per request, the API's maximum
+  const ELEVATION_IDLE_MS = 1200;        // wait for the drawing to settle before asking
+
+  const SNAP_PX = 20;                    // a click snaps to a road within this many pixels
+  const ROUTE_PICK_PX = 16;              // a click this close to the course inserts a point
+  const RESNAP_M = 40;                   // a reopened waypoint finds its road within this
+
+  const PRESETS = [
+    { name: 'Angkor', lat: 13.4125, lon: 103.8667, zoom: 13 },
+    { name: 'Siem Reap', lat: 13.3633, lon: 103.8564, zoom: 14 },
+    { name: 'Kampot', lat: 10.6104, lon: 104.1815, zoom: 14 },
+    { name: 'Bokor', lat: 10.63, lon: 104.03, zoom: 13 },
+    { name: 'Kep', lat: 10.4833, lon: 104.3167, zoom: 14 },
+    { name: 'Phnom Penh', lat: 11.5564, lon: 104.9282, zoom: 13 }
+  ];
+
+  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author' };
+
+  const ROAD_STYLE = {
+    major: { color: '#e8590c', weight: 3.2, opacity: 0.85 },
+    minor: { color: '#343a40', weight: 2.2, opacity: 0.8 },
+    track: { color: '#8f5b0d', weight: 2, opacity: 0.9, dashArray: '7 4' },
+    other: { color: '#868e96', weight: 1.2, opacity: 0.6, dashArray: '2 4' }
+  };
+  const ROUTE_COLOR = '#1864ab';
+
+  const C = window.CircuitCore;
+
+  /* ---------------------------------------------------------- 2. Helpers */
+
+  const $ = (id) => document.getElementById(id);
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // French spacing: a no-break space before : ; ? ! and inside « ».
+  function typo(text) {
+    return String(text).replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
+  }
+  function setText(el, text) { el.textContent = typo(text); }
+  function make(tag, cls, text) {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (text !== undefined) el.textContent = typo(text);
+    return el;
+  }
+
+  const NUM = (v, digits) => v.toLocaleString('fr-FR', { minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0 });
+  function fmtDist(m) {
+    if (!(m >= 0)) return '—';
+    return m < 1000 ? NUM(Math.round(m)) + ' m' : NUM(m / 1000, 2) + ' km';
+  }
+  function fmtTime(s) {
+    s = Math.round(s);
+    const h = Math.floor(s / 3600), min = Math.floor((s % 3600) / 60), sec = s % 60;
+    if (h) return h + ' h ' + String(min).padStart(2, '0') + ' min';
+    return min ? min + ' min ' + String(sec).padStart(2, '0') + ' s' : sec + ' s';
+  }
+  function nowIso() { return new Date().toISOString().replace(/\.\d+Z$/, 'Z'); }
+
+  function loadPref(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+  function savePref(key, value) {
+    try {
+      if (value === null || value === '') window.localStorage.removeItem(key);
+      else window.localStorage.setItem(key, value);
+    } catch (e) { /* private browsing: nothing is kept, the page still works */ }
+  }
+
+  // fetch with one deadline for the headers and the body. Resolves with
+  // { status, ok, headers, text }; rejects with an Error whose kind is
+  // "timeout" or "network".
+  async function fetchText(url, options, waitMs) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), waitMs);
+    try {
+      const res = await fetch(url, Object.assign({}, options, { signal: ctl.signal }));
+      const text = await res.text();
+      return { status: res.status, ok: res.ok, headers: res.headers, text: text };
+    } catch (err) {
+      const e = new Error(err && err.name === 'AbortError' ? 'timeout' : 'network');
+      e.kind = e.message;
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  let toastTimer = null;
+  function toast(text, kind, ms) {
+    const el = $('toast');
+    setText(el, text);
+    el.className = 'toast' + (kind === 'bad' ? ' bad' : '');
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, ms || (kind === 'bad' ? 8000 : 4500));
+  }
+
+  /* ------------------------------------------------------------- 3. State */
+
+  const graph = C.createGraph();
+  const legCache = C.createLegCache();
+  const eleStore = new Map();           // elevation lattice key -> metres
+
+  // The drawing: what undo and redo restore. A waypoint is { lat, lon, edge, t };
+  // edge is -1 while it has no road (reopened file, class no longer allowed).
+  const state = { kind: 'loop', waypoints: [] };
+  const undoStack = [], redoStack = [];
+  let tool = 'add';
+  let idTouched = false;                // the user typed an identifier: stop deriving it from the name
+
+  // What the last refresh computed.
+  const current = { route: null, result: null, plan: null, pending: false, settings: null };
+  const relief = { timer: null, promise: null, error: null, progress: '' };
+  const roads = { busy: false, firstServer: 0, areas: [] };
+
+  let map, roadRenderer, routeRenderer;
+  const layers = {};
+
+  /* ---------------------------------------------------- 4. Map and layers */
+
+  function initMap() {
+    let view = null;
+    try { view = JSON.parse(loadPref(STORE.view)); } catch (e) { view = null; }
+    if (!view || !(Math.abs(view.lat) <= 85) || !(Math.abs(view.lon) <= 180) || !(view.zoom >= 3 && view.zoom <= 19)) {
+      view = { lat: PRESETS[0].lat, lon: PRESETS[0].lon, zoom: PRESETS[0].zoom };
+    }
+    map = L.map('map', { zoomControl: false, doubleClickZoom: false, worldCopyJump: true, minZoom: 3, maxZoom: 19 })
+      .setView([view.lat, view.lon], view.zoom);
+
+    const osmNote = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+    const base = {
+      'Plan (OpenStreetMap)': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: osmNote }),
+      'Satellite (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19, attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+      }),
+      'Relief (OpenTopoMap)': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, maxNativeZoom: 17,
+        attribution: 'Map data: ' + osmNote + ', SRTM | Map style: © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)'
+      })
+    };
+    base['Plan (OpenStreetMap)'].addTo(map);
+    L.control.layers(base, null, { position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Zoom avant', zoomOutTitle: 'Zoom arrière' }).addTo(map);
+    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    // The roads drawn over any background are OpenStreetMap's.
+    map.attributionControl.addAttribution('Routes © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL)');
+
+    // Roads under the course, the course under the waypoints.
+    map.createPane('roads').style.zIndex = 410;
+    map.createPane('route').style.zIndex = 420;
+    roadRenderer = L.canvas({ pane: 'roads', padding: 0.3 });
+    routeRenderer = L.canvas({ pane: 'route', padding: 0.3 });
+
+    layers.areas = L.layerGroup().addTo(map);
+    layers.roads = {};
+    ['other', 'track', 'minor', 'major'].forEach((family) => { layers.roads[family] = L.layerGroup().addTo(map); });
+    layers.imported = L.layerGroup().addTo(map);
+    layers.route = L.layerGroup().addTo(map);
+    layers.preview = L.layerGroup().addTo(map);
+    layers.markers = L.layerGroup().addTo(map);
+    layers.ghost = L.circleMarker([0, 0], { radius: 9, color: '#fff', weight: 3, fillColor: ROUTE_COLOR, fillOpacity: 0.9, interactive: false });
+
+    map.on('popupclose', () => { popupClosedAt = Date.now(); });
+    map.on('click', onMapClick);
+    map.on('moveend', () => {
+      const c = map.getCenter();
+      savePref(STORE.view, JSON.stringify({ lat: +c.lat.toFixed(5), lon: +c.lng.toFixed(5), zoom: map.getZoom() }));
+      updateLoadButton();
+    });
+    map.on('zoomend', drawArrows);
+  }
+
+  // The view as [south, west, north, east], and its area.
+  function viewBox() {
+    const b = map.getBounds();
+    return [Math.max(b.getSouth(), -85), Math.max(b.getWest(), -180), Math.min(b.getNorth(), 85), Math.min(b.getEast(), 180)];
+  }
+  function pxToMetres(latlng, px) {
+    const p = map.latLngToContainerPoint(latlng);
+    return map.distance(latlng, map.containerPointToLatLng(L.point(p.x + px, p.y)));
+  }
+
+  /* ------------------------------------------------------ 5. Roads: Overpass */
+
+  function updateLoadButton() {
+    const btn = $('load-roads');
+    if (roads.busy) return;
+    const box = viewBox(), far = C.bboxAreaKm2(box[0], box[1], box[2], box[3]) > OVERPASS_MAX_KM2;
+    btn.classList.toggle('far', far);
+    setText(btn, far ? 'Zoomez pour charger les routes' : 'Charger les routes de la zone');
+  }
+
+  function overpassQuery(box) {
+    return '[out:json][timeout:' + OVERPASS_QUERY_TIMEOUT_S + '];way[highway](' +
+      box.map((v) => v.toFixed(5)).join(',') + ');out body qt;>;out skel qt;';
+  }
+
+  // Asks the servers in turn. Resolves with the parsed answer; rejects with an
+  // Error whose message is ready to show.
+  async function askOverpass(box, label) {
+    const body = 'data=' + encodeURIComponent(overpassQuery(box));
+    const n = OVERPASS_ENDPOINTS.length;
+    let last = 'network', lastStatus = 0;
+    for (let k = 0; k < n; k++) {
+      const index = (roads.firstServer + k) % n;
+      setText($('load-roads'), label + ' (serveur ' + (k + 1) + '/' + n + ')…');
+      try {
+        const r = await fetchText(OVERPASS_ENDPOINTS[index], {
+          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body
+        }, k === n - 1 ? OVERPASS_WAIT_MS * 3 : OVERPASS_WAIT_MS);
+        if (!r.ok) { last = r.status === 400 ? 'bad' : 'busy'; lastStatus = r.status; continue; }
+        let data;
+        try { data = JSON.parse(r.text); } catch (e) { last = 'unreadable'; continue; }
+        if (!data || !Array.isArray(data.elements)) { last = 'unreadable'; continue; }
+        if (typeof data.remark === 'string' && /error|timed out|out of memory/i.test(data.remark)) { last = 'remark'; continue; }
+        roads.firstServer = index;       // start with the one that answered next time
+        return data;
+      } catch (err) {
+        last = err.kind || 'network';
+      }
+    }
+    const why = {
+      timeout: 'Les serveurs Overpass n\'ont pas répondu à temps. Réessayez dans une minute, ou zoomez pour charger une zone plus petite.',
+      network: 'Connexion impossible aux serveurs Overpass : vérifiez le réseau, puis réessayez.',
+      busy: 'Les serveurs Overpass sont surchargés (réponse ' + lastStatus + '). Réessayez dans une minute.',
+      remark: 'Les serveurs Overpass ont manqué de temps ou de mémoire pour cette zone : zoomez, puis réessayez.',
+      unreadable: 'Les serveurs Overpass ont renvoyé une réponse illisible. Réessayez dans une minute.',
+      bad: 'Les serveurs Overpass ont refusé la demande (réponse ' + lastStatus + ').'
+    };
+    throw new Error(why[last] || why.network);
+  }
+
+  // Draws the ways just added: one polyline per family, on the canvas renderer.
+  function drawWays(wayIndexes) {
+    const lines = { major: [], minor: [], track: [], other: [] };
+    wayIndexes.forEach((wi) => {
+      const way = graph.ways[wi];
+      let run = [];
+      way.nodes.forEach((n) => {
+        if (n < 0) { if (run.length > 1) lines[way.family].push(run); run = []; } else run.push([graph.lat[n], graph.lon[n]]);
+      });
+      if (run.length > 1) lines[way.family].push(run);
+    });
+    C.FAMILIES.forEach((family) => {
+      if (!lines[family].length) return;
+      L.polyline(lines[family], Object.assign({ renderer: roadRenderer, interactive: false, pane: 'roads' }, roadStyle(family)))
+        .addTo(layers.roads[family]);
+    });
+  }
+  // Tracks look like roads one cannot use while « Autoriser les pistes » is off.
+  function roadStyle(family) {
+    return family === 'track' && !$('allow-tracks').checked ? ROAD_STYLE.other : ROAD_STYLE[family];
+  }
+
+  // Loads the roads of a box and merges them. Returns the number of ways added.
+  async function loadBox(box, label) {
+    const data = await askOverpass(box, label);
+    const res = C.addOverpass(graph, data);
+    drawWays(res.ways);
+    L.rectangle([[box[0], box[1]], [box[2], box[3]]], {
+      renderer: roadRenderer, pane: 'roads', interactive: false, color: '#0b7285', weight: 1.5, dashArray: '5 5', fillOpacity: 0.04
+    }).addTo(layers.areas);
+    roads.areas.push(box);
+    return res.ways.length;
+  }
+
+  async function onLoadRoads() {
+    if (roads.busy) return;
+    const box = viewBox(), area = C.bboxAreaKm2(box[0], box[1], box[2], box[3]);
+    if (area > OVERPASS_MAX_KM2) {
+      toast('Zone trop grande (environ ' + NUM(Math.round(area)) + ' km²) : zoomez jusqu\'à moins de ' + NUM(OVERPASS_MAX_KM2) + ' km², puis chargez les routes.', 'bad');
+      return;
+    }
+    await withRoads(async () => {
+      const added = await loadBox(box, 'Chargement');
+      toast(added ? NUM(added) + ' routes ajoutées (' + NUM(graph.ways.length) + ' en tout).'
+        : 'Aucune nouvelle route dans cette zone (' + NUM(graph.ways.length) + ' déjà chargées).');
+    });
+  }
+
+  // Runs a loading job with the button busy, then puts everything back in step.
+  async function withRoads(job) {
+    const btn = $('load-roads');
+    roads.busy = true;
+    btn.disabled = true;
+    btn.classList.add('busy');
+    try {
+      await job();
+    } catch (err) {
+      toast(err.message, 'bad');
+    } finally {
+      roads.busy = false;
+      btn.disabled = false;
+      btn.classList.remove('busy');
+      updateLoadButton();
+      resnapLost(RESNAP_M);
+      refresh();
+    }
+  }
+
+  /* ---------------------------------- 6. Search (Nominatim) and places */
+
+  const search = { last: 0, timer: null, serial: 0 };
+
+  function closeMenus() {
+    $('places-menu').hidden = true;
+    $('places-btn').setAttribute('aria-expanded', 'false');
+    $('search-results').hidden = true;
+  }
+
+  function initSearch() {
+    const menu = $('places-menu');
+    PRESETS.forEach((p) => {
+      const b = make('button', 'btn', p.name);
+      b.type = 'button';
+      b.addEventListener('click', () => { closeMenus(); map.setView([p.lat, p.lon], p.zoom); });
+      menu.appendChild(b);
+    });
+    $('places-btn').addEventListener('click', () => {
+      const open = menu.hidden;
+      closeMenus();
+      menu.hidden = !open;
+      $('places-btn').setAttribute('aria-expanded', String(open));
+    });
+    // Enter only: the form's submit. No request while typing.
+    $('search-form').addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const q = $('search-input').value.trim();
+      if (!q) return;
+      const coords = /^(-?\d+(?:[.,]\d+)?)\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)$/.exec(q);
+      if (coords) {
+        const lat = parseFloat(coords[1].replace(',', '.')), lon = parseFloat(coords[2].replace(',', '.'));
+        if (Math.abs(lat) <= 85 && Math.abs(lon) <= 180) { closeMenus(); map.setView([lat, lon], 15); return; }
+      }
+      runSearch(q);
+    });
+  }
+
+  function showResults(items, note) {
+    const list = $('search-results');
+    list.textContent = '';
+    if (note) list.appendChild(make('li', 'empty', note));
+    items.forEach((it) => {
+      const li = make('li'), b = make('button', '', it.display_name);
+      b.type = 'button';
+      b.addEventListener('click', () => { closeMenus(); goToPlace(it); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+    $('places-menu').hidden = true;
+    list.hidden = false;
+  }
+
+  function goToPlace(it) {
+    const bb = it.boundingbox;
+    if (Array.isArray(bb) && bb.length === 4) map.fitBounds([[+bb[0], +bb[2]], [+bb[1], +bb[3]]], { maxZoom: 16 });
+    else map.setView([+it.lat, +it.lon], 15);
+  }
+
+  function runSearch(q) {
+    const serial = ++search.serial;
+    clearTimeout(search.timer);
+    showResults([], 'Recherche…');
+    const wait = Math.max(0, NOMINATIM_MIN_GAP_MS - (Date.now() - search.last));
+    search.timer = setTimeout(async () => {
+      search.last = Date.now();
+      try {
+        const r = await fetchText(NOMINATIM_URL + '?format=jsonv2&limit=6&accept-language=fr&q=' + encodeURIComponent(q),
+          { headers: { Accept: 'application/json' } }, 15000);
+        if (serial !== search.serial) return;
+        if (r.status === 429 || r.status === 403) { showResults([], 'Le service de recherche demande de ralentir. Réessayez dans un instant.'); return; }
+        if (!r.ok) { showResults([], 'Le service de recherche a répondu ' + r.status + '. Réessayez plus tard.'); return; }
+        const items = JSON.parse(r.text);
+        if (!Array.isArray(items) || !items.length) { showResults([], 'Aucun lieu trouvé pour « ' + q + ' ».'); return; }
+        if (items.length === 1) { closeMenus(); goToPlace(items[0]); return; }
+        showResults(items);
+      } catch (err) {
+        if (serial !== search.serial) return;
+        showResults([], err.kind === 'timeout' ? 'La recherche n\'a pas répondu à temps. Réessayez.'
+          : 'Recherche impossible : vérifiez le réseau, puis réessayez.');
+      }
+    }, wait);
+  }
+
+  /* ------------------------------- 7. Drawing: waypoints, tools, undo */
+
+  function allowedClasses() {
+    return $('allow-tracks').checked ? C.DEFAULT_ALLOWED.slice() : C.DEFAULT_ALLOWED.filter((c) => c !== C.TRACK_CLASS);
+  }
+
+  function snapshot() {
+    return { kind: state.kind, waypoints: state.waypoints.map((w) => ({ lat: w.lat, lon: w.lon, edge: w.edge, t: w.t })) };
+  }
+  function pushUndo() {
+    undoStack.push(snapshot());
+    if (undoStack.length > 200) undoStack.shift();
+    redoStack.length = 0;
+  }
+  function restore(snap) {
+    state.kind = snap.kind;
+    state.waypoints = snap.waypoints;
+    // A restored waypoint may sit on a class that is no longer allowed.
+    resnapForbidden();
+    syncKindButtons();
+    refresh();
+  }
+  function undo() {
+    if (!undoStack.length) return;
+    redoStack.push(snapshot());
+    restore(undoStack.pop());
+  }
+  function redo() {
+    if (!redoStack.length) return;
+    undoStack.push(snapshot());
+    restore(redoStack.pop());
+  }
+
+  // Snaps a map position to the nearest allowed road within SNAP_PX pixels.
+  // Shows why when there is none, and returns null.
+  function snapClick(latlng, quiet) {
+    if (!graph.edgeA.length) {
+      if (!quiet) toast('Chargez d\'abord les routes : cadrez la zone, puis « Charger les routes de la zone ».');
+      return null;
+    }
+    const reach = pxToMetres(latlng, SNAP_PX);
+    const s = C.snap(graph, latlng.lat, latlng.lng, reach, allowedClasses());
+    if (s || quiet) return s;
+    const any = C.snap(graph, latlng.lat, latlng.lng, reach, null);
+    if (any && any.cls === C.TRACK_CLASS) toast('Cette voie est une piste : cochez « Autoriser les pistes » (onglet Tracé) pour y passer.');
+    else if (any) toast('Cette voie (' + any.cls + ') n\'est pas une route où l\'on peut tracer. Choisissez une route ou une piste.');
+    else toast('Pas de route à moins de ' + SNAP_PX + ' pixels : cliquez plus près d\'une route, zoomez, ou chargez les routes de cette zone.');
+    return null;
+  }
+
+  // A click that only closes a menu or a waypoint's popup draws nothing.
+  let popupClosedAt = 0;
+  function onMapClick(ev) {
+    const menuOpen = !$('places-menu').hidden || !$('search-results').hidden;
+    closeMenus();
+    if (menuOpen || Date.now() - popupClosedAt < 80) return;
+    if (tool === 'add') addWaypoint(ev.latlng);
+    else insertWaypoint(ev);
+  }
+
+  function addWaypoint(latlng) {
+    const s = snapClick(latlng);
+    if (!s) return;
+    const last = state.waypoints[state.waypoints.length - 1];
+    if (last && C.distance(last.lat, last.lon, s.lat, s.lon) < 1) return;     // a double click
+    pushUndo();
+    state.waypoints.push({ lat: s.lat, lon: s.lon, edge: s.edge, t: s.t });
+    refresh();
+  }
+
+  // Tool « Modifier »: a click on the course inserts a waypoint in the leg clicked.
+  function insertWaypoint(ev) {
+    const route = current.route;
+    if (!route || !route.legs.length) { toast('Rien à modifier : posez d\'abord des points avec l\'outil « Ajouter ».'); return; }
+    const p = ev.containerPoint;
+    let best = Infinity, leg = -1;
+    route.legs.forEach((l, i) => {
+      let lat, lon;
+      if (l.ok) { lat = l.lat; lon = l.lon; } else {
+        const a = state.waypoints[i], b = state.waypoints[(i + 1) % state.waypoints.length];
+        lat = [a.lat, b.lat]; lon = [a.lon, b.lon];
+      }
+      let prev = map.latLngToContainerPoint([lat[0], lon[0]]);
+      for (let k = 1; k < lat.length; k++) {
+        const cur = map.latLngToContainerPoint([lat[k], lon[k]]);
+        const d = L.LineUtil.pointToSegmentDistance(p, prev, cur);
+        if (d < best) { best = d; leg = i; }
+        prev = cur;
+      }
+    });
+    if (best > ROUTE_PICK_PX) { toast('Cliquez sur le tracé pour y insérer un point. Pour prolonger le circuit, reprenez l\'outil « Ajouter ».'); return; }
+    const s = snapClick(ev.latlng);
+    if (!s) return;
+    pushUndo();
+    state.waypoints.splice(leg + 1, 0, { lat: s.lat, lon: s.lon, edge: s.edge, t: s.t });
+    refresh();
+  }
+
+  function deleteWaypoint(i) {
+    if (i < 0 || i >= state.waypoints.length) return;
+    pushUndo();
+    state.waypoints.splice(i, 1);
+    map.closePopup();
+    refresh();
+  }
+
+  function reverseCourse() {
+    if (state.waypoints.length < 2) return;
+    pushUndo();
+    // A loop keeps its start: only the direction changes.
+    if (state.kind === 'loop') state.waypoints = [state.waypoints[0]].concat(state.waypoints.slice(1).reverse());
+    else state.waypoints.reverse();
+    refresh();
+  }
+
+  function clearAll() {
+    if (!state.waypoints.length) return;
+    pushUndo();
+    state.waypoints = [];
+    layers.imported.clearLayers();
+    refresh();
+    toast('Tracé effacé. « Annuler » le fait revenir.');
+  }
+
+  function setKind(kind) {
+    if (state.kind === kind) return;
+    pushUndo();
+    state.kind = kind;
+    syncKindButtons();
+    refresh();
+  }
+  function syncKindButtons() {
+    const loop = state.kind === 'loop';
+    $('kind-loop').classList.toggle('on', loop); $('kind-loop').setAttribute('aria-pressed', String(loop));
+    $('kind-stage').classList.toggle('on', !loop); $('kind-stage').setAttribute('aria-pressed', String(!loop));
+    $('f-laps').disabled = !loop;
+    setText($('f-laps-hint'), loop ? 'Pour une boucle.' : 'Une spéciale n\'a pas de tours.');
+  }
+  function setTool(next) {
+    tool = next;
+    $('tool-add').classList.toggle('on', tool === 'add'); $('tool-add').setAttribute('aria-pressed', String(tool === 'add'));
+    $('tool-edit').classList.toggle('on', tool === 'edit'); $('tool-edit').setAttribute('aria-pressed', String(tool === 'edit'));
+  }
+
+  // Waypoints without a road (edge -1) look for one within `reach` metres.
+  function resnapLost(reach) {
+    const allowed = allowedClasses();
+    state.waypoints.forEach((w) => {
+      if (w.edge >= 0) return;
+      const s = C.snap(graph, w.lat, w.lon, reach, allowed);
+      if (s) { w.lat = s.lat; w.lon = s.lon; w.edge = s.edge; w.t = s.t; }
+    });
+  }
+  // After the allowed classes changed: a waypoint on a road now forbidden moves
+  // to an allowed one close by, or loses its road.
+  function resnapForbidden() {
+    const allowed = allowedClasses();
+    state.waypoints.forEach((w) => {
+      if (w.edge < 0 || allowed.indexOf(graph.ways[graph.edgeWay[w.edge]].cls) >= 0) return;
+      w.edge = -1;
+    });
+    resnapLost(RESNAP_M);
+  }
+
+  function drawMarkers() {
+    layers.markers.clearLayers();
+    const n = state.waypoints.length;
+    state.waypoints.forEach((w, i) => {
+      const finish = state.kind === 'stage' && i === n - 1 && n > 1;
+      const cls = 'wp' + (w.edge < 0 ? ' lost' : i === 0 ? ' start' : finish ? ' finish' : '');
+      const label = i === 0 ? 'D' : finish ? 'A' : String(i + 1);
+      const name = i === 0 ? 'Départ' : finish ? 'Arrivée' : 'Point ' + (i + 1);
+      const marker = L.marker([w.lat, w.lon], {
+        icon: L.divIcon({ className: '', html: '<div class="' + cls + '">' + label + '</div>', iconSize: [30, 30], iconAnchor: [15, 15] }),
+        draggable: true, title: name, alt: name, zIndexOffset: i === 0 ? 1000 : 0
+      });
+      const pop = make('div', 'wp-pop');
+      pop.appendChild(make('b', '', name + ' (' + (i + 1) + ' sur ' + n + ')'));
+      const del = make('button', 'btn danger', 'Supprimer ce point');
+      del.type = 'button';
+      del.addEventListener('click', () => deleteWaypoint(i));
+      pop.appendChild(del);
+      marker.bindPopup(pop, { closeButton: false, offset: [0, -8] });
+      // Right click, or a long press on a touch screen.
+      marker.on('contextmenu', () => deleteWaypoint(i));
+      marker.on('dragstart', () => { map.closePopup(); layers.ghost.addTo(map); });
+      marker.on('drag', (ev) => {
+        const s = snapClick(ev.latlng, true);
+        layers.ghost.setLatLng(s ? [s.lat, s.lon] : ev.latlng);
+        layers.ghost.setStyle({ fillColor: s ? ROUTE_COLOR : '#c92a2a' });
+      });
+      marker.on('dragend', () => {
+        layers.ghost.remove();
+        const s = snapClick(marker.getLatLng());
+        if (!s) { marker.setLatLng([w.lat, w.lon]); return; }
+        pushUndo();
+        state.waypoints[i] = { lat: s.lat, lon: s.lon, edge: s.edge, t: s.t };
+        refresh();
+      });
+      marker.addTo(layers.markers);
+    });
+  }
+
+  /* ----------------- 8. Route, export chain and what the panel shows */
+
+  const LEG_WHY = {
+    no_path: 'aucun chemin entre ces deux points sur les routes chargées et autorisées. Chargez les routes de la zone qui les sépare, autorisez les pistes, ou déplacez un point.',
+    unsnapped: 'l\'un des deux points n\'est sur aucune route chargée. Chargez les routes autour de lui, ou déplacez-le.',
+    'class': 'l\'un des deux points est sur une voie qui n\'est plus autorisée. Autorisez les pistes, ou déplacez-le.'
+  };
+
+  function errorText(e) {
+    switch (e.code) {
+      case 'no_route': return 'Pas de tracé : posez au moins deux points sur des routes (trois pour une boucle).';
+      case 'too_short': return 'Circuit trop court : ' + fmtDist(e.length) + ' de jeu, il en faut au moins ' + NUM(C.LIMITS.minLength) + ' m. Allongez le tracé ou réduisez l\'échelle.';
+      case 'too_many_points': return 'Circuit trop long pour le format : plus de 20 000 points, même espacés de 20 m.';
+      case 'total_too_long': return 'Trop de tours : ' + fmtDist(e.length) + ' en tout, les jeux acceptent 300 km au plus. Réduisez le nombre de tours.';
+      case 'gap_rule': return 'Demi-tour sur place : le tracé revient sur ses pas au même endroit. Déplacez le point de passage voisin, ou augmentez le rayon de lissage.';
+      case 'no_elevation': return 'Le relief n\'est pas encore chargé.';
+      case 'extent_rule': return 'Circuit trop étendu : il s\'éloigne de plus de 60 km de jeu de son départ. Augmentez l\'échelle ou raccourcissez le tracé.';
+      case 'too_many_waypoints': return 'Trop de points de passage (plus de ' + NUM(e.max) + ') : supprimez-en.';
+      case 'height_rule': return 'Relief hors limites : plus de 3 000 m de jeu d\'écart avec le départ. Augmentez l\'échelle verticale.';
+      case 'slope_rule': return 'Pente hors limites après arrondi : augmentez l\'échelle verticale ou l\'espacement des points.';
+      default: return 'Export impossible (' + e.code + ').';
+    }
+  }
+  function warningText(w) {
+    switch (w.code) {
+      case 'short': return 'Circuit court : ' + fmtDist(w.length) + ' de jeu, moins de 1,5 km.';
+      case 'long': return 'Circuit long : ' + fmtDist(w.length) + ' de jeu, plus de 40 km.';
+      case 'road_twice': return 'La même route est empruntée deux fois (sur ' + fmtDist(w.length) + ').';
+      case 'self_cross': return w.count > 1 ? 'Le tracé se croise lui-même en ' + w.count + ' endroits.' : 'Le tracé se croise lui-même.';
+      case 'hairpin': return (w.count > 1 ? w.count + ' épingles' : 'Une épingle') + ' de moins de ' + w.limit + ' m de rayon après lissage (la plus serrée : ' +
+        NUM(w.radius, 1) + ' m). Déplacez un point ou augmentez le rayon de lissage.';
+      default: return w.code;
+    }
+  }
+  function noteText(n) {
+    switch (n.code) {
+      case 'spike_trimmed': return (n.count > 1 ? n.count + ' petits demi-tours' : 'Un petit demi-tour') + ' de moins de ' + C.RULES.spikeMax +
+        ' m à un point de passage : ignoré à l\'export. Un point posé juste à côté d\'un carrefour en est la cause.';
+      case 'spacing_raised': return 'Espacement des points porté de ' + NUM(n.from, 2) + ' à ' + NUM(n.to, 2) + ' m pour rester sous 20 000 points.';
+      case 'checkpoints_capped': return 'Checkpoints limités à ' + n.max + ', le maximum du format.';
+      default: return n.code;
+    }
+  }
+
+  function readNumber(id, fallback) {
+    const v = parseFloat(String($(id).value).replace(',', '.'));
+    return isFinite(v) ? v : fallback;
+  }
+  // The settings as the form shows them; the core fills defaults and clamps.
+  function readSettings() {
+    const D = C.DEFAULTS, scale = readNumber('f-scale', D.scale), games = [];
+    if ($('f-game-buggy').checked) games.push('3d_buggy');
+    if ($('f-game-rally').checked) games.push('cambodia_rally');
+    return C.normalizeSettings({
+      id: $('f-id').value.trim(), name: $('f-name').value, author: $('f-author').value, games: games,
+      kind: state.kind, laps: readNumber('f-laps', D.laps), scale: scale,
+      vertical_scale: $('f-vscale').value === '' ? scale : readNumber('f-vscale', scale),
+      road_width: readNumber('f-width', D.road_width), spacing: readNumber('f-spacing', D.spacing),
+      smooth_m: readNumber('f-smooth', D.smooth_m), narrow_tracks: $('f-narrow').checked, bridge_widths: $('f-bridges').checked,
+      checkpoint_every_m: $('f-cp').value === '' ? 0 : readNumber('f-cp', 0), gates_auto: $('f-gates').checked,
+      relief: $('f-relief').checked, allowed_classes: allowedClasses(),
+      waypoints: state.waypoints.map((w) => [w.lat, w.lon])
+    });
+  }
+
+  // Everything again from the drawing and the settings. Cheap: legs are cached.
+  function refresh() {
+    current.route = C.buildRoute(graph, state.waypoints, state.kind, allowedClasses(), legCache);
+    const s = current.settings = readSettings();
+    current.result = null; current.plan = null; current.pending = false;
+    if (current.route.ok) {
+      let ele = null;
+      if (s.relief) {
+        const line = current.route.line;
+        current.plan = C.elevationPlan(C.cleanLine({ lat: line.lat, lon: line.lon, seg: line.seg, closed: s.kind === 'loop' }, C.RULES.spikeMax));
+        ele = C.elevationSamples(current.plan, eleStore);
+        if (!ele) {
+          // Elevations still to fetch: show the flat course meanwhile.
+          current.pending = true;
+          if (!relief.error) scheduleElevation();
+        }
+      }
+      current.result = C.buildTrack(graph, current.route.line, ele ? s : Object.assign({}, s, { relief: false }), ele);
+    }
+    drawMarkers();
+    drawRoute();
+    renderInfo();
+    renderRelief();
+    updateButtons();
+    schedulePreview();
+  }
+  let refreshTimer = null;
+  function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 250); }
+
+  function drawRoute() {
+    layers.route.clearLayers();
+    const route = current.route, n = state.waypoints.length;
+    if (!route) return;
+    const good = [], lost = [];
+    route.legs.forEach((leg, i) => {
+      if (leg.ok) good.push(leg.lat.map((la, k) => [la, leg.lon[k]]));
+      else { const a = state.waypoints[i], b = state.waypoints[(i + 1) % n]; lost.push([[a.lat, a.lon], [b.lat, b.lon]]); }
+    });
+    const opt = { renderer: routeRenderer, pane: 'route', interactive: false, lineJoin: 'round' };
+    if (good.length) {
+      L.polyline(good, Object.assign({ color: '#fff', weight: 9, opacity: 0.85 }, opt)).addTo(layers.route);
+      L.polyline(good, Object.assign({ color: ROUTE_COLOR, weight: 5, opacity: 0.95 }, opt)).addTo(layers.route);
+    }
+    // A leg without a path: a red dashed line straight between its two waypoints.
+    if (lost.length) L.polyline(lost, Object.assign({ color: '#e03131', weight: 4, opacity: 0.95, dashArray: '8 8' }, opt)).addTo(layers.route);
+    drawArrows();
+  }
+
+  // One arrow in the middle of each leg, pointing the way the course runs.
+  let arrowLayer = null;
+  function drawArrows() {
+    if (arrowLayer) { arrowLayer.remove(); arrowLayer = null; }
+    const route = current.route;
+    if (!route || !route.legs.length) return;
+    arrowLayer = L.layerGroup();
+    route.legs.forEach((leg) => {
+      if (!leg.ok || leg.lat.length < 2) return;
+      const pts = leg.lat.map((la, k) => map.latLngToLayerPoint([la, leg.lon[k]]));
+      let total = 0;
+      const cum = [0];
+      for (let k = 1; k < pts.length; k++) { total += pts[k].distanceTo(pts[k - 1]); cum.push(total); }
+      if (total < 70) return;                         // too short on screen for an arrow
+      let k = 1;
+      while (k < pts.length - 1 && cum[k] < total / 2) k++;
+      const a = pts[k - 1], b = pts[k], f = (total / 2 - cum[k - 1]) / Math.max(cum[k] - cum[k - 1], 1e-9);
+      const mid = L.point(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f);
+      const angle = Math.atan2(b.x - a.x, -(b.y - a.y)) * 180 / Math.PI;
+      L.marker(map.layerPointToLatLng(mid), {
+        interactive: false, keyboard: false,
+        icon: L.divIcon({ className: '', html: '<div class="wp-arrow" style="transform:rotate(' + angle.toFixed(1) + 'deg)"></div>', iconSize: [14, 13], iconAnchor: [7, 6.5] })
+      }).addTo(arrowLayer);
+    });
+    arrowLayer.addTo(map);
+  }
+
+  // What the file will hold, drawn over the course: the smoothed centre line,
+  // the checkpoints, the gates, and where the warnings are.
+  let previewTimer = null;
+  function schedulePreview() {
+    clearTimeout(previewTimer);
+    layers.preview.clearLayers();
+    previewTimer = setTimeout(drawPreview, 220);
+  }
+  function drawPreview() {
+    layers.preview.clearLayers();
+    const r = current.result;
+    if (!r || !r.ok) return;
+    const ll = C.trackToLatLon(r.track), opt = { renderer: routeRenderer, pane: 'route', interactive: false };
+    if (!ll) return;
+    L.polyline(r.track.kind === 'loop' ? ll.concat([ll[0]]) : ll, Object.assign({ color: '#fff', weight: 1.6, opacity: 0.95 }, opt)).addTo(layers.preview);
+    r.track.gates.forEach((i) => L.circleMarker(ll[i], Object.assign({ radius: 5, color: '#5f3dc4', weight: 2, fillColor: '#fcc419', fillOpacity: 1 }, opt)).addTo(layers.preview));
+    r.track.checkpoints.forEach((i) => L.circleMarker(ll[i], Object.assign({ radius: 6, color: ROUTE_COLOR, weight: 3, fillColor: '#fff', fillOpacity: 1 }, opt)).addTo(layers.preview));
+    r.warnings.forEach((w) => (w.at || []).forEach((p) =>
+      L.circleMarker(p, Object.assign({ radius: 11, color: '#e03131', weight: 3, fill: false }, opt)).addTo(layers.preview)));
+  }
+
+  function renderInfo() {
+    const route = current.route, r = current.result, n = state.waypoints.length;
+    const list = $('messages');
+    list.textContent = '';
+    const add = (cls, text, at) => {
+      const li = make('li', cls), span = make('span', '', text);
+      li.appendChild(span);
+      if (at && at.length) {
+        const b = make('button', '', 'Voir');
+        b.type = 'button';
+        b.addEventListener('click', () => { map.setView(at[0], Math.max(map.getZoom(), 17)); });
+        li.appendChild(b);
+      }
+      list.appendChild(li);
+    };
+    let problems = 0, blocking = 0;
+    const stat = (id, text) => setText($(id), text);
+    ['st-real', 'st-game', 'st-time', 'st-cp', 'st-gates', 'st-points', 'st-climb'].forEach((id) => stat(id, '—'));
+
+    if (n === 0) setText($('summary'), 'Aucun tracé');
+    else if (n === 1) setText($('summary'), 'Un point posé : ajoutez-en un autre');
+    if (route && route.legs.length) {
+      route.legs.forEach((leg, i) => {
+        if (leg.ok) return;
+        blocking++;
+        add('bad', 'Tronçon ' + (i + 1) + ' → ' + ((i + 1) % n + 1) + ' : ' + (LEG_WHY[leg.reason] || LEG_WHY.no_path),
+          [[state.waypoints[i].lat, state.waypoints[i].lon]]);
+      });
+      if (blocking) setText($('summary'), blocking > 1 ? blocking + ' tronçons sans chemin' : 'Un tronçon sans chemin');
+    }
+    if (r) {
+      r.errors.forEach((e) => { blocking++; add('bad', errorText(e), e.at ? [e.at] : null); });
+      r.warnings.forEach((w) => { problems++; add('', warningText(w), w.at); });
+      r.notes.forEach((nt) => add('info', noteText(nt)));
+      const st = r.stats;
+      if (st) {
+        const loop = state.kind === 'loop';
+        stat('st-real', fmtDist(st.length_real_m));
+        stat('st-game', fmtDist(st.length_game_m) + (loop ? ' par tour' : ''));
+        stat('st-time', loop ? fmtTime(st.lap_time_s) + ' par tour, ' + fmtTime(st.total_time_s) + ' pour ' + st.laps + (st.laps > 1 ? ' tours' : ' tour')
+          : fmtTime(st.lap_time_s));
+        stat('st-cp', String(st.checkpoints));
+        stat('st-gates', current.settings.gates_auto ? String(st.gates) : 'aucune');
+        stat('st-points', NUM(st.points) + ' (tous les ' + NUM(st.spacing, 2) + ' m)');
+        stat('st-climb', !current.settings.relief ? 'circuit plat' : relief.error && current.pending ? 'indisponible'
+          : current.pending ? 'en cours…' : NUM(Math.round(st.climb_m)) + ' m');
+        const head = $('summary');
+        setText(head, (loop ? 'Boucle' : 'Spéciale') + ' · ' + fmtDist(st.length_game_m) + ' de jeu · ' + fmtTime(st.lap_time_s) + (loop ? ' par tour' : ''));
+        if (problems) head.appendChild(make('span', 'badge', String(problems)));
+      } else if (r.errors.length) setText($('summary'), errorText(r.errors[0]).split(' : ')[0]);
+    }
+    if (blocking) $('summary').appendChild(make('span', 'badge bad', '!'));
+
+    const info = $('roads-info');
+    if (!graph.ways.length) setText(info, 'Aucune route chargée : cadrez la carte sur la zone voulue, puis « Charger les routes de la zone ».');
+    else setText(info, NUM(graph.ways.length) + ' routes chargées en ' + roads.areas.length + (roads.areas.length > 1 ? ' zones' : ' zone') +
+      ' (cadres en pointillé). Chaque chargement s\'ajoute aux précédents.');
+  }
+
+  function updateButtons() {
+    const n = state.waypoints.length, ready = !!(current.route && current.route.ok && current.result && current.result.ok);
+    $('undo').disabled = !undoStack.length;
+    $('redo').disabled = !redoStack.length;
+    $('reverse').disabled = n < 2;
+    $('clear').disabled = n === 0;
+    $('download').disabled = !ready;
+    $('copy').disabled = !ready;
+    $('send').disabled = !ready || !$('f-token').value.trim();
+  }
+
+  /* --------------------------------------------- 9. Relief: Open-Meteo */
+
+  function scheduleElevation() {
+    clearTimeout(relief.timer);
+    relief.timer = setTimeout(() => { loadElevation(); }, ELEVATION_IDLE_MS);
+  }
+
+  // One request: up to 100 coordinates. Backs off when the API says 429.
+  async function elevationBatch(lat, lon) {
+    const url = ELEVATION_URL + '?latitude=' + lat.join(',') + '&longitude=' + lon.join(',');
+    const waits = [5, 15, 45];
+    for (let attempt = 0; ; attempt++) {
+      let r;
+      try { r = await fetchText(url, {}, 20000); } catch (err) {
+        throw new Error(err.kind === 'timeout' ? 'Open-Meteo n\'a pas répondu à temps.' : 'Connexion impossible à Open-Meteo : vérifiez le réseau.');
+      }
+      if (r.status === 429 && attempt < waits.length) {
+        let wait = parseInt(r.headers.get('retry-after'), 10);
+        if (!(wait > 0 && wait <= 120)) wait = waits[attempt];
+        relief.progress = 'Open-Meteo demande de ralentir : nouvel essai dans ' + wait + ' s…';
+        renderRelief();
+        await sleep(wait * 1000);
+        continue;
+      }
+      if (r.status === 429) throw new Error('Open-Meteo refuse pour l\'instant de nouvelles demandes (trop de requêtes).');
+      if (!r.ok) throw new Error('Open-Meteo a répondu ' + r.status + '.');
+      let data;
+      try { data = JSON.parse(r.text); } catch (e) { data = null; }
+      if (!data || !Array.isArray(data.elevation) || data.elevation.length !== lat.length) throw new Error('Open-Meteo a renvoyé une réponse inattendue.');
+      return data.elevation;
+    }
+  }
+
+  // Fetches what the current course still lacks, one request after the other.
+  // Resolves true when the store covers the course. One run at a time.
+  function loadElevation() {
+    if (relief.promise) return relief.promise;
+    relief.error = null;
+    relief.promise = (async () => {
+      try {
+        for (;;) {
+          const plan = current.plan;
+          if (!plan) return false;
+          const miss = C.elevationMissing(plan, eleStore);
+          if (!miss.key.length) return true;
+          for (let i = 0; i < miss.key.length; i += ELEVATION_BATCH) {
+            relief.progress = 'Relief : ' + Math.min(i + ELEVATION_BATCH, miss.key.length) + ' / ' + miss.key.length + ' points demandés à Open-Meteo…';
+            renderRelief();
+            const values = await elevationBatch(miss.lat.slice(i, i + ELEVATION_BATCH), miss.lon.slice(i, i + ELEVATION_BATCH));
+            // No data (open sea) comes back as null: sea level.
+            values.forEach((v, k) => eleStore.set(miss.key[i + k], typeof v === 'number' && isFinite(v) ? v : 0));
+            if (i + ELEVATION_BATCH < miss.key.length) await sleep(300);
+          }
+          // The course may have changed while we were asking: look again.
+        }
+      } catch (err) {
+        relief.error = err.message + ' Réessayez, ou décochez « Relief » pour un circuit plat.';
+        return false;
+      }
+    })();
+    relief.promise.then(() => {
+      relief.promise = null;
+      relief.progress = '';
+      clearTimeout(relief.timer);
+      refresh();
+    });
+    return relief.promise;
+  }
+
+  function renderRelief() {
+    const status = $('relief-status'), s = current.settings, r = current.result;
+    const on = s && s.relief;
+    $('relief-retry').hidden = !(on && relief.error);
+    status.classList.toggle('bad', !!(on && relief.error));
+    let profile = null;
+    if (!on) setText(status, 'Relief désactivé : le circuit sera plat.');
+    else if (relief.error) setText(status, relief.error);
+    else if (!current.route || !current.route.ok) setText(status, 'Le relief sera chargé quand un tracé existera.');
+    else if (current.pending) setText(status, relief.progress || 'Relief : chargement…');
+    else if (r && r.profile) {
+      profile = r.profile;
+      setText(status, 'Relief chargé : ' + NUM(current.plan.key.length) + ' altitudes le long du tracé.');
+    } else setText(status, '');
+    const e = r && r.track && !current.pending ? r.track.elevation : null;
+    setText($('rl-climb'), e ? NUM(Math.round(e.climb_m)) + ' m' : '—');
+    setText($('rl-range'), e ? 'de ' + NUM(Math.round(e.min)) + ' à ' + NUM(Math.round(e.max)) + ' m' : '—');
+    drawProfile(profile);
+  }
+
+  // The elevation profile: distance along the course across, real metres up.
+  function drawProfile(profile) {
+    const cv = $('profile'), w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;                               // tab not shown: drawn when it opens
+    const dpr = window.devicePixelRatio || 1, ctx = cv.getContext('2d');
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = '12px system-ui, sans-serif';
+    ctx.fillStyle = '#5c6773';
+    if (!profile || profile.ele.length < 2) {
+      ctx.textAlign = 'center';
+      ctx.fillText('Pas de profil à afficher', w / 2, h / 2);
+      return;
+    }
+    let lo = Infinity, hi = -Infinity;
+    profile.ele.forEach((v) => { if (v < lo) lo = v; if (v > hi) hi = v; });
+    // At least 20 m of range, or a flat road looks like a mountain stage.
+    const pad = Math.max(0, (20 - (hi - lo)) / 2), bottom = lo - pad, top = hi + pad;
+    const x0 = 8, x1 = w - 8, y0 = h - 22, y1 = 18, total = profile.dist[profile.dist.length - 1] || 1;
+    const px = (d) => x0 + (x1 - x0) * d / total, py = (v) => y0 - (y0 - y1) * (v - bottom) / (top - bottom);
+    ctx.beginPath();
+    ctx.moveTo(px(0), y0);
+    profile.ele.forEach((v, i) => ctx.lineTo(px(profile.dist[i]), py(v)));
+    ctx.lineTo(px(total), y0);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(11, 114, 133, .18)';
+    ctx.fill();
+    ctx.beginPath();
+    profile.ele.forEach((v, i) => { if (i) ctx.lineTo(px(profile.dist[i]), py(v)); else ctx.moveTo(px(0), py(v)); });
+    ctx.strokeStyle = '#0b7285'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.stroke();
+    ctx.fillStyle = '#5c6773';
+    ctx.textAlign = 'left';
+    ctx.fillText(typo(NUM(Math.round(hi)) + ' m'), x0, 13);
+    ctx.fillText(typo(NUM(Math.round(lo)) + ' m'), x0, h - 6);
+    ctx.textAlign = 'right';
+    ctx.fillText(typo(fmtDist(total) + ' de jeu'), x1, h - 6);
+  }
+
+  /* -------------------------------- 10. Files: download, copy, open */
+
+  function fallbackId() {
+    const d = new Date(), two = (v) => String(v).padStart(2, '0');
+    return 'circuit-' + d.getFullYear() + two(d.getMonth() + 1) + two(d.getDate()) + '-' + two(d.getHours()) + two(d.getMinutes());
+  }
+
+  // The file, ready to leave: { track, text, bbox }. Rejects with an Error whose
+  // message says what is missing.
+  async function prepareExport() {
+    clearTimeout(refreshTimer);
+    refresh();
+    if (!current.route || !current.route.ok) throw new Error('Le tracé n\'est pas complet : posez des points sur les routes, et corrigez les tronçons en rouge.');
+    const s = readSettings();
+    if (!s.name) { showTab('settings'); $('f-name').focus(); throw new Error('Donnez un nom au circuit (onglet Réglages).'); }
+    if (!s.id) {
+      s.id = C.slugify(s.name) || fallbackId();
+      $('f-id').value = s.id;
+    }
+    if (!C.isValidId(s.id)) { showTab('settings'); $('f-id').focus(); throw new Error('Identifiant invalide : des minuscules, des chiffres et des tirets, sans tiret au début ni à la fin.'); }
+    if (!s.games.length) { showTab('settings'); throw new Error('Cochez au moins un jeu (onglet Réglages).'); }
+    let ele = null;
+    if (s.relief) {
+      const covered = await loadElevation();
+      if (!covered || !current.plan) throw new Error(relief.error || 'Le relief n\'a pas pu être chargé. Réessayez, ou décochez « Relief ».');
+      ele = C.elevationSamples(current.plan, eleStore);
+    }
+    s.created = nowIso();
+    const res = C.buildTrack(graph, current.route.line, s, ele);
+    if (!res.ok) throw new Error(errorText(res.errors[0]));
+    const check = C.checkTrack(res.track);
+    if (!check.ok) throw new Error('Le fichier ne respecte pas le format (' + check.errors.map((e) => e.code).join(', ') + '). C\'est un défaut de l\'éditeur : signalez-le.');
+    const text = C.serializeTrack(res.track);
+    if (C.utf8(text).length > C.LIMITS.maxBytes) throw new Error('Fichier trop gros pour les jeux (plus de 4 Mio) : augmentez l\'espacement des points.');
+    return { track: res.track, text: text, bbox: res.bbox };
+  }
+
+  function exportStatus(text, bad) {
+    const el = $('export-status');
+    setText(el, text);
+    el.classList.toggle('bad', !!bad);
+  }
+
+  async function onDownload() {
+    try {
+      const out = await prepareExport();
+      const url = URL.createObjectURL(new Blob([out.text], { type: 'application/json' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = out.track.id + '.cambotrack.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      exportStatus('Fichier ' + a.download + ' téléchargé (' + NUM(out.track.points.length) + ' points).');
+    } catch (err) { exportStatus(err.message, true); }
+  }
+
+  async function onCopy() {
+    try {
+      const out = await prepareExport();
+      let done = false;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try { await navigator.clipboard.writeText(out.text); done = true; } catch (e) { done = false; }
+      }
+      if (!done) {
+        const ta = document.createElement('textarea');
+        ta.value = out.text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        done = document.execCommand('copy');
+        ta.remove();
+      }
+      if (!done) throw new Error('Le navigateur a refusé la copie : utilisez « Télécharger ».');
+      exportStatus('Circuit copié dans le presse-papiers (' + NUM(out.track.points.length) + ' points).');
+    } catch (err) { exportStatus(err.message, true); }
+  }
+
+  // The settings a file carries, back into the form.
+  function applyTrackToForm(t) {
+    const ed = t.editor && typeof t.editor === 'object' ? t.editor : {};
+    const D = C.DEFAULTS;
+    $('f-name').value = typeof t.name === 'string' ? t.name : '';
+    $('f-id').value = C.isValidId(t.id) ? t.id : '';
+    idTouched = !!$('f-id').value;
+    $('f-author').value = typeof t.author === 'string' ? t.author : '';
+    const games = Array.isArray(t.games) && t.games.length ? t.games : C.GAMES;
+    $('f-game-buggy').checked = games.indexOf('3d_buggy') >= 0;
+    $('f-game-rally').checked = games.indexOf('cambodia_rally') >= 0;
+    $('f-laps').value = t.kind === 'loop' && t.laps ? t.laps : D.laps;
+    $('f-scale').value = t.scale;
+    $('f-vscale').value = t.vertical_scale === t.scale ? '' : t.vertical_scale;
+    $('f-width').value = t.road_width;
+    $('f-spacing').value = t.spacing;
+    $('f-smooth').value = isFinite(ed.smooth_m) ? ed.smooth_m : D.smooth_m;
+    $('f-cp').value = ed.checkpoint_every_m > 0 ? ed.checkpoint_every_m : '';
+    $('f-narrow').checked = ed.narrow_tracks === undefined ? D.narrow_tracks : !!ed.narrow_tracks;
+    $('f-bridges').checked = ed.bridge_widths === undefined ? D.bridge_widths : !!ed.bridge_widths;
+    $('f-gates').checked = ed.gates_auto === undefined ? !(Array.isArray(t.gates) && t.gates.length === 0) : !!ed.gates_auto;
+    $('f-relief').checked = !!t.elevation;
+    $('allow-tracks').checked = !Array.isArray(t.allowed_classes) || t.allowed_classes.indexOf(C.TRACK_CLASS) >= 0;
+    restyleTracks();
+  }
+
+  // A box cut into pieces small enough for one Overpass request each.
+  function splitBox(box) {
+    const area = C.bboxAreaKm2(box[0], box[1], box[2], box[3]);
+    const k = Math.max(1, Math.ceil(Math.sqrt(area / (OVERPASS_MAX_KM2 * 0.6)))), out = [];
+    for (let i = 0; i < k; i++) {
+      for (let j = 0; j < k; j++) {
+        out.push([box[0] + (box[2] - box[0]) * i / k, box[1] + (box[3] - box[1]) * j / k,
+          box[0] + (box[2] - box[0]) * (i + 1) / k, box[1] + (box[3] - box[1]) * (j + 1) / k]);
+      }
+    }
+    return out;
+  }
+
+  // « Ouvrir »: the course is drawn from its points by inverse projection, then
+  // the roads of its area are loaded and the route rebuilt from its waypoints.
+  async function onOpenFile(file) {
+    if (!file) return;
+    if (file.size > C.LIMITS.maxBytes) { exportStatus('Ce fichier dépasse 4 Mio : ce n\'est pas un circuit.', true); return; }
+    let text;
+    try { text = await file.text(); } catch (e) { exportStatus('Lecture du fichier impossible.', true); return; }
+    const parsed = C.parseTrack(text);
+    if (!parsed.ok) {
+      exportStatus(parsed.error === 'json' ? 'Ce fichier n\'est pas du JSON valide.'
+        : parsed.error === 'format' ? 'Ce n\'est pas un fichier .cambotrack.json.'
+        : parsed.error === 'version_newer' ? 'Ce circuit est d\'une version du format plus récente que cet éditeur.'
+        : 'Fichier refusé : il ne respecte pas le format (' + parsed.error + ').', true);
+      return;
+    }
+    const t = parsed.track, ll = C.trackToLatLon(t);
+    if (!ll) { exportStatus('Ce circuit n\'a pas d\'origine géographique : il ne peut pas être replacé sur la carte.', true); return; }
+    const badHash = parsed.check.errors.some((e) => e.code === 'hash');
+
+    undoStack.length = 0; redoStack.length = 0;
+    applyTrackToForm(t);
+    state.kind = t.kind;
+    state.waypoints = (Array.isArray(t.waypoints) ? t.waypoints : [])
+      .filter((w) => Array.isArray(w) && isFinite(w[0]) && isFinite(w[1]))
+      .map((w) => ({ lat: w[0], lon: w[1], edge: -1, t: 0 }));
+    syncKindButtons();
+    resnapLost(RESNAP_M);
+    layers.imported.clearLayers();
+    const trace = L.polyline(t.kind === 'loop' ? ll.concat([ll[0]]) : ll, {
+      renderer: routeRenderer, pane: 'route', interactive: false, color: '#9c36b5', weight: 4, opacity: 0.9, dashArray: '2 7'
+    }).addTo(layers.imported);
+    map.fitBounds(trace.getBounds(), { padding: [30, 30] });
+    refresh();
+    exportStatus('« ' + t.name + ' » ouvert (' + NUM(t.points.length) + ' points). Chargement des routes de sa zone…');
+
+    // Roads: the box of the course and 400 m around, in as many requests as needed.
+    const b = trace.getBounds(), m = C.metersPerDegree(b.getCenter().lat);
+    const box = [b.getSouth() - 400 / m.lat, b.getWest() - 400 / m.lon, b.getNorth() + 400 / m.lat, b.getEast() + 400 / m.lon];
+    const pieces = splitBox(box);
+    let failed = false;
+    await withRoads(async () => {
+      try {
+        for (let i = 0; i < pieces.length; i++) await loadBox(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
+      } catch (err) { failed = true; throw err; }
+    });
+    const n = state.waypoints.length, lost = state.waypoints.filter((w) => w.edge < 0).length;
+    if (failed) exportStatus('« ' + t.name + ' » ouvert, mais ses routes n\'ont pas pu être chargées : cadrez sa zone et utilisez « Charger les routes de la zone ».', true);
+    else if (!n) exportStatus('« ' + t.name + ' » ouvert. Ce fichier n\'a pas de points de passage : son tracé est affiché en pointillé violet, il faut le retracer pour le modifier.', true);
+    else if (lost) exportStatus('« ' + t.name + ' » ouvert, mais ' + lost + (lost > 1 ? ' points ne retrouvent' : ' point ne retrouve') + ' pas de route (en rouge) : la carte a changé. Déplacez-les sur une route.', true);
+    else {
+      if (current.route && current.route.ok) layers.imported.clearLayers();
+      exportStatus('« ' + t.name + ' » ouvert et recalculé depuis ses ' + n + ' points de passage.' +
+        (badHash ? ' Attention : son hash ne correspondait pas à son contenu (fichier modifié à la main ?).' : ''), badHash);
+    }
+  }
+
+  /* ---------------------------- 11. Sending to the games (GitHub) */
+
+  function toBase64(text) {
+    const bytes = C.utf8(text);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return window.btoa(bin);
+  }
+  function fromBase64(b64) {
+    const bin = window.atob(String(b64).replace(/\s/g, '')), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function githubError(status, what) {
+    const repo = GITHUB_OWNER + '/' + GITHUB_REPO;
+    if (status === 401) return new Error('GitHub refuse le jeton (401) : il est faux, expiré ou révoqué. Créez-en un nouveau.');
+    if (status === 403) return new Error('GitHub refuse l\'accès (403) : le jeton doit avoir la permission « Contents : Read and write » sur ' + repo + '. Si c\'est le cas, trop de requêtes ont été faites : réessayez dans une heure.');
+    if (status === 404) return new Error('GitHub ne trouve pas ' + repo + ' avec ce jeton (404) : vérifiez qu\'il est limité à ce dépôt et qu\'il a la permission « Contents : Read and write ».');
+    if (status === 409 || status === 422) return new Error('Conflit sur ' + what + ' (' + status + ') : le fichier a changé pendant l\'envoi, deux fois de suite. Réessayez.');
+    return new Error('GitHub a répondu ' + status + ' pour ' + what + '. Réessayez plus tard.');
+  }
+
+  async function github(method, path, token, body) {
+    const url = GITHUB_API + '/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + path +
+      (method === 'GET' ? '?ref=' + encodeURIComponent(GITHUB_BRANCH) : '');
+    const headers = { Accept: 'application/vnd.github.object+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' };
+    const options = { method: method, headers: headers, cache: 'no-store' };
+    if (body) { headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(body); }
+    try {
+      return await fetchText(url, options, 60000);
+    } catch (err) {
+      throw new Error(err.kind === 'timeout' ? 'GitHub n\'a pas répondu à temps. Réessayez.' : 'Connexion impossible à GitHub : vérifiez le réseau, puis réessayez.');
+    }
+  }
+
+  // The file as the branch has it: { sha, text } or null when it does not exist.
+  async function githubRead(path, token, wantText) {
+    const r = await github('GET', path, token);
+    // 404: no such file yet. (A token without access to the repository gets 404
+    // too; the write that follows then fails with the same code and says so.)
+    if (r.status === 404) return null;
+    if (!r.ok) throw githubError(r.status, path);
+    let info;
+    try { info = JSON.parse(r.text); } catch (e) { throw new Error('Réponse illisible de GitHub pour ' + path + '.'); }
+    if (!info || typeof info.sha !== 'string') throw new Error(path + ' n\'est pas un fichier sur GitHub.');
+    let text = null;
+    if (wantText) {
+      if (info.encoding !== 'base64' || typeof info.content !== 'string') throw new Error(path + ' est trop gros pour être relu (plus de 1 Mo).');
+      text = fromBase64(info.content);
+    }
+    return { sha: info.sha, text: text };
+  }
+
+  function githubWrite(path, token, text, sha, message) {
+    const body = { message: message, content: toBase64(text), branch: GITHUB_BRANCH };
+    if (sha) body.sha = sha;
+    return github('PUT', path, token, body);
+  }
+
+  // Writes a file whatever is there; on a conflict, reads the sha again and
+  // tries once more. make(existing) returns the text to write.
+  async function githubPut(path, token, wantText, makeText, message) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const existing = await githubRead(path, token, wantText);
+      const r = await githubWrite(path, token, makeText(existing), existing ? existing.sha : null, message(existing));
+      if (r.ok) { try { return JSON.parse(r.text); } catch (e) { return {}; } }
+      if ((r.status === 409 || r.status === 422) && attempt === 0) continue;
+      throw githubError(r.status, path);
+    }
+    return {};
+  }
+
+  async function onSend() {
+    const box = $('send-status'), token = $('f-token').value.trim();
+    const say = (text, bad) => { box.textContent = ''; box.className = 'send-status' + (bad ? ' bad' : ''); box.appendChild(make('p', '', text)); };
+    if (!token) { say('Collez d\'abord un jeton GitHub.', true); return; }
+    const btn = $('send');
+    btn.disabled = true;
+    try {
+      say('Préparation du circuit…');
+      const out = await prepareExport();
+      const id = out.track.id, file = id + '.cambotrack.json';
+      say('Envoi de ' + file + '…');
+      const sent = await githubPut(TRACKS_DIR + '/' + file, token, false, () => out.text,
+        (existing) => 'Custom tracks: ' + (existing ? 'update ' : 'add ') + id);
+      say('Mise à jour du catalogue…');
+      const when = nowIso(), entry = C.catalogEntry(out.track, out.bbox, when);
+      await githubPut(TRACKS_DIR + '/' + CATALOG_FILE, token, true, (existing) => {
+        let cat = null;
+        if (existing) {
+          try { cat = JSON.parse(existing.text); } catch (e) { throw new Error('Le catalogue ' + TRACKS_DIR + '/' + CATALOG_FILE + ' du site n\'est pas du JSON valide : il n\'a pas été touché. Le circuit, lui, est envoyé.'); }
+        }
+        try { return C.serializeCatalog(C.updateCatalog(cat, entry, when)); } catch (e) {
+          throw new Error('Le fichier ' + TRACKS_DIR + '/' + CATALOG_FILE + ' du site n\'est pas un catalogue : il n\'a pas été touché. Le circuit, lui, est envoyé.');
+        }
+      }, () => 'Custom tracks: catalogue entry for ' + id);
+
+      box.textContent = ''; box.className = 'send-status';
+      const done = make('div', 'done');
+      done.appendChild(make('p', '', '« ' + out.track.name + ' » est envoyé.'));
+      const list = make('ul');
+      const link = (label, url) => {
+        const li = make('li', '', label + ' : '), a = make('a', '', url);
+        a.href = url; a.target = '_blank'; a.rel = 'noopener';
+        li.appendChild(a); list.appendChild(li);
+      };
+      link('Circuit', RAW_BASE + file);
+      link('Catalogue', RAW_BASE + CATALOG_FILE);
+      link('Sur le site', PAGES_BASE + file);
+      if (sent && sent.commit && sent.commit.html_url) link('Commit', sent.commit.html_url);
+      done.appendChild(list);
+      done.appendChild(make('p', '', 'Dans le jeu : « Circuits perso → Actualiser ». GitHub peut mettre jusqu\'à 5 minutes à servir la nouvelle version.'));
+      box.appendChild(done);
+    } catch (err) {
+      say(err.message, true);
+    } finally {
+      updateButtons();
+    }
+  }
+
+  function initToken() {
+    const saved = loadPref(STORE.token), field = $('f-token'), remember = $('f-remember');
+    if (saved) { field.value = saved; remember.checked = true; }
+    const sync = () => {
+      // Kept only when asked; unticking the box forgets it at once.
+      savePref(STORE.token, remember.checked ? field.value.trim() : null);
+      updateButtons();
+    };
+    field.addEventListener('input', sync);
+    remember.addEventListener('change', sync);
+  }
+
+  /* ---------------------- 12. Panel, tabs and the settings form */
+
+  function showTab(name) {
+    document.querySelectorAll('.tab').forEach((b) => {
+      const on = b.dataset.tab === name;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', String(on));
+      $('tab-' + b.dataset.tab).hidden = !on;
+    });
+    if (name === 'relief') renderRelief();
+  }
+
+  function setPanel(open) {
+    $('app').classList.toggle('open', open);
+    $('panel-toggle').setAttribute('aria-expanded', String(open));
+    // The map changes size with the sheet: tell Leaflet once the height has settled.
+    setTimeout(() => { map.invalidateSize(); renderRelief(); }, 220);
+  }
+
+  function restyleTracks() {
+    layers.roads.track.eachLayer((l) => l.setStyle(Object.assign({ dashArray: null }, roadStyle('track'))));
+  }
+
+  function initPanel() {
+    $('panel-toggle').addEventListener('click', () => setPanel(!$('app').classList.contains('open')));
+    document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+    $('repo-name').textContent = GITHUB_OWNER + '/' + GITHUB_REPO;
+    $('readme-link').href = README_URL;
+
+    $('kind-loop').addEventListener('click', () => setKind('loop'));
+    $('kind-stage').addEventListener('click', () => setKind('stage'));
+    $('allow-tracks').addEventListener('change', () => {
+      restyleTracks();
+      resnapForbidden();
+      refresh();
+    });
+
+    // The identifier follows the name until it is typed by hand.
+    $('f-name').addEventListener('input', () => { if (!idTouched) $('f-id').value = C.slugify($('f-name').value); });
+    $('f-id').addEventListener('input', () => {
+      idTouched = $('f-id').value !== '';
+      $('f-id').classList.toggle('invalid', $('f-id').value !== '' && !C.isValidId($('f-id').value));
+    });
+    $('f-author').addEventListener('change', () => savePref(STORE.author, $('f-author').value.trim()));
+    const author = loadPref(STORE.author);
+    if (author) $('f-author').value = author;
+
+    // Numbers: recompute while typing, put the value back in range when leaving the field.
+    const ranges = { 'f-laps': [1, 20], 'f-scale': [1, 10], 'f-width': [3, 30], 'f-spacing': [1, 20], 'f-smooth': [0, 100], 'f-vscale': [0.5, 50], 'f-cp': [150, 20000] };
+    Object.keys(ranges).forEach((id) => {
+      $(id).addEventListener('input', refreshSoon);
+      $(id).addEventListener('change', () => {
+        const el = $(id), optional = id === 'f-vscale' || id === 'f-cp';
+        if (el.value === '' && optional) { refresh(); return; }
+        let v = parseFloat(String(el.value).replace(',', '.'));
+        if (!isFinite(v)) v = parseFloat(el.defaultValue) || ranges[id][0];
+        v = Math.min(Math.max(v, ranges[id][0]), ranges[id][1]);
+        if (id === 'f-laps') v = Math.round(v);
+        el.value = String(v);
+        refresh();
+      });
+    });
+    ['f-narrow', 'f-bridges', 'f-gates', 'f-game-buggy', 'f-game-rally'].forEach((id) => $(id).addEventListener('change', refresh));
+    $('f-relief').addEventListener('change', () => { relief.error = null; refresh(); });
+    $('relief-retry').addEventListener('click', () => { relief.error = null; refresh(); loadElevation(); });
+
+    $('download').addEventListener('click', onDownload);
+    $('copy').addEventListener('click', onCopy);
+    $('open').addEventListener('click', () => $('open-file').click());
+    $('open-file').addEventListener('change', (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      ev.target.value = '';                                   // the same file can be opened twice
+      onOpenFile(file);
+    });
+    $('send').addEventListener('click', onSend);
+    initToken();
+  }
+
+  function initTools() {
+    $('tool-add').addEventListener('click', () => setTool('add'));
+    $('tool-edit').addEventListener('click', () => setTool('edit'));
+    $('undo').addEventListener('click', undo);
+    $('redo').addEventListener('click', redo);
+    $('reverse').addEventListener('click', reverseCourse);
+    $('clear').addEventListener('click', clearAll);
+    $('load-roads').addEventListener('click', onLoadRoads);
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') { closeMenus(); return; }
+      if (!(ev.ctrlKey || ev.metaKey) || ev.altKey) return;
+      // In a text field, Ctrl+Z belongs to the field.
+      const tag = ev.target && ev.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const key = ev.key.toLowerCase();
+      if (key === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
+      else if (key === 'y' || (key === 'z' && ev.shiftKey)) { ev.preventDefault(); redo(); }
+    });
+    // Leaving with a drawing in progress: the browser asks first.
+    window.addEventListener('beforeunload', (ev) => {
+      if (state.waypoints.length) { ev.preventDefault(); ev.returnValue = ''; }
+    });
+    window.addEventListener('resize', () => { renderRelief(); });
+  }
+
+  /* ---------------------------------------------------------- 13. Start */
+
+  function fatal(text) {
+    const wrap = make('div', 'fatal'), inner = make('div');
+    inner.appendChild(make('h1', '', 'Éditeur de circuits'));
+    inner.appendChild(make('p', '', text));
+    wrap.appendChild(inner);
+    document.body.appendChild(wrap);
+  }
+
+  function start() {
+    if (!C) { fatal('Le cœur de l\'éditeur n\'a pas démarré : rechargez la page.'); return; }
+    if (!window.L || !window.L.map) {
+      fatal('La carte n\'a pas pu être chargée. L\'éditeur prend Leaflet sur cdnjs.cloudflare.com : vérifiez la connexion (ou un bloqueur de contenu), puis rechargez la page.');
+      return;
+    }
+    // French spacing for the text written in the page itself.
+    const walker = document.createTreeWalker($('app'), NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (node.nodeValue.trim()) node.nodeValue = typo(node.nodeValue);
+    }
+    initMap();
+    initSearch();
+    initTools();
+    initPanel();
+    syncKindButtons();
+    updateLoadButton();
+    refresh();
+    // For the end-to-end test and for the console.
+    window.circuitEditor = { map: map, graph: graph, state: state, current: current, prepareExport: prepareExport, refresh: refresh };
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>
