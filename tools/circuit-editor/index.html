@@ -587,7 +587,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       'points=' + pts.length + '\n' +
       blocks.join(';') + '\n' +
       'checkpoints=' + t.checkpoints.join(',') + '\n' +
-      'gates=' + (t.gates ? t.gates.join(',') : '') + '\n';
+      'gates=' + (t.gates ? t.gates.join(',') : 'auto') + '\n';
   };
 
   C.trackHash = function (t) { return C.sha256(C.canonicalText(t)); };

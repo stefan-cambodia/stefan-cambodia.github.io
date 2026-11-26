@@ -180,7 +180,7 @@ export function canonicalText(t) {
     `points=${t.points.length}`,
     t.points.map((p) => [q2(p[0]), q2(p[1]), q2(p[2]), q2(p[3]), p[4], p[5]].join(',')).join(';'),
     `checkpoints=${t.checkpoints.join(',')}`,
-    `gates=${(t.gates ?? []).join(',')}`,
+    `gates=${t.gates === undefined ? 'auto' : t.gates.join(',')}`,
   ];
   return lines.map((l) => l + '\n').join('');
 }

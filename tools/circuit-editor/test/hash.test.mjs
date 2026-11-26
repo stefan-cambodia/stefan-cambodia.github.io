@@ -103,11 +103,13 @@ test('hash: what it covers and what it leaves out', () => {
     ['checkpoints', { ...base, checkpoints: [4] }], ['gates', { ...base, gates: [2] }], ['no gates', { ...base, gates: [] }]]) {
     assert.notEqual(C.trackHash(t), h, `${what} did not change the hash`);
   }
-  // laps absent is laps = 1; gates absent is gates empty (FORMAT.md, section Hash).
+  // laps absent is laps = 1. gates absent (the game lays its own) is not gates
+  // empty (none): two circuits, two hashes (FORMAT.md, section Hash).
   assert.equal(C.trackHash({ ...base, laps: 1 }), h);
   const noGates = { ...base }; delete noGates.gates;
-  assert.equal(C.trackHash(noGates), C.trackHash({ ...base, gates: [] }));
-  assert.ok(C.canonicalText(noGates).endsWith('checkpoints=3,7\ngates=\n'));
+  assert.notEqual(C.trackHash(noGates), C.trackHash({ ...base, gates: [] }));
+  assert.ok(C.canonicalText(noGates).endsWith('checkpoints=3,7\ngates=auto\n'));
+  assert.ok(C.canonicalText({ ...base, gates: [] }).endsWith('checkpoints=3,7\ngates=\n'));
   // No checkpoint at all: the line is there, empty.
   assert.ok(C.canonicalText({ ...base, checkpoints: [], gates: [] }).endsWith('\ncheckpoints=\ngates=\n'));
 });

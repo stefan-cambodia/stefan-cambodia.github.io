@@ -54,29 +54,33 @@ contiennent aucun code géographique : ils ne lisent ni `origin`, ni `waypoints`
 | `created` | date ISO 8601 UTC | non | Date de création ou de dernière publication. |
 | `games` | tableau de `"3d_buggy"` / `"cambodia_rally"` | non | Jeux visés. Absent ou vide : les deux. |
 | `kind` | `"loop"` ou `"stage"` | oui | Boucle fermée, ou spéciale d'un point A à un point B. |
-| `laps` | entier de 1 à 20 | boucle seulement | Nombre de tours. Absent : 1. Une spéciale n'en a pas (ou `1`). |
-| `scale` | nombre de 1 à 10 | oui | Mètres réels par mètre de jeu, à l'horizontale. |
-| `vertical_scale` | nombre de 0,5 à 50 | oui | Mètres réels par mètre de jeu, à la verticale. Égal à `scale`, il conserve les pentes réelles. |
-| `road_width` | nombre de 3 à 30 | oui | Largeur de base, en mètres de jeu. |
-| `spacing` | nombre de 1 à 20 | oui | Distance visée entre deux points, en mètres de jeu. |
+| `laps` | entier de 1 à 20 | boucle seulement | Nombre de tours. Absent : 1. Une spéciale n'en a pas, ou `1` : les jeux refusent toute autre valeur sur une spéciale. |
+| `scale` | nombre de 1 à 10, 3 décimales au plus | oui | Mètres réels par mètre de jeu, à l'horizontale. |
+| `vertical_scale` | nombre de 0,5 à 50, 3 décimales au plus | oui | Mètres réels par mètre de jeu, à la verticale. Égal à `scale`, il conserve les pentes réelles. |
+| `road_width` | nombre de 3 à 30, 2 décimales au plus | oui | Largeur de base, en mètres de jeu. |
+| `spacing` | nombre de 1 à 20, 2 décimales au plus | oui | Distance visée entre deux points, en mètres de jeu. |
 | `origin` | `{lat, lon, ele}` | non | Point de départ sur la Terre (WGS84, altitude en mètres) : il vaut `(0, 0, 0)` dans le jeu. Sert à rouvrir le circuit dans l'éditeur. |
 | `length_real_m`, `length_game_m` | nombres | non | Longueur d'un tour (boucle) ou de la spéciale. Informatif. |
 | `elevation` | `{source, min, max, climb_m}` ou `null` | non | Origine du relief, altitudes réelles extrêmes, dénivelé positif réel. `null` : circuit plat. |
 | `surfaces` | tableau de 1 à 32 noms | oui | Table des surfaces ; les points y renvoient par indice. |
 | `points` | tableau de 8 à 20 000 points | oui | La ligne centrale. Voir plus bas. |
 | `checkpoints` | tableau d'indices de points | oui (peut être vide) | Checkpoints, dans l'ordre de la course. |
-| `gates` | tableau d'indices de points | non | Portes bonus. Absent : le jeu en place lui-même. Vide : aucune. |
+| `gates` | tableau d'indices de points | non | Portes bonus. Absent : le jeu en place lui-même. Vide : aucune. Les deux cas n'ont pas le même hash. |
 | `waypoints` | tableau de `[lat, lon]` | non | Clics de l'éditeur, pour reprendre l'édition. |
 | `allowed_classes` | tableau de classes `highway` | non | Classes de routes autorisées au routage dans l'éditeur. |
 | `attribution` | chaîne, 0 à 300 caractères | non | Mention des sources, affichée par les jeux à l'écran de chargement. |
 
 Un champ inconnu est **ignoré** par les jeux (compatibilité ascendante). L'éditeur
-conserve les champs qu'il connaît seulement.
+conserve les champs qu'il connaît seulement. Il ajoute un champ `editor` (ses
+réglages : lissage, pistes rétrécies, largeur des ponts, espacement des
+checkpoints, portes automatiques) pour les retrouver à la réouverture : les jeux
+ne le lisent pas et il n'entre pas dans le hash.
 
 ## Géométrie
 
 - **Axes** : `x` vers l'est, `y` vers le haut, `z` vers le sud. Le nord est `−z`,
-  l'avant de Godot. Unités : mètres de jeu, arrondis au centimètre.
+  l'avant de Godot. Unités : mètres de jeu, arrondis au centimètre (2 décimales
+  au plus, largeur comprise).
 - **Point** : `[x, y, z, largeur, indice_surface, drapeaux]`.
   - `largeur` : largeur de la route à ce point, en mètres de jeu (3 à 30).
   - `indice_surface` : indice dans `surfaces`.
@@ -85,8 +89,10 @@ conserve les champs qu'il connaît seulement.
 - Les points sont **dans le sens de la course**. Le départ est toujours le point 0,
   qui vaut `[0, 0, 0, …]`.
 - **Boucle** : fermée implicitement, le premier point n'est pas répété. Le segment
-  de fermeture (dernier point → point 0) a la même longueur que les autres.
-  L'arrivée est la ligne de départ.
+  de fermeture (dernier point → point 0) est un segment comme les autres : il
+  suit la règle d'écart ci-dessous, et l'éditeur lui donne le même pas qu'aux
+  autres (la boucle est découpée en pas égaux le long de la courbe). L'arrivée
+  est la ligne de départ.
 - **Spéciale** : l'arrivée est le dernier point.
 - **Orientation** (lacet) pour une direction `(dx, dz)` : `atan2(-dx, -dz)`.
 - **Écart entre deux points consécutifs** (à l'horizontale, fermeture comprise) :
@@ -142,7 +148,7 @@ surfaces=<noms séparés par des virgules>
 points=<nombre de points>
 <x>,<y>,<z>,<largeur>,<indice_surface>,<drapeaux>;…   (un bloc par point, séparés par « ; », sans « ; » final)
 checkpoints=<indices séparés par des virgules>
-gates=<indices séparés par des virgules, vide si le champ est absent ou vide>
+gates=<indices séparés par des virgules ; rien si la liste est vide ; « auto » si le champ est absent>
 ```
 
 - `q2(v) = floor(v × 100 + 0,5)` : un entier, en centimètres. `x`, `y`, `z` et
@@ -151,6 +157,11 @@ gates=<indices séparés par des virgules, vide si le champ est absent ou vide>
 - Les entiers sont écrits en décimal, sans zéro inutile ; zéro s'écrit `0`
   (jamais `-0`).
 - `indice_surface` et `drapeaux` sont écrits tels quels.
+- `gates=auto` (champ absent : le jeu place ses portes) et `gates=` (liste vide :
+  aucune porte) sont deux circuits différents, de hash différent.
+- Les nombres du fichier ont au plus autant de décimales que leur quantification
+  en garde (2 pour `q2`, 3 pour `q3`) : aucun n'est alors à la limite entre deux
+  entiers, et le hash ne dépend pas de la bibliothèque qui lit le JSON.
 
 Un jeu recalcule le hash à la lecture et refuse un fichier dont le hash ne
 correspond pas.
