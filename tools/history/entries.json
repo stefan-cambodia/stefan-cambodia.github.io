@@ -1317,6 +1317,20 @@
      "គម្រោងឯកជនក្នុងក្រឡា",
      "ទំព័រនេះពន្យល់ពីរបៀបដែលក្រឡាគម្រោង ឥឡូវបង្ហាញឃ្លាំងកូដឯកជនផងដែរ ពីបញ្ជីមួយក្នុងទំព័រ ជាមួយរូបសោ និងតំណទៅទំព័របង្ហាញរបស់វា ហើយការផ្លាស់ប្តូរចុងក្រោយរបស់វាបន្ថែមធាតុនេះ។"
     ]
+   },
+   "8ff9f74": {
+    "en": [
+     "Twenty-five pages",
+     "With Chantrea Odoo, the page now counts twenty-five presentation pages."
+    ],
+    "fr": [
+     "Vingt-cinq pages",
+     "Avec Chantrea Odoo, la page compte désormais vingt-cinq pages de présentation."
+    ],
+    "km": [
+     "ទំព័រម្ភៃប្រាំ",
+     "ជាមួយ Chantrea Odoo ឥឡូវនេះទំព័រនេះរាប់បានទំព័របង្ហាញចំនួនម្ភៃប្រាំ។"
+    ]
    }
   },
   "btcterm": {
@@ -1737,6 +1751,22 @@
     "km": [
      "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
      "Vigie ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ នៅក្នុងផ្នែកកំពុងអភិវឌ្ឍ៖ អ្វីដែលវាធ្វើ របៀបដែលការផ្ទៀងផ្ទាត់ និងអាទិភាពដំណើរការ ការបំបែកទិន្នន័យអតិថិជន ការជូនដំណឹង ព័ត៌មាន ប្រតិបត្តិការ និងស្ថានភាពបច្ចុប្បន្ន ជាមួយការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 26 ខែវិច្ឆិកា ឆ្នាំ 2026 (ដំណាក់កាលទី 18)។ រូបថតអេក្រង់ប្រាំបីនៃមូលដ្ឋានទិន្នន័យសាកល្បង ដែលគេហទំព័រ Chantrea Systems ផ្សព្វផ្សាយ បង្ហាញអេក្រង់របស់វា។"
+    ]
+   }
+  },
+  "chantrea-odoo": {
+   "8ff9f74": {
+    "en": [
+     "Its own presentation page",
+     "Chantrea Odoo gets a page of its own in the Projects section, in English, French and Khmer: the idea, the Odoo, OCA and in-house modules, the client area, what is specific to Cambodia (riels, KHQR checked with Bakong, Khmer numerals, the Khmer review), security and operations, and where it stands, with Last changes running to 25 November 2026. The repository publishes no screenshots, so a diagram of its architecture stands in for them."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "Chantrea Odoo reçoit sa propre page dans la section Projets, en anglais, en français et en khmer : le principe, les modules d’Odoo, de l’OCA et maison, l’espace client, ce qui est propre au Cambodge (riels, KHQR vérifié auprès de Bakong, chiffres khmers, relecture du khmer), la sécurité et l’exploitation, et l’état du projet, avec des Derniers changements qui vont jusqu’au 25 novembre 2026. Le dépôt ne publie pas de captures : un schéma de son architecture en tient lieu."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "Chantrea Odoo ទទួលបានទំព័រផ្ទាល់ខ្លួន នៅក្នុងផ្នែកគម្រោង ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ៖ គំនិតដើម module របស់ Odoo, OCA និង module ផ្ទាល់ខ្លួន តំបន់អតិថិជន អ្វីដែលពិសេសសម្រាប់កម្ពុជា (ប្រាក់រៀល KHQR ដែលផ្ទៀងផ្ទាត់ជាមួយ Bakong លេខខ្មែរ និងការពិនិត្យភាសាខ្មែរ) សុវត្ថិភាព និងប្រតិបត្តិការ និងស្ថានភាពបច្ចុប្បន្ន ជាមួយការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 25 ខែវិច្ឆិកា ឆ្នាំ 2026។ ឃ្លាំងកូដមិនផ្សព្វផ្សាយរូបថតអេក្រង់ទេ ដូច្នេះដ្យាក្រាមនៃស្ថាបត្យកម្មរបស់វា ត្រូវបានប្រើជំនួស។"
     ]
    }
   }
