@@ -70,6 +70,20 @@
     "ការផ្លាស់ប្តូរចុងក្រោយ",
     "ឥឡូវនេះ ទំព័របញ្ចប់ដោយសេចក្តីសង្ខេបនៃ commit ចុងក្រោយរបស់ repository ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ។"
    ]
+  },
+  "1b3a411": {
+   "en": [
+    "Private repository",
+    "The View repository button, which led visitors to a page GitHub does not show since the repository is private, becomes a padlock label: Private repository."
+   ],
+   "fr": [
+    "Dépôt privé",
+    "Le bouton Voir le dépôt, qui menait les visiteurs vers une page que GitHub n’affiche pas puisque le dépôt est privé, devient une étiquette avec un cadenas : Dépôt privé."
+   ],
+   "km": [
+    "repository ឯកជន",
+    "ប៊ូតុងមើលឃ្លាំងកូដ ដែលនាំអ្នកទស្សនាទៅកាន់ទំព័រដែល GitHub មិនបង្ហាញ ព្រោះ repository ជាឯកជន ក្លាយជាស្លាកមួយដែលមានរូបសោ៖ repository ឯកជន។"
+   ]
   }
  },
  "aliases": {
