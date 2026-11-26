@@ -1489,7 +1489,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       out.profile = { dist: Array.from(dist.subarray(0, count)), ele: Array.from(eleReal), length: length };
     }
     out.frame = { originLat: originLL[0], originLon: originLL[1], scale: S.scale };
-    collectWarnings(out, g, cl, fin, count, closed, length, laps, frameLatLon);
+    collectWarnings(out, g, cl, fin, count, closed, length, frameLatLon);
     if (length * laps > L.maxTotalLength) return fail('total_too_long', { length: length * laps });
     out.track = t;
     out.ok = true;
@@ -1569,7 +1569,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   }
 
   // The warnings of the brief: same road twice, self-crossing, hairpins, length.
-  function collectWarnings(out, g, cl, fin, count, closed, length, laps, latLonOf) {
+  function collectWarnings(out, g, cl, fin, count, closed, length, latLonOf) {
     var R = C.RULES, k, a, b, i, j;
     if (length < R.warnShort) out.warnings.push({ code: 'short', length: length, limit: R.warnShort });
     if (length > R.warnLong) out.warnings.push({ code: 'long', length: length, limit: R.warnLong });
@@ -2457,7 +2457,7 @@ small { color: var(--ink-soft); font-size: .86em; }
 
   const LEG_WHY = {
     no_path: 'aucun chemin entre ces deux points sur les routes chargées et autorisées. Chargez les routes de la zone qui les sépare, autorisez les pistes, ou déplacez un point.',
-    unsnapped: 'l\'un des deux points n\'est sur aucune route chargée. Chargez les routes autour de lui, ou déplacez-le.',
+    unsnapped: 'l\'un des deux points (en rouge) n\'est sur aucune route chargée et autorisée. Chargez les routes autour de lui, autorisez les pistes, ou déplacez-le.',
     'class': 'l\'un des deux points est sur une voie qui n\'est plus autorisée. Autorisez les pistes, ou déplacez-le.'
   };
 

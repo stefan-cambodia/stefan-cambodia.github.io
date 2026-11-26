@@ -233,7 +233,7 @@ que depuis le lancement.
 ## Tests
 
 ```sh
-node --test tools/circuit-editor/test/                 # 75 tests, sans dépendance (essayé avec Node 26)
+node --test tools/circuit-editor/test/                 # 76 tests, sans dépendance (essayé avec Node 26)
 python3 tools/circuit-editor/test/e2e_playwright.py    # un navigateur, réseau simulé
 node tools/circuit-editor/test/make-fixtures.mjs       # réécrit les fichiers d'exemple
 ```
@@ -249,6 +249,7 @@ extraient ce bloc et l'évaluent dans un contexte `node:vm` vide.
 | `graph.test.mjs` | La lecture d'Overpass, la fusion par identifiant OSM, les classes exclues, l'index en grille contre un parcours complet, Dijkstra contre une version naïve, les longueurs partielles, deux points sur le même segment, les classes interdites, le cache des tronçons. |
 | `export.test.mjs` | La fermeture de la boucle, la régularité de l'espacement, les longueurs, le schéma, les règles du format (indices croissants et bornés, écarts, pentes, point 0 à l'origine), largeurs et surfaces, checkpoints, portes, relief, limite de 20 000 points, avertissements, réouverture à hash identique, catalogue. |
 | `petit-circuit.test.mjs` | **Recette** : les points de passage du Petit Circuit des jeux, recalés et routés sur la carte d'aujourd'hui, donnent 7 089 m de jeu pour un tour à l'échelle 2,5, soit −0,15 % par rapport aux 7,1 km du circuit existant (tolérance : 3 %). Aucun point n'a dû être déplacé ; le plus éloigné de sa route en est à 50 m. |
+| `property.test.mjs` | 160 parcours tirés au hasard sur les routes d'Angkor, avec des réglages et un relief au hasard (tirage à graine fixe) : tout fichier que le code accepte d'exporter respecte le schéma et les règles. |
 | `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes, aucun jeton dans le dossier. |
 | `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir. |
 
@@ -280,7 +281,9 @@ reste du réseau est simulé.
   des ponts et des tunnels. Le lissage et la limite de pente les atténuent sans les enlever.
 - **Les virages très serrés restent serrés.** Une moyenne glissante arrondit un angle droit,
   pas une épingle à 150° : l'avertissement « épingle » est là pour cela. Un demi-tour sur
-  place de plus de 30 m empêche l'export.
+  place (un aller-retour de plus de 30 m sur la même route) donne un rebroussement que
+  l'éditeur signale, et qu'il refuse d'exporter quand deux points se retrouvent à moins de
+  50 cm l'un de l'autre.
 - **Overpass peut être lent ou saturé** ; l'éditeur change de serveur et le dit, mais ne
   peut pas faire mieux.
 - **L'envoi à GitHub n'a été essayé que contre une API simulée**, faute de jeton pendant le
