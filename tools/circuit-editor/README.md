@@ -222,10 +222,15 @@ dans les deux ordres. Les jeux n'ont donc rien à gagner à ajouter un paramètr
 envoi, il faut attendre que l'entrée du cache expire. Une réponse 404 (fichier pas encore
 publié) est elle aussi servie depuis le cache.
 
-**Les délais réels restent à mesurer.** Seuls les en-têtes l'ont été : une mesure de bout en
-bout demande un envoi sur `main`. D'après eux, on attend au plus 5 minutes sur la première
-adresse et 10 minutes plus la construction sur la seconde. Pour mesurer, après le premier
-envoi autorisé :
+**Mesuré pour une première publication** (27 novembre 2026) : le catalogue est arrivé sur
+`main` à 05:13:21 UTC, et les deux adresses, qui répondaient 404 juste avant, l'ont montré
+moins d'une minute après (vu au contrôle de 05:14:11, un contrôle toutes les 10 s),
+construction de GitHub Pages comprise.
+
+**Reste à mesurer : la mise à jour d'un catalogue déjà publié**, le cas de chaque « Envoyer
+au jeu » à partir de maintenant. Le cache peut y retenir l'ancienne version : d'après les
+en-têtes, au plus 5 minutes sur la première adresse et 10 minutes plus la construction sur
+la seconde. Pour mesurer, au prochain envoi :
 
 ```sh
 # À lancer AVANT l'envoi : le script garde les caches chauds, comme un téléphone
@@ -305,7 +310,8 @@ reste du réseau est simulé.
 - **L'envoi à GitHub n'a été essayé que contre une API simulée**, faute de jeton pendant le
   développement (les en-têtes CORS et la forme des réponses ont été contrôlés sur l'API
   réelle, sans authentification). Le premier envoi réel est à surveiller.
-- **Les délais de publication ne sont pas mesurés** (section Publication).
+- **Le délai d'une mise à jour du catalogue n'est pas mesuré** ; celui d'une première
+  publication l'est (section Publication).
 - **Pas de suppression** : retirer un circuit publié se fait à la main, dans le dépôt
   (son fichier et sa ligne de `tracks/index.json`).
 - La largeur indiquée par la carte n'est utilisée que pour les ponts.
