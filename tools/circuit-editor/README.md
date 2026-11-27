@@ -6,6 +6,12 @@ le tracé suit les routes entre eux, et l'éditeur écrit un fichier `.cambotrac
 que les deux jeux savent lire (format : [`FORMAT.md`](FORMAT.md), schéma :
 [`cambotrack.schema.json`](cambotrack.schema.json)).
 
+> **Où en sont les jeux (27 novembre 2026).** Seul 3D Buggy lit les circuits : l'écran
+> « Circuits perso » est dans sa branche `main`. Cambodia Rally garde le sien sur une
+> branche non fusionnée, par décision de Stefan (pas maintenant, peut-être jamais). Le
+> format reste commun aux deux jeux, et la case « Cambodia Rally » des réglages n'écrit
+> que le champ `games` du fichier.
+
 L'outil tient dans **un seul fichier**, [`index.html`](index.html) : pas de framework,
 pas d'étape de compilation. Il est prévu pour un **navigateur d'ordinateur** (souris,
 clavier, grand écran).
