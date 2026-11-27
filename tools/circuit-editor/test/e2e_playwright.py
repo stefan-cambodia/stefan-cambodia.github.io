@@ -355,6 +355,12 @@ def desktop_run(context, net, errors, base, shots, tmp):
     check(net.elevation_calls and max(net.elevation_calls) <= 100, "Open-Meteo: %s coordinates per request, 100 at most" % net.elevation_calls)
     check("m" in page.inner_text("#rl-climb"), "relief: positive climb shown (%s)" % page.inner_text("#rl-climb").replace(" ", " "))
     check("surface" in page.inner_text("#tab-relief"), "relief: the page says it is a surface model")
+    # « Lissage du relief »: the course is computed again, and the choice travels in the file.
+    climb = page.evaluate("window.circuitEditor.current.result.track.elevation.climb_m")
+    page.select_option("#f-rsmooth", "300")
+    page.wait_for_function("window.circuitEditor.current.settings.relief_smooth_m === 300 && window.circuitEditor.current.result.ok")
+    strong = page.evaluate("(() => { const t = window.circuitEditor.current.result.track; return [t.elevation.climb_m, t.editor.relief_smooth_m]; })()")
+    check(strong[1] == 300 and strong[0] <= climb, "« Lissage du relief » on « Fort »: %s m of climb instead of %s, kept in the file" % (strong[0], climb))
     shot(page, shots, "desktop-relief.png")
 
     # Settings, then download.
@@ -489,6 +495,7 @@ def reopen_run(context, net, errors, base, shots, target):
     check(st == {"n": 4, "ok": True, "kind": "loop", "lost": 0}, "the route is rebuilt from the file's waypoints: %s" % st)
     check(page.input_value("#f-name") == "Essai de bout en bout" and page.input_value("#f-id") == "essai-de-bout-en-bout",
           "name and identifier come back from the file")
+    check(page.input_value("#f-rsmooth") == "300", "the relief smoothing comes back from the file")
     # Same roads, same settings: the same circuit, hash for hash.
     original = json.loads(pathlib.Path(target).read_text(encoding="utf-8"))
     again = page.evaluate("window.circuitEditor.prepareExport().then(o => o.track.hash)")

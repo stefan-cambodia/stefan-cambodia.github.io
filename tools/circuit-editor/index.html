@@ -117,10 +117,10 @@ small { color: var(--ink-soft); font-size: .86em; }
 .row { display: flex; gap: 8px; margin: 0 0 10px; }
 .field { margin: 0 0 12px; padding: 0; border: 0; min-width: 0; }
 .field > label, .field > legend { display: block; margin: 0 0 4px; padding: 0; font-weight: 600; font-size: .93em; }
-.field input[type=text], .field input[type=number], .field input[type=password], .search input {
+.field input[type=text], .field input[type=number], .field input[type=password], .field select, .search input {
   width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
   background: var(--paper); color: var(--ink); font: inherit; font-size: 16px; }
-.field input:focus-visible, .search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.field input:focus-visible, .field select:focus-visible, .search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
 .field input.invalid { border-color: var(--bad); }
 .field small { display: block; margin-top: 3px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
@@ -363,6 +363,14 @@ small { color: var(--ink-soft); font-size: .86em; }
         <div class="field"><label for="f-vscale">Échelle verticale</label>
           <input id="f-vscale" type="number" inputmode="decimal" min="0.5" max="50" step="0.1" placeholder="comme l'échelle">
           <small>Mètres réels pour 1 m de jeu, en hauteur. Vide : la même que l'échelle, les pentes sont alors les vraies. Plus petite : relief accentué.</small></div>
+        <div class="field"><label for="f-rsmooth">Lissage du relief</label>
+          <select id="f-rsmooth">
+            <option value="90" selected>Normal (90 m)</option>
+            <option value="300">Fort (300 m)</option>
+            <option value="600">Très fort (600 m)</option>
+          </select>
+          <small>Le modèle voit le versant à côté de la route, les arbres, la rivière sous un pont. « Fort » retire les bosses
+            et les creux de moins de 300 m de long ; les côtes plus longues restent, leur sommet un peu écrêté.</small></div>
         <p id="relief-status" class="note" role="status" aria-live="polite">Le relief sera chargé quand un tracé existera.</p>
         <button type="button" id="relief-retry" class="btn" hidden>Réessayer</button>
         <canvas id="profile" class="profile" width="600" height="180" aria-label="Profil d'altitude du circuit"></canvas>
@@ -371,7 +379,7 @@ small { color: var(--ink-soft); font-size: .86em; }
           <div><dt>Altitudes</dt><dd id="rl-range">—</dd></div>
         </dl>
         <p class="note">C'est un modèle de <b>surface</b> à 90 m : la canopée et les bâtiments y font des bosses qui
-          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé sur 90 m, et les pentes sont limitées à 30 %.</p>
+          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé selon le réglage ci-dessus, et les pentes sont limitées à 30 %.</p>
       </section>
 
       <!-- Envoi -->
@@ -487,7 +495,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   C.DEFAULTS = {
     kind: 'loop', laps: 3, scale: 2.5, vertical_scale: 2.5, road_width: 11, spacing: 4,
     smooth_m: 15, narrow_tracks: true, bridge_widths: true, checkpoint_every_m: 0, gates_auto: true,
-    relief: true
+    relief: true, relief_smooth_m: 90        // real metres; 90 is the plain average of RULES.elevationSmooth
   };
 
   /* ------------------------------------------------- 2. SHA-256 and canonical hash */
@@ -1138,6 +1146,35 @@ small { color: var(--ink-soft); font-size: .86em; }
     return out;
   }
 
+  // The lowest (low true) or the highest value within h points either side.
+  // Open line: the window stops at the ends. Closed line: it wraps.
+  function extremum(v, closed, h, low) {
+    var n = v.length, out = new Float64Array(n), i, j, k, best;
+    for (i = 0; i < n; i++) {
+      best = v[i];
+      for (j = i - h; j <= i + h; j++) {
+        if (closed) k = ((j % n) + n) % n;
+        else if (j < 0 || j >= n) continue;
+        else k = j;
+        if (low ? v[k] < best : v[k] > best) best = v[k];
+      }
+      out[i] = best;
+    }
+    return out;
+  }
+
+  // Bumps and hollows narrower than the window (2 h + 1 points) are taken out;
+  // wider shapes stay where they are. Bumps go first, then hollows: a surface
+  // model errs upwards (a hillside, trees, roofs), and two bumps a few cells
+  // apart must not be taken for one wide hill with a hollow in it.
+  function levelNarrow(v, closed, h) {
+    var n = v.length, out = new Float64Array(n);
+    if (closed) h = Math.min(h, Math.floor((n - 1) / 2));
+    if (h < 1 || n < 3) { out.set(v); return out; }
+    out = extremum(extremum(v, closed, h, true), closed, h, false);
+    return extremum(extremum(out, closed, h, false), closed, h, true);
+  }
+
   // The highest function under v whose step from i to i + 1 never exceeds
   // lim[i] (closed: lim[n - 1] is the step from the last point back to the
   // first). Forward pass then backward pass; twice round for a closed line.
@@ -1166,6 +1203,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   }
   C.limitSlope = limitSlope;
   C.movingAverage = movingAverage;
+  C.levelNarrow = levelNarrow;
 
   // Curvature (1 / radius) of the circle through three points.
   function curvature(ax, ay, bx, by, cx, cy) {
@@ -1280,6 +1318,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     o.checkpoint_every_m = num(s.checkpoint_every_m, 0, 0, 20000);
     o.gates_auto = s.gates_auto === undefined ? d.gates_auto : !!s.gates_auto;
     o.relief = s.relief === undefined ? d.relief : !!s.relief;
+    o.relief_smooth_m = Math.round(num(s.relief_smooth_m, d.relief_smooth_m, C.RULES.elevationSmooth, 1000));
     o.allowed_classes = Array.isArray(s.allowed_classes) ? s.allowed_classes.slice() : C.DEFAULT_ALLOWED.slice();
     o.waypoints = Array.isArray(s.waypoints) ? s.waypoints : [];
     return o;
@@ -1386,8 +1425,13 @@ small { color: var(--ink-soft); font-size: .86em; }
       if (!ele || !ele.chain || ele.chain.length < 2) return fail('no_elevation');
       var es = ele.ele, ec = ele.chain, ne = es.length;
       var eStep = ne > 1 ? (ec[ne - 1] - ec[0]) / (ne - 1) : R.elevationStep;
-      var eHalf = Math.max(1, Math.floor(R.elevationSmooth / 2 / Math.max(eStep, 1)));
-      var sm = movingAverage(Float64Array.from(es), closed, eHalf);
+      var eHalf = Math.max(1, Math.floor(S.relief_smooth_m / 2 / Math.max(eStep, 1)));
+      var src = Float64Array.from(es);
+      // A 90 m surface model sees the hillside beside the road, the trees, the
+      // river under a bridge. Asked to smooth over more than the plain 90 m,
+      // what is narrower than that length goes first, then the average.
+      if (S.relief_smooth_m > R.elevationSmooth) src = levelNarrow(src, closed, eHalf);
+      var sm = movingAverage(src, closed, eHalf);
       // Samples run along the line the plan saw; rescale in case it differs a little.
       var eTotal = ele.length > 0 ? ele.length : realLen, ratio = eTotal / realLen;
       var raw = new Float64Array(count), c, a, b, t;
@@ -1475,6 +1519,8 @@ small { color: var(--ink-soft); font-size: .86em; }
       smooth_m: S.smooth_m, narrow_tracks: S.narrow_tracks, bridge_widths: S.bridge_widths,
       checkpoint_every_m: S.checkpoint_every_m, gates_auto: S.gates_auto
     };
+    // Written only when it is not the default: a file made with the defaults stays what it was.
+    if (S.relief && S.relief_smooth_m !== C.DEFAULTS.relief_smooth_m) t.editor.relief_smooth_m = S.relief_smooth_m;
     t.hash = C.trackHash(t);
 
     // Figures and warnings for the interface.
@@ -1875,6 +1921,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   const SNAP_PX = 20;                    // a click snaps to a road within this many pixels
   const ROUTE_PICK_PX = 16;              // a click this close to the course inserts a point
   const RESNAP_M = 40;                   // a reopened waypoint finds its road within this
+  const RELIEF_SMOOTH = [90, 300, 600];  // the choices of « Lissage du relief », real metres (the options of #f-rsmooth)
 
   const PRESETS = [
     { name: 'Angkor', lat: 13.4125, lon: 103.8667, zoom: 13 },
@@ -2514,7 +2561,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       road_width: readNumber('f-width', D.road_width), spacing: readNumber('f-spacing', D.spacing),
       smooth_m: readNumber('f-smooth', D.smooth_m), narrow_tracks: $('f-narrow').checked, bridge_widths: $('f-bridges').checked,
       checkpoint_every_m: $('f-cp').value === '' ? 0 : readNumber('f-cp', 0), gates_auto: $('f-gates').checked,
-      relief: $('f-relief').checked, allowed_classes: allowedClasses(),
+      relief: $('f-relief').checked, relief_smooth_m: readNumber('f-rsmooth', D.relief_smooth_m), allowed_classes: allowedClasses(),
       waypoints: state.waypoints.map((w) => [w.lat, w.lon])
     });
   }
@@ -2921,6 +2968,9 @@ small { color: var(--ink-soft); font-size: .86em; }
     $('f-bridges').checked = ed.bridge_widths === undefined ? D.bridge_widths : !!ed.bridge_widths;
     $('f-gates').checked = ed.gates_auto === undefined ? !(Array.isArray(t.gates) && t.gates.length === 0) : !!ed.gates_auto;
     $('f-relief').checked = !!t.elevation;
+    // The choice closest to what the file says (a file may carry any length).
+    const rs = isFinite(ed.relief_smooth_m) ? ed.relief_smooth_m : D.relief_smooth_m;
+    $('f-rsmooth').value = String(RELIEF_SMOOTH.reduce((best, v) => (Math.abs(v - rs) < Math.abs(best - rs) ? v : best), RELIEF_SMOOTH[0]));
     $('allow-tracks').checked = !Array.isArray(t.allowed_classes) || t.allowed_classes.indexOf(C.TRACK_CLASS) >= 0;
     restyleTracks();
   }
@@ -3192,6 +3242,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     });
     ['f-narrow', 'f-bridges', 'f-gates', 'f-game-buggy', 'f-game-rally'].forEach((id) => $(id).addEventListener('change', refresh));
     $('f-relief').addEventListener('change', () => { relief.error = null; refresh(); });
+    $('f-rsmooth').addEventListener('change', refresh);
     $('relief-retry').addEventListener('click', () => { relief.error = null; refresh(); loadElevation(); });
 
     $('download').addEventListener('click', onDownload);

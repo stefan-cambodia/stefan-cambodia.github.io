@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   loadCore, readSchema, validateSchema, formatRuleErrors, gaps, plain, buildSample, elevationStore,
-  graphOf, routeThrough, SMALL_FIXTURE, SAMPLES,
+  graphOf, routeThrough, readJsonFixture, SMALL_FIXTURE, SAMPLES,
 } from './helpers.mjs';
 
 const C = loadCore();
@@ -227,6 +227,122 @@ test('limitSlope: forward and backward passes, open and closed', () => {
   // A profile already gentle is left alone.
   const gentle = Float64Array.from([0, 1, 2, 1, 0]);
   assert.deepEqual(plain(Array.from(C.limitSlope(gentle, new Float64Array(4).fill(1), false))), [0, 1, 2, 1, 0]);
+});
+
+test('levelNarrow: what is narrower than the window goes, what is wider stays', () => {
+  const base = new Array(60).fill(5);
+  const v = base.slice();
+  for (let i = 10; i < 16; i++) v[i] = 33;            // a bump six points wide
+  v[20] = 44;                                         // a spike
+  for (let i = 26; i < 29; i++) v[i] = -4;            // a hollow three points wide
+  for (let i = 36; i < 54; i++) v[i] = 25;            // a plateau eighteen points wide
+  for (const closed of [false, true]) {
+    const out = plain(Array.from(C.levelNarrow(Float64Array.from(v), closed, 5)));
+    const want = base.slice();
+    for (let i = 36; i < 54; i++) want[i] = 25;
+    assert.deepEqual(out, want, closed ? 'closed' : 'open');
+  }
+  // A window of one point changes nothing, and a line too short is left alone.
+  assert.deepEqual(plain(Array.from(C.levelNarrow(Float64Array.from(v), false, 0))), v);
+  assert.deepEqual(plain(Array.from(C.levelNarrow(Float64Array.from([1, 9]), false, 3))), [1, 9]);
+  // Two bumps a few points apart are two bumps, not a hill with a hollow in it: both go.
+  const pair = base.slice();
+  for (let i = 10; i < 16; i++) pair[i] = 33;
+  pair[19] = 44;
+  assert.deepEqual(plain(Array.from(C.levelNarrow(Float64Array.from(pair), false, 5))), base);
+  // A bump at the seam of a closed line is a bump like another.
+  const seam = base.slice();
+  seam[58] = seam[59] = seam[0] = seam[1] = 40;
+  assert.deepEqual(plain(Array.from(C.levelNarrow(Float64Array.from(seam), true, 5))), base);
+});
+
+// A loop of 6 km on flat ground at 5 m, with what a surface model adds beside a
+// road (a hillside 180 m long, a single high cell, a river under a bridge) and
+// a real hill: 60 m high, 1.5 km from foot to foot.
+function bumpyRelief(settings) {
+  const g = rectangle();
+  const { route, wps } = routeThrough(g, RECT_VIA.map(([e, n]) => ll(e, n)), 'loop', null, 5);
+  const plan = C.elevationPlan(C.cleanLine({ ...plain(route.line), closed: true }, C.RULES.spikeMax));
+  const store = new Map();
+  plan.key.forEach((k, i) => {
+    const c = plan.chain[i];
+    let h = 5;
+    if (c >= 1000 && c < 1180) h = 33;
+    else if (c >= 1300 && c < 1330) h = 44;
+    else if (c >= 1600 && c < 1690) h = 0;
+    else if (c >= 3000 && c <= 4500) h = 5 + 30 * (1 - Math.cos(2 * Math.PI * (c - 3000) / 1500));
+    store.set(k, Math.round(h));
+  });
+  const s = { id: 'bumps', name: 'Bumps', kind: 'loop', relief: true, ...settings, waypoints: wps.map((w) => [w.lat, w.lon]) };
+  const res = C.buildTrack(g, route.line, s, C.elevationSamples(plan, store));
+  assert.ok(res.ok, JSON.stringify(res.errors));
+  // The profile by real metres along the course: [from, to] -> lowest and highest.
+  const between = (a, b) => {
+    const ys = res.profile.ele.filter((_, i) => res.profile.dist[i] * res.track.scale >= a && res.profile.dist[i] * res.track.scale <= b);
+    return [Math.min(...ys), Math.max(...ys)];
+  };
+  return { res, t: res.track, between };
+}
+
+test('relief smoothing: « Fort » takes the narrow bumps and hollows out and keeps the hill', () => {
+  const normal = bumpyRelief({}), strong = bumpyRelief({ relief_smooth_m: 300 });
+  assertValid(normal.t);
+  assertValid(strong.t);
+  // As it has always been: the hillside, the high cell and the river are in the road.
+  assert.ok(normal.between(1030, 1150)[1] > 30, 'normal keeps the hillside');
+  assert.ok(normal.between(1280, 1350)[1] > 15, 'normal keeps most of the high cell');
+  assert.ok(normal.between(1620, 1670)[0] < 1, 'normal keeps the river');
+  // « Fort »: the road stays at its 5 m there...
+  for (const [a, b] of [[900, 1280], [1280, 1400], [1500, 1800]]) {
+    const [lo, hi] = strong.between(a, b);
+    assert.ok(lo > 4.4 && hi < 5.6, `strong, ${a} to ${b} m: ${lo} to ${hi}`);
+  }
+  // ... and the hill is still a hill. Its top (65 m) loses what the road gains
+  // over the last 150 m, about 6 m here: the price of the choice.
+  const top = strong.between(3700, 3800)[1];
+  assert.ok(top > 58 && top < 60, `the hill's top: ${top}`);
+  near(normal.between(3700, 3800)[1], 65, 0.5, 'normal keeps the top');
+  near(strong.t.elevation.min, 5, 0.6);
+  near(strong.t.elevation.climb_m, top - 5, 1, 'the only climb left is the hill');
+  assert.ok(normal.t.elevation.climb_m > strong.t.elevation.climb_m + 40, `normal climbs ${normal.t.elevation.climb_m}`);
+  assert.notEqual(strong.t.hash, normal.t.hash);
+});
+
+test('relief smoothing: the default is the file of always, the choice is kept for « Ouvrir »', () => {
+  const normal = bumpyRelief({}), same = bumpyRelief({ relief_smooth_m: 90 }), strong = bumpyRelief({ relief_smooth_m: 300 });
+  assert.equal(C.serializeTrack(same.t), C.serializeTrack(normal.t));
+  assert.equal('relief_smooth_m' in normal.t.editor, false);
+  assert.equal(strong.t.editor.relief_smooth_m, 300);
+  // Out of range, it is brought back: never less than the plain 90 m, never more than a kilometre.
+  assert.equal(C.normalizeSettings({ relief_smooth_m: 20 }).relief_smooth_m, 90);
+  assert.equal(C.normalizeSettings({ relief_smooth_m: 5000 }).relief_smooth_m, 1000);
+  assert.equal(C.normalizeSettings({ relief_smooth_m: 'fort' }).relief_smooth_m, 90);
+  assert.equal(C.normalizeSettings({}).relief_smooth_m, 90);
+  assert.equal(C.serializeTrack(bumpyRelief({ relief_smooth_m: 20 }).t), C.serializeTrack(normal.t));
+  // A flat circuit has no relief to smooth: nothing is written.
+  const flat = bumpyRelief({ relief: false, relief_smooth_m: 300 });
+  assert.equal('relief_smooth_m' in flat.t.editor, false);
+  // Read back from the file.
+  const parsed = C.parseTrack(C.serializeTrack(strong.t));
+  assert.ok(parsed.ok && parsed.check.ok);
+  assert.equal(parsed.track.editor.relief_smooth_m, 300);
+});
+
+test('relief smoothing on real answers: the coast road at the point of Kep', () => {
+  const kep = readJsonFixture('kep-loop.elevations.json');
+  const raw = Float64Array.from(kep.elevation);
+  const chain = (metres) => Math.max(1, Math.floor(metres / 2 / kep.step_m));
+  const today = C.movingAverage(raw, true, chain(90));
+  const strong = C.movingAverage(C.levelNarrow(raw, true, chain(300)), true, chain(300));
+  const top = (v, a, b) => Math.max(...Array.from(v).slice(a, b + 1));
+  const climb = (v) => Array.from(v).reduce((sum, y, i) => sum + Math.max(0, v[(i + 1) % v.length] - y), 0);
+  // The hillside beside the road (33 m over 180 m) and one high cell (44 m).
+  assert.ok(top(today, 571, 576) >= 33 && top(today, 579, 581) > 20, 'today the road climbs the hillside');
+  assert.ok(top(strong, 565, 585) < 15, `strong: ${top(strong, 565, 585)} m at the point`);
+  // The rise that is 480 m long stays.
+  assert.ok(top(strong, 601, 616) > 25, `strong: ${top(strong, 601, 616)} m on the long rise`);
+  near(Math.min(...strong), Math.min(...raw), 1);
+  assert.ok(climb(today) > 190 && climb(strong) < 60, `climb ${climb(today)} then ${climb(strong)}`);
 });
 
 test('elevation plan: lattice keys, no repeats, missing values', () => {

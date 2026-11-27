@@ -60,8 +60,8 @@ clavier, grand écran).
 6. Onglet « Réglages » : nom, identifiant (le nom du fichier publié), auteur, jeux visés,
    tours, échelle (2,5 par défaut), largeur, espacement des points, checkpoints, portes
    bonus, rayon de lissage.
-7. Onglet « Relief » : relief réel ou circuit plat, échelle verticale, profil d'altitude et
-   dénivelé positif.
+7. Onglet « Relief » : relief réel ou circuit plat, échelle verticale, lissage du relief,
+   profil d'altitude et dénivelé positif ([Le lissage du relief](#le-lissage-du-relief)).
 
 ### 2. Envoyer
 
@@ -129,10 +129,10 @@ l'éditeur là où le format laisse la main.
 | Ouvrages | `bridge=*` donne le drapeau 1, `tunnel=*` le drapeau 2 (sauf valeur `no`). |
 | Checkpoints | À intervalles égaux : un tous les 1 000 m de jeu jusqu'à 12 km, un tous les 2 000 m au-delà (ou la valeur saisie) ; jamais à moins de 150 m du départ ou de l'arrivée ; 200 au plus. |
 | Portes bonus | Environ une par kilomètre, seulement là où la courbure reste sous 1/300 m⁻¹ sur 60 m de part et d'autre, à 600 m au moins de la précédente et à 150 m au moins d'un checkpoint, du départ et de l'arrivée. Case décochée : `"gates": []`. |
-| Relief | Une altitude tous les 30 m réels environ, lissée sur 90 m, puis pentes limitées à 30 % (le format en tolère 60). `elevation: null` et tous les `y` à zéro si le relief est décoché. |
+| Relief | Une altitude tous les 30 m réels environ, lissée sur 90 m (ou sur 300 ou 600 m après retrait des bosses et des creux plus étroits, selon « Lissage du relief »), puis pentes limitées à 30 % (le format en tolère 60). `elevation: null` et tous les `y` à zéro si le relief est décoché. |
 | Nombres du hash | `scale` et `vertical_scale` sont écrits arrondis au millième, `road_width` et `spacing` au centième, comme les points le sont au centimètre : aucune valeur du fichier n'est à cheval sur un arrondi du hash. |
 | Demi-tours | Un aller-retour de moins de 30 m à un point de passage (point posé juste à côté d'un carrefour) est retiré de l'export, et signalé. |
-| Champ `editor` | Les réglages propres à l'éditeur (lissage, options de largeur, checkpoints, portes) sont rangés dans un champ `editor`, pour « Ouvrir ». Les jeux l'ignorent, comme tout champ inconnu. |
+| Champ `editor` | Les réglages propres à l'éditeur (lissage, options de largeur, checkpoints, portes, et `relief_smooth_m` quand le lissage du relief n'est pas « Normal ») sont rangés dans un champ `editor`, pour « Ouvrir ». Les jeux l'ignorent, comme tout champ inconnu. |
 
 Pour vérifier un fichier à la main :
 
