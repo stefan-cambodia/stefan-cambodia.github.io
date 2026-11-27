@@ -145,6 +145,11 @@ test('index.html: one file, Leaflet 1.9.4 from cdnjs with the verified SRI hashe
   const external = [...html.matchAll(/<(?:script|link)[^>]*(?:src|href)="(https?:[^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(external.sort(), [script[0].match(/src="([^"]+)"/)[1], link[0].match(/href="([^"]+)"/)[1]].sort());
   assert.equal([...html.matchAll(/<script\b/g)].length, 3, 'Leaflet, the core, the interface');
+  // The HEIC decoder, loaded by the page only for a HEIC photo: an exact version and its hash
+  // (of the file downloaded; its sha256 equals the one jsDelivr publishes for it).
+  assert.match(html, /src: 'https:\/\/cdn\.jsdelivr\.net\/npm\/libheif-js@1\.23\.5\/libheif-wasm\/libheif-bundle\.js',/);
+  assert.match(html, /integrity: 'sha512-mvcRkE7mf1NkKszQkZ4N7sEeGMKFJcOe\/3\/j0Cddu\+I6CdUx5P\+32P1yjL7G12xd0gio1uqlc6Riye9\+65NhDg=='/);
+  assert.equal([...html.matchAll(/https:\/\/cdn\.jsdelivr\.net[^'"\s]*/g)].length, 1, 'nothing else from jsDelivr');
   assert.match(html, /<html lang="fr">/);
   assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1/);
 });

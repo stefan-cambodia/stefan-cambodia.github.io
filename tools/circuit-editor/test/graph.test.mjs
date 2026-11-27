@@ -372,3 +372,62 @@ test('real fixture: what was loaded', () => {
   assert.equal(g.ways.length, raw.elements.filter((e) => e.type === 'way' && !C.EXCLUDED_CLASSES.includes(e.tags.highway) && e.tags.area !== 'yes').length);
   for (let e = 0; e < g.edgeA.length; e++) assert.ok(Number.isFinite(g.edgeLen[e]) && g.edgeLen[e] >= 0);
 });
+
+/* ---------------------------------------------------- no U-turn at a waypoint */
+
+// A small town drawn in metres (x east, y north) near the equator: a ring of
+// streets round a pond, whose west side bulges far out, and a dead end.
+function pondTown() {
+  const ll = ([x, y]) => ({ lat: y / 110574, lon: x / 111320 });
+  const nodes = { 1: [0, 0], 2: [200, 0], 3: [200, 100], 4: [0, 100], 5: [-150, 50], 6: [200, -120] };
+  const ways = [[11, [4, 3]], [12, [3, 2]], [13, [2, 1]], [14, [1, 5, 4]], [15, [2, 6]]];
+  const data = { elements: [
+    ...Object.entries(nodes).map(([id, p]) => ({ type: 'node', id: +id, ...ll(p) })),
+    ...ways.map(([id, nd]) => ({ type: 'way', id, nodes: nd, tags: { highway: 'residential' } })),
+  ] };
+  const g = C.createGraph();
+  C.addOverpass(g, data);
+  const at = (x, y) => { const p = ll([x, y]); return C.snap(g, p.lat, p.lon, 20, null); };
+  return { g, at };
+}
+
+test('route: a loop does not turn back at a waypoint when going on is less than 500 m longer', () => {
+  const { g, at } = pondTown();
+  // North side, east side, south side: the way back to the start is shorter
+  // by the way it came (390 m) than round the bulging west side (426 m).
+  const wps = [at(50, 100), at(200, 50), at(60, 0)];
+  const r = C.buildRoute(g, wps, 'loop', null, null);
+  assert.ok(r.ok);
+  const closing = r.legs[2];
+  near(closing.length, 60 + 2 * Math.hypot(150, 50) + 50, 0.5, 'closing leg round the west side');
+  assert.equal(closing.depart, 'B', 'it leaves the south side westwards, as it came');
+  // The legs' lengths are what is driven, without the penalty.
+  near(r.length, r.legs.reduce((a, l) => a + l.length, 0), 1e-9);
+  near(r.length, 150 + 50 + 50 + 140 + closing.length, 0.5);
+  // Without the leg before it, the shortest way is the way back.
+  near(C.route(g, wps[2], wps[0], null).length, 390, 0.5);
+});
+
+test('route: a U-turn stays where there is no other way, or within 30 m of a junction', () => {
+  const { g, at } = pondTown();
+  // A dead end: in and out the same way.
+  const spur = C.buildRoute(g, [at(200, 50), at(200, -100)], 'loop', null, null);
+  assert.ok(spur.ok);
+  near(spur.length, 150 + 150, 0.5);
+  // 20 m past the south-east corner and back: the export takes that spike away, the router keeps it.
+  const corner = C.buildRoute(g, [at(200, 50), at(180, 0), at(200, -60)], 'stage', null, null);
+  assert.ok(corner.ok);
+  near(corner.length, 50 + 20 + 20 + 60, 0.5);
+  assert.equal(corner.legs[0].arrive, null, 'a waypoint at a junction has no side');
+});
+
+test('route: two waypoints on one segment, the second behind the first', () => {
+  const { g, at } = pondTown();
+  // Along the north side eastwards, then a point back west on the same segment:
+  // round the block is 716 m longer than straight back, so straight back it is,
+  // and not past the corner and back either.
+  const r = C.buildRoute(g, [at(40, 100), at(150, 100), at(100, 100)], 'stage', null, null);
+  assert.ok(r.ok);
+  near(r.legs[1].length, 50, 0.5);
+  assert.deepEqual(plain(r.legs[1].seg), plain([r.legs[0].seg[r.legs[0].seg.length - 1]]));
+});

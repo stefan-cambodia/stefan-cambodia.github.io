@@ -36,7 +36,9 @@ clavier, grand écran).
    le bouton « Lieux » (Angkor, Siem Reap, Kampot, Bokor, Kep, Phnom Penh) ou la souris.
 2. « **Charger les routes de la zone** » : les routes de la vue apparaissent en surimpression.
    Chaque chargement s'ajoute aux précédents ; un cadre en pointillé montre ce qui est déjà
-   chargé. Au-delà d'environ 1 500 km², l'éditeur demande de zoomer.
+   chargé. Au-delà d'environ 1 500 km², l'éditeur demande de zoomer. Une zone déjà chargée
+   lors d'une visite précédente revient aussitôt, sans attendre le serveur
+   ([Les routes gardées](#les-routes-gardées)).
 3. Outil « **Ajouter** » : un clic sur une route pose un point de passage, recalé sur la
    route la plus proche (à moins de 20 pixels). Entre deux points, le tracé prend le plus
    court chemin par les routes. Pour l'obliger à passer ailleurs, ajouter un point.
@@ -66,6 +68,10 @@ clavier, grand écran).
    bonus, rayon de lissage.
 7. Onglet « Relief » : relief réel ou circuit plat, échelle verticale, lissage du relief,
    profil d'altitude et dénivelé positif ([Le lissage du relief](#le-lissage-du-relief)).
+   Le profil montre la carte : l'endroit survolé y apparaît en orange, avec sa distance et
+   son altitude, et un clic y amène la carte.
+
+8. Onglet « Photos » : des photos prises le long du parcours ([Les photos](#les-photos)).
 
 ### 2. Envoyer
 
@@ -76,6 +82,10 @@ Onglet « Envoi » :
   ([voir plus bas](#jeton-github)). L'éditeur affiche ensuite les adresses du circuit et du
   catalogue.
 - « **Télécharger** » enregistre le fichier, « **Copier** » le met dans le presse-papiers.
+- « **Mes circuits** » : la liste des circuits gardés sur cet ordinateur. « Garder ce
+  circuit » y range le tracé en cours, et tout circuit téléchargé, copié ou envoyé y entre
+  de lui-même ; un clic le rouvre, « Nouveau circuit » repart d'un tracé et d'un nom vides
+  ([Mes circuits](#mes-circuits)).
 - « **Ouvrir…** » recharge un fichier `.cambotrack.json` pour le modifier : son tracé est
   redessiné à partir de ses points, les routes de sa zone sont chargées, et le parcours est
   recalculé depuis ses points de passage. Si la carte n'a pas changé entre-temps, le circuit
@@ -152,9 +162,11 @@ du parcours et les altitudes déjà reçues pour lui. Jamais le jeton GitHub.
 
 - À l'ouverture, s'il trouve un dessin, il affiche « Un tracé en cours a été retrouvé »
   avec son nom, son nombre de points et sa date. « **Reprendre** » remet le formulaire et
-  les points, charge les routes du cadre du parcours (une demande à Overpass, comme
-  « Ouvrir… ») et recalcule le tracé ; les altitudes gardées ne sont pas redemandées à
-  Open-Meteo. Si la carte n'a pas changé, le circuit repris a le même hash qu'avant.
+  les points, reprend les routes sur lesquelles il a été dessiné
+  ([Les routes gardées](#les-routes-gardées) ; à défaut une demande à Overpass pour le cadre
+  du parcours, comme « Ouvrir… ») et recalcule le tracé ; les altitudes gardées ne sont pas
+  redemandées à Open-Meteo. Si la carte n'a pas changé, le circuit repris a le même hash
+  qu'avant.
 - « **Ignorer** » referme la proposition. Le dessin reste gardé jusqu'à ce qu'un nouveau
   tracé prenne sa place, c'est-à-dire dès le premier point posé.
 - « Tout effacer » l'oublie (« Annuler » le fait revenir, et il est gardé de nouveau).
@@ -165,6 +177,182 @@ Le dessin gardé appartient au navigateur et à l'adresse de la page : la copie 
 et la page ouverte depuis un dossier (`file://`) partagent le même, la page publiée sur le
 site a le sien. Pour passer un circuit d'un ordinateur à un autre, « Télécharger » puis
 « Ouvrir… ».
+
+## Les photos
+
+Les photos **ne sont pas affichées dans le jeu**. Elles décrivent les lieux du parcours à
+qui habillera le circuit : ce qu'on voit devant, à gauche, à droite. Elles sont donc
+gardées petites (320 pixels au plus grand côté, 10 à 20 ko pour une photo de téléphone),
+assez pour décrire un endroit et vite lues.
+
+L'onglet « Photos » importe des photos qui portent leur position GPS dans leurs
+métadonnées (Exif), comme celles d'un téléphone dont la localisation de l'appareil photo
+est activée. « Ajouter des photos… » ou un dépôt de fichiers sur la carte ; plusieurs à la
+fois, ou une archive `.zip`.
+
+Deux formats sont lus : le **JPEG** et le **HEIC** (les photos « haute efficacité » des
+Samsung et des iPhone). Le navigateur d'un ordinateur n'affiche pas le HEIC : l'éditeur lit
+lui-même sa position, puis charge un décodeur (libheif, 2 Mo, la première fois qu'il en
+faut un) pour en tirer l'image réduite. Compter environ une seconde et demie par photo de
+12 mégapixels, et une connexion pour ce premier chargement.
+
+**On peut commencer par les photos.** Sans tracé, l'éditeur prend toutes celles qui ont une
+position, centre la carte sur elles, charge les routes autour (500 m de marge : celles déjà
+chargées ou gardées sur l'ordinateur, sinon une requête Overpass) et propose un tracé qui
+passe par chaque lieu, dans l'ordre de prise de vue : un point de passage sur la route la
+plus proche de chaque lieu (à moins de l'écart admis). Il reste à l'adapter : type de
+circuit (boucle ou spéciale), points à déplacer ou à ajouter, échelle. Un seul « Annuler »
+retire les photos et le tracé proposé.
+
+Essayé le 27 novembre 2026 avec un album Google Photos de 23 photos HEIC prises autour d'un
+étang de Kampot : 43 s en tout (lecture, décodage, routes), 7 lieux, une boucle de 679 m
+réels autour de l'étang, refermée par la rue voisine (voir « Pas de demi-tour » plus bas).
+Seule retouche : l'échelle, car un tour de 679 m réels fait moins des 400 m de jeu demandés
+à l'échelle 2,5 ; à 1,25, 525 m de jeu. 3D Buggy construit ce fichier en 0,14 s et son pilote
+automatique en boucle les trois tours en 90 s.
+
+**Depuis un album Google Photos** : sur photos.google.com, ouvrir l'album, menu ⋮ puis
+« Tout télécharger » ; Google donne un `.zip` des photos d'origine, à donner tel quel à
+l'éditeur. Vérifié le 27 novembre 2026 sur un album de 23 photos HEIC d'un Samsung : les
+positions GPS et les dates y sont (le bloc de métadonnées est placé après l'image, l'éditeur
+le trouve où qu'il soit). Les dossiers de l'archive sont parcourus, ce qui n'est pas un JPEG est refusé
+avec sa raison. (L'accès direct par l'API de Google n'est pas possible pour cet usage :
+Google retire la position des photos qu'il donne aux applications, « all the Exif metadata
+except the location metadata », et ne laisse plus lire les albums existants depuis le
+31 mars 2025.)
+
+### Lieux et rôles
+
+Les photos prises au même endroit (à moins de 30 m de la première) forment un **lieu**,
+numéroté le long du parcours. À chaque lieu, dans l'ordre de prise de vue (date de
+l'Exif, puis nom du fichier) :
+
+1. **devant** : la route qui vient, dans le sens du circuit ;
+2. **à gauche** ;
+3. **à droite** ;
+4. les suivantes sont **en plus**, pour mieux décrire l'endroit.
+
+La liste de l'onglet suit les lieux ; chaque photo a un menu pour changer son rôle (les
+autres photos du lieu prennent alors les rôles restants, dans l'ordre). Si l'appareil a
+noté sa direction (boussole), l'éditeur la compare à la route et prévient quand elle
+contredit le rôle : « D'après la boussole de l'appareil, elle regarde à gauche (−57° par
+rapport à la route) ». « Annuler » défait un changement de rôle.
+
+### Le tri
+
+Chaque photo est comparée au **tracé du circuit** :
+
+| Cas | Ce qui se passe |
+|---|---|
+| Prise à moins de l'**écart admis** du parcours (100 m réels par défaut, réglable de 5 à 2 000 m) | **Acceptée.** Elle est écrite dans le fichier, à sa place au bord de la route (point le plus proche, côté gauche ou droit, distance). La première photo d'un **nouveau lieu** fait de la route la plus proche un **point de passage**, inséré dans le tronçon le plus proche ; si un point de passage est déjà à moins de 10 m, rien n'est ajouté. |
+| Prise plus loin | **Gardée**, en rouge sur la carte et dans la liste (« à 1 175 m du parcours : elle ne sera pas dans le fichier »), sans point de passage : au tracé d'aller la chercher, ou à la corbeille de la retirer. |
+| Sans position, ou position nulle (l'appareil n'avait pas capté les satellites) | Refusée, avec la raison. |
+| Pas un JPEG, image illisible, déjà importée, plus de 24 photos | Refusée, avec la raison. |
+
+Il faut donc tracer le circuit avant d'importer les photos. Un import se défait d'un
+« Annuler » (photos et points de passage ensemble). Une photo acceptée reste dans la
+liste ; si le tracé change ensuite et s'en éloigne au-delà de l'écart admis, elle est
+signalée en rouge et laissée hors du fichier. La corbeille retire une photo ; son point de
+passage reste.
+
+Dans le fichier (champ `photos`, [`FORMAT.md`](FORMAT.md)), chaque photo garde son lieu
+et son rôle, sa position, son altitude, sa date et sa direction de prise de vue, sa place
+dans le repère du circuit, et l'image réduite, réencodée en JPEG : **aucune autre
+métadonnée** de la photo d'origine n'y passe. Les photos n'entrent pas dans le hash : la
+route reste la même. **Un circuit envoyé au jeu est public, ses photos aussi.** Les jeux
+ignorent ce champ (le circuit se joue comme avant, vérifié avec 3D Buggy le 27 novembre 2026).
+
+Les images sont gardées sur l'ordinateur (IndexedDB, table `photos`, les 200 plus
+récentes) pour que le tracé en cours et « Mes circuits » retrouvent leurs photos ; « Ouvrir… »
+les relit dans le fichier.
+
+### Lire les photos d'un circuit
+
+```sh
+node tools/circuit-editor/photos-brief.mjs mon-circuit.cambotrack.json [dossier]
+```
+
+écrit une image par photo (`lieu-01-devant.jpg`, `lieu-01-gauche.jpg`…) et une fiche
+`brief.md` : pour chaque lieu, sa distance depuis le départ, sa position, et pour chaque
+photo son rôle, le côté de la route, ce que dit la boussole. Le dossier par défaut est
+`mon-circuit.photos/` à côté du fichier.
+
+## Le décor du lieu réel
+
+À l'export (« Télécharger », « Copier », « Envoyer au jeu »), l'éditeur lit autour du
+parcours le décor du lieu réel et l'écrit dans le fichier (champ `scenery`,
+[`FORMAT.md`](FORMAT.md), « Décor »), sans aucune autre aide :
+
+- les **bâtiments** à moins de 150 m réels du parcours et pas sur la route, chacun en un
+  rectangle (centre, longueur, largeur, orientation), avec sa hauteur et sa sorte quand
+  elles sont connues (habitation, commerce, culte, école, hôtel…) ;
+- l'**eau** : étangs, lacs, rivières larges, avec leur contour ;
+- la **couverture du sol** sur une grille, 400 m réels autour du parcours : bâti,
+  cultures, forêt, herbe, broussaille, sol nu, zone humide, mangrove, eau.
+
+Les données viennent d'**Overture Maps** (version 2026-11-18.0) : les bâtiments
+d'OpenStreetMap et de Microsoft (beaucoup plus complets qu'OpenStreetMap seul au
+Cambodge : 237 bâtiments autour de l'étang de Kampot, contre 28 dans OpenStreetMap),
+l'eau et l'usage du sol d'OpenStreetMap, la couverture du sol d'ESA WorldCover. Overture
+les publie en deux archives (`buildings.pmtiles`, 181 Go, et `base.pmtiles`) que
+l'éditeur lit par petits morceaux (requêtes HTTP « Range ») : pour un circuit de ville,
+deux tuiles et un demi-mégaoctet, en deux secondes. Les tuiles lues restent en mémoire
+tant que la page est ouverte.
+
+Le décor apparaît sur la carte (bâtiments en brun, eau en bleu) et la ligne d'export le
+résume : « Décor : 237 bâtiments, 5 plans d'eau, sol : bâti 66 %, eau 26 %… ». La case
+« Décor du lieu réel » (onglet Réglages) le retire du fichier. Si Overture ne répond pas,
+le fichier part sans décor et la ligne d'export le dit. Au-delà de 160 tuiles (un très
+long circuit), le décor est laissé de côté.
+
+Le décor n'entre pas dans le hash. Un jeu qui ne le connaît pas construit son décor
+habituel. 3D Buggy le construit (bâtiments, eau, sol) : voir `docs/CUSTOM_TRACKS.md` du jeu.
+
+## Mes circuits
+
+L'onglet « Envoi » garde une liste de circuits sur l'ordinateur, dans la même base
+IndexedDB que les routes (`circuit-editor`, table `circuits`). Chaque circuit y est rangé
+sous son identifiant, avec ce qu'il faut pour le retrouver tel quel : points de passage,
+réglages, zones de ses routes, altitudes reçues.
+
+- « **Garder ce circuit** » range le tracé en cours (il lui faut un nom). Un tracé
+  incomplet se garde aussi. Un circuit **téléchargé, copié ou envoyé** entre dans la liste
+  sans qu'on le demande. Garder sous un identifiant déjà pris remplace l'ancien.
+- Un **clic sur un circuit** le rouvre : le formulaire, les points, les routes gardées et le
+  relief reviennent sans rien demander à Overpass ni à Open-Meteo, et le circuit a le même
+  hash. Si le tracé en cours n'est pas dans la liste tel qu'il est, l'éditeur demande
+  d'abord confirmation, car il va être remplacé.
+- La **corbeille** retire un circuit de la liste, après confirmation. Les fichiers déjà
+  téléchargés ou envoyés ne sont pas touchés.
+- « **Nouveau circuit** » vide le tracé, le nom et l'identifiant ; la carte, les routes
+  chargées et les autres réglages restent.
+
+Après « Ouvrir… », « Reprendre » ou un clic dans la liste, l'identifiant continue de suivre
+le nom tant qu'il en est la forme simplifiée : renommer un circuit pour en faire un autre
+lui donne donc un autre identifiant, et ne remplace pas le premier dans les jeux. Un
+identifiant tapé à la main, lui, ne bouge plus.
+
+## Les routes gardées
+
+Les réponses d'Overpass sont gardées sur l'ordinateur, dans la base IndexedDB
+`circuit-editor` du navigateur : une par zone chargée, les 24 plus récentes. Elles servent
+à ne pas redemander à un serveur bénévole, qui met de dix secondes à une minute à répondre,
+ce que l'on a déjà.
+
+| Geste | Ce qui se passe |
+|---|---|
+| « Reprendre » un tracé en cours | Toutes les zones sur lesquelles il a été dessiné reviennent de l'ordinateur, quel que soit leur âge : la carte est celle qu'on a quittée. Si l'une manque, les routes du cadre du parcours sont demandées à Overpass. |
+| « Ouvrir… » un fichier | Si une zone gardée depuis moins de 30 jours contient le parcours, elle sert ; sinon Overpass. |
+| « Charger les routes de la zone » | Si une zone gardée depuis moins de 30 jours contient la vue et n'a pas encore été chargée pendant cette visite, elle sert, et l'éditeur dit de quel jour elle date. Un nouveau clic interroge OpenStreetMap. |
+
+Mesuré le 27 novembre 2026 sur le tour de la colline de Kep, la page ouverte depuis le
+disque : reprendre le tracé prend 0,4 s avec les routes gardées, contre 34 s en les
+demandant à Overpass ; aucune requête ne part, et le circuit a le même hash.
+
+L'onglet « Tracé » dit combien de zones sont gardées, et « Les oublier » les efface toutes.
+Redemander une zone ajoute les routes nouvelles ; celles qui sont déjà sur la carte n'y sont
+pas remplacées pendant la visite, la réponse fraîche servira à la suivante. Comme le tracé
+en cours, ces routes appartiennent au navigateur et à l'adresse de la page.
 
 ## Le lissage du relief
 
@@ -204,10 +392,12 @@ chacun avec ses conditions.
 | **Tuiles OSM** `tile.openstreetmap.org` | Fond « Plan ». | [Politique d'usage des tuiles](https://operations.osmfoundation.org/policies/tiles/) : usage interactif modéré, mention visible. |
 | **Esri World Imagery** | Fond « Satellite ». | Conditions d'Esri ; mention affichée sur la carte. Sert à regarder, pas à tracer : les routes viennent d'OSM. |
 | **OpenTopoMap** | Fond « Relief ». | Tuiles sous CC-BY-SA, mention affichée. |
-| **Overpass API** | « Charger les routes de la zone ». | Service bénévole : une requête par clic, zone bornée à 1 500 km², jamais de requête automatique. Voir les serveurs plus bas. |
+| **Overpass API** | « Charger les routes de la zone ». | Service bénévole : une requête par clic, zone bornée à 1 500 km², jamais de requête automatique, et ce qui a déjà été reçu est gardé sur l'ordinateur plutôt que redemandé. Voir les serveurs plus bas. |
 | **Nominatim** `nominatim.openstreetmap.org` | La recherche de lieu. | [Politique d'usage](https://operations.osmfoundation.org/policies/nominatim/) : une requête par seconde au plus, pas d'autocomplétion. L'éditeur ne cherche que sur **Entrée**, et jamais plus d'une fois par seconde. |
 | **Open-Meteo** `api.open-meteo.com/v1/elevation` | Le relief (Copernicus DEM GLO-90). | Voir l'encadré. 100 coordonnées par requête au plus, et **600 altitudes par minute** pour une même connexion : chaque coordonnée compte pour un appel (en-têtes `x-ratelimit-*`, mesuré le 27 novembre 2026). L'éditeur envoie les requêtes l'une après l'autre, ne redemande jamais une altitude déjà reçue, et quand l'API répond 429 il attend le délai qu'elle indique (`retry-after`). |
 | **cdnjs** | Leaflet 1.9.4. | Fichiers épinglés par leur empreinte SRI (ci-dessous). |
+| **Overture Maps** `tiles.overturemaps.org` | Le décor du lieu réel, à l'export (bâtiments, eau, sol). | Données ODbL (OpenStreetMap, Microsoft ML Buildings) et CC BY 4.0 (ESA WorldCover) : la mention est écrite dans `scenery.source`. Archives publiques lues par requêtes « Range », sans clé. |
+| **jsDelivr** | Le décodeur des photos HEIC, libheif-js 1.23.5 (libheif en WebAssembly, LGPL-3.0, 2 Mo). | Chargé seulement quand une photo HEIC est importée, épinglé par son empreinte SRI (ci-dessous). |
 | **API GitHub** | « Envoyer au jeu ». | Seulement avec le jeton de l'utilisateur, seulement sur `tracks/` du dépôt du site. |
 
 > **Open-Meteo est gratuit pour un usage non commercial.** Les deux jeux sont gratuits
@@ -237,7 +427,16 @@ Vérifié le 26 novembre 2026, avec de vraies requêtes `way[highway]` sur Angko
 Les trois ont renvoyé les mêmes données. Écartés : `overpass.private.coffee` et
 `overpass.kumi.systems` (aucune réponse en 40 s), `overpass.osm.ch` (ne couvre que la Suisse).
 
-### Leaflet et ses empreintes SRI
+Revérifié le 27 novembre 2026 au soir sur Kampot : `overpass-api.de` répond 200 à un
+navigateur (mais 406 à `curl` sans en-tête `User-Agent` de navigateur) et une fois 502
+depuis l'éditeur, `maps.mail.ru` répond (200 en 11 s, un 504), **`overpass.openstreetmap.fr`
+refuse désormais** (403 « This service is only available to white-listed usages », sans
+en-tête CORS : le navigateur n'y voit qu'une erreur de connexion). `overpass.private.coffee`
+et `overpass.kumi.systems` ne répondent toujours pas. Le troisième serveur reste dans la
+liste en attendant mieux ; quand les deux premiers échouent, le message « Connexion
+impossible » vient de lui.
+
+### Leaflet, le décodeur HEIC et leurs empreintes SRI
 
 ```
 https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js
@@ -248,7 +447,17 @@ https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css
 
 Elles ont été calculées sur les fichiers téléchargés
 (`openssl dgst -sha512 -binary leaflet.min.js | openssl base64 -A`) et sont égales à celles
-que publie cdnjs (`https://api.cdnjs.com/libraries/leaflet/1.9.4?fields=sri`). Le test de
+que publie cdnjs (`https://api.cdnjs.com/libraries/leaflet/1.9.4?fields=sri`).
+
+Le décodeur HEIC, chargé par la page seulement quand il sert :
+
+```
+https://cdn.jsdelivr.net/npm/libheif-js@1.23.5/libheif-wasm/libheif-bundle.js
+  sha512-mvcRkE7mf1NkKszQkZ4N7sEeGMKFJcOe/3/j0Cddu+I6CdUx5P+32P1yjL7G12xd0gio1uqlc6Riye9+65NhDg==
+```
+
+calculée de même sur le fichier téléchargé, dont le sha256 est celui que publie jsDelivr
+(`https://data.jsdelivr.com/v1/packages/npm/libheif-js@1.23.5`). Le test de
 bout en bout charge la page dans un navigateur, qui refuserait un fichier dont l'empreinte
 ne correspond pas.
 
@@ -304,7 +513,7 @@ que depuis le lancement.
 ## Tests
 
 ```sh
-node --test tools/circuit-editor/test/                 # 86 tests, sans dépendance (essayé avec Node 26)
+node --test tools/circuit-editor/test/                 # 122 tests, sans dépendance (essayé avec Node 26)
 python3 tools/circuit-editor/test/e2e_playwright.py    # un navigateur, réseau simulé
 node tools/circuit-editor/test/make-fixtures.mjs       # réécrit les fichiers d'exemple
 ```
@@ -317,19 +526,32 @@ extraient ce bloc et l'évaluent dans un contexte `node:vm` vide.
 |---|---|
 | `hash.test.mjs` | Le SHA-256 en JavaScript pur contre `node:crypto`, la forme canonique écrite à la main sur un petit circuit, ce que le hash couvre ou non. |
 | `geodesy.test.mjs` | WGS84, ECEF, le plan tangent et son inverse. |
-| `graph.test.mjs` | La lecture d'Overpass, la fusion par identifiant OSM, les classes exclues, l'index en grille contre un parcours complet, Dijkstra contre une version naïve, les longueurs partielles, deux points sur le même segment, les classes interdites, le cache des tronçons. |
+| `graph.test.mjs` | Pas de demi-tour à un point de passage (un étang dont le tour revenait sur ses pas, une impasse, un carrefour, deux points sur un segment) ; la lecture d'Overpass, la fusion par identifiant OSM, les classes exclues, l'index en grille contre un parcours complet, Dijkstra contre une version naïve, les longueurs partielles, deux points sur le même segment, les classes interdites, le cache des tronçons. |
 | `export.test.mjs` | La fermeture de la boucle, la régularité de l'espacement, les longueurs, le schéma, les règles du format (indices croissants et bornés, écarts, pentes, point 0 à l'origine), largeurs et surfaces, checkpoints, portes, relief, lissage du relief (cas construit, et vraies altitudes de Kep), limite de 20 000 points, avertissements, réouverture à hash identique, catalogue. |
-| `draft.test.mjs` | Le tracé en cours : il revient tel qu'il a été écrit, ce qui n'en est pas un est refusé, ce qui est inutilisable est écarté. |
+| `photos.test.mjs` | La lecture de la position GPS dans l'Exif (les deux ordres d'octets, les quatre hémisphères, altitude, date, direction, bloc après un premier segment, minutes absentes), les refus (sans Exif, sans GPS, position nulle, pas un JPEG), un fichier coupé à chaque octet ou abîmé octet par octet sans jamais planter ; la place d'une photo au bord du parcours, le côté selon le sens, l'écart admis, la limite de 24, le hash inchangé, la relecture d'un fichier, le tracé en cours sans les images ; les lieux et les rôles (ordre de prise de vue, choix à la main, relecture), l'angle de la boussole avec la route ; les archives zip (écrite par le `zipfile` de Python, ZIP64, coupée ou abîmée sans planter) ; la position d'une photo HEIC, métadonnées avant ou après l'image, et un HEIC abîmé octet par octet sans planter ; la fiche de `photos-brief.mjs`. |
+| `scenery.test.mjs` | Le décor : les identifiants de tuile PMTiles contre le code de la spécification, une archive avec et sans répertoire feuille, les tuiles vectorielles (propriétés de chaque type, anneaux fermés, tuile coupée refusée), le plus petit rectangle d'un bâtiment, le décor d'une boucle (bâtiments gardés ou écartés, un bâtiment coupé par deux tuiles recollé, couverture par ordre d'affichage, usage bâti, étang et son île), la vérification d'un décor abîmé. |
+| `draft.test.mjs` | Le tracé en cours : il revient tel qu'il a été écrit, avec les zones de ses routes ; ce qui n'en est pas un est refusé, ce qui est inutilisable est écarté. Les cadres : leur clé, et si l'un contient l'autre. |
 | `petit-circuit.test.mjs` | **Recette** : les points de passage du Petit Circuit des jeux, recalés et routés sur la carte d'aujourd'hui, donnent 7 089 m de jeu pour un tour à l'échelle 2,5, soit −0,15 % par rapport aux 7,1 km du circuit existant (tolérance : 3 %). Aucun point n'a dû être déplacé ; le plus éloigné de sa route en est à 50 m. |
 | `property.test.mjs` | 160 parcours tirés au hasard sur les routes d'Angkor, avec des réglages et un relief au hasard (tirage à graine fixe) : tout fichier que le code accepte d'exporter respecte le schéma et les règles. |
 | `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes, aucun jeton dans le dossier. |
-| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir ; laisser un tracé, le reprendre à la visite suivante sans redemander ses altitudes, l'ignorer, l'effacer ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
+| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, pointer le profil d'altitude et voir l'endroit sur la carte, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir avec les routes gardées puis sans ; recharger une zone déjà gardée ; garder deux circuits dans « Mes circuits », passer de l'un à l'autre, en retirer un ; importer cinq fichiers (une photo près du parcours, une loin gardée en rouge, une sans position, une image PNG, un doublon), annuler l'import, resserrer l'écart admis, déposer une photo sur la carte, retrouver les photos après « Reprendre » et « Ouvrir… », importer un album en `.zip`, changer le rôle d'une photo et l'annuler, réduire une photo de 1 600 × 1 200 à 320 × 240, décoder deux photos HEIC avec le vrai décodeur chargé depuis jsDelivr (une seule fois), lire le décor depuis deux archives Overture simulées (requêtes « Range »), le retirer, l'export quand Overture est en panne ; commencer par un album sans aucun tracé (routes chargées autour des photos, tracé proposé par leurs lieux, un seul « Annuler ») ; laisser un tracé, le reprendre à la visite suivante sans redemander ni ses routes ni ses altitudes, puis une fois les routes oubliées, l'ignorer, l'effacer ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
 
 Dans `test/fixtures/` :
 
 - `angkor-wat.overpass.json`, `angkor-petit-circuit.overpass.json.gz` : de vraies réponses
   d'Overpass, enregistrées le 26 novembre 2026 ;
 - `open-meteo-sample-stage.json` : les vraies altitudes de la spéciale d'exemple ;
+- `photo-base.jpg` et les `photo-*.jpg` : une petite image dessinée pour les tests, et la même avec une position GPS écrite
+  par `make-fixtures.mjs` (près du parcours d'essai, loin, sans position) ;
+- `photos-album.zip` : une archive écrite par le `zipfile` de Python (un dossier, deux photos,
+  une copie sous un nom accentué, une image PNG), comme celle de « Tout télécharger » de
+  Google Photos ; `make_album_zip.py` la réécrit ;
+- `overture-buildings.pmtiles` et `overture-base.pmtiles` : deux petites archives inventées
+  autour de la boucle d'essai (une maison tous les 60 m, des cultures, une forêt, un étang),
+  écrites par `make-fixtures.mjs` ;
+- `photo-near-2.heic` et `photo-near-2-late.heic` : `photo-near-2.jpg` encodée en HEIC par
+  `heif-enc` (libheif), métadonnées avant l'image comme l'écrit un téléphone, puis après
+  l'image comme dans un album téléchargé de Google Photos ; `make_heic_fixtures.py` les réécrit ;
 - `kep-loop.elevations.json` : les vraies altitudes d'un tour de la colline de Kep, une tous
   les 30 m, enregistrées le 27 novembre 2026 ;
 - `sample-loop.cambotrack.json`, `sample-stage.cambotrack.json` : deux circuits exportés par
@@ -345,11 +567,21 @@ reste du réseau est simulé.
 ## Limites connues
 
 - **Navigateur d'ordinateur.** L'outil est conçu pour la souris et un grand écran.
-- **Un seul tracé en cours est gardé**, dans le navigateur de cet ordinateur
-  ([Le tracé en cours](#le-tracé-en-cours)) : l'historique d'annulation, lui, ne survit pas à
-  la fermeture. Un circuit téléchargé ou envoyé se rouvre avec « Ouvrir… ».
-- **Le routage ne connaît que la longueur.** Ni sens uniques, ni accès privés
-  (`access=no`), ni préférence pour les grandes routes : au besoin, ajouter des points.
+- **Le tracé en cours et « Mes circuits » sont gardés dans le navigateur de cet
+  ordinateur** ([Le tracé en cours](#le-tracé-en-cours), [Mes circuits](#mes-circuits)) :
+  ils ne suivent pas sur un autre ordinateur, et l'historique d'annulation ne survit pas à
+  la fermeture. Un fichier téléchargé se rouvre partout avec « Ouvrir… ».
+- **Le routage ne connaît que la longueur**, plus une seule règle (ci-dessous). Ni sens
+  uniques, ni accès privés (`access=no`), ni préférence pour les grandes routes : au besoin,
+  ajouter des points.
+- **Pas de demi-tour à un point de passage.** Repartir d'un point de passage par où l'on
+  est arrivé coûte 500 m de plus au routage : le tracé ne fait demi-tour que si aucun autre
+  chemin n'est plus court d'autant (une impasse, par exemple). La boucle tient compte aussi
+  du sens de départ pour se refermer. Un point à moins de 30 m d'un carrefour n'a pas de
+  sens d'arrivée : le petit aller-retour qu'il fait est retiré à l'export, comme avant. Sans
+  cette règle, autour de l'étang de Kampot, la boucle revenait sur ses 334 m plutôt que
+  d'en faire 345 par la rue voisine. Les fichiers déjà faits (Petit Circuit, exemples)
+  donnent le même tracé qu'avant.
 - **La carte change.** Un circuit rouvert plus tard peut suivre un autre chemin si OSM a
   été modifié ; un point qui ne retrouve pas de route à moins de 40 m est signalé en rouge.
 - **Relief de surface** : bosses dues au versant voisin, aux arbres et aux bâtiments, creux
@@ -367,8 +599,9 @@ reste du réseau est simulé.
   compter une minute par tranche de 18 km, soit cinq minutes pour 100 km réels. L'onglet
   « Relief » annonce l'attente et le temps restant. Les altitudes déjà reçues sont gardées
   tant que la page reste ouverte : retoucher le tracé ne redemande que le terrain nouveau.
-- **Overpass peut être lent ou saturé** ; l'éditeur change de serveur et le dit, mais ne
-  peut pas faire mieux.
+- **Overpass peut être lent ou saturé** ; l'éditeur change de serveur et le dit. Pour une zone
+  déjà chargée un jour sur cet ordinateur, il n'en dépend plus
+  ([Les routes gardées](#les-routes-gardées)).
 - **L'envoi à GitHub n'a été essayé que contre une API simulée**, faute de jeton pendant le
   développement (les en-têtes CORS et la forme des réponses ont été contrôlés sur l'API
   réelle, sans authentification). Le premier envoi réel est à surveiller.
