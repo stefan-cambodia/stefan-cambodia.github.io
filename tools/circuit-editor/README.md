@@ -11,9 +11,13 @@ pas d'étape de compilation. Il est prévu pour un **navigateur d'ordinateur** (
 clavier, grand écran).
 
 - En ligne, une fois publié : `https://stefan-cambodia.github.io/tools/circuit-editor/`
-- En local : `python3 -m http.server` à la racine du dépôt, puis
-  `http://localhost:8000/tools/circuit-editor/`. Ouvrir le fichier directement
-  (`file://`) marche aussi.
+- Sur l'ordinateur, sans rien publier : `tools/circuit-editor/editeur-circuits.sh` ouvre
+  l'éditeur de ce dossier dans une fenêtre à lui (le mode application de Chrome ou de
+  Chromium, sinon un onglet du navigateur par défaut). `editeur-circuits.sh --install`
+  l'ajoute au menu des applications sous le nom « Éditeur de circuits », `--uninstall` l'en
+  retire. L'entrée du menu contient le chemin du dossier : relancer `--install` s'il change.
+- À la main : ouvrir `index.html` dans un navigateur (`file://`), ou `python3 -m http.server`
+  à la racine du dépôt puis `http://localhost:8000/tools/circuit-editor/`.
 
 ## En trois étapes
 
