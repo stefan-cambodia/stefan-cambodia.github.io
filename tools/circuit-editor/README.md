@@ -144,7 +144,7 @@ chacun avec ses conditions.
 | **OpenTopoMap** | Fond « Relief ». | Tuiles sous CC-BY-SA, mention affichée. |
 | **Overpass API** | « Charger les routes de la zone ». | Service bénévole : une requête par clic, zone bornée à 1 500 km², jamais de requête automatique. Voir les serveurs plus bas. |
 | **Nominatim** `nominatim.openstreetmap.org` | La recherche de lieu. | [Politique d'usage](https://operations.osmfoundation.org/policies/nominatim/) : une requête par seconde au plus, pas d'autocomplétion. L'éditeur ne cherche que sur **Entrée**, et jamais plus d'une fois par seconde. |
-| **Open-Meteo** `api.open-meteo.com/v1/elevation` | Le relief (Copernicus DEM GLO-90). | Voir l'encadré. 100 coordonnées par requête au plus ; l'éditeur les envoie l'une après l'autre, ne redemande jamais une altitude déjà reçue, et ralentit quand l'API répond 429. |
+| **Open-Meteo** `api.open-meteo.com/v1/elevation` | Le relief (Copernicus DEM GLO-90). | Voir l'encadré. 100 coordonnées par requête au plus, et **600 altitudes par minute** pour une même connexion : chaque coordonnée compte pour un appel (en-têtes `x-ratelimit-*`, mesuré le 27 novembre 2026). L'éditeur envoie les requêtes l'une après l'autre, ne redemande jamais une altitude déjà reçue, et quand l'API répond 429 il attend le délai qu'elle indique (`retry-after`). |
 | **cdnjs** | Leaflet 1.9.4. | Fichiers épinglés par leur empreinte SRI (ci-dessous). |
 | **API GitHub** | « Envoyer au jeu ». | Seulement avec le jeton de l'utilisateur, seulement sur `tracks/` du dépôt du site. |
 
@@ -288,6 +288,12 @@ reste du réseau est simulé.
   place (un aller-retour de plus de 30 m sur la même route) donne un rebroussement que
   l'éditeur signale, et qu'il refuse d'exporter quand deux points se retrouvent à moins de
   50 cm l'un de l'autre.
+- **Le relief d'un long circuit se fait attendre.** L'éditeur demande une altitude tous les
+  30 m réels et Open-Meteo en donne 600 par minute : jusqu'à 18 km de vraies routes
+  (7,2 km de jeu à l'échelle 2,5), le relief arrive en quelques secondes ; au-delà, il faut
+  compter une minute par tranche de 18 km, soit cinq minutes pour 100 km réels. L'onglet
+  « Relief » annonce l'attente et le temps restant. Les altitudes déjà reçues sont gardées
+  tant que la page reste ouverte : retoucher le tracé ne redemande que le terrain nouveau.
 - **Overpass peut être lent ou saturé** ; l'éditeur change de serveur et le dit, mais ne
   peut pas faire mieux.
 - **L'envoi à GitHub n'a été essayé que contre une API simulée**, faute de jeton pendant le

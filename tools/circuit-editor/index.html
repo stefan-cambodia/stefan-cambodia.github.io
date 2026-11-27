@@ -1869,6 +1869,7 @@ small { color: var(--ink-soft); font-size: .86em; }
 
   const ELEVATION_URL = 'https://api.open-meteo.com/v1/elevation';
   const ELEVATION_BATCH = 100;           // coordinates per request, the API's maximum
+  const ELEVATION_PER_MINUTE = 600;      // what Open-Meteo gives one address a minute: a coordinate counts as a call (x-ratelimit headers, 2026-11-27)
   const ELEVATION_IDLE_MS = 1200;        // wait for the drawing to settle before asking
 
   const SNAP_PX = 20;                    // a click snaps to a road within this many pixels
@@ -2691,8 +2692,16 @@ small { color: var(--ink-soft); font-size: .86em; }
     relief.timer = setTimeout(() => { loadElevation(); }, ELEVATION_IDLE_MS);
   }
 
-  // One request: up to 100 coordinates. Backs off when the API says 429.
-  async function elevationBatch(lat, lon) {
+  // What a long course has to be told: the altitudes beyond a minute's allowance
+  // wait for the next minute. `total` is what this run asks for, `done` what it has.
+  function reliefWait(total, done) {
+    const minutes = Math.ceil(total / ELEVATION_PER_MINUTE) - 1 - Math.floor(done / ELEVATION_PER_MINUTE);
+    return minutes > 0 ? ' Encore environ ' + minutes + ' min : Open-Meteo donne ' + ELEVATION_PER_MINUTE + ' altitudes par minute.' : '';
+  }
+
+  // One request: up to 100 coordinates. Backs off when the API says 429;
+  // `asked` is the progress line, kept on screen during the wait.
+  async function elevationBatch(lat, lon, asked) {
     const url = ELEVATION_URL + '?latitude=' + lat.join(',') + '&longitude=' + lon.join(',');
     const waits = [5, 15, 45];
     for (let attempt = 0; ; attempt++) {
@@ -2702,8 +2711,10 @@ small { color: var(--ink-soft); font-size: .86em; }
       }
       if (r.status === 429 && attempt < waits.length) {
         let wait = parseInt(r.headers.get('retry-after'), 10);
-        if (!(wait > 0 && wait <= 120)) wait = waits[attempt];
-        relief.progress = 'Open-Meteo demande de ralentir : nouvel essai dans ' + wait + ' s…';
+        // The minute's allowance says when it comes back; any other refusal does not.
+        const minute = wait > 0 && wait <= 120;
+        if (!minute) wait = waits[attempt];
+        relief.progress = asked + (minute ? '. Le service en donne ' + ELEVATION_PER_MINUTE + ' par minute : la suite dans ' : '. Open-Meteo demande de ralentir : nouvel essai dans ') + wait + ' s…';
         renderRelief();
         await sleep(wait * 1000);
         continue;
@@ -2730,9 +2741,10 @@ small { color: var(--ink-soft); font-size: .86em; }
           const miss = C.elevationMissing(plan, eleStore);
           if (!miss.key.length) return true;
           for (let i = 0; i < miss.key.length; i += ELEVATION_BATCH) {
-            relief.progress = 'Relief : ' + Math.min(i + ELEVATION_BATCH, miss.key.length) + ' / ' + miss.key.length + ' points demandés à Open-Meteo…';
+            const asked = 'Relief : ' + NUM(Math.min(i + ELEVATION_BATCH, miss.key.length)) + ' / ' + NUM(miss.key.length) + ' points demandés à Open-Meteo';
+            relief.progress = asked + '…' + reliefWait(miss.key.length, i);
             renderRelief();
-            const values = await elevationBatch(miss.lat.slice(i, i + ELEVATION_BATCH), miss.lon.slice(i, i + ELEVATION_BATCH));
+            const values = await elevationBatch(miss.lat.slice(i, i + ELEVATION_BATCH), miss.lon.slice(i, i + ELEVATION_BATCH), asked);
             // No data (open sea) comes back as null: sea level.
             values.forEach((v, k) => eleStore.set(miss.key[i + k], typeof v === 'number' && isFinite(v) ? v : 0));
             if (i + ELEVATION_BATCH < miss.key.length) await sleep(300);

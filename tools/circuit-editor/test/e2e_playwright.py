@@ -17,7 +17,8 @@ It loads the roads, places four waypoints, checks undo and redo, downloads the
 file and validates it (hash recomputed here in Python, schema and rules by
 test/validate.mjs when Node is there), sends it to the mocked GitHub API with a
 conflict on the catalogue, reopens the file, then checks what the page says when
-every Overpass server is down. The editor is meant for a desktop browser: the
+Open-Meteo has given its 600 altitudes of the minute and when every Overpass
+server is down. The editor is meant for a desktop browser: the
 test runs at 1280 x 800.
 """
 
@@ -98,6 +99,7 @@ class Network:
         self.overpass_down = set()        # hosts that answer 504
         self.elevation_calls = []         # coordinates per request
         self.elevation_429 = 0            # how many times to answer 429 first
+        self.elevation_retry_after = "1"  # seconds, as the minute's allowance gives them
         self.nominatim_calls = []
         self.github_files = {}            # path -> (sha, bytes)
         self.github_log = []              # (method, path, authorization, body)
@@ -144,7 +146,7 @@ class Network:
         if self.elevation_429 > 0:
             self.elevation_429 -= 1
             headers = dict(CORS)
-            headers["retry-after"] = "1"
+            headers["retry-after"] = self.elevation_retry_after
             return route.fulfill(status=429, content_type="application/json",
                                  body='{"error":true,"reason":"Too many requests"}', headers=headers)
         # A gentle hill, in whole metres like the real answers.
@@ -495,6 +497,30 @@ def reopen_run(context, net, errors, base, shots, target):
     page.close()
 
 
+def relief_wait_run(context, net, errors, base, shots):
+    print("Relief, the minute's allowance used up")
+    net.overpass_down = set()
+    net.elevation_429, net.elevation_retry_after = 1, "3"
+    page = new_page(context, errors, base, 1280, 800)
+    page.evaluate("(pts) => window.circuitEditor.map.fitBounds(pts, { padding: [170, 170], animate: false })", [list(w) for w in WAYPOINTS])
+    page.wait_for_function("document.getElementById('load-roads').textContent.includes('Charger')")
+    page.click("#load-roads")
+    page.wait_for_function("window.circuitEditor.graph.ways.length > 0", timeout=20000)
+    page.click("#tabbtn-relief")
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    # The refusal carries the delay: the page says what it waits for, and for how long.
+    page.wait_for_function("document.getElementById('relief-status').textContent.includes('la suite dans 3 s')", timeout=20000)
+    said = page.inner_text("#relief-status").replace("\u00a0", " ")
+    check("points demandés à Open-Meteo" in said and "600 par minute" in said,
+          "Open-Meteo answers 429: the count stays on screen with the wait (« %s »)" % said)
+    shot(page, shots, "desktop-relief-wait.png")
+    page.wait_for_function("document.getElementById('relief-status').textContent.includes('Relief chargé')", timeout=30000)
+    check(net.elevation_429 == 0, "then the relief is asked again and arrives")
+    net.elevation_retry_after = "1"
+    page.close()
+
+
 def outage_run(context, net, errors, base, shots):
     print("Services down")
     net.overpass_down = {"overpass-api.de", "maps.mail.ru", "overpass.openstreetmap.fr"}
@@ -529,6 +555,7 @@ def main():
         try:
             target = desktop_run(context, net, errors, base, args.screenshots, tmp)
             reopen_run(context, net, errors, base, args.screenshots, target)
+            relief_wait_run(context, net, errors, base, args.screenshots)
             outage_run(context, net, errors, base, args.screenshots)
         finally:
             context.close()
