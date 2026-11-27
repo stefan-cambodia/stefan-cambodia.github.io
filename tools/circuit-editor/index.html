@@ -191,6 +191,10 @@ small { color: var(--ink-soft); font-size: .86em; }
 .toast { position: absolute; z-index: 1001; left: 12px; right: 12px; bottom: 96px; margin: 0 auto; max-width: 460px; padding: 10px 14px;
   border-radius: var(--radius); background: rgba(27, 36, 48, .94); color: #fff; box-shadow: var(--shadow); text-align: center; }
 .toast.bad { background: rgba(160, 30, 30, .96); }
+.draft { position: absolute; z-index: 1001; top: 124px; left: 12px; right: 12px; margin: 0 auto; max-width: 440px; padding: 14px 16px;
+  border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
+.draft p { margin: 0 0 12px; }
+.draft-btns { display: flex; justify-content: flex-end; gap: 8px; }
 
 @media (min-width: 900px) {
   .top { right: auto; width: 380px; }
@@ -265,6 +269,14 @@ small { color: var(--ink-soft); font-size: .86em; }
     </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <div id="draft" class="draft" role="group" aria-labelledby="draft-text" hidden>
+      <p id="draft-text"></p>
+      <div class="draft-btns">
+        <button type="button" id="draft-ignore" class="btn">Ignorer</button>
+        <button type="button" id="draft-resume" class="btn primary">Reprendre</button>
+      </div>
+    </div>
   </div>
 
   <!-- ===================================== Panel ===================================== -->
@@ -437,6 +449,7 @@ small { color: var(--ink-soft); font-size: .86em; }
      9. The export chain: buildTrack()
     10. Checking, serialising and reading a track
     11. Catalogue (tracks/index.json)
+    12. Draft: the drawing in progress, kept from one visit to the next
    ========================================================================== */
 (function (root) {
   'use strict';
@@ -1858,6 +1871,78 @@ small { color: var(--ink-soft); font-size: .86em; }
       JSON.stringify(cat.updated) + ', "tracks": [' + (rows.length ? '\n' + rows.join(',\n') + '\n' : '') + ']}\n';
   };
 
+  /* ---------------------------------------------------------------- 12. Draft */
+
+  // The drawing in progress, as the page keeps it from one visit to the next:
+  // the waypoints, the form's fields, the box of the course (where its roads
+  // are) and the elevations already received. Never a token.
+  C.DRAFT_VERSION = 1;
+  C.DRAFT_MAX_WAYPOINTS = 2000;
+  C.DRAFT_MAX_ELEVATIONS = 60000;
+
+  // The smallest box [south, west, north, east] holding the points, grown to
+  // hold `box` too when there is one. null without a point and without a box.
+  C.boxOf = function (lat, lon, box) {
+    var s = box ? box[0] : Infinity, w = box ? box[1] : Infinity, n = box ? box[2] : -Infinity, e = box ? box[3] : -Infinity, i;
+    for (i = 0; i < lat.length; i++) {
+      if (lat[i] < s) s = lat[i];
+      if (lat[i] > n) n = lat[i];
+      if (lon[i] < w) w = lon[i];
+      if (lon[i] > e) e = lon[i];
+    }
+    return s <= n && w <= e ? [s, w, n, e] : null;
+  };
+
+  // waypoints: [[lat, lon]...]; form: { field: string or boolean }; box:
+  // [south, west, north, east] or null; ele: { lattice key: metres } or null.
+  C.makeDraft = function (kind, waypoints, form, box, ele, saved) {
+    var d = { v: C.DRAFT_VERSION, saved: saved, kind: kind === 'stage' ? 'stage' : 'loop',
+      waypoints: waypoints.map(function (w) { return [w[0], w[1]]; }), form: form };
+    if (box) d.box = box.slice();
+    if (ele) d.ele = ele;
+    return d;
+  };
+
+  // A draft read back from its text, or null when it is not one. What cannot be
+  // used is dropped, never repaired: a draft is a convenience, not a file.
+  C.parseDraft = function (text) {
+    var d, i, w, k, v, lat = [], lon = [], wps = [], form = {}, ele = null, box = null, n = 0;
+    if (typeof text !== 'string' || !text) return null;
+    try { d = JSON.parse(text); } catch (e) { return null; }
+    if (!d || typeof d !== 'object' || d.v !== C.DRAFT_VERSION || !Array.isArray(d.waypoints)) return null;
+    if (d.waypoints.length < 1 || d.waypoints.length > C.DRAFT_MAX_WAYPOINTS) return null;
+    for (i = 0; i < d.waypoints.length; i++) {
+      w = d.waypoints[i];
+      if (!Array.isArray(w) || typeof w[0] !== 'number' || typeof w[1] !== 'number' || !isFinite(w[0]) || !isFinite(w[1]) ||
+          Math.abs(w[0]) > 90 || Math.abs(w[1]) > 180) return null;
+      wps.push([w[0], w[1]]); lat.push(w[0]); lon.push(w[1]);
+    }
+    if (d.form && typeof d.form === 'object' && !Array.isArray(d.form)) {
+      for (k in d.form) {
+        if (!Object.prototype.hasOwnProperty.call(d.form, k)) continue;
+        v = d.form[k];
+        if (typeof v === 'boolean' || (typeof v === 'string' && v.length <= 200)) form[k] = v;
+      }
+    }
+    // The box of the course, when it is a box and the waypoints are in it.
+    if (Array.isArray(d.box) && d.box.length === 4 &&
+        d.box.every(function (x) { return typeof x === 'number' && isFinite(x); }) &&
+        d.box[0] <= d.box[2] && d.box[1] <= d.box[3] && Math.abs(d.box[0]) <= 90 && Math.abs(d.box[2]) <= 90 &&
+        Math.abs(d.box[1]) <= 180 && Math.abs(d.box[3]) <= 180) box = d.box.slice();
+    box = C.boxOf(lat, lon, box);
+    if (d.ele && typeof d.ele === 'object' && !Array.isArray(d.ele)) {
+      ele = {};
+      for (k in d.ele) {
+        if (!Object.prototype.hasOwnProperty.call(d.ele, k) || n >= C.DRAFT_MAX_ELEVATIONS) continue;
+        v = d.ele[k];
+        if (typeof v === 'number' && isFinite(v) && /^-?\d+_-?\d+$/.test(k)) { ele[k] = v; n++; }
+      }
+      if (!n) ele = null;
+    }
+    return { v: C.DRAFT_VERSION, saved: typeof d.saved === 'string' ? d.saved : '', kind: d.kind === 'stage' ? 'stage' : 'loop',
+      waypoints: wps, form: form, box: box, ele: ele };
+  };
+
   root.CircuitCore = C;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
@@ -1878,9 +1963,10 @@ small { color: var(--ink-soft); font-size: .86em; }
      8. Route, export chain and what the panel shows
      9. Relief: Open-Meteo
     10. Files: download, copy, open
-    11. Sending to the games (GitHub)
-    12. Panel, tabs and the settings form
-    13. Start
+    11. The drawing in progress, kept from one visit to the next
+    12. Sending to the games (GitHub)
+    13. Panel, tabs and the settings form
+    14. Start
    ========================================================================== */
 (function () {
   'use strict';
@@ -1932,7 +2018,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     { name: 'Phnom Penh', lat: 11.5564, lon: 104.9282, zoom: 13 }
   ];
 
-  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author' };
+  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author', draft: 'circuit-editor.draft' };
 
   const ROAD_STYLE = {
     major: { color: '#e8590c', weight: 3.2, opacity: 0.85 },
@@ -1975,11 +2061,13 @@ small { color: var(--ink-soft); font-size: .86em; }
   function nowIso() { return new Date().toISOString().replace(/\.\d+Z$/, 'Z'); }
 
   function loadPref(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+  // Returns whether the browser kept it.
   function savePref(key, value) {
     try {
       if (value === null || value === '') window.localStorage.removeItem(key);
       else window.localStorage.setItem(key, value);
-    } catch (e) { /* private browsing: nothing is kept, the page still works */ }
+      return true;
+    } catch (e) { return false; }      // private browsing, full store: nothing is kept, the page still works
   }
 
   // fetch with one deadline for the headers and the body. Resolves with
@@ -2591,6 +2679,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     renderRelief();
     updateButtons();
     schedulePreview();
+    saveDraftSoon();
   }
   let refreshTimer = null;
   function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 250); }
@@ -3045,7 +3134,128 @@ small { color: var(--ink-soft); font-size: .86em; }
     }
   }
 
-  /* ---------------------------- 11. Sending to the games (GitHub) */
+  /* ---------- 11. The drawing in progress, kept from one visit to the next */
+
+  // The form's fields a draft carries, and how each one is read.
+  const DRAFT_FIELDS = {
+    'f-name': 'value', 'f-id': 'value', 'f-author': 'value', 'f-laps': 'value', 'f-scale': 'value', 'f-vscale': 'value',
+    'f-width': 'value', 'f-spacing': 'value', 'f-cp': 'value', 'f-smooth': 'value', 'f-narrow': 'checked', 'f-bridges': 'checked',
+    'f-gates': 'checked', 'f-relief': 'checked', 'f-rsmooth': 'value', 'f-game-buggy': 'checked', 'f-game-rally': 'checked',
+    'allow-tracks': 'checked'
+  };
+  // kept: what the browser's store holds. 'none'; 'earlier', the drawing of an
+  // earlier visit, not taken up (it is left alone until a new drawing takes its
+  // place); 'own', this visit's drawing. offer: the earlier drawing while the
+  // page proposes it. box, ele: the course's box and elevations as last known,
+  // for the moments the course is not whole (roads not loaded yet).
+  const draft = { kept: 'none', timer: null, saved: true, offer: null, box: null, ele: null };
+
+  function saveDraftSoon() {
+    // Drawing while an earlier drawing is on offer: the new one takes its place.
+    if (state.waypoints.length && draft.offer) hideDraftOffer();
+    clearTimeout(draft.timer);
+    draft.timer = setTimeout(writeDraft, 400);
+  }
+
+  function writeDraft() {
+    clearTimeout(draft.timer);
+    draft.timer = null;
+    if (!state.waypoints.length) {
+      if (draft.kept === 'own') {
+        draft.saved = savePref(STORE.draft, null);
+        draft.kept = 'none'; draft.box = null; draft.ele = null;
+      }
+      return;
+    }
+    const form = {};
+    Object.keys(DRAFT_FIELDS).forEach((id) => { form[id] = $(id)[DRAFT_FIELDS[id]]; });
+    const lat = state.waypoints.map((w) => w.lat), lon = state.waypoints.map((w) => w.lon);
+    if (draft.kept !== 'own') { draft.box = null; draft.ele = null; }
+    if (current.route && current.route.ok) draft.box = C.boxOf(current.route.line.lat, current.route.line.lon, null);
+    if (current.plan) {
+      // The elevations of this course that have arrived: Open-Meteo is not asked twice.
+      const ele = {};
+      let n = 0;
+      current.plan.key.forEach((k) => {
+        const v = eleStore.get(k);
+        if (typeof v === 'number' && isFinite(v) && n < C.DRAFT_MAX_ELEVATIONS) { ele[k] = v; n++; }
+      });
+      if (n) draft.ele = ele;
+    }
+    const d = C.makeDraft(state.kind, state.waypoints.map((w) => [w.lat, w.lon]), form, C.boxOf(lat, lon, draft.box), draft.ele, nowIso());
+    draft.saved = savePref(STORE.draft, JSON.stringify(d));
+    draft.kept = 'own';
+  }
+
+  function offerDraft(d) {
+    draft.offer = d;
+    draft.kept = 'earlier';
+    const name = typeof d.form['f-name'] === 'string' && d.form['f-name'].trim() ? '« ' + d.form['f-name'].trim() + ' »' : 'sans nom';
+    const n = d.waypoints.length, t = Date.parse(d.saved);
+    const when = isFinite(t) ? ', laissé le ' + new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+    setText($('draft-text'), 'Un tracé en cours a été retrouvé : ' + name + ', ' + n + (n > 1 ? ' points de passage' : ' point de passage') + when + '.');
+    $('draft').hidden = false;
+  }
+  function hideDraftOffer() {
+    draft.offer = null;
+    $('draft').hidden = true;
+  }
+
+  // « Reprendre »: the form and the waypoints come back, then the roads of the
+  // course's box are loaded (as « Ouvrir » does) and the route is rebuilt.
+  async function resumeDraft() {
+    const d = draft.offer;
+    if (!d) return;
+    if (roads.busy) { toast('Des routes sont en cours de chargement : reprenez le tracé quand ce sera fini.'); return; }
+    hideDraftOffer();
+    undoStack.length = 0; redoStack.length = 0;
+    Object.keys(DRAFT_FIELDS).forEach((id) => {
+      const how = DRAFT_FIELDS[id], v = d.form[id];
+      if (typeof v === (how === 'checked' ? 'boolean' : 'string')) $(id)[how] = v;
+    });
+    idTouched = $('f-id').value !== '' && $('f-id').value !== C.slugify($('f-name').value);
+    $('f-id').classList.toggle('invalid', $('f-id').value !== '' && !C.isValidId($('f-id').value));
+    restyleTracks();
+    if (d.ele) Object.keys(d.ele).forEach((k) => { if (!eleStore.has(k)) eleStore.set(k, d.ele[k]); });
+    draft.kept = 'own'; draft.box = d.box; draft.ele = d.ele;
+    state.kind = d.kind;
+    state.waypoints = d.waypoints.map((w) => ({ lat: w[0], lon: w[1], edge: -1, t: 0 }));
+    syncKindButtons();
+    resnapLost(RESNAP_M);
+    layers.imported.clearLayers();
+    map.fitBounds([[d.box[0], d.box[1]], [d.box[2], d.box[3]]], { padding: [30, 30], maxZoom: 16, animate: false });
+    refresh();
+
+    const m = C.metersPerDegree((d.box[0] + d.box[2]) / 2);
+    const pieces = splitBox([d.box[0] - 400 / m.lat, d.box[1] - 400 / m.lon, d.box[2] + 400 / m.lat, d.box[3] + 400 / m.lon]);
+    if (pieces.length > 9) {
+      toast('Tracé repris. Sa zone est trop grande pour charger ses routes d\'un coup : cadrez-la par morceaux, avec « Charger les routes de la zone ».', '', 12000);
+      return;
+    }
+    toast('Tracé repris. Chargement des routes de sa zone…');
+    let failed = false;
+    await withRoads(async () => {
+      try {
+        for (let i = 0; i < pieces.length; i++) await loadBox(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
+      } catch (err) { failed = true; throw err; }
+    });
+    const n = state.waypoints.length, lost = state.waypoints.filter((w) => w.edge < 0).length;
+    if (failed) toast('Tracé repris, mais ses routes n\'ont pas pu être chargées : réessayez avec « Charger les routes de la zone ».', 'bad', 12000);
+    else if (lost) toast(lost + (lost > 1 ? ' points ne retrouvent' : ' point ne retrouve') + ' pas de route (en rouge) : la carte a changé. Déplacez-les sur une route.', 'bad', 12000);
+    else toast('Tracé repris : ' + n + (n > 1 ? ' points de passage.' : ' point de passage.'));
+  }
+
+  function initDraft() {
+    $('draft-resume').addEventListener('click', resumeDraft);
+    $('draft-ignore').addEventListener('click', hideDraftOffer);
+    // Fields that change nothing of the course are kept too.
+    ['f-name', 'f-id', 'f-author'].forEach((id) => $(id).addEventListener('input', saveDraftSoon));
+    window.addEventListener('pagehide', () => { if (draft.timer) writeDraft(); });
+    const d = C.parseDraft(loadPref(STORE.draft));
+    if (d) offerDraft(d);
+  }
+
+  /* ---------------------------- 12. Sending to the games (GitHub) */
 
   function toBase64(text) {
     const bytes = C.utf8(text);
@@ -3178,7 +3388,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     remember.addEventListener('change', sync);
   }
 
-  /* ---------------------- 12. Panel, tabs and the settings form */
+  /* ---------------------- 13. Panel, tabs and the settings form */
 
   function showTab(name) {
     document.querySelectorAll('.tab').forEach((b) => {
@@ -3275,14 +3485,16 @@ small { color: var(--ink-soft); font-size: .86em; }
       if (key === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
       else if (key === 'y' || (key === 'z' && ev.shiftKey)) { ev.preventDefault(); redo(); }
     });
-    // Leaving with a drawing in progress: the browser asks first.
+    // Leaving with a drawing in progress: it is kept for the next visit, and the
+    // browser asks first only when it could not be (private browsing).
     window.addEventListener('beforeunload', (ev) => {
-      if (state.waypoints.length) { ev.preventDefault(); ev.returnValue = ''; }
+      if (draft.timer) writeDraft();
+      if (state.waypoints.length && !draft.saved) { ev.preventDefault(); ev.returnValue = ''; }
     });
     window.addEventListener('resize', () => { renderRelief(); });
   }
 
-  /* ---------------------------------------------------------- 13. Start */
+  /* ---------------------------------------------------------- 14. Start */
 
   function fatal(text) {
     const wrap = make('div', 'fatal'), inner = make('div');
@@ -3307,6 +3519,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     initSearch();
     initTools();
     initPanel();
+    initDraft();
     syncKindButtons();
     updateLoadButton();
     refresh();

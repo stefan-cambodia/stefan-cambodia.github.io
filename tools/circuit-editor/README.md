@@ -46,6 +46,10 @@ clavier, grand écran).
    - **supprimer** un point : clic droit dessus (ou un clic, puis « Supprimer ce point ») ;
    - **annuler / rétablir** : Ctrl+Z / Ctrl+Y, ou les flèches sous la carte ;
    - **inverser** le sens, **tout effacer** : les deux derniers boutons.
+
+   Le tracé en cours est gardé à chaque changement (dans le navigateur, sur cet
+   ordinateur). On peut fermer l'éditeur : à l'ouverture suivante il propose de le
+   **reprendre**, avec ses réglages et son relief ([Le tracé en cours](#le-tracé-en-cours)).
 5. Onglet « Tracé » : **Boucle** ou **Spéciale** (d'un point A à un point B), et
    « Autoriser les pistes ». On y lit la longueur réelle, la longueur de jeu, le temps
    estimé (17,75 m de jeu par seconde, la vitesse de référence des jeux), le nombre de
@@ -139,6 +143,55 @@ Pour vérifier un fichier à la main :
 ```sh
 node tools/circuit-editor/test/validate.mjs tracks/mon-circuit.cambotrack.json
 ```
+
+## Le tracé en cours
+
+À chaque changement, l'éditeur range le dessin dans le `localStorage` du navigateur, sous
+la clé `circuit-editor.draft` : les points de passage, les champs du formulaire, le cadre
+du parcours et les altitudes déjà reçues pour lui. Jamais le jeton GitHub.
+
+- À l'ouverture, s'il trouve un dessin, il affiche « Un tracé en cours a été retrouvé »
+  avec son nom, son nombre de points et sa date. « **Reprendre** » remet le formulaire et
+  les points, charge les routes du cadre du parcours (une demande à Overpass, comme
+  « Ouvrir… ») et recalcule le tracé ; les altitudes gardées ne sont pas redemandées à
+  Open-Meteo. Si la carte n'a pas changé, le circuit repris a le même hash qu'avant.
+- « **Ignorer** » referme la proposition. Le dessin reste gardé jusqu'à ce qu'un nouveau
+  tracé prenne sa place, c'est-à-dire dès le premier point posé.
+- « Tout effacer » l'oublie (« Annuler » le fait revenir, et il est gardé de nouveau).
+- Le navigateur ne demande plus confirmation à la fermeture, sauf s'il n'a pas pu garder le
+  dessin (navigation privée).
+
+Le dessin gardé appartient au navigateur et à l'adresse de la page : la copie installée
+et la page ouverte depuis un dossier (`file://`) partagent le même, la page publiée sur le
+site a le sien. Pour passer un circuit d'un ordinateur à un autre, « Télécharger » puis
+« Ouvrir… ».
+
+## Le lissage du relief
+
+Le relief vient d'un modèle de surface dont une case fait 90 m : le long d'une route, il
+donne aussi le versant d'à côté, la cime des arbres, les toits, et le niveau de l'eau sous
+un pont. « Lissage du relief » (onglet « Relief ») choisit ce que l'éditeur en garde.
+
+| Choix | Ce qui est fait |
+|---|---|
+| **Normal (90 m)** | Moyenne glissante sur 90 m. C'est le réglage de toujours : un fichier fait avec lui est identique, hash compris, à ce qu'il était. |
+| **Fort (300 m)** | Les bosses de moins de 300 m de long sont retirées, puis les creux de moins de 300 m, puis moyenne sur 300 m. |
+| **Très fort (600 m)** | La même chose sur 600 m. |
+
+Les bosses passent avant les creux parce qu'un modèle de surface se trompe vers le haut, et
+pour que deux fausses bosses voisines ne soient pas prises pour une colline. Ce qui est plus
+long que la fenêtre reste en place ; une vraie côte perd à son sommet ce que la route gagne
+sur la dernière demi-fenêtre (6 m pour une colline de 60 m longue de 1,5 km, en « Fort »).
+
+Mesuré le 27 novembre 2026 sur de vraies réponses d'Open-Meteo :
+
+| Parcours | Normal | Fort | Très fort |
+|---|---|---|---|
+| Tour de la colline de Kep, 20,9 km de routes au niveau de la mer ou presque | 198 m de dénivelé positif ; 33 m à la pointe de Kep, où la route longe la mer au pied du versant | 44 m ; 9 m à la pointe | 32 m ; 7 m à la pointe |
+| Montée au Bokor par les pistes, 17,5 km, d'environ 50 m à 1 000 m | 1 318 m de dénivelé positif | 1 055 m | 1 012 m |
+
+Les altitudes de Kep sont dans `test/fixtures/kep-loop.elevations.json`, et un test vérifie
+ces chiffres. Le choix est écrit dans le champ `editor` du fichier, pour « Ouvrir… ».
 
 ## Services utilisés
 
@@ -251,7 +304,7 @@ que depuis le lancement.
 ## Tests
 
 ```sh
-node --test tools/circuit-editor/test/                 # 76 tests, sans dépendance (essayé avec Node 26)
+node --test tools/circuit-editor/test/                 # 86 tests, sans dépendance (essayé avec Node 26)
 python3 tools/circuit-editor/test/e2e_playwright.py    # un navigateur, réseau simulé
 node tools/circuit-editor/test/make-fixtures.mjs       # réécrit les fichiers d'exemple
 ```
@@ -265,17 +318,20 @@ extraient ce bloc et l'évaluent dans un contexte `node:vm` vide.
 | `hash.test.mjs` | Le SHA-256 en JavaScript pur contre `node:crypto`, la forme canonique écrite à la main sur un petit circuit, ce que le hash couvre ou non. |
 | `geodesy.test.mjs` | WGS84, ECEF, le plan tangent et son inverse. |
 | `graph.test.mjs` | La lecture d'Overpass, la fusion par identifiant OSM, les classes exclues, l'index en grille contre un parcours complet, Dijkstra contre une version naïve, les longueurs partielles, deux points sur le même segment, les classes interdites, le cache des tronçons. |
-| `export.test.mjs` | La fermeture de la boucle, la régularité de l'espacement, les longueurs, le schéma, les règles du format (indices croissants et bornés, écarts, pentes, point 0 à l'origine), largeurs et surfaces, checkpoints, portes, relief, limite de 20 000 points, avertissements, réouverture à hash identique, catalogue. |
+| `export.test.mjs` | La fermeture de la boucle, la régularité de l'espacement, les longueurs, le schéma, les règles du format (indices croissants et bornés, écarts, pentes, point 0 à l'origine), largeurs et surfaces, checkpoints, portes, relief, lissage du relief (cas construit, et vraies altitudes de Kep), limite de 20 000 points, avertissements, réouverture à hash identique, catalogue. |
+| `draft.test.mjs` | Le tracé en cours : il revient tel qu'il a été écrit, ce qui n'en est pas un est refusé, ce qui est inutilisable est écarté. |
 | `petit-circuit.test.mjs` | **Recette** : les points de passage du Petit Circuit des jeux, recalés et routés sur la carte d'aujourd'hui, donnent 7 089 m de jeu pour un tour à l'échelle 2,5, soit −0,15 % par rapport aux 7,1 km du circuit existant (tolérance : 3 %). Aucun point n'a dû être déplacé ; le plus éloigné de sa route en est à 50 m. |
 | `property.test.mjs` | 160 parcours tirés au hasard sur les routes d'Angkor, avec des réglages et un relief au hasard (tirage à graine fixe) : tout fichier que le code accepte d'exporter respecte le schéma et les règles. |
 | `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes, aucun jeton dans le dossier. |
-| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir. |
+| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir ; laisser un tracé, le reprendre à la visite suivante sans redemander ses altitudes, l'ignorer, l'effacer ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
 
 Dans `test/fixtures/` :
 
 - `angkor-wat.overpass.json`, `angkor-petit-circuit.overpass.json.gz` : de vraies réponses
   d'Overpass, enregistrées le 26 novembre 2026 ;
 - `open-meteo-sample-stage.json` : les vraies altitudes de la spéciale d'exemple ;
+- `kep-loop.elevations.json` : les vraies altitudes d'un tour de la colline de Kep, une tous
+  les 30 m, enregistrées le 27 novembre 2026 ;
 - `sample-loop.cambotrack.json`, `sample-stage.cambotrack.json` : deux circuits exportés par
   le code (une boucle plate à l'échelle 1,25 avec une piste, une spéciale avec relief), pour
   recouper le hash côté jeu ;
@@ -289,14 +345,17 @@ reste du réseau est simulé.
 ## Limites connues
 
 - **Navigateur d'ordinateur.** L'outil est conçu pour la souris et un grand écran.
-- **Rien n'est enregistré en cours de route.** Recharger la page perd le tracé (le
-  navigateur demande confirmation). Un circuit téléchargé ou envoyé se rouvre avec « Ouvrir… ».
+- **Un seul tracé en cours est gardé**, dans le navigateur de cet ordinateur
+  ([Le tracé en cours](#le-tracé-en-cours)) : l'historique d'annulation, lui, ne survit pas à
+  la fermeture. Un circuit téléchargé ou envoyé se rouvre avec « Ouvrir… ».
 - **Le routage ne connaît que la longueur.** Ni sens uniques, ni accès privés
   (`access=no`), ni préférence pour les grandes routes : au besoin, ajouter des points.
 - **La carte change.** Un circuit rouvert plus tard peut suivre un autre chemin si OSM a
   été modifié ; un point qui ne retrouve pas de route à moins de 40 m est signalé en rouge.
-- **Relief de surface** : bosses dues aux arbres et aux bâtiments, pas de prise en compte
-  des ponts et des tunnels. Le lissage et la limite de pente les atténuent sans les enlever.
+- **Relief de surface** : bosses dues au versant voisin, aux arbres et aux bâtiments, creux
+  sous les ponts. « Lissage du relief » sur « Fort » retire ce qui fait moins de 300 m de long ;
+  une forêt continue ou un versant longé sur un kilomètre restent dans le profil. Les tunnels
+  ne sont pas pris en compte.
 - **Les virages très serrés restent serrés.** Une moyenne glissante arrondit un angle droit,
   pas une épingle à 150° : l'avertissement « épingle » est là pour cela. Un demi-tour sur
   place (un aller-retour de plus de 30 m sur la même route) donne un rebroussement que

@@ -16,9 +16,9 @@ Open-Meteo, Nominatim and the GitHub API. Any other request fails the test.
 It loads the roads, places four waypoints, checks undo and redo, downloads the
 file and validates it (hash recomputed here in Python, schema and rules by
 test/validate.mjs when Node is there), sends it to the mocked GitHub API with a
-conflict on the catalogue, reopens the file, then checks what the page says when
-Open-Meteo has given its 600 altitudes of the minute and when every Overpass
-server is down. The editor is meant for a desktop browser: the
+conflict on the catalogue, reopens the file, leaves a drawing and takes it up
+again on a new visit, then checks what the page says when Open-Meteo has given
+its 600 altitudes of the minute and when every Overpass server is down. The editor is meant for a desktop browser: the
 test runs at 1280 x 800.
 """
 
@@ -226,13 +226,16 @@ def click_latlon(page, lat, lon):
     page.mouse.click(x, y)
 
 
-def new_page(context, errors, base, width, height):
+def new_page(context, errors, base, width, height, keep_offer=False):
+    """A page of its own. The drawing an earlier page left is declined, unless keep_offer."""
     page = context.new_page()
     page.set_viewport_size({"width": width, "height": height})
     page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
     page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
     page.goto(base + PAGE)
     page.wait_for_function("window.circuitEditor && window.circuitEditor.map")
+    if not keep_offer and page.locator("#draft").is_visible():
+        page.click("#draft-ignore")
     return page
 
 
@@ -504,6 +507,87 @@ def reopen_run(context, net, errors, base, shots, target):
     page.close()
 
 
+def stored_draft(page):
+    text = page.evaluate("localStorage.getItem('circuit-editor.draft')")
+    return json.loads(text) if text else None
+
+
+def frame_and_load(page):
+    page.evaluate("(pts) => window.circuitEditor.map.fitBounds(pts, { padding: [170, 170], animate: false })", [list(w) for w in WAYPOINTS])
+    page.wait_for_function("document.getElementById('load-roads').textContent.includes('Charger')")
+    page.click("#load-roads")
+    page.wait_for_function("window.circuitEditor.graph.ways.length > 0", timeout=20000)
+
+
+def draft_run(context, net, errors, base, shots):
+    print("The drawing in progress, kept from one visit to the next")
+    net.overpass_down = set()
+    page = new_page(context, errors, base, 1280, 800)
+    frame_and_load(page)
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.click("#tabbtn-settings")
+    page.fill("#f-name", "Tracé gardé")
+    page.fill("#f-laps", "2")
+    page.dispatch_event("#f-laps", "change")
+    page.click("#tabbtn-relief")
+    page.select_option("#f-rsmooth", "600")
+    page.wait_for_function("document.getElementById('relief-status').textContent.includes('Relief chargé')", timeout=30000)
+    page.wait_for_function("(() => { const t = localStorage.getItem('circuit-editor.draft') || '';"
+                           " return t.includes('Tracé gardé') && t.includes('\"ele\"') && t.includes('\"f-laps\":\"2\"'); })()")
+    kept = stored_draft(page)
+    samples = page.evaluate("new Set(window.circuitEditor.current.plan.key).size")
+    check(len(kept["waypoints"]) == 4 and kept["kind"] == "loop" and len(kept["ele"]) == samples and len(kept["box"]) == 4,
+          "the drawing is kept as it is made: 4 waypoints, the form, the course's box, %d elevations" % len(kept["ele"]))
+    before = page.evaluate("window.circuitEditor.prepareExport().then(o => o.track.hash)")
+    asked = []
+    page.on("dialog", lambda d: (asked.append(d.type), d.accept()))
+    page.close(run_before_unload=True)
+    if not page.is_closed():
+        page.wait_for_event("close", timeout=10000)
+    check(not asked, "leaving the page asks nothing: the drawing is kept")
+
+    # A new visit: the page offers the drawing and draws nothing by itself.
+    roads, heights = len(net.overpass_calls), len(net.elevation_calls)
+    page = new_page(context, errors, base, 1280, 800, keep_offer=True)
+    said = page.inner_text("#draft-text").replace("\u00a0", " ")
+    check(page.locator("#draft").is_visible() and "« Tracé gardé »" in said and "4 points de passage" in said,
+          "a new visit offers the drawing (« %s »)" % said)
+    check(page.evaluate("window.circuitEditor.state.waypoints.length") == 0 and len(net.overpass_calls) == roads,
+          "nothing is drawn and no road is asked for before « Reprendre »")
+    shot(page, shots, "desktop-draft-offer.png")
+    page.click("#draft-resume")
+    page.wait_for_function("(() => { const t = document.getElementById('toast').textContent;"
+                           " return t.includes('Tracé repris') && t.includes('4 points'); })()", timeout=30000)
+    st = page.evaluate("(() => { const e = window.circuitEditor, v = (id) => document.getElementById(id).value;"
+                       " return { n: e.state.waypoints.length, ok: e.current.route.ok, lost: e.state.waypoints.filter(w => w.edge < 0).length,"
+                       " name: v('f-name'), id: v('f-id'), laps: v('f-laps'), smooth: v('f-rsmooth') }; })()")
+    check(st == {"n": 4, "ok": True, "lost": 0, "name": "Tracé gardé", "id": "trace-garde", "laps": "2", "smooth": "600"},
+          "« Reprendre »: the waypoints are back on their roads, with the form: %s" % st)
+    check(len(net.overpass_calls) == roads + 1, "the roads of the course's box are asked for once")
+    page.wait_for_function("document.getElementById('relief-status').textContent.includes('Relief chargé')", timeout=30000)
+    check(len(net.elevation_calls) == heights, "the elevations kept with the drawing are not asked for again")
+    again = page.evaluate("window.circuitEditor.prepareExport().then(o => o.track.hash)")
+    check(again == before, "the resumed circuit has the hash it had before the page was left")
+    check(page.locator("#draft").is_hidden(), "the offer is gone once taken")
+    shot(page, shots, "desktop-draft-resumed.png")
+    page.close()
+
+    # Declined, the earlier drawing stays until a new one takes its place; erasing all forgets it.
+    page = new_page(context, errors, base, 1280, 800, keep_offer=True)
+    page.click("#draft-ignore")
+    check(page.locator("#draft").is_hidden() and len(stored_draft(page)["waypoints"]) == 4, "« Ignorer » hides the offer and keeps the drawing")
+    frame_and_load(page)
+    click_latlon(page, *WAYPOINTS[0])
+    page.wait_for_function("(JSON.parse(localStorage.getItem('circuit-editor.draft') || '{}').waypoints || []).length === 1")
+    check(True, "a new drawing takes the place of the one declined")
+    page.click("#clear")
+    page.wait_for_function("localStorage.getItem('circuit-editor.draft') === null")
+    check(True, "« Tout effacer » forgets the kept drawing")
+    page.close()
+
+
 def relief_wait_run(context, net, errors, base, shots):
     print("Relief, the minute's allowance used up")
     net.overpass_down = set()
@@ -562,6 +646,7 @@ def main():
         try:
             target = desktop_run(context, net, errors, base, args.screenshots, tmp)
             reopen_run(context, net, errors, base, args.screenshots, target)
+            draft_run(context, net, errors, base, args.screenshots)
             relief_wait_run(context, net, errors, base, args.screenshots)
             outage_run(context, net, errors, base, args.screenshots)
         finally:
