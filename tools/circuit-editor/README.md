@@ -46,6 +46,17 @@ clavier, grand écran).
   (aller au lieu, charger les routes, cliquer sur les routes) et les autres départs (des
   photos, un fichier, Mes circuits). Elle part dès que les routes sont là ; le menu Aide la
   rappelle.
+- **Clic droit sur la carte** : ce qu'on peut faire à cet endroit (poser l'objet choisi, un
+  point de passage, l'insérer dans le tracé, centrer, charger les routes autour, copier les
+  coordonnées). Sur un point ou un objet, le clic droit le supprime, comme avant.
+- **Annuler sans chercher** : un message qui dit ce qu'« Annuler » reprendrait (tracé effacé,
+  objets posés ou retirés) porte le bouton lui-même. La barre dit quand le brouillon a été
+  gardé dans le navigateur.
+- **Réglages** : le nom, les tours, l'échelle, les jeux, le décor et l'auteur sont en vue ;
+  l'identifiant, les largeurs, l'espacement, les checkpoints, le lissage et les options sont
+  sous « Réglages avancés » (ouverts d'eux-mêmes si l'identifiant est faux).
+- **Objets** : les derniers choisis sont en tête (« Utilisés récemment », gardés dans le
+  navigateur) ; l'écart ne se demande que pour une ligne.
 - **Raccourcis** (<kbd>?</kbd> les montre tous) : <kbd>Ctrl</kbd>+<kbd>S</kbd> garder,
   <kbd>Ctrl</kbd>+<kbd>Maj</kbd>+<kbd>S</kbd> télécharger, <kbd>Ctrl</kbd>+<kbd>O</kbd>
   ouvrir, <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> annuler, rétablir ;

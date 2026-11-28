@@ -159,6 +159,10 @@ small { color: var(--ink-soft); font-size: .86em; }
 .objmode .field { flex: 1 1 70px; }
 .objlib { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; margin: 0 0 12px; padding: 2px;
   list-style: none; max-height: 44vh; overflow-y: auto; }
+.objlib.recent { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); max-height: none; margin-bottom: 8px; }
+.objlib.recent .otile { min-height: 0; padding: 3px; }
+.objlib.recent .oname { display: none; }
+h3.minor { margin: 0 0 4px; color: var(--ink-soft); font-size: .82em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .otile { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; min-height: 100px; padding: 4px;
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: inherit;
   font-size: 11px; line-height: 1.2; text-align: center; cursor: pointer; }
@@ -211,6 +215,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .circuit-del { flex: 0 0 44px; }
 .note.kept .btn.small { min-height: 30px; margin-left: 4px; padding: 2px 10px; font-size: .95em; font-weight: 500; vertical-align: baseline; }
 .help { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
+.checks-row { display: flex; gap: 18px; flex-wrap: wrap; }
+.checks-row .check { padding: 4px 0; min-height: 36px; }
 .help summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; cursor: pointer; }
 .help ul, .help ol { margin: 0 0 12px; padding-left: 20px; }
 .help li { margin-bottom: 5px; }
@@ -257,6 +263,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .toast { position: absolute; z-index: 1001; left: 12px; right: 12px; bottom: 96px; margin: 0 auto; max-width: 460px; padding: 10px 14px;
   border-radius: var(--radius); background: rgba(27, 36, 48, .94); color: #fff; box-shadow: var(--shadow); text-align: center; }
 .toast.bad { background: rgba(160, 30, 30, .96); }
+.toast-act { margin-left: 12px; min-height: 30px; padding: 3px 12px; border: 1px solid rgba(255, 255, 255, .55); border-radius: 7px;
+  background: none; color: #fff; font: inherit; font-weight: 700; cursor: pointer; vertical-align: baseline; }
+.toast-act:hover { background: rgba(255, 255, 255, .16); }
 .draft { position: absolute; z-index: 1001; top: 124px; left: 12px; right: 12px; margin: 0 auto; max-width: 440px; padding: 14px 16px;
   border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
 .draft p { margin: 0 0 12px; }
@@ -282,7 +291,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   font-weight: 600; cursor: pointer; }
 .mb-btn:hover, .mb-btn[aria-expanded=true] { background: rgba(255, 255, 255, .14); color: #fff; }
 .mb-btn:focus-visible { outline: 2px solid #fcc419; outline-offset: 1px; }
-.mb-pop { position: absolute; top: calc(100% + 4px); left: 0; min-width: 300px; padding: 6px; border-radius: 10px; background: var(--paper);
+.mb-pop, .mapmenu { position: absolute; top: calc(100% + 4px); left: 0; min-width: 300px; padding: 6px; border-radius: 10px; background: var(--paper);
   color: var(--ink); box-shadow: 0 8px 28px rgba(15, 25, 40, .28); z-index: 1400; }
 .mi { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 6px 10px; border: 0; border-radius: 7px;
   background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
@@ -293,12 +302,18 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .mi.on::before { content: '✓'; position: absolute; margin-left: -2px; color: var(--accent); font-weight: 700; }
 .mi.on { position: relative; }
 .mi .ic { width: 18px; flex: 0 0 18px; text-align: center; color: var(--accent); }
+.mapmenu { top: 0; min-width: 250px; z-index: 1200; }
+.mapmenu .where { padding: 4px 10px 6px; color: var(--ink-soft); font-size: .8em; font-variant-numeric: tabular-nums; }
 .msep { height: 1px; margin: 5px 4px; background: var(--line); }
 .bar-name { flex: 0 1 260px; min-width: 90px; height: 34px; margin-left: 8px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .25);
   border-radius: 8px; background: rgba(255, 255, 255, .1); color: #fff; font: inherit; font-weight: 600; }
 .bar-name::placeholder { color: rgba(255, 255, 255, .6); font-weight: 500; }
 .bar-name:hover { border-color: rgba(255, 255, 255, .5); }
 .bar-name:focus { outline: none; background: #fff; color: var(--ink); }
+.bar-saved { color: #9fd8b0; font-size: .82em; white-space: nowrap; }
+.bar-saved:not(:empty)::before { content: '● '; }
+.bar-saved.bad { color: #ffc9c9; }
+@media (max-width: 1100px) { .bar-saved { display: none; } }
 .bar-state { color: #b9dfe5; font-size: .85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-gap { flex: 1 1 auto; }
 .bar-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .28);
@@ -402,6 +417,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       <div class="mb"><button type="button" class="mb-btn" data-menu="help" aria-haspopup="menu" aria-expanded="false">Aide</button></div>
     </nav>
     <input id="bar-name" class="bar-name" type="text" maxlength="80" placeholder="Circuit sans nom" aria-label="Nom du circuit" autocomplete="off" spellcheck="false">
+    <span id="bar-saved" class="bar-saved" title="Le tracé en cours est gardé dans ce navigateur à chaque changement : il revient à la prochaine visite."></span>
     <span id="bar-state" class="bar-state" aria-live="polite"></span>
     <span class="bar-gap"></span>
     <button type="button" id="bar-cmd" class="bar-btn" title="Chercher une commande (Ctrl+K)">
@@ -451,6 +467,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <div id="mapmenu" class="mapmenu" role="menu" aria-label="Ici" hidden></div>
 
     <div id="welcome" class="welcome" role="group" aria-labelledby="welcome-title" hidden>
       <button type="button" id="welcome-close" class="close" aria-label="Fermer" title="Fermer">×</button>
@@ -537,17 +554,6 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       <section id="tab-settings" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-settings" hidden>
         <div class="field"><label for="f-name">Nom du circuit</label>
           <input id="f-name" type="text" maxlength="80" placeholder="Petit Circuit perso" autocomplete="off"></div>
-        <div class="field"><label for="f-id">Identifiant</label>
-          <input id="f-id" type="text" maxlength="64" placeholder="petit-circuit-perso" autocomplete="off" autocapitalize="none" spellcheck="false">
-          <small id="f-id-hint">Nom du fichier publié ; minuscules, chiffres et tirets.</small></div>
-        <div class="field"><label for="f-author">Auteur</label>
-          <input id="f-author" type="text" maxlength="60" autocomplete="off"></div>
-        <fieldset class="field"><legend>Jeux visés</legend>
-          <label class="check"><input type="checkbox" id="f-game-buggy" checked><span>3D Buggy</span></label>
-          <label class="check"><input type="checkbox" id="f-game-rally" checked><span>Cambodia Rally</span></label>
-        </fieldset>
-        <label class="check"><input type="checkbox" id="f-scenery" checked><span>Décor du lieu réel <small>(bâtiments, eau, sol :
-          Overture Maps, lus à l'export)</small></span></label>
         <div class="grid2">
           <div class="field"><label for="f-laps">Tours</label>
             <input id="f-laps" type="number" inputmode="numeric" min="1" max="20" step="1" value="3">
@@ -555,22 +561,39 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
           <div class="field"><label for="f-scale">Échelle</label>
             <input id="f-scale" type="number" inputmode="decimal" min="1" max="10" step="0.1" value="2.5">
             <small>Mètres réels pour 1 m de jeu.</small></div>
-          <div class="field"><label for="f-width">Largeur de base</label>
-            <input id="f-width" type="number" inputmode="decimal" min="3" max="30" step="0.5" value="11">
-            <small>En mètres de jeu.</small></div>
-          <div class="field"><label for="f-spacing">Espacement des points</label>
-            <input id="f-spacing" type="number" inputmode="decimal" min="1" max="20" step="0.5" value="4">
-            <small>En mètres de jeu.</small></div>
-          <div class="field"><label for="f-cp">Un checkpoint tous les</label>
-            <input id="f-cp" type="number" inputmode="numeric" min="150" max="20000" step="50" placeholder="auto">
-            <small>Mètres de jeu. Vide : 1 000 m jusqu'à 12 km, 2 000 m au-delà.</small></div>
-          <div class="field"><label for="f-smooth">Rayon de lissage</label>
-            <input id="f-smooth" type="number" inputmode="decimal" min="0" max="100" step="1" value="15">
-            <small>Mètres de jeu ; arrondit les angles.</small></div>
         </div>
-        <label class="check"><input type="checkbox" id="f-narrow" checked><span>Pistes plus étroites <small>(8 m au lieu de la largeur de base)</small></span></label>
-        <label class="check"><input type="checkbox" id="f-bridges" checked><span>Largeur des ponts d'après la carte <small>(1,4 × la largeur indiquée, de 6 m à la largeur de base)</small></span></label>
-        <label class="check"><input type="checkbox" id="f-gates" checked><span>Portes bonus sur les lignes droites <small>(environ une par kilomètre)</small></span></label>
+        <fieldset class="field"><legend>Jeux visés</legend>
+          <div class="checks-row">
+            <label class="check"><input type="checkbox" id="f-game-buggy" checked><span>3D Buggy</span></label>
+            <label class="check"><input type="checkbox" id="f-game-rally" checked><span>Cambodia Rally</span></label>
+          </div>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="f-scenery" checked><span>Décor du lieu réel <small>(bâtiments, eau, sol :
+          Overture Maps, lus à l'export)</small></span></label>
+        <div class="field"><label for="f-author">Auteur</label>
+          <input id="f-author" type="text" maxlength="60" autocomplete="off"></div>
+        <details class="help adv"><summary>Réglages avancés</summary>
+          <div class="field"><label for="f-id">Identifiant</label>
+            <input id="f-id" type="text" maxlength="64" placeholder="petit-circuit-perso" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <small id="f-id-hint">Nom du fichier publié ; minuscules, chiffres et tirets. Il suit le nom tant qu'on ne l'écrit pas.</small></div>
+          <div class="grid2">
+            <div class="field"><label for="f-width">Largeur de base</label>
+              <input id="f-width" type="number" inputmode="decimal" min="3" max="30" step="0.5" value="11">
+              <small>En mètres de jeu.</small></div>
+            <div class="field"><label for="f-spacing">Espacement des points</label>
+              <input id="f-spacing" type="number" inputmode="decimal" min="1" max="20" step="0.5" value="4">
+              <small>En mètres de jeu.</small></div>
+            <div class="field"><label for="f-cp">Un checkpoint tous les</label>
+              <input id="f-cp" type="number" inputmode="numeric" min="150" max="20000" step="50" placeholder="auto">
+              <small>Mètres de jeu. Vide : 1 000 m jusqu'à 12 km, 2 000 m au-delà.</small></div>
+            <div class="field"><label for="f-smooth">Rayon de lissage</label>
+              <input id="f-smooth" type="number" inputmode="decimal" min="0" max="100" step="1" value="15">
+              <small>Mètres de jeu ; arrondit les angles.</small></div>
+          </div>
+          <label class="check"><input type="checkbox" id="f-narrow" checked><span>Pistes plus étroites <small>(8 m au lieu de la largeur de base)</small></span></label>
+          <label class="check"><input type="checkbox" id="f-bridges" checked><span>Largeur des ponts d'après la carte <small>(1,4 × la largeur indiquée, de 6 m à la largeur de base)</small></span></label>
+          <label class="check"><input type="checkbox" id="f-gates" checked><span>Portes bonus sur les lignes droites <small>(environ une par kilomètre)</small></span></label>
+        </details>
       </section>
 
       <!-- Relief -->
@@ -651,6 +674,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         </div>
         <p id="obj-mode-help" class="note"></p>
         <p id="obj-armed" class="note armed" role="status" aria-live="polite"></p>
+        <div id="obj-recent-box" hidden><h3 class="minor">Utilisés récemment</h3>
+          <ul id="obj-recent" class="objlib recent" aria-label="Objets utilisés récemment"></ul></div>
         <ul id="obj-lib" class="objlib" aria-label="Bibliothèque des objets"></ul>
 
         <h2>Objets posés <span id="obj-count" class="muted"></span></h2>
@@ -3618,7 +3643,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     { name: 'Phnom Penh', lat: 11.5564, lon: 104.9282, zoom: 13 }
   ];
 
-  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author', draft: 'circuit-editor.draft' };
+  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author', draft: 'circuit-editor.draft', recent: 'circuit-editor.recent-objects' };
 
   const ROAD_STYLE = {
     major: { color: '#e8590c', weight: 3.2, opacity: 0.85 },
@@ -3700,6 +3725,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     const el = $('toast');
     setText(el, text);
     el.className = 'toast' + (kind === 'bad' ? ' bad' : '');
+    // A message that says what « Annuler » would take back carries the button itself.
+    if (kind !== 'bad' && /« Annuler »|Ctrl\+Z/.test(text) && undoStack.length) {
+      const b = make('button', 'toast-act', 'Annuler');
+      b.type = 'button';
+      b.addEventListener('click', () => { el.hidden = true; undo(); });
+      el.appendChild(b);
+      ms = ms || 8000;
+    }
     el.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { el.hidden = true; }, ms || (kind === 'bad' ? 8000 : 4500));
@@ -3791,6 +3824,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
     map.on('popupclose', () => { popupClosedAt = Date.now(); });
     map.on('click', onMapClick);
+    map.on('contextmenu', onMapMenu);
+    map.on('movestart zoomstart', () => { $('mapmenu').hidden = true; });
     map.on('moveend', () => {
       const c = map.getCenter();
       savePref(STORE.view, JSON.stringify({ lat: +c.lat.toFixed(5), lon: +c.lng.toFixed(5), zoom: map.getZoom() }));
@@ -4241,6 +4276,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   // A click that only closes a menu or a waypoint's popup draws nothing.
   let popupClosedAt = 0;
   function onMapClick(ev) {
+    if (!$('mapmenu').hidden) { $('mapmenu').hidden = true; return; }
     const menuOpen = !$('places-menu').hidden || !$('search-results').hidden;
     closeMenus();
     if (menuOpen || Date.now() - popupClosedAt < 80) return;
@@ -4248,6 +4284,43 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (objUi.selected >= 0) { selectObject(-1); return; }
     if (tool === 'add') addWaypoint(ev.latlng);
     else insertWaypoint(ev);
+  }
+
+  // A right click on the map: what can be done at that spot.
+  function onMapMenu(ev) {
+    L.DomEvent.preventDefault(ev.originalEvent);
+    closeMenus();
+    const m = $('mapmenu'), ll = ev.latlng, p = ev.containerPoint;
+    m.textContent = '';
+    const item = (label, run, ok) => {
+      const b = make('button', 'mi', typo(label));
+      b.type = 'button';
+      b.setAttribute('role', 'menuitem');
+      b.disabled = ok === false;
+      b.addEventListener('click', () => { m.hidden = true; run(); });
+      m.appendChild(b);
+    };
+    m.appendChild(make('div', 'where', NUM(ll.lat, 5) + ', ' + NUM(ll.lng, 5)));
+    if (objUi.armed) item('Poser « ' + objName(objUi.armed) + ' » ici', () => onObjectsClick(ll));
+    item('Ajouter un point de passage ici', () => addWaypoint(ll), graph.ways.length > 0);
+    item('Insérer dans le tracé ici', () => insertWaypoint({ latlng: ll, containerPoint: p }), !!(current.route && current.route.legs.length));
+    m.appendChild(make('div', 'msep'));
+    item('Centrer la carte ici', () => map.panTo(ll));
+    item('Charger les routes autour d\'ici', () => {
+      map.once('moveend', () => setTimeout(() => $('load-roads').click(), 50));
+      map.setView(ll, Math.max(map.getZoom(), 15));
+    });
+    item('Copier les coordonnées', () => {
+      const text = ll.lat.toFixed(6) + ', ' + ll.lng.toFixed(6);
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Coordonnées copiées : ' + text), () => toast(text));
+      else toast(text);
+    });
+    m.hidden = false;
+    const size = map.getSize(), w = m.offsetWidth, h = m.offsetHeight;
+    m.style.left = Math.min(p.x, size.x - w - 8) + 'px';
+    m.style.top = Math.min(p.y, size.y - h - 8) + 'px';
+    const first = m.querySelector('.mi:not(:disabled)');
+    if (first) first.focus({ preventScroll: true });
   }
 
   function addWaypoint(latlng) {
@@ -5158,6 +5231,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     clearTimeout(draft.timer);
     draft.timer = null;
     if (!state.waypoints.length) {
+      setText($('bar-saved'), '');
       if (draft.kept === 'own') {
         draft.saved = savePref(STORE.draft, null);
         draft.kept = 'none'; draft.box = null; draft.ele = null;
@@ -5167,6 +5241,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (draft.kept !== 'own') { draft.box = null; draft.ele = null; }
     draft.saved = savePref(STORE.draft, JSON.stringify(currentDrawing()));
     draft.kept = 'own';
+    const t = new Date();
+    setText($('bar-saved'), draft.saved ? 'Brouillon gardé à ' + t.getHours() + ' h ' + String(t.getMinutes()).padStart(2, '0') : 'Brouillon non gardé (navigation privée ?)');
+    $('bar-saved').classList.toggle('bad', !draft.saved);
   }
 
   function formNow() {
@@ -6113,6 +6190,38 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       n++;
     });
     if (!n) list.appendChild(make('li', 'note', 'Aucun objet ne correspond.'));
+    renderRecent();
+  }
+  // The last kinds picked, first: the ones a circuit uses again and again.
+  const RECENT_MAX = 10;
+  function recentKinds() {
+    let r = [];
+    try { r = JSON.parse(loadPref(STORE.recent) || '[]'); } catch (e) { r = []; }
+    return Array.isArray(r) ? r.filter((k) => typeof k === 'string' && libById.has(k)).slice(0, RECENT_MAX) : [];
+  }
+  function noteRecent(kind) {
+    const r = recentKinds().filter((k) => k !== kind);
+    r.unshift(kind);
+    savePref(STORE.recent, JSON.stringify(r.slice(0, RECENT_MAX)));
+    renderRecent();
+  }
+  function renderRecent() {
+    const list = $('obj-recent'), kinds = LIB ? recentKinds() : [];
+    list.textContent = '';
+    $('obj-recent-box').hidden = !kinds.length || !!$('obj-search').value.trim() || !!$('obj-group').value;
+    kinds.forEach((k) => {
+      const e = libById.get(k), li = make('li'), b = make('button', 'otile rtile' + (objUi.armed === k ? ' on' : ''));
+      b.type = 'button';
+      b.dataset.kind = k;
+      b.title = typo(e.n + ' : ' + sizeText(e));
+      b.setAttribute('aria-label', typo(e.n));
+      b.setAttribute('aria-pressed', String(objUi.armed === k));
+      b.appendChild(thumb(k, 52));
+      b.appendChild(make('span', 'oname', e.n));
+      b.addEventListener('click', () => arm(objUi.armed === k ? null : k));
+      li.appendChild(b);
+      list.appendChild(li);
+    });
   }
 
   // Picks the kind a click on the map places (null: stop placing).
@@ -6121,7 +6230,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     objUi.anchor = null;
     if (!objUi.armed) { objUi.manual = false; layers.objGhost.clearLayers(); }
     $('map').classList.toggle('placing', !!objUi.armed);
-    document.querySelectorAll('#obj-lib .otile').forEach((b) => {
+    if (objUi.armed) noteRecent(objUi.armed);
+    document.querySelectorAll('#obj-lib .otile, #obj-recent .otile').forEach((b) => {
       const on = b.dataset.kind === objUi.armed;
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', String(on));
@@ -6144,6 +6254,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       b.setAttribute('aria-pressed', String(on));
     });
     setText($('obj-mode-help'), MODE_HELP[mode]);
+    $('obj-gap').closest('.field').hidden = mode === 'one';
     sayArmed();
     drawGhost();
   }
@@ -6609,7 +6720,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     row('Poser un point de passage (outil Ajouter)', 'clic sur une route');
     row('Insérer un point (outil Modifier)', 'clic sur le tracé');
     row('Déplacer un point ou un objet', 'glisser');
-    row('Supprimer un point ou un objet', 'clic droit');
+    row('Supprimer un point ou un objet', 'clic droit dessus');
+    row('Ce qu\'on peut faire à un endroit (point, objet, routes autour, coordonnées)', 'clic droit sur la carte');
     head('Objets');
     row('Tourner l\'objet à poser ou choisi de 15°', 'R / Maj+R');
     row('Supprimer l\'objet choisi', 'Suppr');
@@ -6638,6 +6750,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     };
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
     $('trace-stats').hidden = state.waypoints.length < 2;
+    if ($('f-id').classList.contains('invalid')) document.querySelector('#tab-settings details.adv').open = true;
     const empty = !graph.ways.length && !state.waypoints.length && !state.photos.length && !state.objects.length;
     $('welcome').hidden = chrome.welcomeClosed || !$('draft').hidden || !(chrome.welcomeForced || empty);
   }
@@ -6647,7 +6760,10 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       b.addEventListener('click', (ev) => { ev.stopPropagation(); if (chrome.open === b.dataset.menu) closeBarMenu(); else openBarMenu(b.dataset.menu); });
       b.addEventListener('mouseenter', () => { if (chrome.open && chrome.open !== b.dataset.menu) openBarMenu(b.dataset.menu); });
     });
-    document.addEventListener('click', (ev) => { if (chrome.open && !ev.target.closest('.mb')) closeBarMenu(); });
+    document.addEventListener('click', (ev) => {
+      if (chrome.open && !ev.target.closest('.mb')) closeBarMenu();
+      if (!$('mapmenu').hidden && !ev.target.closest('#mapmenu')) $('mapmenu').hidden = true;
+    });
     $('menubar').addEventListener('keydown', (ev) => {
       if (!chrome.pop) return;
       const items = Array.from(chrome.pop.querySelectorAll('.mi:not(:disabled)')), i = items.indexOf(document.activeElement);
@@ -6691,6 +6807,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     document.addEventListener('keydown', (ev) => {
       const mod = ev.ctrlKey || ev.metaKey, key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
       if (ev.key === 'Escape') {
+        if (!$('mapmenu').hidden) { $('mapmenu').hidden = true; return; }
         if (!$('palette-veil').hidden) { showPalette(false); return; }
         if (!$('keys-veil').hidden) { showKeys(false); return; }
         if (chrome.open) { const b = document.querySelector('.mb-btn[data-menu=' + chrome.open + ']'); closeBarMenu(); b.focus(); }
