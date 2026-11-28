@@ -26,6 +26,7 @@ test runs at 1280 x 800.
 """
 
 import argparse
+import os
 import base64
 import functools
 import hashlib
@@ -128,6 +129,9 @@ class Network:
             return route.continue_()      # the real HEIC decoder, SRI checked too
         if host.endswith("tile.openstreetmap.org") or host.endswith("arcgisonline.com") or host.endswith("opentopomap.org"):
             return route.fulfill(status=200, content_type="image/png", body=PNG_1X1, headers=CORS)
+        if host == "fonts.googleapis.com" and url.path == "/css2" and "Noto+Sans+Khmer" in request.url:
+            self.font_calls = getattr(self, "font_calls", 0) + 1
+            return route.fulfill(status=200, content_type="text/css", body="/* Noto Sans Khmer */", headers=CORS)
         if host == "tiles.overturemaps.org":
             return self.overture_tiles(route, request, url)
         if url.path.endswith("/api/interpreter"):
@@ -1391,6 +1395,68 @@ def chrome_run(context, net, errors, base, shots):
     page.close()
 
 
+def lang_run(context, net, errors, base, shots):
+    print("Languages: English and Khmer")
+    net.overpass_down = set()
+    page = context.new_page()
+    page.set_viewport_size({"width": 1280, "height": 800})
+    page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
+    page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
+    page.goto(base + PAGE + "?lang=en")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.map")
+    if page.locator("#draft").is_visible():
+        page.click("#draft-ignore")
+    check(page.evaluate("document.documentElement.lang") == "en" and page.inner_text(".mb-btn[data-menu=file]") == "File",
+          "?lang=en: the page is in English (menu « %s »)" % page.inner_text(".mb-btn[data-menu=file]"))
+    page.evaluate("(pts) => window.circuitEditor.map.fitBounds(pts, { padding: [170, 170], animate: false })", [list(w) for w in WAYPOINTS])
+    page.wait_for_timeout(300)
+    page.click("#load-roads")
+    page.wait_for_function("window.circuitEditor.graph.ways.length > 0", timeout=20000)
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.wait_for_function("window.circuitEditor.current.result && window.circuitEditor.current.result.ok", timeout=30000)
+    summary = page.inner_text("#summary")
+    check("Boucle" not in summary and "de jeu" not in summary, "the course is summed up in English (%s)" % summary.replace(" ", " "))
+    for tab in ["settings", "relief", "photos", "objects", "send", "trace"]:
+        page.click("#tabbtn-" + tab)
+    page.click("#tabbtn-objects")
+    first = page.inner_text("#obj-lib .otile >> nth=0")
+    check(first and "Maison" not in first, "the library's objects carry English names (%s)" % first)
+    page.keyboard.press("?")
+    page.keyboard.press("Escape")
+    page.click(".mb-btn[data-menu=file]")
+    page.keyboard.press("Escape")
+    missing = page.evaluate("window.circuitEditor.i18nMissing()")
+    check(len(missing) <= 3, "English: %d texts left in French%s" % (len(missing), (" (" + " | ".join(missing[:8]) + ")") if missing else ""))
+    if os.environ.get("I18N_DUMP"):
+        json.dump(missing, open(os.environ["I18N_DUMP"] + ".en.json", "w"), ensure_ascii=False, indent=0)
+    shot(page, shots, "desktop-english.png")
+    # The language picker: the page comes back in Khmer with the drawing as it was.
+    page.select_option("#bar-lang", "km")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.lang === 'km' && window.circuitEditor.state.waypoints.length === 4", timeout=30000)
+    check(page.locator("#draft").is_hidden(), "the picker switches to Khmer and the drawing comes back without asking")
+    menu = page.inner_text(".mb-btn[data-menu=file]")
+    check(re.search("[ក-៿]", menu) is not None, "the menus are in Khmer (%s)" % menu)
+    page.wait_for_function("window.circuitEditor.current.result && window.circuitEditor.current.result.ok", timeout=30000)
+    for tab in ["settings", "relief", "photos", "objects", "send", "trace"]:
+        page.click("#tabbtn-" + tab)
+    page.click("#tabbtn-objects")
+    page.keyboard.press("?")
+    page.keyboard.press("Escape")
+    missing = page.evaluate("window.circuitEditor.i18nMissing()")
+    check(len(missing) <= 3, "Khmer: %d texts left in French%s" % (len(missing), (" (" + " | ".join(missing[:8]) + ")") if missing else ""))
+    if os.environ.get("I18N_DUMP"):
+        json.dump(missing, open(os.environ["I18N_DUMP"] + ".km.json", "w"), ensure_ascii=False, indent=0)
+    page.click("#tabbtn-trace")
+    shot(page, shots, "desktop-khmer.png")
+    page.select_option("#bar-lang", "fr")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.lang === 'fr'", timeout=30000)
+    check(page.inner_text(".mb-btn[data-menu=file]") == "Fichier", "and back to French")
+    page.click("#clear")
+    page.close()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--browser", choices=["webkit", "chrome", "chromium"])
@@ -1407,6 +1473,9 @@ def main():
         print("Browser: %s %s" % (name, browser.version))
         context = browser.new_context(accept_downloads=True, locale="fr-FR")
         context.route("**/*", net.handle)
+        collect = os.environ.get("CIRCUIT_I18N_COLLECT")   # a file: every French text the pages show goes there
+        if collect:
+            context.add_init_script("window.__i18nCollect = true;")
         try:
             target = desktop_run(context, net, errors, base, args.screenshots, tmp)
             reopen_run(context, net, errors, base, args.screenshots, target)
@@ -1417,7 +1486,16 @@ def main():
             photos_first_run(context, net, errors, base, args.screenshots)
             relief_wait_run(context, net, errors, base, args.screenshots)
             outage_run(context, net, errors, base, args.screenshots)
+            lang_run(context, net, errors, base, args.screenshots)
         finally:
+            if collect:
+                page = context.new_page()
+                page.goto(base + PAGE)
+                page.wait_for_timeout(800)
+                seen = page.evaluate("JSON.parse(localStorage.getItem('circuit-editor.i18n-seen') || '[]')")
+                with open(collect, "w", encoding="utf-8") as f:
+                    json.dump(sorted(seen), f, ensure_ascii=False, indent=0)
+                print("i18n: %d texts -> %s" % (len(seen), collect))
             context.close()
             browser.close()
             server.shutdown()

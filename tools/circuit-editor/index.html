@@ -328,6 +328,15 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 @media (max-width: 1100px) { .bar-saved { display: none; } }
 .bar-state { color: #b9dfe5; font-size: .85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-gap { flex: 1 1 auto; }
+.bar-lang-box { display: inline-flex; align-items: center; gap: 4px; color: #cfe7eb; }
+.bar-lang-box svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.bar-lang { min-height: 34px; padding: 4px 6px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 8px; background: rgba(255, 255, 255, .08);
+  color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.bar-lang option { color: var(--ink); }
+/* Khmer: its script, a little more room between the lines. */
+html.lang-km, html.lang-km body, html.lang-km button, html.lang-km input, html.lang-km select, html.lang-km .leaflet-container {
+  font-family: "Noto Sans Khmer", "Khmer OS System", "Khmer OS", "Leelawadee UI", system-ui, sans-serif; }
+html.lang-km body { line-height: 1.55; }
 .bar-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .28);
   border-radius: 8px; background: rgba(255, 255, 255, .08); color: #fff; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .bar-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .18); }
@@ -451,6 +460,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     <span id="bar-saved" class="bar-saved" title="Le tracé en cours est gardé dans ce navigateur à chaque changement : il revient à la prochaine visite."></span>
     <span id="bar-state" class="bar-state" aria-live="polite"></span>
     <span class="bar-gap"></span>
+    <label class="bar-lang-box" title="Langue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
+      <select id="bar-lang" class="bar-lang notr" aria-label="Langue"></select></label>
     <button type="button" id="bar-cmd" class="bar-btn" title="Chercher une commande (Ctrl+K)">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="lbl">Commandes</span> <kbd>Ctrl K</kbd></button>
     <button type="button" id="bar-keep" class="bar-btn" title="Garder ce circuit dans « Mes circuits » (Ctrl+S)" disabled>
@@ -803,6 +814,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
 <!-- The library of the game's objects, beside the page (made by 3D Buggy's tools/object_library.gd). -->
 <script src="objects-library.js"></script>
+<!-- The page's texts in English and Khmer (French is the source, in this file). -->
+<script src="i18n.js"></script>
 <script id="core">
 /* ==========================================================================
    CircuitCore: pure computation, no DOM, no network, no host API.
@@ -3696,9 +3709,110 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // French spacing: a no-break space before : ; ? ! and inside « ».
+  /* Languages. French is the source: every text the page shows is written in
+     French in this file and goes through typo() (setText, make, toast, the page's
+     own text at start). In English or Khmer, tr() finds it in i18n.js beside the
+     page (window.CIRCUIT_I18N[lang]): a text as it is, or a pattern where {1},
+     {2}… stand for what varies (numbers, names), themselves translated when they
+     can be. A text not found stays in French. */
+  const LANGS = { fr: 'Français', en: 'English', km: 'ខ្មែរ' };
+  const LANG_KEY = 'circuit-editor.lang';
+  const I18N = window.CIRCUIT_I18N || {};
+  const LANG = (() => {
+    let q = null;
+    try { q = new URLSearchParams(window.location.search).get('lang'); } catch (e) { q = null; }
+    let kept = null;
+    try { kept = window.localStorage.getItem(LANG_KEY); } catch (e) { kept = null; }
+    const nav = String((navigator.languages && navigator.languages[0]) || navigator.language || 'fr').slice(0, 2).toLowerCase();
+    const want = LANGS[q] ? q : LANGS[kept] ? kept : LANGS[nav] ? nav : 'en';
+    return want === 'fr' || I18N[want] ? want : 'fr';
+  })();
+  const LOCALE = { fr: 'fr-FR', en: 'en-GB', km: 'km-KH' }[LANG];
+  const trCache = new Map();
+  const trMissing = new Set();
+  let trPatterns = null;
+  const norm = (v) => String(v).replace(/\s+/g, ' ').trim();
+  const LETTERS = /[A-Za-zÀ-ÖØ-öø-ÿ]{2}/;
+  let trDone = null;                    // the translations themselves: a text already in the page's language
+  function trCompile() {
+    const d = I18N[LANG] || {};
+    trDone = new Set(Object.values(d).map(norm));
+    trPatterns = Object.keys(d).filter((k) => /\{\d\}/.test(k)).map((k) => {
+      const body = k.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
+      return {
+        lazy: new RegExp('^' + body.replace(/\{(\d)\}/g, '(.+?)') + '$'), greedy: new RegExp('^' + body.replace(/\{(\d)\}/g, '(.+)') + '$'),
+        order: (k.match(/\{(\d)\}/g) || []).map((m) => +m[1]), out: d[k], fixed: k.replace(/\{\d\}/g, '').length
+      };
+    }).sort((a, b) => b.fixed - a.fixed);
+  }
+  // A translation of key, or null: as it is, else by the first pattern whose
+  // parts all translate (a part may itself hold a colon or a dot: the lazy and
+  // the greedy split are both tried), else by the first pattern that matches.
+  function trFind(key, depth) {
+    const d = I18N[LANG];
+    if (Object.prototype.hasOwnProperty.call(d, key)) return d[key];
+    if (!trPatterns) trCompile();
+    if (trDone.has(key)) return key;
+    if (depth > 4) return null;
+    let loose = null;
+    for (const p of trPatterns) {
+      for (const re of [p.lazy, p.greedy]) {
+        const m = re.exec(key);
+        if (!m) continue;
+        const parts = {};
+        let all = true;
+        p.order.forEach((n, i) => {
+          const part = m[i + 1], t = LETTERS.test(part) ? trFind(norm(part), depth + 1) : part;
+          if (t === null) all = false;
+          parts[n] = t === null ? part : t;
+        });
+        const out = p.out.replace(/\{(\d)\}/g, (_, n) => (parts[n] === undefined ? '' : parts[n]));
+        if (all) return out;
+        if (loose === null) loose = out;
+      }
+    }
+    return loose;
+  }
+  // The text in the page's language (French: as it is).
+  function tr(text) {
+    const s = String(text);
+    if (window.__i18nCollect) collectText(s);
+    if (LANG === 'fr') return s;
+    const key = norm(s);
+    if (!key || !LETTERS.test(key)) return s;
+    let out = trCache.get(key);
+    if (out === undefined) {
+      if (!trPatterns) trCompile();
+      out = trFind(key, 0);
+      if (out === null) { trMissing.add(key); out = key; } else trDone.add(norm(out));
+      if (trCache.size > 5000) trCache.clear();
+      trCache.set(key, out);
+    }
+    if (out === key) return s;
+    return s.match(/^\s*/)[0] + out + s.match(/\s*$/)[0];
+  }
+  // For whoever writes the translations: every French text the page shows (collect mode).
+  function collectText(s) {
+    const key = norm(s);
+    if (!key || !/[A-Za-zÀ-ÿ]{2}/.test(key)) return;
+    const all = window.__i18nSeen || (window.__i18nSeen = new Set());
+    if (all.has(key)) return;
+    all.add(key);
+    clearTimeout(window.__i18nTimer);
+    window.__i18nTimer = setTimeout(() => {
+      try {
+        const kept = new Set(JSON.parse(window.localStorage.getItem('circuit-editor.i18n-seen') || '[]'));
+        all.forEach((k) => kept.add(k));
+        window.localStorage.setItem('circuit-editor.i18n-seen', JSON.stringify(Array.from(kept)));
+      } catch (e) { /* collecting is best effort */ }
+    }, 300);
+  }
+
+  // In the page's language; in French, a no-break space before : ; ? ! and inside « ».
   function typo(text) {
-    return String(text).replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
+    const t = tr(text);
+    if (LANG !== 'fr') return t;
+    return t.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
   }
   function setText(el, text) { el.textContent = typo(text); }
   // Whether keys pressed in this element are text typed in it.
@@ -3714,7 +3828,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     return el;
   }
 
-  const NUM = (v, digits) => v.toLocaleString('fr-FR', { minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0 });
+  const NUM = (v, digits) => v.toLocaleString(LOCALE, { minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0 });
   function fmtDist(m) {
     if (!(m >= 0)) return '—';
     return m < 1000 ? NUM(Math.round(m)) + ' m' : NUM(m / 1000, 2) + ' km';
@@ -3826,18 +3940,19 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     };
     base['Plan (OpenStreetMap)'].addTo(map);
     baseLayers = base;
-    L.control.layers(base, null, { position: 'topright' }).addTo(map);
-    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Zoom avant', zoomOutTitle: 'Zoom arrière' }).addTo(map);
+    const shown = {};
+    Object.keys(base).forEach((k) => { shown[typo(k)] = base[k]; });
+    L.control.layers(shown, null, { position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright', zoomInTitle: typo('Zoom avant'), zoomOutTitle: typo('Zoom arrière') }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
     // What the colours of the roads loaded mean (shown once there are roads).
     const Legend = L.Control.extend({ onAdd: () => {
       const d = L.DomUtil.create('div', 'legend-ctl');
       d.id = 'road-legend';
       d.hidden = true;
-      d.innerHTML = '<div><i style="border-color:' + ROAD_STYLE.major.color + '"></i>grande route</div>' +
-        '<div><i style="border-color:' + ROAD_STYLE.minor.color + '"></i>petite route, rue</div>' +
-        '<div><i style="border-color:' + ROAD_STYLE.track.color + ';border-top-style:dashed"></i>piste</div>' +
-        '<div><i style="border-color:' + ROUTE_COLOR + ';border-top-width:5px"></i>le tracé</div>';
+      [['grande route', 'border-color:' + ROAD_STYLE.major.color], ['petite route, rue', 'border-color:' + ROAD_STYLE.minor.color],
+        ['piste', 'border-color:' + ROAD_STYLE.track.color + ';border-top-style:dashed'], ['le tracé', 'border-color:' + ROUTE_COLOR + ';border-top-width:5px']]
+        .forEach((row) => { const line = make('div'), i = make('i'); i.setAttribute('style', row[1]); line.appendChild(i); line.appendChild(document.createTextNode(typo(row[0]))); d.appendChild(line); });
       L.DomEvent.disableClickPropagation(d);
       return d;
     } });
@@ -4128,7 +4243,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   }
   function dayText(iso) {
     const t = Date.parse(iso);
-    return isFinite(t) ? new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : 'une date inconnue';
+    return isFinite(t) ? new Date(t).toLocaleDateString(LOCALE, { day: 'numeric', month: 'long' }) : 'une date inconnue';
   }
   // The line of the panel that says what is kept.
   async function renderKept() {
@@ -4249,7 +4364,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     search.timer = setTimeout(async () => {
       search.last = Date.now();
       try {
-        const r = await fetchText(NOMINATIM_URL + '?format=jsonv2&limit=6&accept-language=fr&q=' + encodeURIComponent(q),
+        const r = await fetchText(NOMINATIM_URL + '?format=jsonv2&limit=6&accept-language=' + LANG + '&q=' + encodeURIComponent(q),
           { headers: { Accept: 'application/json' } }, 15000);
         if (serial !== search.serial) return;
         if (r.status === 429 || r.status === 403) { showResults([], 'Le service de recherche demande de ralentir. Réessayez dans un instant.'); return; }
@@ -5325,7 +5440,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     draft.kept = 'earlier';
     const name = typeof d.form['f-name'] === 'string' && d.form['f-name'].trim() ? '« ' + d.form['f-name'].trim() + ' »' : 'sans nom';
     const n = d.waypoints.length, t = Date.parse(d.saved);
-    const when = isFinite(t) ? ', laissé le ' + new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+    const when = isFinite(t) ? ', laissé le ' + new Date(t).toLocaleString(LOCALE, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
     setText($('draft-text'), 'Un tracé en cours a été retrouvé : ' + name + ', ' + n + (n > 1 ? ' points de passage' : ' point de passage') + when + '.');
     $('draft').hidden = false;
   }
@@ -5518,7 +5633,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       open.appendChild(what);
       open.addEventListener('click', () => openCircuit(r));
       del.type = 'button';
-      del.title = 'Supprimer de Mes circuits';
+      del.title = typo('Supprimer de Mes circuits');
       del.setAttribute('aria-label', typo('Supprimer « ' + r.name + ' » de Mes circuits'));
       del.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>';
       del.addEventListener('click', () => deleteCircuit(r));
@@ -5596,7 +5711,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     ['f-name', 'f-id', 'f-author'].forEach((id) => $(id).addEventListener('input', saveDraftSoon));
     window.addEventListener('pagehide', () => { if (draft.timer) writeDraft(); });
     const d = C.parseDraft(loadPref(STORE.draft));
-    if (d) offerDraft(d);
+    let relang = false;
+    try { relang = window.sessionStorage.getItem('circuit-editor.relang') === '1'; window.sessionStorage.removeItem('circuit-editor.relang'); } catch (e) { relang = false; }
+    if (d) { offerDraft(d); if (relang) resumeDraft(); }
   }
 
   /* -------------------------------------------------------- 11 b. Photos */
@@ -5975,14 +6092,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       }
       const li = make('li', 'photo' + (out ? ' out' : '')), img = document.createElement('img'), what = make('div', 'what'), del = make('button', 'btn icon danger');
       img.src = ph.image; img.alt = '';
-      img.title = 'Voir sur la carte';
+      img.title = typo('Voir sur la carte');
       img.addEventListener('click', () => map.setView([ph.lat, ph.lon], Math.max(map.getZoom(), 16)));
       what.appendChild(make('b', '', ph.name));
       if (kept) {
         const sel = document.createElement('select');
         sel.setAttribute('aria-label', typo('Ce que montre « ' + ph.name + ' »'));
         sel.appendChild(new Option(typo('Selon l\'ordre : ' + (fate.auto ? VIEW_WORDS[fate.view] : 'devant, gauche, droite')), ''));
-        VIEW_CHOICES.forEach(([v, label]) => sel.appendChild(new Option(label, v)));
+        VIEW_CHOICES.forEach(([v, label]) => sel.appendChild(new Option(typo(label), v)));
         sel.value = ph.view || '';
         sel.addEventListener('change', () => setPhotoView(ph.id, sel.value));
         what.appendChild(sel);
@@ -5991,7 +6108,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       const warn = lookWarning(fate);
       if (warn) what.appendChild(make('small', 'look', warn));
       del.type = 'button';
-      del.title = 'Retirer du circuit';
+      del.title = typo('Retirer du circuit');
       del.setAttribute('aria-label', typo('Retirer « ' + ph.name + ' » du circuit'));
       del.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>';
       del.addEventListener('click', () => removePhoto(ph.id));
@@ -6006,13 +6123,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       pop.appendChild(big);
       pop.appendChild(make('b', '', ph.name));
       pop.appendChild(make('div', '', (kept ? 'Lieu ' + fate.spot + ', ' + VIEW_WORDS[fate.view] + ', à ' + fmtDist(fate.at_m) + ' du départ. ' : '') +
-        (ph.taken ? 'Prise le ' + new Date(ph.taken).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) + '. ' : '') +
+        (ph.taken ? 'Prise le ' + new Date(ph.taken).toLocaleString(LOCALE, { dateStyle: 'long', timeStyle: 'short' }) + '. ' : '') +
         line.charAt(0).toUpperCase() + line.slice(1) + '.'));
       L.marker([ph.lat, ph.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [40, 40], iconAnchor: [20, 20] }), keyboard: false, title: ph.name })
         .bindPopup(pop, { maxWidth: 280 }).addTo(layers.photos);
     });
     const tab = $('tabbtn-photos');
-    tab.textContent = 'Photos';
+    tab.textContent = tr('Photos');
     if (state.photos.length) tab.appendChild(make('span', 'count', String(state.photos.length)));
   }
 
@@ -6261,7 +6378,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     let n = 0;
     libOrder.forEach((e) => {
       if (g && e.g !== g) return;
-      if (q && !(fold(e.n).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q))) return;
+      if (q && !(fold(e.n).includes(q) || fold(tr(e.n)).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q) ||
+        fold(tr(LIB.groups[e.g] || '')).includes(q))) return;
       const li = make('li'), b = make('button', 'otile' + (objUi.armed === e.id ? ' on' : ''));
       b.type = 'button';
       b.dataset.kind = e.id;
@@ -6531,7 +6649,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   // The panel's list: the objects placed, by kind; the chosen one's settings.
   function renderPlaced() {
     const n = state.objects.length, tab = $('tabbtn-objects'), wet = state.objects.filter(drowned).length;
-    tab.textContent = 'Objets';
+    tab.textContent = tr('Objets');
     if (n) tab.appendChild(make('span', 'count', String(n)));
     setText($('obj-count'), n ? '(' + NUM(n) + (wet ? ', dont ' + NUM(wet) + ' dans l\'eau, en rouge' : '') + ')' : '');
     $('obj-none').hidden = n > 0;
@@ -6771,7 +6889,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   function renderPalette() {
     const q = fold($('palette-input').value.trim()), list = $('palette-list');
     list.textContent = '';
-    chrome.palette = CMDS.filter((c) => !c.sep && canRun(c) && (!q || q.split(/\s+/).every((w) => fold(c.label + ' ' + (c.words || '') + ' ' + MENU_NAMES[c.menu]).includes(w))));
+    chrome.palette = CMDS.filter((c) => !c.sep && canRun(c) && (!q || q.split(/\s+/).every((w) => fold(c.label + ' ' + tr(c.label) + ' ' + (c.words || '') + ' ' + tr(MENU_NAMES[c.menu]) + ' ' + MENU_NAMES[c.menu]).includes(w))));
     chrome.cur = Math.min(chrome.cur, Math.max(0, chrome.palette.length - 1));
     chrome.palette.forEach((c, i) => {
       const b = menuItem(c, () => showPalette(false));
@@ -7106,17 +7224,46 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     document.body.appendChild(wrap);
   }
 
+  // The language picker of the bar: the choice is kept, and the page comes back
+  // in that language with the drawing as it was (taken back without asking).
+  function initLanguage() {
+    const sel = $('bar-lang');
+    Object.keys(LANGS).forEach((k) => { const o = new Option(LANGS[k], k); o.lang = k; sel.appendChild(o); });
+    sel.value = LANG;
+    sel.addEventListener('change', () => {
+      try { window.localStorage.setItem(LANG_KEY, sel.value); } catch (e) { /* the URL keeps it */ }
+      if (draft.timer) writeDraft();
+      try { window.sessionStorage.setItem('circuit-editor.relang', '1'); } catch (e) { /* the offer will ask */ }
+      const u = new URL(window.location.href);
+      u.searchParams.set('lang', sel.value);
+      window.location.replace(u.toString());
+    });
+  }
+
   function start() {
     if (!C) { fatal('Le cœur de l\'éditeur n\'a pas démarré : rechargez la page.'); return; }
     if (!window.L || !window.L.map) {
       fatal('La carte n\'a pas pu être chargée. L\'éditeur prend Leaflet sur cdnjs.cloudflare.com : vérifiez la connexion (ou un bloqueur de contenu), puis rechargez la page.');
       return;
     }
-    // French spacing for the text written in the page itself.
+    // The text written in the page itself: in its language (French: its spacing).
+    document.documentElement.lang = LANG;
+    document.documentElement.classList.add('lang-' + LANG);
+    if (LANG === 'km') {
+      const f = document.createElement('link');
+      f.rel = 'stylesheet';
+      f.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&display=swap';
+      document.head.appendChild(f);
+    }
     const walker = document.createTreeWalker($('app'), NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      if (node.nodeValue.trim()) node.nodeValue = typo(node.nodeValue);
+      if (node.nodeValue.trim() && !(node.parentNode && node.parentNode.closest('code, .notr'))) node.nodeValue = typo(node.nodeValue);
     }
+    document.querySelectorAll('#app [placeholder], #app [title], #app [aria-label]').forEach((el) => {
+      ['placeholder', 'title', 'aria-label'].forEach((a) => { if (el.hasAttribute(a)) el.setAttribute(a, typo(el.getAttribute(a))); });
+    });
+    document.title = typo(document.title);
+    initLanguage();
     initMap();
     initSearch();
     initTools();
@@ -7129,7 +7276,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     updateLoadButton();
     refresh();
     // For the end-to-end test and for the console.
-    window.circuitEditor = { map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh, objUi: objUi,
+    window.circuitEditor = { lang: LANG, tr: tr, i18nMissing: () => Array.from(trMissing), map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh, objUi: objUi,
       forgetScenery: () => { scenery.archives = {}; scenery.tiles.clear(); } };
   }
 
