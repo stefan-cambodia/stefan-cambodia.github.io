@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Circuit editor: a web page to draw a racing circuit on the real roads of OpenStreetMap and send it to 3D Buggy. The course follows the roads between the points you click, with the real relief, the real place's buildings, water and land cover, photos taken along the way and the game's 379 scenery objects placed by hand; one HTML file, no build step, 134 tests.">
+<title data-en="Circuit editor, real roads for 3D Buggy — Chantrea Systems" data-fr="Éditeur de circuits, de vraies routes pour 3D Buggy — Chantrea Systems" data-km="កម្មវិធីគូរសៀគ្វី ផ្លូវពិតសម្រាប់ 3D Buggy — Chantrea Systems">Circuit editor, real roads for 3D Buggy — Chantrea Systems</title>
+<link rel="icon" type="image/svg+xml" href="../assets/logo/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Kantumruy+Pro:wght@300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../games/game.css">
+<script src="../games/game.js"></script>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="../" aria-label="Chantrea Systems"><img class="brand-logo" src="../assets/logo/chantrea-mark.svg" alt="" width="56" height="43"><span class="brand-name"><span class="brand-word">chantrea<i>_</i></span><span class="brand-sub"><span>SYSTEMS</span><span lang="km">ចន្ទ្រា</span></span></span></a>
+<div class="nav-right"><a class="back" href="../#dev">← <span data-l="en">In development</span><span data-l="fr">En développement</span><span data-l="km">កំពុងអភិវឌ្ឍ</span></a><button class="lang" id="langBtn">EN / FR / ខ្មែរ</button></div>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<div class="kicker"><span data-l="en">In development</span><span data-l="fr">En développement</span><span data-l="km">កំពុងអភិវឌ្ឍ</span> / 04</div>
+<h1><span data-l="en">Circuit editor</span><span data-l="fr">Éditeur de circuits</span><span data-l="km">កម្មវិធីគូរសៀគ្វី</span></h1>
+<div class="alias">tools/circuit-editor · <span data-l="en">for 3D Buggy</span><span data-l="fr">pour 3D Buggy</span><span data-l="km">សម្រាប់ 3D Buggy</span></div>
+<p class="lead" data-l="en">A web page to draw a racing circuit on the real roads of Cambodia and send it to the game. You click waypoints on the map; between them the course follows the shortest way along OpenStreetMap’s roads, then it is smoothed, given the real relief and written as a <code>.cambotrack.json</code> file that 3D Buggy builds and lets you race. The file can also carry what the real place looks like — its buildings, water and land cover, read from Overture Maps — photos taken along the way, and objects of the game’s own scenery placed by hand on the map: houses on stilts, palms, stalls, pagodas, tuk-tuks, 379 in all. One HTML file, no framework and no build step, made for a computer’s browser.</p>
+<p class="lead" data-l="fr">Une page web pour dessiner un circuit de course sur les vraies routes du Cambodge et l’envoyer au jeu. On clique des points de passage sur la carte ; entre eux, le tracé prend le plus court chemin par les routes d’OpenStreetMap, puis il est lissé, reçoit le relief réel et devient un fichier <code>.cambotrack.json</code> que 3D Buggy construit et fait courir. Le fichier peut aussi porter l’allure du lieu réel — ses bâtiments, son eau et la couverture du sol, lus dans Overture Maps —, des photos prises en chemin, et des objets du décor du jeu posés à la main sur la carte : maisons sur pilotis, palmiers, étals, pagodes, tuk-tuks, 379 en tout. Un seul fichier HTML, sans framework ni compilation, fait pour le navigateur d’un ordinateur.</p>
+<p class="lead" data-l="km">ទំព័រវិបមួយ សម្រាប់គូរសៀគ្វីប្រណាំង លើផ្លូវពិតនៃប្រទេសកម្ពុជា ហើយផ្ញើវាទៅហ្គេម។ អ្នកចុចចំណុចឆ្លងកាត់លើផែនទី ហើយរវាងចំណុចទាំងនោះ ផ្លូវប្រណាំងដើរតាមផ្លូវខ្លីបំផុត លើផ្លូវថ្នល់របស់ OpenStreetMap បន្ទាប់មកវាត្រូវបានធ្វើឱ្យរលោង ទទួលបានភូមិសាស្ត្រកម្ពស់ពិត ហើយសរសេរជាឯកសារ <code>.cambotrack.json</code> ដែល 3D Buggy សាងសង់ និងឱ្យអ្នកប្រណាំង។ ឯកសារនេះក៏អាចផ្ទុករូបរាងនៃទីកន្លែងពិត — អគារ ទឹក និងគម្របដីរបស់វា ដែលអានពី Overture Maps — រូបថតដែលថតតាមផ្លូវ និងវត្ថុនៃទេសភាពរបស់ហ្គេម ដែលដាក់ដោយដៃលើផែនទី៖ ផ្ទះលើសសរ ដើមត្នោត តូប វត្ត រ៉ឺម៉ក សរុប 379។ ឯកសារ HTML តែមួយ គ្មាន framework និងគ្មានការ compile ដែលធ្វើឡើងសម្រាប់ browser របស់កុំព្យូទ័រ។</p>
+<div class="tags"><span class="tag p">Web</span><span class="tag t" data-l="en">Games</span><span class="tag t" data-l="fr">Jeux</span><span class="tag t" data-l="km">ហ្គេម</span><span class="tag">JavaScript</span><span class="tag">Leaflet</span><span class="tag">OpenStreetMap</span><span class="tag">Overture Maps</span></div>
+<div class="actions"><a class="btn primary" href="../tools/circuit-editor/" target="_blank" rel="noopener"><span data-l="en">Open the editor</span><span data-l="fr">Ouvrir l’éditeur</span><span data-l="km">បើកកម្មវិធីគូរ</span> ↗</a><a class="btn secondary" href="https://github.com/stefan-cambodia/stefan-cambodia.github.io/tree/main/tools/circuit-editor" target="_blank" rel="noopener noreferrer"><span data-l="en">View the source</span><span data-l="fr">Voir le code</span><span data-l="km">មើលកូដ</span> ↗</a><a class="btn secondary" href="../history/circuit-editor.html"><span data-l="en">History</span><span data-l="fr">Historique</span><span data-l="km">ប្រវត្តិ</span> →</a></div>
+</div>
+
+<div class="shot"><img src="../assets/screenshots/circuit-editor/petit-circuit.jpg" width="1440" height="900" alt="The circuit editor with the Petit Circuit of Angkor: 28 waypoints on OpenStreetMap’s roads, 7.09 km of game a lap, its checkpoints, bonus gates and warnings in the side panel"></div>
+
+<div class="stats">
+<div class="stat"><strong>1</strong><span data-l="en">HTML file, no build step</span><span data-l="fr">Fichier HTML, sans compilation</span><span data-l="km">ឯកសារ HTML គ្មានការ compile</span></div>
+<div class="stat"><strong>379</strong><span data-l="en">Game objects to place</span><span data-l="fr">Objets du jeu à poser</span><span data-l="km">វត្ថុរបស់ហ្គេម សម្រាប់ដាក់</span></div>
+<div class="stat"><strong>−0.15 %</strong><span data-l="en">Petit Circuit redrawn</span><span data-l="fr">Petit Circuit redessiné</span><span data-l="km">Petit Circuit គូរឡើងវិញ</span></div>
+<div class="stat"><strong>134</strong><span data-l="en">Tests, and one in a browser</span><span data-l="fr">Tests, et un dans un navigateur</span><span data-l="km">ការធ្វើតេស្ត និងមួយក្នុង browser</span></div>
+</div>
+
+<div data-l="en">
+<section>
+<div class="kicker">The idea</div>
+<h2>Draw it on the map, race it on the phone.</h2>
+<p>3D Buggy’s stages are laid out from OpenStreetMap by hand, one by one. The editor lets anyone do it: frame a place, load its roads, click where the course should go. The file it writes is a format of its own, version 1, with a JSON Schema and a hash that the game recomputes, so a circuit cannot be altered on the way. 3D Buggy reads them in its « Circuits perso » screen; Cambodia Rally keeps its own on a branch that is not merged, by decision of 27 November 2026, and the format stays common to both.</p>
+<p>Its acceptance test was to draw the game’s Petit Circuit again from its waypoints on today’s map: 7,089 m of game a lap at scale 2.5, 0.15 % short of the 7.1 km of the circuit built by hand, without moving a single point.</p>
+</section>
+
+<section>
+<div class="kicker">In three steps</div>
+<h2>Trace, send, play.</h2>
+<div class="table-wrap"><table>
+<tr><th>Step</th><th>What happens</th></tr>
+<tr><td>Trace</td><td>Search a place or pick one (Angkor, Siem Reap, Kampot, Bokor, Kep, Phnom Penh), load the roads of the view from Overpass, click waypoints: each one snaps to the nearest road, and the course takes the shortest way between them. Loop or point-to-point stage, tracks allowed or not. The panel gives the real and game lengths, the time a lap takes at the games’ reference speed, the checkpoints and bonus gates, and warns of a road taken twice, a course that crosses itself, a hairpin under 8 m or a length outside 1.5 to 40 km.</td></tr>
+<tr><td>Send</td><td>« Envoyer au jeu » writes the file into <code>tracks/</code> on this site and updates the catalogue, through GitHub’s API with a fine-grained token limited to this one repository; the token is never written into a file. A circuit can also be downloaded, copied, and opened again later: if the map has not changed, it comes out the same, hash included.</td></tr>
+<tr><td>Play</td><td>In 3D Buggy, « Circuits perso → Actualiser ». A first publication showed on both addresses the game reads in under a minute, the site’s build included.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">What a circuit carries</div>
+<h2>The road, and the place around it.</h2>
+<p><b>Relief.</b> An altitude every 30 real metres from Open-Meteo, smoothed and with slopes held under 30 %. The model is a surface model at 90 m, which adds the trees, roofs and neighbouring slopes to the road; « Lissage du relief » takes out the bumps and hollows shorter than 300 or 600 m. On the tour of Kep hill, at sea level or nearly, the climb goes from 198 m to 44 m; on the climb to Bokor, a real one, from 1,318 m to 1,055 m.</p>
+<p><b>The real place.</b> On export, the editor reads Overture Maps’ archives piece by piece and writes the buildings within 150 m of the course, the water and a grid of land cover 400 m around it: 237 buildings round a pond in Kampot where OpenStreetMap alone has 28. The game builds them.</p>
+<p><b>Photos.</b> Photos with a GPS position, JPEG or the phones’ HEIC, one by one or a whole Google Photos album as a <code>.zip</code>, describe each place of the course: ahead, left, right. Kept at 320 pixels, they are for whoever dresses the circuit, not shown in the game. With no course drawn yet, the editor proposes one through the places in the order they were taken: 23 photos round a pond in Kampot gave a 679 m loop in 43 seconds.</p>
+<p><b>Objects.</b> The library holds the game’s 379 scenery objects, with thumbnails rendered by the game’s engine and written by a script of the game itself: Khmer houses and Kampot shophouses, stalls, pagodas and stupas, palms and rice fields, people, motorbikes and tuk-tuks, the town’s big buildings, Angkor’s monuments. They are placed one by click, in a straight row or in a row along the course, turned, resized, moved; 3D Buggy builds them exactly there, with their collisions.</p>
+</section>
+
+<section>
+<div class="kicker">Kept on the computer</div>
+<h2>Close it, come back, carry on.</h2>
+<p>The drawing in progress is kept at every change and offered again at the next visit. « Mes circuits » keeps a list of circuits on the computer, reopened with their roads and relief without asking any server. The roads Overpass gave are kept too, so as not to ask a volunteer service twice: on the tour of Kep hill, taking up a drawing takes 0.4 s instead of 34 s. Up to 300,000 altitudes are kept as well, so a course drawn again on the same roads asks Open-Meteo only for new ground. With <code>editeur-circuits.sh --install</code>, the editor becomes a program of the computer, with its own window and its entry in the applications menu.</p>
+</section>
+
+<section>
+<div class="kicker">Where it stands</div>
+<h2>Published on 28 November 2026.</h2>
+<p>Everything the first brief of 26 November asked of the editor is done, and so are photos, the real place’s scenery and the objects since. On 28 November the editor’s branch was merged into this site’s <code>main</code>: the page online is the one of the computer. The same day the scenery and objects were merged into 3D Buggy.</p>
+<div class="table-wrap"><table>
+<tr><th>Next</th><th>Done when</th></tr>
+<tr><td>The first real « Envoyer au jeu »</td><td>A circuit sent from the editor shows in the game, and the delay of an update to a catalogue already published is measured. Sending has only been tried against a mocked GitHub API so far.</td></tr>
+<tr><td>On the phone</td><td>A circuit with its scenery and objects built and raced on a Galaxy A56, its frame rate measured.</td></tr>
+<tr><td>Objects on the road</td><td>Ramps and gates placed by hand that change the race; the format must then say whether they enter the hash.</td></tr>
+<tr><td>Removing a published circuit</td><td>From the editor, with a confirmation; today it is done by hand in the repository.</td></tr>
+</table></div>
+</section>
+</div>
+
+<div data-l="fr">
+<section>
+<div class="kicker">L’idée</div>
+<h2>Le dessiner sur la carte, le courir sur le téléphone.</h2>
+<p>Les étapes de 3D Buggy sont tracées à la main d’après OpenStreetMap, une par une. L’éditeur permet à chacun de le faire : cadrer un lieu, charger ses routes, cliquer là où doit passer le circuit. Le fichier qu’il écrit suit un format à lui, en version 1, avec un schéma JSON et un hash que le jeu recalcule, pour qu’un circuit ne puisse pas être altéré en route. 3D Buggy les lit dans son écran « Circuits perso » ; Cambodia Rally garde le sien sur une branche non fusionnée, par décision du 27 novembre 2026, et le format reste commun aux deux.</p>
+<p>Son essai de réception a été de redessiner le Petit Circuit du jeu à partir de ses points de passage sur la carte d’aujourd’hui : 7 089 m de jeu par tour à l’échelle 2,5, 0,15 % de moins que les 7,1 km du circuit fait à la main, sans déplacer un seul point.</p>
+</section>
+
+<section>
+<div class="kicker">En trois étapes</div>
+<h2>Tracer, envoyer, jouer.</h2>
+<div class="table-wrap"><table>
+<tr><th>Étape</th><th>Ce qui se passe</th></tr>
+<tr><td>Tracer</td><td>Chercher un lieu ou en choisir un (Angkor, Siem Reap, Kampot, Bokor, Kep, Phnom Penh), charger les routes de la vue depuis Overpass, cliquer des points de passage : chacun se recale sur la route la plus proche, et le tracé prend le plus court chemin entre eux. Boucle ou spéciale d’un point à un autre, pistes autorisées ou non. Le panneau donne les longueurs réelle et de jeu, le temps d’un tour à la vitesse de référence des jeux, les checkpoints et les portes bonus, et prévient d’une route empruntée deux fois, d’un tracé qui se croise, d’une épingle de moins de 8 m ou d’une longueur hors de 1,5 à 40 km.</td></tr>
+<tr><td>Envoyer</td><td>« Envoyer au jeu » écrit le fichier dans <code>tracks/</code> sur ce site et met à jour le catalogue, par l’API de GitHub avec un jeton à accès fin limité à ce seul dépôt ; le jeton n’est jamais écrit dans un fichier. Un circuit peut aussi être téléchargé, copié, puis rouvert plus tard : si la carte n’a pas changé, il ressort identique, hash compris.</td></tr>
+<tr><td>Jouer</td><td>Dans 3D Buggy, « Circuits perso → Actualiser ». Une première publication est apparue sur les deux adresses que lit le jeu en moins d’une minute, construction du site comprise.</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">Ce que porte un circuit</div>
+<h2>La route, et le lieu autour.</h2>
+<p><b>Le relief.</b> Une altitude tous les 30 mètres réels depuis Open-Meteo, lissée et aux pentes tenues sous 30 %. Le modèle est un modèle de surface à 90 m, qui ajoute à la route les arbres, les toits et les versants voisins ; « Lissage du relief » retire les bosses et les creux de moins de 300 ou 600 m. Sur le tour de la colline de Kep, au niveau de la mer ou presque, le dénivelé passe de 198 m à 44 m ; sur la montée au Bokor, une vraie, de 1 318 m à 1 055 m.</p>
+<p><b>Le lieu réel.</b> À l’export, l’éditeur lit par petits morceaux les archives d’Overture Maps et écrit les bâtiments à moins de 150 m du parcours, l’eau et une grille de couverture du sol sur 400 m autour : 237 bâtiments autour d’un étang de Kampot, là où OpenStreetMap seul en a 28. Le jeu les construit.</p>
+<p><b>Les photos.</b> Des photos qui portent leur position GPS, en JPEG ou en HEIC des téléphones, une à une ou un album Google Photos entier en <code>.zip</code>, décrivent chaque lieu du parcours : devant, à gauche, à droite. Gardées à 320 pixels, elles servent à qui habillera le circuit et ne sont pas montrées dans le jeu. Sans tracé encore, l’éditeur en propose un qui passe par les lieux dans l’ordre de prise de vue : 23 photos autour d’un étang de Kampot ont donné une boucle de 679 m en 43 secondes.</p>
+<p><b>Les objets.</b> La bibliothèque tient les 379 objets de décor du jeu, avec des vignettes rendues par le moteur du jeu et écrites par un script du jeu lui-même : maisons khmères et compartiments de Kampot, étals, pagodes et stoupas, palmiers et rizières, gens, motos et tuk-tuks, grands bâtiments de ville, monuments d’Angkor. On les pose un par clic, en ligne droite ou en rangée le long du tracé, on les tourne, on les agrandit, on les déplace ; 3D Buggy les construit exactement là, avec leurs collisions.</p>
+</section>
+
+<section>
+<div class="kicker">Gardé sur l’ordinateur</div>
+<h2>Fermer, revenir, continuer.</h2>
+<p>Le tracé en cours est gardé à chaque changement et proposé de nouveau à la visite suivante. « Mes circuits » tient une liste de circuits sur l’ordinateur, rouverts avec leurs routes et leur relief sans rien demander à aucun serveur. Les routes données par Overpass sont gardées aussi, pour ne pas demander deux fois à un service bénévole : sur le tour de la colline de Kep, reprendre un tracé prend 0,4 s au lieu de 34 s. Jusqu’à 300 000 altitudes sont gardées de même, si bien qu’un tracé refait sur les mêmes routes ne demande à Open-Meteo que le terrain nouveau. Avec <code>editeur-circuits.sh --install</code>, l’éditeur devient un programme de l’ordinateur, avec sa propre fenêtre et son entrée dans le menu des applications.</p>
+</section>
+
+<section>
+<div class="kicker">Où il en est</div>
+<h2>Publié le 28 novembre 2026.</h2>
+<p>Tout ce que la première demande du 26 novembre attendait de l’éditeur est fait, et depuis les photos, le décor du lieu réel et les objets. Le 28 novembre, la branche de l’éditeur a été fusionnée dans le <code>main</code> de ce site : la page en ligne est celle de l’ordinateur. Le même jour, le décor et les objets ont été fusionnés dans 3D Buggy.</p>
+<div class="table-wrap"><table>
+<tr><th>Ensuite</th><th>Terminé quand</th></tr>
+<tr><td>Le premier vrai « Envoyer au jeu »</td><td>Un circuit envoyé depuis l’éditeur apparaît dans le jeu, et le délai de mise à jour d’un catalogue déjà publié est mesuré. L’envoi n’a été essayé jusqu’ici que contre une API GitHub simulée.</td></tr>
+<tr><td>Sur le téléphone</td><td>Un circuit avec son décor et ses objets construit et couru sur un Galaxy A56, ses images par seconde mesurées.</td></tr>
+<tr><td>Des objets sur la route</td><td>Des tremplins et des portes posés à la main qui changent la course ; le format devra alors dire s’ils entrent dans le hash.</td></tr>
+<tr><td>Retirer un circuit publié</td><td>Depuis l’éditeur, avec une confirmation ; aujourd’hui cela se fait à la main dans le dépôt.</td></tr>
+</table></div>
+</section>
+</div>
+
+<div data-l="km">
+<section>
+<div class="kicker">គំនិតដើម</div>
+<h2>គូរវាលើផែនទី ប្រណាំងវាលើទូរស័ព្ទ។</h2>
+<p>វគ្គនៃ 3D Buggy ត្រូវបានគូរដោយដៃ ពី OpenStreetMap ម្តងមួយៗ។ កម្មវិធីគូរនេះ អនុញ្ញាតឱ្យអ្នកណាក៏ធ្វើវាបាន៖ ជ្រើសទីកន្លែងមួយ ផ្ទុកផ្លូវរបស់វា ហើយចុចកន្លែងដែលសៀគ្វីគួរឆ្លងកាត់។ ឯកសារដែលវាសរសេរ មានទម្រង់ផ្ទាល់ខ្លួន កំណែទី 1 ជាមួយ JSON Schema និង hash ដែលហ្គេមគណនាឡើងវិញ ដូច្នេះសៀគ្វីមួយមិនអាចត្រូវបានកែប្រែតាមផ្លូវបានទេ។ 3D Buggy អានវានៅក្នុងអេក្រង់ «Circuits perso» របស់វា ចំណែក Cambodia Rally រក្សារបស់ខ្លួននៅលើ branch ដែលមិនទាន់បញ្ចូល តាមការសម្រេចចិត្តថ្ងៃទី 27 ខែវិច្ឆិកា ឆ្នាំ 2026 ហើយទម្រង់ឯកសារនៅតែដូចគ្នាសម្រាប់ទាំងពីរ។</p>
+<p>ការសាកល្បងទទួលយករបស់វា គឺការគូរ Petit Circuit របស់ហ្គេមឡើងវិញ ពីចំណុចឆ្លងកាត់របស់វា លើផែនទីបច្ចុប្បន្ន៖ 7 089 ម៉ែត្រនៃហ្គេមក្នុងមួយជុំ តាមមាត្រដ្ឋាន 2.5 ខ្លីជាង 7.1 គីឡូម៉ែត្រ នៃសៀគ្វីដែលធ្វើដោយដៃ 0.15 % ដោយមិនបានផ្លាស់ទីចំណុចណាមួយឡើយ។</p>
+</section>
+
+<section>
+<div class="kicker">បីជំហាន</div>
+<h2>គូរ ផ្ញើ លេង។</h2>
+<div class="table-wrap"><table>
+<tr><th>ជំហាន</th><th>អ្វីដែលកើតឡើង</th></tr>
+<tr><td>គូរ</td><td>ស្វែងរកទីកន្លែងមួយ ឬជ្រើសមួយ (អង្គរ សៀមរាប កំពត បូកគោ កែប ភ្នំពេញ) ផ្ទុកផ្លូវនៃទិដ្ឋភាពពី Overpass ហើយចុចចំណុចឆ្លងកាត់៖ ចំណុចនីមួយៗភ្ជាប់ទៅផ្លូវដែលនៅជិតបំផុត ហើយផ្លូវប្រណាំងយកផ្លូវខ្លីបំផុតរវាងវា។ ជារង្វង់ ឬជាវគ្គពីចំណុចមួយទៅចំណុចមួយទៀត អនុញ្ញាតផ្លូវលំ ឬមិនអនុញ្ញាត។ ផ្ទាំងចំហៀងផ្តល់ប្រវែងពិត និងប្រវែងហ្គេម ពេលវេលាមួយជុំ តាមល្បឿនយោងនៃហ្គេម checkpoint និងទ្វារប្រាក់រង្វាន់ ហើយព្រមានពីផ្លូវដែលឆ្លងកាត់ពីរដង ផ្លូវប្រណាំងដែលកាត់ខ្លួនឯង ផ្លូវបត់ចង្អៀតតិចជាង 8 ម៉ែត្រ ឬប្រវែងក្រៅពី 1.5 ទៅ 40 គីឡូម៉ែត្រ។</td></tr>
+<tr><td>ផ្ញើ</td><td>«Envoyer au jeu» សរសេរឯកសារទៅក្នុង <code>tracks/</code> នៃគេហទំព័រនេះ ហើយធ្វើបច្ចុប្បន្នភាពបញ្ជី តាមរយៈ API របស់ GitHub ជាមួយ token ដែលកំណត់សិទ្ធិត្រឹមតែ repository នេះប៉ុណ្ណោះ ហើយ token មិនដែលត្រូវបានសរសេរក្នុងឯកសារឡើយ។ សៀគ្វីមួយក៏អាចទាញយក ចម្លង ហើយបើកឡើងវិញពេលក្រោយបាន៖ ប្រសិនបើផែនទីមិនបានផ្លាស់ប្តូរ វាចេញមកដូចគ្នា រួមទាំង hash ផងដែរ។</td></tr>
+<tr><td>លេង</td><td>នៅក្នុង 3D Buggy «Circuits perso → Actualiser»។ ការផ្សព្វផ្សាយលើកដំបូង បានបង្ហាញនៅលើអាសយដ្ឋានទាំងពីរដែលហ្គេមអាន ក្នុងរយៈពេលតិចជាងមួយនាទី រួមទាំងការសាងសង់គេហទំព័រផងដែរ។</td></tr>
+</table></div>
+</section>
+
+<section>
+<div class="kicker">អ្វីដែលសៀគ្វីមួយផ្ទុក</div>
+<h2>ផ្លូវ និងទីកន្លែងជុំវិញវា។</h2>
+<p><b>កម្ពស់ដី។</b> កម្ពស់មួយរៀងរាល់ 30 ម៉ែត្រពិត ពី Open-Meteo ដែលធ្វើឱ្យរលោង និងរក្សាជម្រាលក្រោម 30 %។ គំរូនេះជាគំរូផ្ទៃខាងលើ 90 ម៉ែត្រ ដែលបន្ថែមដើមឈើ ដំបូលផ្ទះ និងជម្រាលភ្នំក្បែរនោះ ទៅលើផ្លូវ ហើយ «Lissage du relief» ដកចេញនូវទួល និងរណ្តៅដែលខ្លីជាង 300 ឬ 600 ម៉ែត្រ។ លើផ្លូវជុំវិញភ្នំកែប ដែលស្ទើរតែស្មើនឹងនីវ៉ូសមុទ្រ កម្ពស់ឡើងសរុបធ្លាក់ពី 198 ម៉ែត្រ មក 44 ម៉ែត្រ ហើយលើផ្លូវឡើងភ្នំបូកគោ ដែលជាផ្លូវឡើងពិត ពី 1 318 ម៉ែត្រ មក 1 055 ម៉ែត្រ។</p>
+<p><b>ទីកន្លែងពិត។</b> ពេលនាំចេញ កម្មវិធីអានបណ្ណសាររបស់ Overture Maps ម្តងបន្តិចៗ ហើយសរសេរអគារដែលនៅក្នុងចម្ងាយ 150 ម៉ែត្រពីផ្លូវប្រណាំង ទឹក និងក្រឡាគម្របដី 400 ម៉ែត្រជុំវិញ៖ អគារ 237 ជុំវិញស្រះមួយនៅកំពត ខណៈដែល OpenStreetMap តែឯងមានត្រឹម 28។ ហ្គេមសាងសង់វាទាំងអស់។</p>
+<p><b>រូបថត។</b> រូបថតដែលមានទីតាំង GPS ជា JPEG ឬ HEIC របស់ទូរស័ព្ទ ម្តងមួយៗ ឬអាល់ប៊ុម Google Photos ទាំងមូលជា <code>.zip</code> ពិពណ៌នាទីកន្លែងនីមួយៗនៃផ្លូវប្រណាំង៖ ខាងមុខ ខាងឆ្វេង ខាងស្តាំ។ រក្សាទុកត្រឹម 320 ភីកសែល វាសម្រាប់អ្នកដែលតុបតែងសៀគ្វី មិនបង្ហាញក្នុងហ្គេមទេ។ ពេលមិនទាន់មានផ្លូវប្រណាំង កម្មវិធីស្នើផ្លូវមួយ ដែលឆ្លងកាត់ទីកន្លែងទាំងនោះ តាមលំដាប់ដែលបានថត៖ រូបថត 23 ជុំវិញស្រះមួយនៅកំពត បានផ្តល់រង្វង់ 679 ម៉ែត្រ ក្នុង 43 វិនាទី។</p>
+<p><b>វត្ថុ។</b> បណ្ណាល័យមានវត្ថុទេសភាព 379 របស់ហ្គេម ជាមួយរូបតូចៗ ដែលបង្ហាញដោយម៉ាស៊ីនរបស់ហ្គេម និងសរសេរដោយ script របស់ហ្គេមផ្ទាល់៖ ផ្ទះខ្មែរ និងផ្ទះល្វែងកំពត តូប វត្ត និងចេតិយ ដើមត្នោត និងវាលស្រែ មនុស្ស ម៉ូតូ និងរ៉ឺម៉ក អគារធំៗក្នុងក្រុង និងប្រាសាទអង្គរ។ គេដាក់វាម្តងមួយក្នុងមួយចុច ជាជួរត្រង់ ឬជាជួរតាមបណ្តោយផ្លូវប្រណាំង បង្វិល ពង្រីក និងផ្លាស់ទីវា ហើយ 3D Buggy សាងសង់វានៅកន្លែងនោះពិតប្រាកដ ជាមួយការប៉ះទង្គិចរបស់វា។</p>
+</section>
+
+<section>
+<div class="kicker">រក្សាទុកលើកុំព្យូទ័រ</div>
+<h2>បិទ ត្រឡប់មកវិញ ហើយបន្ត។</h2>
+<p>ការគូរដែលកំពុងធ្វើ ត្រូវបានរក្សាទុករាល់ពេលមានការផ្លាស់ប្តូរ ហើយស្នើឡើងវិញនៅពេលចូលមកលើកក្រោយ។ «Mes circuits» រក្សាបញ្ជីសៀគ្វីនៅលើកុំព្យូទ័រ ដែលបើកឡើងវិញជាមួយផ្លូវ និងកម្ពស់ដីរបស់វា ដោយមិនសួរ server ណាមួយឡើយ។ ផ្លូវដែល Overpass បានផ្តល់ ក៏ត្រូវបានរក្សាទុកដែរ ដើម្បីកុំសួរសេវាស្ម័គ្រចិត្តពីរដង៖ លើផ្លូវជុំវិញភ្នំកែប ការបន្តការគូរ ចំណាយពេល 0.4 វិនាទី ជំនួសឱ្យ 34 វិនាទី។ កម្ពស់រហូតដល់ 300 000 ក៏ត្រូវបានរក្សាទុកដែរ ដូច្នេះការគូរឡើងវិញលើផ្លូវដដែល សួរ Open-Meteo តែដីថ្មីប៉ុណ្ណោះ។ ជាមួយ <code>editeur-circuits.sh --install</code> កម្មវិធីគូរក្លាយជាកម្មវិធីរបស់កុំព្យូទ័រ ដែលមានបង្អួចផ្ទាល់ខ្លួន និងធាតុនៅក្នុងម៉ឺនុយកម្មវិធី។</p>
+</section>
+
+<section>
+<div class="kicker">ស្ថានភាពបច្ចុប្បន្ន</div>
+<h2>បានផ្សព្វផ្សាយនៅថ្ងៃទី 28 ខែវិច្ឆិកា ឆ្នាំ 2026។</h2>
+<p>អ្វីៗទាំងអស់ដែលសំណើដំបូងនៅថ្ងៃទី 26 ខែវិច្ឆិកា ទាមទារពីកម្មវិធីគូរ បានធ្វើរួចហើយ ហើយចាប់តាំងពីពេលនោះមក រូបថត ទេសភាពនៃទីកន្លែងពិត និងវត្ថុក៏រួចដែរ។ នៅថ្ងៃទី 28 ខែវិច្ឆិកា branch របស់កម្មវិធីគូរ ត្រូវបានបញ្ចូលទៅក្នុង <code>main</code> នៃគេហទំព័រនេះ៖ ទំព័រលើអ៊ីនធឺណិត គឺដូចនឹងទំព័រលើកុំព្យូទ័រ។ នៅថ្ងៃដដែល ទេសភាព និងវត្ថុត្រូវបានបញ្ចូលទៅក្នុង 3D Buggy។</p>
+<div class="table-wrap"><table>
+<tr><th>បន្ទាប់</th><th>បញ្ចប់នៅពេល</th></tr>
+<tr><td>«Envoyer au jeu» ពិតលើកដំបូង</td><td>សៀគ្វីដែលផ្ញើពីកម្មវិធីគូរ បង្ហាញក្នុងហ្គេម ហើយរយៈពេលធ្វើបច្ចុប្បន្នភាពបញ្ជីដែលបានផ្សព្វផ្សាយរួច ត្រូវបានវាស់។ រហូតមកដល់ពេលនេះ ការផ្ញើត្រូវបានសាកល្បងតែជាមួយ API GitHub ក្លែងធ្វើប៉ុណ្ណោះ។</td></tr>
+<tr><td>លើទូរស័ព្ទ</td><td>សៀគ្វីមួយ ជាមួយទេសភាព និងវត្ថុរបស់វា ត្រូវបានសាងសង់ និងប្រណាំងលើ Galaxy A56 ហើយល្បឿនរូបភាពក្នុងមួយវិនាទីត្រូវបានវាស់។</td></tr>
+<tr><td>វត្ថុនៅលើផ្លូវ</td><td>ស្ពានលោត និងទ្វារដែលដាក់ដោយដៃ ដែលផ្លាស់ប្តូរការប្រណាំង ហើយទម្រង់ឯកសារត្រូវប្រាប់ថា តើវាចូលក្នុង hash ឬអត់។</td></tr>
+<tr><td>ដកសៀគ្វីដែលបានផ្សព្វផ្សាយចេញ</td><td>ពីកម្មវិធីគូរ ជាមួយការបញ្ជាក់ ពេលនេះវាត្រូវធ្វើដោយដៃនៅក្នុង repository។</td></tr>
+</table></div>
+</section>
+</div>
+
+<section>
+<div class="kicker"><span data-l="en">Screenshots</span><span data-l="fr">Captures d’écran</span><span data-l="km">រូបថតអេក្រង់</span></div>
+<h2><span data-l="en">The Petit Circuit of Angkor.</span><span data-l="fr">Le Petit Circuit d’Angkor.</span><span data-l="km">Petit Circuit នៃអង្គរ។</span></h2>
+<p data-l="en">Captures of 28 November 2026, the editor as published, with the Petit Circuit of the catalogue opened from its file; the interface is in French. The objects near Ta Keo were placed for the capture and are not in the published circuit.</p>
+<p data-l="fr">Captures du 28 novembre 2026, l’éditeur tel qu’il est publié, avec le Petit Circuit du catalogue ouvert depuis son fichier. Les objets près de Ta Keo ont été posés pour la capture et ne sont pas dans le circuit publié.</p>
+<p data-l="km">រូបថតអេក្រង់ថ្ងៃទី 28 ខែវិច្ឆិកា ឆ្នាំ 2026 កម្មវិធីគូរដូចដែលបានផ្សព្វផ្សាយ ជាមួយ Petit Circuit នៃបញ្ជី ដែលបើកពីឯកសាររបស់វា ផ្ទាំងប្រើប្រាស់ជាភាសាបារាំង។ វត្ថុនៅជិតប្រាសាទតាកែវ ត្រូវបានដាក់សម្រាប់រូបថតនេះ ហើយមិនមាននៅក្នុងសៀគ្វីដែលបានផ្សព្វផ្សាយទេ។</p>
+<div class="gallery landscape">
+<a href="../assets/screenshots/circuit-editor/objects.jpg" target="_blank"><img src="../assets/screenshots/circuit-editor/objects.jpg" width="1440" height="900" alt="The Objects tab near Ta Keo: a pagoda, a row of palms and two houses on stilts placed beside the course, each with its footprint at its real size and its front arrow, the library of 379 objects in the panel" loading="lazy"></a>
+<a href="../assets/screenshots/circuit-editor/satellite.jpg" target="_blank"><img src="../assets/screenshots/circuit-editor/satellite.jpg" width="1440" height="900" alt="The whole Petit Circuit on the satellite layer, with the Settings tab: name, identifier, games aimed at, the real place’s scenery, laps, scale and width" loading="lazy"></a>
+</div>
+</section>
+
+<section data-l="en">
+<div class="kicker">Under the hood</div>
+<h2>How it is built.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>The page</td><td>One HTML file of about 6,500 lines, plain JavaScript and CSS, with Leaflet 1.9.4 from cdnjs pinned by its SRI hash, and the objects library generated by 3D Buggy beside it. The computing core — graph, routing, resampling, relief, export, hash — is pure code without DOM or network, so that the tests can run it alone.</td></tr>
+<tr><td>Routing</td><td>A graph of OpenStreetMap’s roads, a grid index and Dijkstra’s shortest path, with one rule: no U-turn at a waypoint unless no other way is 500 m shorter. A local tangent plane through WGS84’s ECEF coordinates projects the course, and its inverse brings a file back onto the map.</td></tr>
+<tr><td>The file</td><td><code>.cambotrack.json</code>, version 1, described in <code>FORMAT.md</code> with a JSON Schema; a SHA-256 over a canonical text, written in pure JavaScript and checked against Node’s, that the games recompute. Photos, scenery and objects stay out of the hash: the road is the same with or without them.</td></tr>
+<tr><td>Scenery</td><td>Overture Maps’ PMTiles archives read by HTTP range requests and their vector tiles decoded in the page: two tiles and half a megabyte for a town circuit, in two seconds.</td></tr>
+<tr><td>Services</td><td>No server of its own. OpenStreetMap’s tiles, Esri’s imagery and OpenTopoMap for the map; Overpass, with two fallback servers, for the roads; Nominatim for search, only on Enter; Open-Meteo for the relief, within its 600 altitudes a minute; Overture Maps; jsDelivr for the HEIC decoder; GitHub’s API for sending.</td></tr>
+<tr><td>Tests</td><td>134 Node tests without any dependency, among them a seeded property test of 160 random courses on Angkor’s roads and the Petit Circuit’s acceptance test; an end-to-end test in a real browser with the network mocked, from the first click to the sending and back.</td></tr>
+</table></div>
+</section>
+
+<section data-l="fr">
+<div class="kicker">Sous le capot</div>
+<h2>Comment c’est construit.</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>La page</td><td>Un fichier HTML d’environ 6 500 lignes, JavaScript et CSS natifs, avec Leaflet 1.9.4 depuis cdnjs épinglé par son empreinte SRI, et la bibliothèque des objets produite par 3D Buggy à côté. Le cœur de calcul — graphe, routage, rééchantillonnage, relief, export, hash — est du code pur, sans DOM ni réseau, pour que les tests puissent l’exécuter seul.</td></tr>
+<tr><td>Routage</td><td>Un graphe des routes d’OpenStreetMap, un index en grille et le plus court chemin de Dijkstra, avec une règle : pas de demi-tour à un point de passage, sauf si aucun autre chemin n’est plus court de 500 m. Un plan tangent local, par les coordonnées ECEF de WGS84, projette le tracé, et son inverse ramène un fichier sur la carte.</td></tr>
+<tr><td>Le fichier</td><td><code>.cambotrack.json</code>, version 1, décrit dans <code>FORMAT.md</code> avec un schéma JSON ; un SHA-256 sur un texte canonique, écrit en JavaScript pur et vérifié contre celui de Node, que les jeux recalculent. Photos, décor et objets restent hors du hash : la route est la même avec ou sans eux.</td></tr>
+<tr><td>Décor</td><td>Les archives PMTiles d’Overture Maps lues par requêtes HTTP « Range » et leurs tuiles vectorielles décodées dans la page : deux tuiles et un demi-mégaoctet pour un circuit de ville, en deux secondes.</td></tr>
+<tr><td>Services</td><td>Aucun serveur à lui. Les tuiles d’OpenStreetMap, l’imagerie d’Esri et OpenTopoMap pour la carte ; Overpass, avec deux serveurs de secours, pour les routes ; Nominatim pour la recherche, seulement sur Entrée ; Open-Meteo pour le relief, dans la limite de ses 600 altitudes par minute ; Overture Maps ; jsDelivr pour le décodeur HEIC ; l’API de GitHub pour l’envoi.</td></tr>
+<tr><td>Tests</td><td>134 tests Node sans aucune dépendance, dont un test de propriétés à graine fixe sur 160 parcours tirés au hasard sur les routes d’Angkor et l’essai de réception du Petit Circuit ; un test de bout en bout dans un vrai navigateur, réseau simulé, du premier clic à l’envoi et retour.</td></tr>
+</table></div>
+</section>
+
+<section data-l="km">
+<div class="kicker">ផ្នែកបច្ចេកទេស</div>
+<h2>របៀបដែលវាត្រូវបានបង្កើត។</h2>
+<div class="table-wrap"><table class="kv">
+<tr><td>ទំព័រ</td><td>ឯកសារ HTML តែមួយ ប្រហែល 6 500 បន្ទាត់ JavaScript និង CSS ធម្មតា ជាមួយ Leaflet 1.9.4 ពី cdnjs ដែលខ្ទាស់ដោយ hash SRI របស់វា និងបណ្ណាល័យវត្ថុ ដែលបង្កើតដោយ 3D Buggy នៅក្បែរវា។ ស្នូលគណនា — ក្រាហ្វ ការរកផ្លូវ ការយកគំរូឡើងវិញ កម្ពស់ដី ការនាំចេញ hash — គឺជាកូដសុទ្ធ គ្មាន DOM និងគ្មានបណ្តាញ ដើម្បីឱ្យការធ្វើតេស្តអាចដំណើរការវាតែឯងបាន។</td></tr>
+<tr><td>ការរកផ្លូវ</td><td>ក្រាហ្វនៃផ្លូវរបស់ OpenStreetMap លិបិក្រមក្រឡា និងផ្លូវខ្លីបំផុតរបស់ Dijkstra ជាមួយច្បាប់មួយ៖ គ្មានការបកក្រោយនៅចំណុចឆ្លងកាត់ លើកលែងតែគ្មានផ្លូវផ្សេងខ្លីជាង 500 ម៉ែត្រ។ ប្លង់ tangent ក្នុងតំបន់ តាមរយៈកូអរដោនេ ECEF នៃ WGS84 បញ្ចាំងផ្លូវប្រណាំង ហើយការបញ្ច្រាសរបស់វា នាំឯកសារមកលើផែនទីវិញ។</td></tr>
+<tr><td>ឯកសារ</td><td><code>.cambotrack.json</code> កំណែទី 1 ដែលពិពណ៌នាក្នុង <code>FORMAT.md</code> ជាមួយ JSON Schema និង SHA-256 លើអត្ថបទ canonical ដែលសរសេរជា JavaScript សុទ្ធ និងផ្ទៀងផ្ទាត់ជាមួយរបស់ Node ដែលហ្គេមគណនាឡើងវិញ។ រូបថត ទេសភាព និងវត្ថុ នៅក្រៅ hash៖ ផ្លូវនៅដដែល ទោះមាន ឬគ្មានវា។</td></tr>
+<tr><td>ទេសភាព</td><td>បណ្ណសារ PMTiles របស់ Overture Maps ដែលអានដោយសំណើ HTTP «Range» ហើយក្រឡា vector របស់វា ត្រូវបានបកស្រាយនៅក្នុងទំព័រ៖ ក្រឡាពីរ និងកន្លះមេកាបៃ សម្រាប់សៀគ្វីក្នុងក្រុង ក្នុងរយៈពេលពីរវិនាទី។</td></tr>
+<tr><td>សេវាកម្ម</td><td>គ្មាន server ផ្ទាល់ខ្លួនទេ។ ក្រឡាផែនទីរបស់ OpenStreetMap រូបផ្កាយរណបរបស់ Esri និង OpenTopoMap សម្រាប់ផែនទី Overpass ជាមួយ server បម្រុងពីរ សម្រាប់ផ្លូវ Nominatim សម្រាប់ការស្វែងរក តែនៅពេលចុច Entrée ប៉ុណ្ណោះ Open-Meteo សម្រាប់កម្ពស់ដី ក្នុងដែនកំណត់ 600 កម្ពស់ក្នុងមួយនាទី Overture Maps, jsDelivr សម្រាប់កម្មវិធីបកស្រាយ HEIC និង API របស់ GitHub សម្រាប់ការផ្ញើ។</td></tr>
+<tr><td>ការធ្វើតេស្ត</td><td>ការធ្វើតេស្ត Node 134 គ្មាន dependency ណាមួយ ក្នុងនោះមានការធ្វើតេស្តលក្ខណៈ ដែលមានគ្រាប់ពូជថេរ លើផ្លូវប្រណាំងចៃដន្យ 160 លើផ្លូវនៃអង្គរ និងការសាកល្បងទទួលយកនៃ Petit Circuit និងការធ្វើតេស្តពីដើមដល់ចប់ ក្នុង browser ពិត ដោយបណ្តាញក្លែងធ្វើ ពីការចុចដំបូង រហូតដល់ការផ្ញើ និងត្រឡប់មកវិញ។</td></tr>
+</table></div>
+</section>
+
+<section class="changes" data-l="en">
+<div class="kicker">Last changes</div>
+<h2>Published, with the place around the road.</h2>
+<p class="changes-note">A summary of the latest commits in this site’s repository, up to 28 November 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-11-28">28 Nov 2026</time><div><b>The editor published, and its scenery in the game</b><p>The editor’s branch is merged into the site’s <code>main</code>: the page online now has the photos, the scenery, the objects and the altitudes kept on the computer. The same day, 3D Buggy’s <code>main</code> receives the scenery and objects, which it builds where the file puts them.</p></div></li>
+<li><time datetime="2026-11-28">28 Nov 2026</time><div><b>The game’s objects, placed by hand</b><p>A library of the game’s scenery objects with thumbnails rendered by its engine, Cambodia first, grown to 379 with the places of worship, festivals, the village and the river, the street and six big town buildings. Objects are placed by click, in a straight row or along the course, turned, resized, duplicated and moved.</p></div></li>
+<li><time datetime="2026-11-28">28 Nov 2026</time><div><b>Photos, albums and the real place’s scenery</b><p>Photos with their GPS position, JPEG or HEIC, or a whole Google Photos album as a <code>.zip</code>, sorted into places and roles; a course proposed through them when none is drawn; and, on export, the buildings, water and land cover of the real place read from Overture Maps.</p></div></li>
+<li><time datetime="2026-11-27">27–28 Nov 2026</time><div><b>Kept from one visit to the next</b><p>The drawing in progress, the roads Overpass gave and the altitudes Open-Meteo gave are kept on the computer: taking up a drawing on the tour of Kep hill takes 0.4 s instead of 34 s. The relief can be smoothed of bumps and hollows shorter than 300 or 600 m.</p></div></li>
+<li><time datetime="2026-11-27">27 Nov 2026</time><div><b>A program of the computer</b><p>A launcher installs the editor with its own command, window and entry in the applications menu. The delay of a first publication is measured (under a minute), and the README says which game reads the circuits today: 3D Buggy.</p></div></li>
+<li><time datetime="2026-11-26">26 Nov 2026</time><div><b>The format, the page and the Petit Circuit</b><p>The <code>.cambotrack.json</code> format and its JSON Schema; the page, one HTML file with Leaflet; Node tests of its core, an end-to-end test in a browser and a seeded property test; and the Petit Circuit, redrawn 0.15 % short of the original, as the catalogue’s first circuit.</p></div></li>
+</ol>
+<p class="changes-more">Earlier versions of this page, with their captures and videos: <a href="../history/circuit-editor.html">History →</a></p>
+</section>
+
+<section class="changes" data-l="fr">
+<div class="kicker">Derniers changements</div>
+<h2>Publié, avec le lieu autour de la route.</h2>
+<p class="changes-note">Un résumé des derniers commits du dépôt de ce site, jusqu’au 28 novembre 2026.</p>
+<ol class="changelog">
+<li><time datetime="2026-11-28">28 nov. 2026</time><div><b>L’éditeur publié, et son décor dans le jeu</b><p>La branche de l’éditeur est fusionnée dans le <code>main</code> du site : la page en ligne a désormais les photos, le décor, les objets et les altitudes gardées sur l’ordinateur. Le même jour, le <code>main</code> de 3D Buggy reçoit le décor et les objets, qu’il construit là où le fichier les met.</p></div></li>
+<li><time datetime="2026-11-28">28 nov. 2026</time><div><b>Les objets du jeu, posés à la main</b><p>Une bibliothèque des objets de décor du jeu, avec des vignettes rendues par son moteur, le Cambodge en tête, portée à 379 avec les lieux de culte, les fêtes, le village et la rivière, la rue et six grands bâtiments de ville. Les objets se posent par clic, en ligne droite ou le long du tracé, se tournent, s’agrandissent, se dupliquent et se déplacent.</p></div></li>
+<li><time datetime="2026-11-28">28 nov. 2026</time><div><b>Photos, albums et décor du lieu réel</b><p>Des photos avec leur position GPS, en JPEG ou en HEIC, ou un album Google Photos entier en <code>.zip</code>, rangées en lieux et en rôles ; un tracé proposé à partir d’elles quand aucun n’est dessiné ; et, à l’export, les bâtiments, l’eau et la couverture du sol du lieu réel, lus dans Overture Maps.</p></div></li>
+<li><time datetime="2026-11-27">27–28 nov. 2026</time><div><b>Gardé d’une visite à l’autre</b><p>Le tracé en cours, les routes données par Overpass et les altitudes données par Open-Meteo sont gardés sur l’ordinateur : reprendre un tracé sur le tour de la colline de Kep prend 0,4 s au lieu de 34 s. Le relief peut être débarrassé des bosses et des creux de moins de 300 ou 600 m.</p></div></li>
+<li><time datetime="2026-11-27">27 nov. 2026</time><div><b>Un programme de l’ordinateur</b><p>Un lanceur installe l’éditeur avec sa commande, sa fenêtre et son entrée dans le menu des applications. Le délai d’une première publication est mesuré (moins d’une minute), et le README dit quel jeu lit les circuits aujourd’hui : 3D Buggy.</p></div></li>
+<li><time datetime="2026-11-26">26 nov. 2026</time><div><b>Le format, la page et le Petit Circuit</b><p>Le format <code>.cambotrack.json</code> et son schéma JSON ; la page, un fichier HTML avec Leaflet ; des tests Node de son cœur, un test de bout en bout dans un navigateur et un test de propriétés à graine fixe ; et le Petit Circuit, redessiné à 0,15 % près de l’original, comme premier circuit du catalogue.</p></div></li>
+</ol>
+<p class="changes-more">Les versions antérieures de cette page, avec leurs captures et leurs vidéos : <a href="../history/circuit-editor.html">Historique →</a></p>
+</section>
+
+<section class="changes" data-l="km">
+<div class="kicker">ការផ្លាស់ប្តូរចុងក្រោយ</div>
+<h2>បានផ្សព្វផ្សាយ ជាមួយទីកន្លែងជុំវិញផ្លូវ។</h2>
+<p class="changes-note">សេចក្តីសង្ខេបនៃ commit ចុងក្រោយក្នុង repository នៃគេហទំព័រនេះ រហូតដល់ថ្ងៃទី 28 ខែវិច្ឆិកា ឆ្នាំ 2026។</p>
+<ol class="changelog">
+<li><time datetime="2026-11-28">28 វិច្ឆិកា 2026</time><div><b>កម្មវិធីគូរបានផ្សព្វផ្សាយ និងទេសភាពរបស់វាក្នុងហ្គេម</b><p>branch របស់កម្មវិធីគូរ ត្រូវបានបញ្ចូលទៅក្នុង <code>main</code> នៃគេហទំព័រ៖ ទំព័រលើអ៊ីនធឺណិត ឥឡូវមានរូបថត ទេសភាព វត្ថុ និងកម្ពស់ដែលរក្សាទុកលើកុំព្យូទ័រ។ នៅថ្ងៃដដែល <code>main</code> របស់ 3D Buggy ទទួលបានទេសភាព និងវត្ថុ ដែលវាសាងសង់នៅកន្លែងដែលឯកសារដាក់។</p></div></li>
+<li><time datetime="2026-11-28">28 វិច្ឆិកា 2026</time><div><b>វត្ថុរបស់ហ្គេម ដាក់ដោយដៃ</b><p>បណ្ណាល័យវត្ថុទេសភាពរបស់ហ្គេម ជាមួយរូបតូចៗដែលបង្ហាញដោយម៉ាស៊ីនរបស់វា កម្ពុជានៅខាងមុខ ដែលកើនដល់ 379 ជាមួយទីសក្ការៈ ពិធីបុណ្យ ភូមិ និងទន្លេ ផ្លូវ និងអគារធំៗប្រាំមួយក្នុងក្រុង។ វត្ថុត្រូវបានដាក់ដោយការចុច ជាជួរត្រង់ ឬតាមបណ្តោយផ្លូវប្រណាំង ហើយអាចបង្វិល ពង្រីក ចម្លង និងផ្លាស់ទី។</p></div></li>
+<li><time datetime="2026-11-28">28 វិច្ឆិកា 2026</time><div><b>រូបថត អាល់ប៊ុម និងទេសភាពនៃទីកន្លែងពិត</b><p>រូបថតដែលមានទីតាំង GPS ជា JPEG ឬ HEIC ឬអាល់ប៊ុម Google Photos ទាំងមូលជា <code>.zip</code> ដែលរៀបជាទីកន្លែង និងតួនាទី ផ្លូវប្រណាំងដែលស្នើពីវា ពេលមិនទាន់មានការគូរ ហើយពេលនាំចេញ អគារ ទឹក និងគម្របដីនៃទីកន្លែងពិត ដែលអានពី Overture Maps។</p></div></li>
+<li><time datetime="2026-11-27">27–28 វិច្ឆិកា 2026</time><div><b>រក្សាទុកពីការចូលមើលមួយទៅមួយទៀត</b><p>ការគូរដែលកំពុងធ្វើ ផ្លូវដែល Overpass បានផ្តល់ និងកម្ពស់ដែល Open-Meteo បានផ្តល់ ត្រូវបានរក្សាទុកលើកុំព្យូទ័រ៖ ការបន្តការគូរលើផ្លូវជុំវិញភ្នំកែប ចំណាយពេល 0.4 វិនាទី ជំនួសឱ្យ 34 វិនាទី។ កម្ពស់ដីអាចត្រូវបានសម្អាតពីទួល និងរណ្តៅ ដែលខ្លីជាង 300 ឬ 600 ម៉ែត្រ។</p></div></li>
+<li><time datetime="2026-11-27">27 វិច្ឆិកា 2026</time><div><b>កម្មវិធីមួយរបស់កុំព្យូទ័រ</b><p>កម្មវិធីបើកដំណើរការមួយ ដំឡើងកម្មវិធីគូរ ជាមួយពាក្យបញ្ជា បង្អួច និងធាតុរបស់វាក្នុងម៉ឺនុយកម្មវិធី។ រយៈពេលនៃការផ្សព្វផ្សាយលើកដំបូង ត្រូវបានវាស់ (តិចជាងមួយនាទី) ហើយ README ប្រាប់ថា ហ្គេមណាអានសៀគ្វីនៅពេលនេះ៖ 3D Buggy។</p></div></li>
+<li><time datetime="2026-11-26">26 វិច្ឆិកា 2026</time><div><b>ទម្រង់ឯកសារ ទំព័រ និង Petit Circuit</b><p>ទម្រង់ <code>.cambotrack.json</code> និង JSON Schema របស់វា ទំព័រដែលជាឯកសារ HTML តែមួយជាមួយ Leaflet ការធ្វើតេស្ត Node នៃស្នូលរបស់វា ការធ្វើតេស្តពីដើមដល់ចប់ក្នុង browser និងការធ្វើតេស្តលក្ខណៈដែលមានគ្រាប់ពូជថេរ ហើយ Petit Circuit ដែលគូរឡើងវិញ ខុសពីដើមត្រឹម 0.15 % ជាសៀគ្វីដំបូងនៃបញ្ជី។</p></div></li>
+</ol>
+<p class="changes-more">កំណែមុនៗនៃទំព័រនេះ ជាមួយរូបថតអេក្រង់ និងវីដេអូរបស់វា៖ <a href="../history/circuit-editor.html">ប្រវត្តិ →</a></p>
+</section>
+
+<nav class="pager">
+<a href="phlov.html"><small>← <span data-l="en">Previous</span><span data-l="fr">Précédent</span><span data-l="km">មុន</span></small><b>phlov</b></a>
+<a href="nautica.html"><small><span data-l="en">Next</span><span data-l="fr">Suivant</span><span data-l="km">បន្ទាប់</span> →</small><b>Cambodia Nautic</b></a>
+</nav>
+</main>
+<footer><div class="wrap foot"><span>© <span id="year"></span> CHANTREA SYSTEMS</span><a href="../#dev">← <span data-l="en">Back to projects in development</span><span data-l="fr">Retour aux projets en développement</span><span data-l="km">ត្រឡប់ទៅគម្រោងកំពុងអភិវឌ្ឍ</span></a></div></footer>
+</body></html>
