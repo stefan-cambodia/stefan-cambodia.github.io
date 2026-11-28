@@ -1312,10 +1312,13 @@ def chrome_run(context, net, errors, base, shots):
     check(page.locator(".mb-pop").count() == 0, "Échap closes the menu")
     frame_and_load(page)
     check(page.locator("#welcome").is_hidden(), "no first steps once roads are loaded")
+    check("poser le départ" in sp(page.inner_text("#maphint")) and page.locator("#road-legend").is_visible(),
+          "roads loaded: the map says where to click, and what the road colours mean")
     for lat, lon in WAYPOINTS:
         click_latlon(page, lat, lon)
     page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
     page.wait_for_function("document.getElementById('tabbtn-trace').classList.contains('done')")
+    check(page.locator("#maphint").is_hidden(), "with a course, no more hint on the map")
     check(not page.locator("#tabbtn-settings").evaluate("b => b.classList.contains('done')"), "the course is ticked, the settings wait for a name")
     # A right click on the map: what can be done there; Échap closes it, a click elsewhere too, without a waypoint.
     x, y = page.evaluate("""(ll) => { const p = window.circuitEditor.map.latLngToContainerPoint(ll), r = document.getElementById('map').getBoundingClientRect();
@@ -1363,6 +1366,9 @@ def chrome_run(context, net, errors, base, shots):
     page.keyboard.press("Control+s")
     page.wait_for_function("document.getElementById('toast').textContent.includes('Mes circuits')", timeout=10000)
     check(True, "Ctrl+S keeps the circuit in « Mes circuits »")
+    page.wait_for_function("document.querySelectorAll('#circuits .sketch path').length >= 1")
+    d = page.evaluate("document.querySelector('#circuits .sketch path').getAttribute('d')")
+    check(d.count("L") > 20 and d.endswith("Z"), "« Mes circuits » shows the shape of the loop (%d points)" % (d.count("L") + 1))
     shot(page, shots, "desktop-menubar.png")
     page.click("#clear")
     page.wait_for_selector("#toast .toast-act")

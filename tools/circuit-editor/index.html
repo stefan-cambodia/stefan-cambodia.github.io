@@ -211,7 +211,12 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
 .circuit-open:hover { background: var(--paper-soft); }
 .circuit-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.circuit-open { display: flex; align-items: center; gap: 10px; }
+.circuit-what { flex: 1 1 auto; min-width: 0; }
 .circuit-open b, .circuit-open small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sketch { flex: 0 0 56px; width: 56px; height: 42px; border-radius: 6px; background: #eef4f6; }
+.sketch path { fill: none; stroke: var(--route); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.sketch circle { fill: var(--ok); stroke: #fff; stroke-width: 1; }
 .circuit-del { flex: 0 0 44px; }
 .note.kept .btn.small { min-height: 30px; margin-left: 4px; padding: 2px 10px; font-size: .95em; font-weight: 500; vertical-align: baseline; }
 .help { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
@@ -302,6 +307,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .mi.on::before { content: '✓'; position: absolute; margin-left: -2px; color: var(--accent); font-weight: 700; }
 .mi.on { position: relative; }
 .mi .ic { width: 18px; flex: 0 0 18px; text-align: center; color: var(--accent); }
+.maphint { position: absolute; z-index: 999; top: 14px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 24px);
+  padding: 7px 14px; border-radius: 999px; background: rgba(11, 61, 75, .92); color: #fff; font-size: .92em; font-weight: 600;
+  box-shadow: var(--shadow); pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (min-width: 900px) { .maphint { left: 400px; transform: none; max-width: calc(100% - 470px); } }
+.legend-ctl { padding: 5px 9px; border-radius: 8px; background: rgba(255, 255, 255, .92); box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+  color: var(--ink); font-size: 11.5px; line-height: 1.6; }
+.legend-ctl i { display: inline-block; width: 20px; height: 0; margin-right: 5px; vertical-align: middle; border-top: 3px solid; }
 .mapmenu { top: 0; min-width: 250px; z-index: 1200; }
 .mapmenu .where { padding: 4px 10px 6px; color: var(--ink-soft); font-size: .8em; font-variant-numeric: tabular-nums; }
 .msep { height: 1px; margin: 5px 4px; background: var(--line); }
@@ -477,6 +489,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
     <div id="mapmenu" class="mapmenu" role="menu" aria-label="Ici" hidden></div>
+    <div id="maphint" class="maphint" aria-live="polite" hidden></div>
 
     <div id="welcome" class="welcome" role="group" aria-labelledby="welcome-title" hidden>
       <button type="button" id="welcome-close" class="close" aria-label="Fermer" title="Fermer">×</button>
@@ -3804,6 +3817,19 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     L.control.layers(base, null, { position: 'topright' }).addTo(map);
     L.control.zoom({ position: 'bottomright', zoomInTitle: 'Zoom avant', zoomOutTitle: 'Zoom arrière' }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    // What the colours of the roads loaded mean (shown once there are roads).
+    const Legend = L.Control.extend({ onAdd: () => {
+      const d = L.DomUtil.create('div', 'legend-ctl');
+      d.id = 'road-legend';
+      d.hidden = true;
+      d.innerHTML = '<div><i style="border-color:' + ROAD_STYLE.major.color + '"></i>grande route</div>' +
+        '<div><i style="border-color:' + ROAD_STYLE.minor.color + '"></i>petite route, rue</div>' +
+        '<div><i style="border-color:' + ROAD_STYLE.track.color + ';border-top-style:dashed"></i>piste</div>' +
+        '<div><i style="border-color:' + ROUTE_COLOR + ';border-top-width:5px"></i>le tracé</div>';
+      L.DomEvent.disableClickPropagation(d);
+      return d;
+    } });
+    new Legend({ position: 'bottomleft' }).addTo(map);
     // The roads drawn over any background are OpenStreetMap's.
     map.attributionControl.addAttribution('Routes © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL)');
 
@@ -5431,6 +5457,39 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     });
   }
 
+  // The shape of the course for the list: the route as drawn, 60 points at most.
+  function sketchNow() {
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (!line || line.lat.length < 2) return state.waypoints.map((w) => [+w.lat.toFixed(5), +w.lon.toFixed(5)]);
+    const n = line.lat.length, step = Math.max(1, Math.ceil(n / 60)), out = [];
+    for (let i = 0; i < n; i += step) out.push([+line.lat[i].toFixed(5), +line.lon[i].toFixed(5)]);
+    return out;
+  }
+  // A small drawing of a course (an SVG), north up, its proportions kept.
+  function sketchSvg(pts, closed) {
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg'), W = 56, H = 42, pad = 5;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('class', 'sketch');
+    svg.setAttribute('aria-hidden', 'true');
+    const ok = Array.isArray(pts) ? pts.filter((p) => Array.isArray(p) && isFinite(p[0]) && isFinite(p[1])) : [];
+    if (ok.length < 2) return svg;
+    const k = Math.cos(ok[0][0] * Math.PI / 180);
+    const xs = ok.map((p) => p[1] * k), ys = ok.map((p) => -p[0]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const sc = Math.min((W - 2 * pad) / Math.max(x1 - x0, 1e-9), (H - 2 * pad) / Math.max(y1 - y0, 1e-9));
+    const ox = (W - (x1 - x0) * sc) / 2, oy = (H - (y1 - y0) * sc) / 2;
+    const d = xs.map((x, i) => (i ? 'L' : 'M') + (ox + (x - x0) * sc).toFixed(1) + ' ' + (oy + (ys[i] - y0) * sc).toFixed(1)).join('') + (closed ? 'Z' : '');
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    svg.appendChild(path);
+    const start = document.createElementNS(NS, 'circle');
+    start.setAttribute('cx', (ox + (xs[0] - x0) * sc).toFixed(1));
+    start.setAttribute('cy', (oy + (ys[0] - y0) * sc).toFixed(1));
+    start.setAttribute('r', '2.6');
+    svg.appendChild(start);
+    return svg;
+  }
+
   async function renderCircuits() {
     const rows = await circuitRows(), list = $('circuits');
     library.sigs = {};
@@ -5440,8 +5499,11 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       const li = make('li'), open = make('button', 'circuit-open'), del = make('button', 'btn icon danger circuit-del');
       const laps = r.kind === 'loop' && r.laps > 1 ? r.laps + ' tours · ' : '';
       open.type = 'button';
-      open.appendChild(make('b', '', r.name));
-      open.appendChild(make('small', '', (r.length_game_m > 0 ? fmtDist(r.length_game_m) + ' de jeu · ' : 'tracé incomplet · ') + laps + 'gardé le ' + dayText(r.saved)));
+      open.appendChild(sketchSvg(Array.isArray(r.sketch) && r.sketch.length > 1 ? r.sketch : r.draft.waypoints, r.kind === 'loop'));
+      const what = make('span', 'circuit-what');
+      what.appendChild(make('b', '', r.name));
+      what.appendChild(make('small', '', (r.length_game_m > 0 ? fmtDist(r.length_game_m) + ' de jeu · ' : 'tracé incomplet · ') + laps + 'gardé le ' + dayText(r.saved)));
+      open.appendChild(what);
       open.addEventListener('click', () => openCircuit(r));
       del.type = 'button';
       del.title = 'Supprimer de Mes circuits';
@@ -5471,7 +5533,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     }
     const r = current.result, ok = !!(current.route && current.route.ok && r && r.ok);
     const row = { id: id, name: name, saved: nowIso(), kind: state.kind, laps: current.settings ? current.settings.laps : 1,
-      length_game_m: ok ? r.track.length_game_m : 0, draft: currentDrawing() };
+      length_game_m: ok ? r.track.length_game_m : 0, draft: currentDrawing(), sketch: sketchNow() };
     const done = await circuitWrite((store) => store.put(row));
     await renderCircuits();
     if (!quiet) toast(done ? '« ' + name + ' » est gardé dans Mes circuits.' : 'Ce navigateur n\'a pas pu garder le circuit.', done ? '' : 'bad');
@@ -6761,6 +6823,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     };
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
     $('trace-stats').hidden = state.waypoints.length < 2;
+    if ($('road-legend')) $('road-legend').hidden = !graph.ways.length;
+    // What to do next on the map, while it is not obvious.
+    const hint = !graph.ways.length || objUi.armed ? ''
+      : state.waypoints.length === 0 ? 'Cliquez sur une route pour poser le départ'
+        : state.waypoints.length === 1 ? 'Cliquez plus loin sur une route : le tracé la suivra' : '';
+    setText($('maphint'), typo(hint));
+    $('maphint').hidden = !hint;
     // The send step says first whether there is something to send, else what is missing.
     const n = state.waypoints.length, go = $('send-ready-go'), plural = (k, one, many) => NUM(k) + ' ' + (k > 1 ? many : one);
     let title, text = '', fix = null;
