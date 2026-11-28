@@ -390,6 +390,16 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .ready span { flex: 1 1 auto; color: var(--ink-soft); font-size: .92em; }
 .ready.ok { border-left-color: var(--ok); background: #ebfbee; }
 .ready .btn.small { min-height: 32px; padding: 3px 12px; font-size: .92em; }
+.wplist { margin: 0 0 10px; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
+.wplist li { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--paper-soft); }
+.wplist .n { flex: 0 0 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: var(--route); color: #fff; font-size: 12px; font-weight: 700; }
+.wplist li.start .n { background: var(--ok); }
+.wplist li.lost .n { background: var(--bad); }
+.wplist .d { flex: 1 1 auto; color: var(--ink-soft); font-size: .9em; font-variant-numeric: tabular-nums; }
+.wplist button { min-height: 30px; padding: 2px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper);
+  color: var(--ink); font: inherit; font-size: .85em; cursor: pointer; }
+.wplist button.del { color: var(--bad); }
 .stepnav { display: flex; justify-content: space-between; gap: 8px; margin: 18px 0 4px; padding-top: 12px; border-top: 1px solid var(--line); }
 .stepnav .next { margin-left: auto; border-color: var(--accent); color: var(--accent); }
 .stepnav .ghost { border-color: transparent; color: var(--ink-soft); font-weight: 500; }
@@ -555,6 +565,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         </dl>
 
         <ul id="messages" class="messages" aria-label="Avertissements"></ul>
+        <details id="wp-box" class="help wps" hidden><summary>Points de passage <span id="wp-count" class="muted"></span></summary>
+          <ol id="wp-list" class="wplist"></ol></details>
         <p id="roads-info" class="note">Aucune route chargée : cadrez la carte sur la zone voulue, puis « Charger les routes de la zone ».</p>
         <p id="roads-kept" class="note kept" hidden><span id="roads-kept-text"></span>
           <button type="button" id="roads-forget" class="btn small">Les oublier</button></p>
@@ -6823,6 +6835,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     };
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
     $('trace-stats').hidden = state.waypoints.length < 2;
+    renderWaypointList();
     if ($('road-legend')) $('road-legend').hidden = !graph.ways.length;
     // What to do next on the map, while it is not obvious.
     const hint = !graph.ways.length || objUi.armed ? ''
@@ -6848,6 +6861,33 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if ($('f-id').classList.contains('invalid')) document.querySelector('#tab-settings details.adv').open = true;
     const empty = !graph.ways.length && !state.waypoints.length && !state.photos.length && !state.objects.length;
     $('welcome').hidden = chrome.welcomeClosed || !$('draft').hidden || !(chrome.welcomeForced || empty);
+  }
+
+  // The waypoints as a list: where each one is along the course, a click goes there.
+  let wpSig = '';
+  function renderWaypointList() {
+    const wps = state.waypoints, route = current.route, legs = route && route.legs ? route.legs : [];
+    const sig = JSON.stringify([wps.map((w) => [w.lat, w.lon, w.edge < 0]), legs.map((l) => (l.ok ? Math.round(l.length) : -1)), objScale()]);
+    if (sig === wpSig) return;
+    wpSig = sig;
+    $('wp-box').hidden = wps.length < 2;
+    setText($('wp-count'), '(' + wps.length + ')');
+    const list = $('wp-list'), k = objScale();
+    list.textContent = '';
+    let at = 0, known = true;
+    wps.forEach((w, i) => {
+      const li = make('li', i === 0 ? 'start' : (w.edge < 0 ? 'lost' : ''));
+      li.appendChild(make('span', 'n', i === 0 ? 'D' : String(i + 1)));
+      li.appendChild(make('span', 'd', i === 0 ? 'départ' : known ? typo(fmtDist(at / k) + ' de jeu') : '—'));
+      const go = make('button', '', 'Voir'), del = make('button', 'del', 'Retirer');
+      go.type = del.type = 'button';
+      go.addEventListener('click', () => map.setView([w.lat, w.lon], Math.max(map.getZoom(), 17)));
+      del.addEventListener('click', () => deleteWaypoint(i));
+      li.appendChild(go); li.appendChild(del);
+      list.appendChild(li);
+      const leg = legs[i];
+      if (leg && leg.ok) at += leg.length; else known = false;
+    });
   }
 
   function initChrome() {

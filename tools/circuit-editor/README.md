@@ -52,6 +52,8 @@ clavier, grand écran).
 - **Sur la carte** : une fois les routes chargées, une ligne dit où cliquer (le départ, puis
   plus loin) et une légende donne le sens des couleurs (grande route, petite route, piste,
   le tracé). Dans « Mes circuits », chaque circuit gardé a le dessin de son tracé.
+- **Points de passage** (étape Tracé) : la liste des points, chacun à sa distance du départ
+  en mètres de jeu ; « Voir » y amène la carte, « Retirer » l'enlève (Ctrl+Z le remet).
 - **D'une étape à l'autre** : au pied de chaque étape, « Suivant » et le retour à la
   précédente. L'étape Envoi dit d'abord si le circuit est prêt (son nom, sa longueur, ses
   objets et photos) ou ce qui manque, avec le bouton pour y aller.

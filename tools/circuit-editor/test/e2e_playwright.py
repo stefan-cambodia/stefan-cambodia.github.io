@@ -1319,6 +1319,14 @@ def chrome_run(context, net, errors, base, shots):
     page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
     page.wait_for_function("document.getElementById('tabbtn-trace').classList.contains('done')")
     check(page.locator("#maphint").is_hidden(), "with a course, no more hint on the map")
+    page.click("#wp-box summary")
+    rows = page.evaluate("Array.from(document.querySelectorAll('#wp-list li')).map(li => li.querySelector('.d').textContent)")
+    check(len(rows) == 4 and rows[0] == "départ" and "de jeu" in rows[3], "the list of waypoints, each where it is along the course (%s)" % sp(", ".join(rows)))
+    page.locator("#wp-list li").nth(3).locator("button.del").click()
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 3")
+    page.keyboard.press("Control+z")
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    check(True, "« Retirer » in the list takes a waypoint out, Ctrl+Z puts it back")
     check(not page.locator("#tabbtn-settings").evaluate("b => b.classList.contains('done')"), "the course is ticked, the settings wait for a name")
     # A right click on the map: what can be done there; Échap closes it, a click elsewhere too, without a waypoint.
     x, y = page.evaluate("""(ll) => { const p = window.circuitEditor.map.latLngToContainerPoint(ll), r = document.getElementById('map').getBoundingClientRect();
