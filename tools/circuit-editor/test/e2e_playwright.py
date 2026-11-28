@@ -97,6 +97,15 @@ def serve():
     return server
 
 
+def overpass_area_km2(query):
+    """The area of an Overpass query's bounding box (south, west, north, east)."""
+    m = re.search(r"\(([-0-9.]+),([-0-9.]+),([-0-9.]+),([-0-9.]+)\)", query)
+    if not m:
+        return 0.0
+    s, w, n, e = (float(v) for v in m.groups())
+    return (n - s) * 111.32 * (e - w) * 111.32 * math.cos(math.radians((s + n) / 2))
+
+
 class Network:
     """Answers every request the page makes outside this machine."""
 
@@ -104,6 +113,7 @@ class Network:
         self.overpass_body = FIXTURE.read_bytes()
         self.overpass_calls = []          # (host, query)
         self.overpass_down = set()        # hosts that answer 504
+        self.overpass_max_km2 = None      # every host answers 504 for a larger box (a busy server timing out)
         self.elevation_calls = []         # coordinates per request
         self.elevation_429 = 0            # how many times to answer 429 first
         self.elevation_retry_after = "1"  # seconds, as the minute's allowance gives them
@@ -167,7 +177,7 @@ class Network:
     def overpass(self, route, request, host):
         query = urllib.parse.parse_qs(request.post_data or "").get("data", [""])[0]
         self.overpass_calls.append((host, query))
-        if host in self.overpass_down:
+        if host in self.overpass_down or (self.overpass_max_km2 and overpass_area_km2(query) > self.overpass_max_km2):
             return route.fulfill(status=504, content_type="text/html", body="<h1>504 Gateway Time-out</h1>", headers=CORS)
         return route.fulfill(status=200, content_type="application/json", body=self.overpass_body, headers=CORS)
 
@@ -345,6 +355,28 @@ def desktop_run(context, net, errors, base, shots, tmp):
     page.wait_for_function("document.getElementById('toast').textContent.includes('Aucune nouvelle route')")
     check(net.overpass_calls[-1][0] == "maps.mail.ru" and page.evaluate("window.circuitEditor.graph.ways.length") == ways,
           "a second load merges by OSM id and adds nothing")
+    # Every server gives up on the whole view (504), but answers for a quarter of it:
+    # the editor loads the four quarters, starting with the server that answered last.
+    view = overpass_area_km2(net.overpass_calls[-1][1])
+    net.overpass_max_km2 = view / 3
+    calls = len(net.overpass_calls)
+    page.evaluate("""() => { window.__toasts = []; new MutationObserver(() => window.__toasts.push(document.getElementById('toast').textContent))
+      .observe(document.getElementById('toast'), { childList: true, subtree: true, characterData: true }); }""")
+    page.click("#load-roads")
+    for _ in range(100):
+        if len(net.overpass_calls) - calls >= 7:
+            break
+        page.wait_for_timeout(200)
+    page.wait_for_function("!document.getElementById('load-roads').disabled", timeout=20000)
+    check(any("quatre morceaux" in t for t in page.evaluate("window.__toasts")), "the split is announced (%.1f km² view)" % view)
+    asked = net.overpass_calls[calls:]
+    sizes = [overpass_area_km2(q) for _, q in asked]
+    check(len(asked) == 7 and all(a > view / 3 for a in sizes[:3]) and all(a < view / 3 for a in sizes[3:])
+          and abs(sum(sizes[3:]) - view) < view * 0.02 and all(h == "maps.mail.ru" for h, _ in asked[3:]),
+          "a view every server fails on is loaded in four quarters (%s)" % ["%s %.2f" % (h, a) for (h, _), a in zip(asked, sizes)])
+    check(page.evaluate("localStorage.getItem('circuit-editor.overpass')") == "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+          "the server that answered is remembered for the next visit")
+    net.overpass_max_km2 = None
 
     # Four waypoints.
     for lat, lon in WAYPOINTS:
@@ -1294,7 +1326,7 @@ def outage_run(context, net, errors, base, shots):
     calls = len(net.overpass_calls)
     page.click("#load-roads")
     page.wait_for_function("document.getElementById('toast').textContent.includes('surchargés')", timeout=20000)
-    check(len(net.overpass_calls) == calls + 3, "Overpass down everywhere: the three servers are tried, then a message in French")
+    check(len(net.overpass_calls) == calls + 6, "Overpass down everywhere: the three servers are tried on the view, then on its first quarter, then a message in French")
     check(not page.locator("#load-roads").is_disabled(), "the button comes back for another try")
     shot(page, shots, "desktop-overpass-down.png")
     page.close()

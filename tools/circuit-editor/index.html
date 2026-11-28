@@ -3649,6 +3649,8 @@ html.lang-km body { line-height: 1.55; }
   const OVERPASS_QUERY_TIMEOUT_S = 60;   // what the server may spend on the query
   const OVERPASS_WAIT_MS = 25000;        // how long the page waits before trying the next server (the last one: three times that)
   const OVERPASS_MAX_KM2 = 1500;
+  const OVERPASS_SPLIT_MIN_KM2 = 0.5;    // a zone every server fails on is loaded in quarters, down to about this size
+  const OVERPASS_SERVER_KEY = 'circuit-editor.overpass';   // localStorage: the server that answered last, asked first next visit
   const ROADS_DB = 'circuit-editor';     // IndexedDB: the roads and the circuits kept on this computer
   const ROADS_KEEP = 24;                 // boxes kept; the oldest make room
   const ELEVATIONS_KEEP = 300000;        // altitudes kept (a 100 km course asks some 3 300); beyond, the store starts again
@@ -3912,6 +3914,7 @@ html.lang-km body { line-height: 1.55; }
   // view: what the canvas last drew; ll: the course's points as [lat, lon], of `track`.
   const probe = { index: -1, view: null, ll: null, track: null };
   const roads = { busy: false, firstServer: 0, areas: [] };   // areas: the boxes loaded in this visit
+  try { roads.firstServer = Math.max(0, OVERPASS_ENDPOINTS.indexOf(localStorage.getItem(OVERPASS_SERVER_KEY))); } catch (e) { /* first one */ }
 
   let map, roadRenderer, routeRenderer, baseLayers = {};
   const layers = {};
@@ -4029,6 +4032,7 @@ html.lang-km body { line-height: 1.55; }
     const body = 'data=' + encodeURIComponent(overpassQuery(box));
     const n = OVERPASS_ENDPOINTS.length;
     let last = 'network', lastStatus = 0;
+    const said = [];
     for (let k = 0; k < n; k++) {
       const index = (roads.firstServer + k) % n;
       setText($('load-roads'), label + ' (serveur ' + (k + 1) + '/' + n + ')…');
@@ -4036,15 +4040,17 @@ html.lang-km body { line-height: 1.55; }
         const r = await fetchText(OVERPASS_ENDPOINTS[index], {
           method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body
         }, k === n - 1 ? OVERPASS_WAIT_MS * 3 : OVERPASS_WAIT_MS);
-        if (!r.ok) { last = r.status === 400 ? 'bad' : 'busy'; lastStatus = r.status; continue; }
+        if (!r.ok) { last = r.status === 400 ? 'bad' : 'busy'; lastStatus = r.status; said.push(last); continue; }
         let data;
         try { data = JSON.parse(r.text); } catch (e) { last = 'unreadable'; continue; }
         if (!data || !Array.isArray(data.elements)) { last = 'unreadable'; continue; }
-        if (typeof data.remark === 'string' && /error|timed out|out of memory/i.test(data.remark)) { last = 'remark'; continue; }
+        if (typeof data.remark === 'string' && /error|timed out|out of memory/i.test(data.remark)) { last = 'remark'; said.push(last); continue; }
         roads.firstServer = index;       // start with the one that answered next time
+        try { localStorage.setItem(OVERPASS_SERVER_KEY, OVERPASS_ENDPOINTS[index]); } catch (e) { /* not kept */ }
         return data;
       } catch (err) {
         last = err.kind || 'network';
+        said.push(last);
       }
     }
     const why = {
@@ -4055,7 +4061,13 @@ html.lang-km body { line-height: 1.55; }
       unreadable: 'Les serveurs Overpass ont renvoyé une réponse illisible. Réessayez dans une minute.',
       bad: 'Les serveurs Overpass ont refusé la demande (réponse ' + lastStatus + ').'
     };
-    throw new Error(why[last] || why.network);
+    // What the servers said matters more than the last one failing to connect (a
+    // mirror that refuses this page shows only as a network error): an overloaded
+    // or slow server is the reason given, and the one loadBoxSplit acts on.
+    const code = ['remark', 'timeout', 'busy'].find((c) => said.indexOf(c) >= 0) || last;
+    const err = new Error(why[code] || why.network);
+    err.code = code;
+    throw err;
   }
 
   // Draws the ways just added: one polyline per family, on the canvas renderer.
@@ -4097,6 +4109,37 @@ html.lang-km body { line-height: 1.55; }
     const data = await askOverpass(box, label);
     keepRoads(box, data);                // not waited for: keeping them is a convenience
     return addRoads(box, data);
+  }
+
+  // Like loadBox, but when every server fails on the box for its size (no answer
+  // in time, overloaded, out of time or memory), loads its four quarters instead,
+  // and theirs in turn, down to about OVERPASS_SPLIT_MIN_KM2: a busy server that
+  // gives up on a town often answers for a district. What loaded stays (each
+  // quarter is kept and framed on its own); if the first quarter fails too, the
+  // servers are down rather than the zone too big, and the error is thrown.
+  const SPLIT_ON = ['timeout', 'busy', 'remark'];
+  async function loadBoxSplit(box, label) {
+    try {
+      return await loadBox(box, label);
+    } catch (err) {
+      if (SPLIT_ON.indexOf(err.code) < 0 || C.bboxAreaKm2(box[0], box[1], box[2], box[3]) < OVERPASS_SPLIT_MIN_KM2 * 4) throw err;
+      const ms = (box[0] + box[2]) / 2, mw = (box[1] + box[3]) / 2;
+      const quarters = [[box[0], box[1], ms, mw], [box[0], mw, ms, box[3]], [ms, box[1], box[2], mw], [ms, mw, box[2], box[3]]];
+      toast('Les serveurs n\'arrivent pas à donner cette zone d\'un coup : chargement en quatre morceaux…', '', 8000);
+      let added = 0, loaded = 0, first = null;
+      for (let i = 0; i < quarters.length; i++) {
+        try {
+          added += await loadBoxSplit(quarters[i], label);
+          loaded++;
+        } catch (e) {
+          if (i === 0) throw e;          // the first quarter fails too: the servers are down, not the zone too big
+          first = first || e;
+        }
+      }
+      if (!loaded) throw first;
+      if (first) toast('Une partie de la zone n\'a pas pu être chargée (les cadres en pointillé montrent ce qui l\'est) : relancez « Charger les routes de la zone » sur le reste.', 'bad', 12000);
+      return added;
+    }
   }
 
   /* The roads Overpass gave are kept on this computer (IndexedDB), one record a
@@ -4271,7 +4314,7 @@ html.lang-km body { line-height: 1.55; }
         toast(NUM(n) + ' routes reprises de cet ordinateur (chargées le ' + dayText(kept.saved) + '). Un nouveau clic les redemande à OpenStreetMap.', '', 8000);
         return;
       }
-      const added = await loadBox(box, 'Chargement');
+      const added = await loadBoxSplit(box, 'Chargement');
       toast(added ? NUM(added) + ' routes ajoutées (' + NUM(graph.ways.length) + ' en tout).'
         : 'Aucune nouvelle route dans cette zone (' + NUM(graph.ways.length) + ' déjà chargées).');
     });
@@ -5353,7 +5396,7 @@ html.lang-km body { line-height: 1.55; }
     await withRoads(async () => {
       if (kept) { addRoads(kept.box, kept.data); return; }
       try {
-        for (let i = 0; i < pieces.length; i++) await loadBox(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
+        for (let i = 0; i < pieces.length; i++) await loadBoxSplit(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
       } catch (err) { failed = true; throw err; }
     });
     const n = state.waypoints.length, lost = state.waypoints.filter((w) => w.edge < 0).length;
@@ -5534,7 +5577,7 @@ html.lang-km body { line-height: 1.55; }
     let failed = false;
     await withRoads(async () => {
       try {
-        for (let i = 0; i < pieces.length; i++) await loadBox(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
+        for (let i = 0; i < pieces.length; i++) await loadBoxSplit(pieces[i], pieces.length > 1 ? 'Routes ' + (i + 1) + '/' + pieces.length : 'Chargement');
       } catch (err) { failed = true; throw err; }
     });
     const n = state.waypoints.length, lost = state.waypoints.filter((w) => w.edge < 0).length;
@@ -5910,7 +5953,7 @@ html.lang-km body { line-height: 1.55; }
     await withRoads(async () => {
       const kept = await keptCovering(box, ROADS_FRESH_DAYS);
       if (kept) { addRoads(kept.box, kept.data); return; }
-      try { await loadBox(box, 'Routes autour des photos'); } catch (err) { result = { ok: false, why: err.message }; }
+      try { await loadBoxSplit(box, 'Routes autour des photos'); } catch (err) { result = { ok: false, why: err.message }; }
     });
     return result;
   }
