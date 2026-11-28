@@ -3422,6 +3422,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const OVERPASS_MAX_KM2 = 1500;
   const ROADS_DB = 'circuit-editor';     // IndexedDB: the roads and the circuits kept on this computer
   const ROADS_KEEP = 24;                 // boxes kept; the oldest make room
+  const ELEVATIONS_KEEP = 300000;        // altitudes kept (a 100 km course asks some 3 300); beyond, the store starts again
   const ROADS_FRESH_DAYS = 30;           // older than this, a box is asked for again (« Reprendre » takes it at any age)
 
   const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
@@ -3554,6 +3555,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const graph = C.createGraph();
   const legCache = C.createLegCache();
   const eleStore = new Map();           // elevation lattice key -> metres
+  const eleLooked = new Set();          // keys already looked up among the altitudes kept on this computer
 
   // The drawing: what undo and redo restore. A waypoint is { lat, lon, edge, t };
   // edge is -1 while it has no road (reopened file, class no longer allowed).
@@ -3753,11 +3755,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (!keptDb) {
       keptDb = new Promise((done) => {
         try {
-          const q = window.indexedDB.open(ROADS_DB, 3);
+          const q = window.indexedDB.open(ROADS_DB, 4);
           q.onupgradeneeded = () => {
             // Version 1 had the roads ("meta", "data"); version 2 adds « Mes circuits »,
-            // version 3 the images of the photos ("photos": { id, image, saved }).
+            // version 3 the images of the photos ("photos": { id, image, saved }),
+            // version 4 the altitudes ("elevations": { key, m }, the lattice key of elevationPlan).
             if (!q.result.objectStoreNames.contains('photos')) q.result.createObjectStore('photos', { keyPath: 'id' });
+            if (!q.result.objectStoreNames.contains('elevations')) q.result.createObjectStore('elevations', { keyPath: 'key' });
             const have = q.result.objectStoreNames;
             if (!have.contains('meta')) q.result.createObjectStore('meta', { keyPath: 'key' });
             if (!have.contains('data')) q.result.createObjectStore('data', { keyPath: 'key' });
@@ -3787,6 +3791,45 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       } catch (e) { done(null); }
     });
   }
+  /* The altitudes Open-Meteo gave are kept as well: the ground does not move, so
+     a course drawn again over the same roads, another day or in another circuit,
+     asks only for the ground it has not had yet. */
+  async function withElevations(mode, work) {
+    const db = await openKept();
+    if (!db) return null;
+    return new Promise((done) => {
+      try {
+        const tx = db.transaction(['elevations'], mode), out = { value: null };
+        work(tx.objectStore('elevations'), out);
+        tx.oncomplete = () => done(out.value);
+        tx.onerror = tx.onabort = () => done(null);
+      } catch (e) { done(null); }
+    });
+  }
+  // Puts into eleStore those of `keys` kept on this computer; how many it found.
+  async function keptElevations(keys) {
+    const found = await withElevations('readonly', (store, out) => {
+      out.value = 0;
+      keys.forEach((k) => {
+        const g = store.get(k);
+        g.onsuccess = () => {
+          if (g.result && typeof g.result.m === 'number' && isFinite(g.result.m)) { eleStore.set(k, g.result.m); out.value++; }
+        };
+      });
+    });
+    return found || 0;
+  }
+  function keepElevations(keys, values) {
+    // Not waited for: keeping them is a convenience.
+    withElevations('readwrite', (store) => {
+      const n = store.count();
+      n.onsuccess = () => {
+        if (n.result + keys.length > ELEVATIONS_KEEP) store.clear();
+        keys.forEach((k, i) => store.put({ key: k, m: values[i] }));
+      };
+    });
+  }
+
   async function keepRoads(box, data) {
     const key = C.boxKey(box);
     await withKept('readwrite', (meta, store) => {
@@ -4499,7 +4542,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         for (;;) {
           const plan = current.plan;
           if (!plan) return false;
-          const miss = C.elevationMissing(plan, eleStore);
+          let miss = C.elevationMissing(plan, eleStore);
+          // What this computer has kept from an earlier visit first (each key looked up once).
+          const unseen = miss.key.filter((k) => !eleLooked.has(k));
+          if (unseen.length) {
+            unseen.forEach((k) => eleLooked.add(k));
+            if (await keptElevations(unseen)) miss = C.elevationMissing(plan, eleStore);
+          }
           if (!miss.key.length) return true;
           for (let i = 0; i < miss.key.length; i += ELEVATION_BATCH) {
             const asked = 'Relief : ' + NUM(Math.min(i + ELEVATION_BATCH, miss.key.length)) + ' / ' + NUM(miss.key.length) + ' points demandés à Open-Meteo';
@@ -4507,7 +4556,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
             renderRelief();
             const values = await elevationBatch(miss.lat.slice(i, i + ELEVATION_BATCH), miss.lon.slice(i, i + ELEVATION_BATCH), asked);
             // No data (open sea) comes back as null: sea level.
-            values.forEach((v, k) => eleStore.set(miss.key[i + k], typeof v === 'number' && isFinite(v) ? v : 0));
+            const keys = miss.key.slice(i, i + ELEVATION_BATCH), metres = values.map((v) => (typeof v === 'number' && isFinite(v) ? v : 0));
+            keys.forEach((k, j) => eleStore.set(k, metres[j]));
+            keepElevations(keys, metres);
             if (i + ELEVATION_BATCH < miss.key.length) await sleep(300);
           }
           // The course may have changed while we were asking: look again.

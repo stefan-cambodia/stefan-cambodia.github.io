@@ -276,6 +276,13 @@ def forget_roads(page):
     page.wait_for_selector("#roads-kept", state="hidden")
 
 
+def forget_elevations(page):
+    """The altitudes kept by earlier pages are forgotten (no button: straight in the database)."""
+    page.evaluate("""() => new Promise((done) => { const q = indexedDB.open('circuit-editor');
+        q.onsuccess = () => { const tx = q.result.transaction(['elevations'], 'readwrite');
+            tx.objectStore('elevations').clear(); tx.oncomplete = () => { q.result.close(); done(); }; }; })""")
+
+
 def shot(page, folder, name):
     if folder:
         pathlib.Path(folder).mkdir(parents=True, exist_ok=True)
@@ -882,6 +889,21 @@ def draft_run(context, net, errors, base, shots):
     check(True, "« Tout effacer » forgets the kept drawing")
     page.close()
 
+    # The altitudes stay on the computer: the same course drawn again on a new visit,
+    # with no drawing kept, asks Open-Meteo for nothing.
+    page = new_page(context, errors, base, 1280, 800)
+    heights = len(net.elevation_calls)
+    frame_and_load(page)
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.click("#tabbtn-relief")
+    page.wait_for_function("document.getElementById('relief-status').textContent.includes('Relief chargé')", timeout=30000)
+    check(len(net.elevation_calls) == heights, "drawn again on a later visit: its altitudes come from this computer (%d requests)"
+          % (len(net.elevation_calls) - heights))
+    page.click("#clear")
+    page.close()
+
 
 def circuits(page):
     """The rows of « Mes circuits » as the page shows them: [name, detail]."""
@@ -1234,6 +1256,7 @@ def relief_wait_run(context, net, errors, base, shots):
     net.overpass_down = set()
     net.elevation_429, net.elevation_retry_after = 1, "3"
     page = new_page(context, errors, base, 1280, 800)
+    forget_elevations(page)
     page.evaluate("(pts) => window.circuitEditor.map.fitBounds(pts, { padding: [170, 170], animate: false })", [list(w) for w in WAYPOINTS])
     page.wait_for_function("document.getElementById('load-roads').textContent.includes('Charger')")
     page.click("#load-roads")
