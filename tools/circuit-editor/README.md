@@ -317,6 +317,9 @@ herbes et rochers, maisons khmères et compartiments de Kampot, étals, gens, mo
 tuk-tuks, animaux, panneaux, rizières, bateaux, obstacles, services publics (commissariat, école, centre de santé, poste), commerces (station-service, banque, supérette, pharmacie, café, maison d'hôtes, réparateur de motos), route et réseaux (poteaux électriques, antenne relais, feux, panneaux stop et de limitation), lieux de culte (vihear, grand portail et kot d'une pagode, sala, stoupas familiaux, Bouddha et autel de Neak Ta de bord de route, temple chinois, mosquée cham, banian sacré), fêtes et vie de la rue (tente de mariage, tour de sono, marché de nuit, chariots de jus de canne et de grillades, bar karaoké, terrain de volley, montagne de sable du Nouvel An), village, rivière et côte (four à briques, rizerie, carrelet, maison flottante, marché aux crabes, paillotes à hamacs de Kep, cuisine de sucre de palme), la rue et ses véhicules (portique « Bienvenue », monument de rond-point, villa et maisons de borey, bijouterie-changeur, coin des motodops, cyclo, pick-up surchargé, camion-benne de latérite), monuments d'Angkor, de
 Kampot et de Bokor, monuments des paysages…). Le champ « Chercher » trouve un objet par son
 nom, sans tenir compte des accents ni des majuscules ; « Famille » ne montre qu'un groupe.
+La liste complète commence par le Cambodge (maisons khmères, la rue, les commerces, les
+services, les lieux de culte, les fêtes, la vie du village, puis la campagne, Angkor et
+Kampot) ; les objets des autres paysages du jeu (pins, cactus…) viennent après.
 
 - **Poser** : un clic sur un objet de la bibliothèque, puis un clic sur la carte, autant de
   fois qu'il faut ; <kbd>Échap</kbd> arrête. Tant qu'un objet est choisi, son emprise suit

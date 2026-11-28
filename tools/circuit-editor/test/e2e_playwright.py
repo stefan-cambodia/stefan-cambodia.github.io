@@ -590,6 +590,8 @@ def objects_run(page, shots):
     lib_n = page.evaluate("window.CIRCUIT_OBJECTS.objects.length")
     tiles = page.locator("#obj-lib .otile").count()
     check(lib_n > 250 and tiles == lib_n, "the library of the game's objects: %d tiles with their thumbnails" % tiles)
+    first = page.evaluate("Array.from(document.querySelectorAll('#obj-lib .otile')).slice(0, 3).map(b => b.dataset.kind)")
+    check(first[0].startswith("house_stilt"), "Cambodia first: the list opens on the Khmer houses (%s)" % ", ".join(first))
     page.fill("#obj-search", "pagode")
     names = page.inner_text("#obj-lib")
     check(page.locator("#obj-lib .otile").count() >= 1 and "Pagode" in names, "search « pagode » finds the pagoda")

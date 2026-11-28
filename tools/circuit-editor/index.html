@@ -5870,6 +5870,18 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const LIB = window.CIRCUIT_OBJECTS && Array.isArray(window.CIRCUIT_OBJECTS.objects) && window.CIRCUIT_OBJECTS.cols > 0 ? window.CIRCUIT_OBJECTS : null;
   const libById = new Map();
   if (LIB) LIB.objects.forEach((e) => libById.set(e.id, e));
+  // « Toutes » lists Cambodia first, in this order of families (a town, its people
+  // and its temples, then the land, Angkor and Kampot's monuments), then the
+  // game's other landscapes as the library gives them.
+  const LIB_FIRST = ['khmer_houses', 'kampot_gable_props', 'khmer_street_props', 'khmer_commerce_props', 'khmer_services_props',
+    'khmer_faith_props', 'khmer_festive_props', 'khmer_life', 'khmer_props', 'khmer_village_props', 'khmer_infra_props',
+    'road_sign_props', 'kampot_town_props', 'kampot_road_props', 'kampot_river_props', 'kampot_land_props', 'kampot_hill_props',
+    'kampot_props', 'khmer_flora', 'khmer_jungle', 'khmer_fauna', 'paddy_props', 'temple_props', 'khmer_village', 'angkor',
+    'kampot_town', 'kampot_water', 'kampot_bokor', 'kampot_land'];
+  const libOrder = LIB ? LIB.objects.slice().sort((a, b) => {
+    const ra = LIB_FIRST.indexOf(a.g), rb = LIB_FIRST.indexOf(b.g);
+    return (ra < 0 ? LIB_FIRST.length : ra) - (rb < 0 ? LIB_FIRST.length : rb) || a.t - b.t;
+  }) : [];
   const OBJ_STEP = 15;                   // degrees a press of R turns an object
   const OBJ_FACE_M = 300;                // a new object faces the course when it is this near (real metres)
   const OBJ_THUMB = 64, OBJ_MARK = 30;   // pixels of a thumbnail in the list, on the map
@@ -5928,7 +5940,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (!LIB) { $('obj-missing').hidden = false; return; }
     const q = fold($('obj-search').value.trim()), g = $('obj-group').value;
     let n = 0;
-    LIB.objects.forEach((e) => {
+    libOrder.forEach((e) => {
       if (g && e.g !== g) return;
       if (q && !(fold(e.n).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q))) return;
       const li = make('li'), b = make('button', 'otile' + (objUi.armed === e.id ? ' on' : ''));
