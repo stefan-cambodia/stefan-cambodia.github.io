@@ -19,16 +19,18 @@ téléphone.
 | 6 | Routes gardées sur l'ordinateur, profil relié à la carte, « Mes circuits » | idem |
 | 7 | Photos (JPEG, HEIC, album Google Photos en `.zip`), lieux et rôles, tracé proposé à partir des photos, pas de demi-tour aux points de passage | idem |
 | 8 | Décor du lieu réel (Overture Maps : bâtiments, eau, sol) écrit dans le fichier | idem |
-| 9 | **Bibliothèque des objets** : les 379 objets de décor du jeu (59 de plus le 28 nov. : lieux de culte, fêtes, village et rivière, la rue, les grands bâtiments de ville), avec vignettes, recherche et familles ; pose à la main sur la carte, orientation, taille, déplacement, duplication, suppression ; champ `objects` du format | idem, 28 nov. ; le jeu les construit sur sa branche `feature/custom-scenery` |
+| 9 | **Bibliothèque des objets** : les 379 objets de décor du jeu (59 de plus le 28 nov. : lieux de culte, fêtes, village et rivière, la rue, les grands bâtiments de ville), avec vignettes, recherche et familles ; pose à la main sur la carte, orientation, taille, déplacement, duplication, suppression ; champ `objects` du format | idem, 28 nov. ; le jeu les construit (`main` de 3D Buggy, PR #20) |
 | 13 | **Poser en ligne** : une rangée droite entre deux clics, ou le long du tracé à la même distance, chaque objet face à la route ; l'objet à venir suit le pointeur ; R le tourne pendant la pose | idem, 28 nov. |
+| 11 a | **Éditeur publié** : `editor/resume` fusionnée dans `main` du site (PR #2) ; la page en ligne est celle de l'ordinateur (photos, décor, objets, altitudes gardées) | `main` du site, 28 nov. |
+| 12 a | **Le décor et les objets dans le jeu** : `feature/custom-scenery` fusionnée dans `main` de 3D Buggy (PR #20) | `main` de 3D Buggy, 28 nov. |
 
 ## À faire, dans l'ordre
 
 | Étape | Contenu | Terminé quand | Attend |
 |---|---|---|---|
 | 10 | **Premier envoi réel** au catalogue avec « Envoyer au jeu », et le délai de mise à jour d'un catalogue déjà publié (`measure-publish-delay.mjs`, lancé avant l'envoi) | un circuit envoyé depuis l'éditeur apparaît dans « Circuits perso » du jeu ; le délai est écrit dans le README (section Publication) | **Stefan** : un jeton GitHub fine-grained (Contents, lecture et écriture, ce seul dépôt) |
-| 11 | **Publier l'éditeur** : fusionner `editor/resume` dans `main` du site, pour que la page en ligne ait les photos, le décor et les objets ; dire sur la page 3D Buggy du site que l'écran « Circuits perso » existe (page suivie : règle d'historique du `CLAUDE.md` du site) | la page publiée est celle de l'ordinateur ; l'historique de la page 3D Buggy est régénéré | **Stefan** : accord pour fusionner et publier |
-| 12 | **Les objets dans le jeu, sur le téléphone** : fusionner `feature/custom-scenery` dans `main` de 3D Buggy, APK, un circuit avec objets couru sur le téléphone | le circuit se construit et se court sur le Galaxy A56, images par seconde mesurées depuis l'état thermique 0 | **Stefan** : accord pour fusionner, téléphone libre |
+| 11 b | **La page 3D Buggy du site** dit que l'écran « Circuits perso » existe (page suivie : règle d'historique du `CLAUDE.md` du site) | l'historique de la page 3D Buggy est régénéré | **Stefan** : accord pour changer la page publiée |
+| 12 b | **Sur le téléphone** : APK de `main`, un circuit avec décor et objets couru sur le Galaxy A56 | le circuit se construit et se court, images par seconde mesurées depuis l'état thermique 0 | **Stefan** : téléphone libre |
 | 14 | **Objets sur la route** : tremplins et portes posés à la main, qui touchent la course (aujourd'hui le jeu les place lui-même ; ils sont hors de la bibliothèque) | un tremplin posé dans l'éditeur se saute dans le jeu ; le format dit s'il entre dans le hash | décision de Stefan (le hash change avec eux) |
 | 15 | **Retirer un circuit publié** depuis l'éditeur (son fichier et sa ligne du catalogue), avec confirmation | le circuit disparaît du catalogue, le jeu ne le propose plus au téléchargement | jeton, comme l'étape 10 |
 
