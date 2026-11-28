@@ -1921,6 +1921,38 @@
      "រូបថតអេក្រង់ប្រាំនៃការលក់ពិតប្រាកដមួយ នៅលើកន្លែងគិតលុយសាកល្បង នៅថ្ងៃទី 26 ខែវិច្ឆិកា និងការបិទកន្លែងគិតលុយបន្ទាប់មក៖ $22.83 បង់ដោយ $20 និង 20 000 ៛ អាប់វិញ $2 និង 400 ៛ បង្កាន់ដៃជាភាសាខ្មែរ និងអង់គ្លេស ជាមួយរូបិយប័ណ្ណទាំងពីរ បន្ទាប់មកការបិទ ដោយរាប់បាន 34 400 ៛ និង $38 គ្មានភាពខុសគ្នា ហើយវគ្គត្រូវបានបិទ និងកត់ត្រាក្នុងគណនេយ្យ នៅក្នុង back-office។"
     ]
    }
+  },
+  "phlov": {
+   "c49e358": {
+    "en": [
+     "Its own presentation page",
+     "phlov gets a page of its own, in English, French and Khmer, in the In development section: the fork of Angkor World Engine, its five steps, regions along any road with the two Kampot corridors, the video pipeline, the scenery inventory and the Galaxy A56’s budget, with Last changes running to 28 November 2026. Five captures of the engine at Kampot show it; none comes from the footage."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "phlov reçoit sa propre page, en anglais, en français et en khmer, dans la section En développement : le fork d’Angkor World Engine, ses cinq étapes, des régions le long de n’importe quelle route avec les deux corridors de Kampot, la chaîne vidéo, l’inventaire du décor et le budget du Galaxy A56, avec des Derniers changements qui vont jusqu’au 28 novembre 2026. Cinq captures du moteur à Kampot le montrent ; aucune ne vient des vidéos."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "phlov ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ នៅក្នុងផ្នែកកំពុងអភិវឌ្ឍ៖ fork នៃ Angkor World Engine ជំហានទាំងប្រាំរបស់វា តំបន់តាមបណ្តោយផ្លូវណាមួយ ជាមួយច្រករបៀងពីរនៅកំពត ខ្សែសង្វាក់វីដេអូ សារពើភ័ណ្ឌទេសភាព និងគោលដៅល្បឿនរបស់ Galaxy A56 ជាមួយការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 28 ខែវិច្ឆិកា ឆ្នាំ 2026។ រូបថតអេក្រង់ប្រាំរបស់ម៉ាស៊ីននៅកំពត បង្ហាញវា ហើយគ្មានរូបណាមួយមកពីវីដេអូទេ។"
+    ]
+   }
+  },
+  "circuit-editor": {
+   "c49e358": {
+    "en": [
+     "Its own presentation page",
+     "The circuit editor gets a page of its own, in English, French and Khmer, in the In development section: drawing a circuit on OpenStreetMap’s roads for 3D Buggy, what a circuit carries (relief, the real place’s scenery, photos, the game’s 379 objects), what is kept on the computer, where it stands and how it is built, with Last changes running to 28 November 2026. Three captures of the published editor with the Petit Circuit of Angkor show its screens."
+    ],
+    "fr": [
+     "Sa page de présentation",
+     "L’éditeur de circuits reçoit sa propre page, en anglais, en français et en khmer, dans la section En développement : dessiner un circuit sur les routes d’OpenStreetMap pour 3D Buggy, ce que porte un circuit (relief, décor du lieu réel, photos, les 379 objets du jeu), ce qui est gardé sur l’ordinateur, où il en est et comment il est construit, avec des Derniers changements qui vont jusqu’au 28 novembre 2026. Trois captures de l’éditeur publié, avec le Petit Circuit d’Angkor, montrent ses écrans."
+    ],
+    "km": [
+     "ទំព័របង្ហាញផ្ទាល់ខ្លួន",
+     "កម្មវិធីគូរសៀគ្វី ទទួលបានទំព័រផ្ទាល់ខ្លួន ជាភាសាអង់គ្លេស បារាំង និងខ្មែរ នៅក្នុងផ្នែកកំពុងអភិវឌ្ឍ៖ ការគូរសៀគ្វីលើផ្លូវរបស់ OpenStreetMap សម្រាប់ 3D Buggy អ្វីដែលសៀគ្វីមួយផ្ទុក (កម្ពស់ដី ទេសភាពនៃទីកន្លែងពិត រូបថត វត្ថុ 379 របស់ហ្គេម) អ្វីដែលរក្សាទុកលើកុំព្យូទ័រ ស្ថានភាពបច្ចុប្បន្ន និងរបៀបដែលវាត្រូវបានបង្កើត ជាមួយការផ្លាស់ប្តូរចុងក្រោយរហូតដល់ថ្ងៃទី 28 ខែវិច្ឆិកា ឆ្នាំ 2026។ រូបថតអេក្រង់បីនៃកម្មវិធីគូរដែលបានផ្សព្វផ្សាយ ជាមួយ Petit Circuit នៃអង្គរ បង្ហាញអេក្រង់របស់វា។"
+    ]
+   }
   }
  }
 }
