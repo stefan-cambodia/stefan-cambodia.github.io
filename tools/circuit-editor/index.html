@@ -372,6 +372,15 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .keys th { padding: 12px 0 4px; text-align: left; color: var(--accent); font-size: .85em; text-transform: uppercase; letter-spacing: .04em; }
 .keys td { padding: 5px 0; border-bottom: 1px solid var(--paper-soft); vertical-align: top; }
 .keys td:last-child { text-align: right; white-space: nowrap; padding-left: 14px; }
+.ready { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px;
+  border-left: 4px solid var(--warn); background: #fff4e6; }
+.ready b { flex: 1 0 100%; }
+.ready span { flex: 1 1 auto; color: var(--ink-soft); font-size: .92em; }
+.ready.ok { border-left-color: var(--ok); background: #ebfbee; }
+.ready .btn.small { min-height: 32px; padding: 3px 12px; font-size: .92em; }
+.stepnav { display: flex; justify-content: space-between; gap: 8px; margin: 18px 0 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.stepnav .next { margin-left: auto; border-color: var(--accent); color: var(--accent); }
+.stepnav .ghost { border-color: transparent; color: var(--ink-soft); font-weight: 500; }
 .tools .lbl { margin-left: 2px; }
 .tools .btn:disabled { opacity: 1; background: var(--paper); color: #b3bac2; }
 .tools .btn.icon.labelled { width: auto; padding: 0 11px; }
@@ -706,6 +715,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
       <!-- Envoi -->
       <section id="tab-send" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-send" hidden>
+        <div id="send-ready" class="ready" role="status" aria-live="polite"><b id="send-ready-title"></b><span id="send-ready-text"></span>
+          <button type="button" id="send-ready-go" class="btn small" hidden></button></div>
         <div class="buttons">
           <button type="button" id="download" class="btn" disabled>Télécharger</button>
           <button type="button" id="copy" class="btn" disabled>Copier</button>
@@ -6750,6 +6761,21 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     };
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
     $('trace-stats').hidden = state.waypoints.length < 2;
+    // The send step says first whether there is something to send, else what is missing.
+    const n = state.waypoints.length, go = $('send-ready-go'), plural = (k, one, many) => NUM(k) + ' ' + (k > 1 ? many : one);
+    let title, text = '', fix = null;
+    if (ok) {
+      title = '✓ Prêt : ' + (name.trim() || 'circuit sans nom');
+      text = sum + (state.objects.length ? ' · ' + plural(state.objects.length, 'objet', 'objets') : '') + (state.photos.length ? ' · ' + plural(state.photos.length, 'photo', 'photos') : '');
+      if (!name.trim()) fix = ['Lui donner un nom', () => goTo('settings', 'f-name')];
+    } else if (n < 2) { title = 'Pas encore de circuit'; text = 'Posez au moins deux points sur les routes.'; fix = ['Aller au tracé', () => goTo('trace')]; }
+    else if (s && s.relief && current.pending && !relief.error) { title = 'Presque prêt'; text = 'Le relief arrive…'; }
+    else { title = 'Pas encore prêt'; text = sum || 'Le tracé a un problème.'; fix = ['Voir le problème', () => goTo('trace', 'messages')]; }
+    setText($('send-ready-title'), typo(title));
+    setText($('send-ready-text'), typo(text));
+    $('send-ready').classList.toggle('ok', ok);
+    go.hidden = !fix;
+    if (fix) { setText(go, fix[0]); go.onclick = fix[1]; }
     if ($('f-id').classList.contains('invalid')) document.querySelector('#tab-settings details.adv').open = true;
     const empty = !graph.ways.length && !state.waypoints.length && !state.photos.length && !state.objects.length;
     $('welcome').hidden = chrome.welcomeClosed || !$('draft').hidden || !(chrome.welcomeForced || empty);
@@ -6785,6 +6811,23 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     $('bar-download').addEventListener('click', press('download'));
     $('bar-cmd').addEventListener('click', () => showPalette(true));
     $('fit').addEventListener('click', fitAll);
+    // At the foot of each step, the way to the next one.
+    STEPS.forEach((st, i) => {
+      const box = make('div', 'stepnav'), panel = $('tab-' + st[0]);
+      if (i > 0) {
+        const back = make('button', 'btn ghost', typo('← ' + STEPS[i - 1][1]));
+        back.type = 'button';
+        back.addEventListener('click', () => { goTo(STEPS[i - 1][0]); $('panel-body').scrollTop = 0; });
+        box.appendChild(back);
+      }
+      if (i < STEPS.length - 1) {
+        const next = make('button', 'btn next', typo('Suivant : ' + STEPS[i + 1][1] + ' →'));
+        next.type = 'button';
+        next.addEventListener('click', () => { goTo(STEPS[i + 1][0]); $('panel-body').scrollTop = 0; });
+        box.appendChild(next);
+      }
+      panel.appendChild(box);
+    });
 
     $('palette-input').addEventListener('input', () => { chrome.cur = 0; renderPalette(); });
     $('palette-input').addEventListener('keydown', (ev) => {
