@@ -12,8 +12,9 @@ que les deux jeux savent lire (format : [`FORMAT.md`](FORMAT.md), schéma :
 > format reste commun aux deux jeux, et la case « Cambodia Rally » des réglages n'écrit
 > que le champ `games` du fichier.
 
-L'outil tient dans **un seul fichier**, [`index.html`](index.html) : pas de framework,
-pas d'étape de compilation. Il est prévu pour un **navigateur d'ordinateur** (souris,
+L'outil tient dans **un seul fichier**, [`index.html`](index.html), plus la bibliothèque
+des objets du jeu qu'il charge à côté de lui ([`objects-library.js`](objects-library.js),
+voir [Les objets posés](#les-objets-posés)) : pas de framework, pas d'étape de compilation. Il est prévu pour un **navigateur d'ordinateur** (souris,
 clavier, grand écran).
 
 - En ligne, une fois publié : `https://stefan-cambodia.github.io/tools/circuit-editor/`
@@ -308,6 +309,55 @@ long circuit), le décor est laissé de côté.
 Le décor n'entre pas dans le hash. Un jeu qui ne le connaît pas construit son décor
 habituel. 3D Buggy le construit (bâtiments, eau, sol) : voir `docs/CUSTOM_TRACKS.md` du jeu.
 
+## Les objets posés
+
+L'onglet **Objets** tient la **bibliothèque de tous les objets de décor de 3D Buggy** :
+373 objets, avec une vignette, un nom en français et leur taille dans le jeu (arbres,
+herbes et rochers, maisons khmères et compartiments de Kampot, étals, gens, motos et
+tuk-tuks, animaux, panneaux, rizières, bateaux, obstacles, services publics (commissariat, école, centre de santé, poste), commerces (station-service, banque, supérette, pharmacie, café, maison d'hôtes, réparateur de motos), route et réseaux (poteaux électriques, antenne relais, feux, panneaux stop et de limitation), lieux de culte (vihear, grand portail et kot d'une pagode, sala, stoupas familiaux, Bouddha et autel de Neak Ta de bord de route, temple chinois, mosquée cham, banian sacré), fêtes et vie de la rue (tente de mariage, tour de sono, marché de nuit, chariots de jus de canne et de grillades, bar karaoké, terrain de volley, montagne de sable du Nouvel An), village, rivière et côte (four à briques, rizerie, carrelet, maison flottante, marché aux crabes, paillotes à hamacs de Kep, cuisine de sucre de palme), la rue et ses véhicules (portique « Bienvenue », monument de rond-point, villa et maisons de borey, bijouterie-changeur, coin des motodops, cyclo, pick-up surchargé, camion-benne de latérite), monuments d'Angkor, de
+Kampot et de Bokor, monuments des paysages…). Le champ « Chercher » trouve un objet par son
+nom, sans tenir compte des accents ni des majuscules ; « Famille » ne montre qu'un groupe.
+
+- **Poser** : un clic sur un objet de la bibliothèque, puis un clic sur la carte, autant de
+  fois qu'il faut ; <kbd>Échap</kbd> arrête. Tant qu'un objet est choisi, son emprise suit
+  le pointeur en pointillé orange. Un objet posé à moins de 300 m réels du parcours regarde
+  la route ; plus loin, il prend l'orientation du dernier objet ; <kbd>R</kbd> pendant la
+  pose le tourne à la main (et la route ne décide plus, jusqu'à ce qu'on arrête la pose).
+- **Poser en ligne** : « En ligne » pose une rangée droite entre deux clics ; « Le long du
+  tracé » pose une rangée qui suit le parcours entre deux clics, à la distance et du côté du
+  premier clic, chaque objet face à la route (sur la route même : dans le sens de la
+  course), et passe le départ d'une boucle sans revenir en arrière. « Écart » : les mètres
+  réels entre deux objets (vide : selon la taille de l'objet). Les objets à venir
+  s'affichent en pointillé avant le second clic ; une rangée s'annule d'un seul Ctrl+Z
+  (400 objets au plus par rangée). Pour des palmiers le long d'une avenue, des lampadaires,
+  une clôture, des poteaux électriques.
+- **Sur la carte**, chaque objet a sa vignette dans un rond, son emprise au sol à sa
+  vraie taille (un mètre de jeu vaut l'échelle du circuit en mètres réels : une pagode de
+  22 m fait 54 m sur la carte à l'échelle 2,5), et une flèche vers sa face avant. Vert :
+  un petit objet ; violet : une construction ; orange : l'objet choisi.
+- **Modifier** : glisser une vignette déplace l'objet ; un clic le choisit ; l'onglet
+  donne alors son orientation (curseur, « Tourner de 90° », « Face à la route »), sa taille
+  (de × 0,5 à × 2), « Dupliquer » (une copie juste à côté) et « Supprimer ». <kbd>R</kbd>
+  tourne de 15° (<kbd>Maj</kbd>+<kbd>R</kbd> dans l'autre sens), <kbd>Suppr</kbd> ou un clic
+  droit supprime. Ctrl+Z et Ctrl+Y annulent et rétablissent, comme pour le tracé.
+- La liste « Objets posés » les compte par sorte ; un clic montre le suivant sur la carte.
+
+Les objets sont gardés avec le tracé en cours et dans « Mes circuits », et écrits dans le
+fichier (champ `objects`, [`FORMAT.md`](FORMAT.md), « Objets posés ») dans le repère des
+points : l'éditeur, lui, les garde sur la Terre, si bien qu'ils restent en place quand le
+départ du circuit change. « Ouvrir… » les remet où ils étaient. Ils n'entrent pas dans le
+hash. 3D Buggy les construit exactement là, au sol, avec leurs collisions, et sa végétation
+et son décor leur laissent la place (voir `docs/CUSTOM_TRACKS.md` du jeu).
+
+La bibliothèque vient du jeu lui-même : dans le dépôt de 3D Buggy,
+`godot --path . -s tools/object_library.gd -- <ce dossier>/objects-library.js` (avec un
+écran : les vignettes sont rendues par le moteur) la réécrit en une quarantaine de
+secondes. La liste des objets possibles est `custom_tracks/custom_objects.gd` : tout le
+décor du jeu, sauf le mobilier de course (arches, portes, tremplins, chevrons, panneaux de
+pub du moteur) et les pièces qui n'ont de sens que posées en ligne par les règles d'une
+étape (murs d'enceinte, ponts, digue). À relancer quand un objet est ajouté au jeu. Sans ce
+fichier, l'onglet le dit et les objets déjà posés restent dans le fichier.
+
 ## Mes circuits
 
 L'onglet « Envoi » garde une liste de circuits sur l'ordinateur, dans la même base
@@ -513,7 +563,7 @@ que depuis le lancement.
 ## Tests
 
 ```sh
-node --test tools/circuit-editor/test/                 # 122 tests, sans dépendance (essayé avec Node 26)
+node --test tools/circuit-editor/test/                 # 131 tests, sans dépendance (essayé avec Node 26)
 python3 tools/circuit-editor/test/e2e_playwright.py    # un navigateur, réseau simulé
 node tools/circuit-editor/test/make-fixtures.mjs       # réécrit les fichiers d'exemple
 ```
@@ -530,11 +580,12 @@ extraient ce bloc et l'évaluent dans un contexte `node:vm` vide.
 | `export.test.mjs` | La fermeture de la boucle, la régularité de l'espacement, les longueurs, le schéma, les règles du format (indices croissants et bornés, écarts, pentes, point 0 à l'origine), largeurs et surfaces, checkpoints, portes, relief, lissage du relief (cas construit, et vraies altitudes de Kep), limite de 20 000 points, avertissements, réouverture à hash identique, catalogue. |
 | `photos.test.mjs` | La lecture de la position GPS dans l'Exif (les deux ordres d'octets, les quatre hémisphères, altitude, date, direction, bloc après un premier segment, minutes absentes), les refus (sans Exif, sans GPS, position nulle, pas un JPEG), un fichier coupé à chaque octet ou abîmé octet par octet sans jamais planter ; la place d'une photo au bord du parcours, le côté selon le sens, l'écart admis, la limite de 24, le hash inchangé, la relecture d'un fichier, le tracé en cours sans les images ; les lieux et les rôles (ordre de prise de vue, choix à la main, relecture), l'angle de la boussole avec la route ; les archives zip (écrite par le `zipfile` de Python, ZIP64, coupée ou abîmée sans planter) ; la position d'une photo HEIC, métadonnées avant ou après l'image, et un HEIC abîmé octet par octet sans planter ; la fiche de `photos-brief.mjs`. |
 | `scenery.test.mjs` | Le décor : les identifiants de tuile PMTiles contre le code de la spécification, une archive avec et sans répertoire feuille, les tuiles vectorielles (propriétés de chaque type, anneaux fermés, tuile coupée refusée), le plus petit rectangle d'un bâtiment, le décor d'une boucle (bâtiments gardés ou écartés, un bâtiment coupé par deux tuiles recollé, couverture par ordre d'affichage, usage bâti, étang et son île), la vérification d'un décor abîmé. |
+| `objects.test.mjs` | Les objets posés : leur place dans le repère des points (arrondis, cap, taille), les objets refusés, ce que la vérification du champ refuse, la réouverture au même endroit, l'emprise et la flèche selon le cap (contre la rotation de Godot), le tracé en cours, la bibliothèque (identifiants valides et uniques, familles nommées, vignettes dans l'ordre, pas de mobilier de course), un circuit avec objets : même hash que sans, schéma, écriture et relecture, champ abîmé signalé sans rendre le fichier illisible. |
 | `draft.test.mjs` | Le tracé en cours : il revient tel qu'il a été écrit, avec les zones de ses routes ; ce qui n'en est pas un est refusé, ce qui est inutilisable est écarté. Les cadres : leur clé, et si l'un contient l'autre. |
 | `petit-circuit.test.mjs` | **Recette** : les points de passage du Petit Circuit des jeux, recalés et routés sur la carte d'aujourd'hui, donnent 7 089 m de jeu pour un tour à l'échelle 2,5, soit −0,15 % par rapport aux 7,1 km du circuit existant (tolérance : 3 %). Aucun point n'a dû être déplacé ; le plus éloigné de sa route en est à 50 m. |
 | `property.test.mjs` | 160 parcours tirés au hasard sur les routes d'Angkor, avec des réglages et un relief au hasard (tirage à graine fixe) : tout fichier que le code accepte d'exporter respecte le schéma et les règles. |
-| `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes, aucun jeton dans le dossier. |
-| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, pointer le profil d'altitude et voir l'endroit sur la carte, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir avec les routes gardées puis sans ; recharger une zone déjà gardée ; garder deux circuits dans « Mes circuits », passer de l'un à l'autre, en retirer un ; importer cinq fichiers (une photo près du parcours, une loin gardée en rouge, une sans position, une image PNG, un doublon), annuler l'import, resserrer l'écart admis, déposer une photo sur la carte, retrouver les photos après « Reprendre » et « Ouvrir… », importer un album en `.zip`, changer le rôle d'une photo et l'annuler, réduire une photo de 1 600 × 1 200 à 320 × 240, décoder deux photos HEIC avec le vrai décodeur chargé depuis jsDelivr (une seule fois), lire le décor depuis deux archives Overture simulées (requêtes « Range »), le retirer, l'export quand Overture est en panne ; commencer par un album sans aucun tracé (routes chargées autour des photos, tracé proposé par leurs lieux, un seul « Annuler ») ; laisser un tracé, le reprendre à la visite suivante sans redemander ni ses routes ni ses altitudes, puis une fois les routes oubliées, l'ignorer, l'effacer ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
+| `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes et la bibliothèque des objets à côté d'elle, aucun jeton dans le dossier. |
+| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, pointer le profil d'altitude et voir l'endroit sur la carte, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir avec les routes gardées puis sans ; recharger une zone déjà gardée ; garder deux circuits dans « Mes circuits », passer de l'un à l'autre, en retirer un ; importer cinq fichiers (une photo près du parcours, une loin gardée en rouge, une sans position, une image PNG, un doublon), annuler l'import, resserrer l'écart admis, déposer une photo sur la carte, retrouver les photos après « Reprendre » et « Ouvrir… », importer un album en `.zip`, changer le rôle d'une photo et l'annuler, chercher un objet dans la bibliothèque, en poser deux sur la carte, les tourner, les agrandir, les déplacer, les supprimer, annuler, et les retrouver dans le fichier puis après « Ouvrir… », réduire une photo de 1 600 × 1 200 à 320 × 240, décoder deux photos HEIC avec le vrai décodeur chargé depuis jsDelivr (une seule fois), lire le décor depuis deux archives Overture simulées (requêtes « Range »), le retirer, l'export quand Overture est en panne ; commencer par un album sans aucun tracé (routes chargées autour des photos, tracé proposé par leurs lieux, un seul « Annuler ») ; laisser un tracé, le reprendre à la visite suivante sans redemander ni ses routes ni ses altitudes, puis une fois les routes oubliées, l'ignorer, l'effacer ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
 
 Dans `test/fixtures/` :
 

@@ -21,7 +21,7 @@ test('a draft comes back as it was written', () => {
   const text = JSON.stringify(C.makeDraft('loop', WPS, FORM, [13.41, 103.84, 13.42, 103.86], ele, '2026-11-27T05:00:00Z', areas));
   const d = plain(C.parseDraft(text));
   assert.deepEqual(d, { v: 1, saved: '2026-11-27T05:00:00Z', kind: 'loop', waypoints: WPS, form: FORM,
-    box: [13.41, 103.84, 13.42, 103.86], ele, areas, photos: [] });
+    box: [13.41, 103.84, 13.42, 103.86], ele, areas, photos: [], objects: [], objects_made: '' });
   // Waypoints keep every digit: a point put back on its road must land where it was.
   assert.equal(JSON.parse(text).waypoints[0][1], 103.856094);
 });

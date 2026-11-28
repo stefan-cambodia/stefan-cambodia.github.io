@@ -419,6 +419,8 @@ def desktop_run(context, net, errors, base, shots, tmp):
     check(strong[1] == 300 and strong[0] <= climb, "« Lissage du relief » on « Fort »: %s m of climb instead of %s, kept in the file" % (strong[0], climb))
     shot(page, shots, "desktop-relief.png")
 
+    objects_run(page, shots)
+
     # Settings, then download.
     page.click("#tabbtn-settings")
     page.fill("#f-name", "Essai de bout en bout")
@@ -441,6 +443,9 @@ def desktop_run(context, net, errors, base, shots, tmp):
           "it carries the relief")
     check(len(track["waypoints"]) == 4 and track["scale"] == 2.5 and track["road_width"] == 11, "waypoints and default settings are in the file")
     check(FAKE_TOKEN not in text and "token" not in text.lower(), "no token in the file")
+    ob = track.get("objects") or {}
+    check(ob.get("v") == 1 and [it[0] for it in ob.get("items", [])] == ["pagoda", "pagoda"] and "2 objets posés" in page.inner_text("#export-status").replace("\u00a0", " "),
+          "the two objects placed are in the file (outside the hash, which still matches): %s" % ob.get("items"))
     sc = track.get("scenery") or {}
     status = page.inner_text("#export-status").replace("\u00a0", " ").replace("\u202f", " ")
     kinds = sorted(set(b[6] for b in sc.get("buildings", [])))
@@ -565,6 +570,168 @@ def desktop_run(context, net, errors, base, shots, tmp):
     return target
 
 
+def mark_point(page, i):
+    """Where the mark of object i is on the screen."""
+    return page.evaluate("""(i) => { const o = window.circuitEditor.state.objects[i];
+        const p = window.circuitEditor.map.latLngToContainerPoint([o.lat, o.lon]), r = document.getElementById('map').getBoundingClientRect();
+        return [r.left + p.x, r.top + p.y]; }""", i)
+
+
+def objects_run(page, shots):
+    """The Objets tab: the library, placing on the map, turning, moving, deleting, undo."""
+    page.click("#tabbtn-objects")
+    lib_n = page.evaluate("window.CIRCUIT_OBJECTS.objects.length")
+    tiles = page.locator("#obj-lib .otile").count()
+    check(lib_n > 250 and tiles == lib_n, "the library of the game's objects: %d tiles with their thumbnails" % tiles)
+    page.fill("#obj-search", "pagode")
+    names = page.inner_text("#obj-lib")
+    check(page.locator("#obj-lib .otile").count() >= 1 and "Pagode" in names, "search « pagode » finds the pagoda")
+    page.fill("#obj-search", "ELEPHANT")
+    check(page.locator("#obj-lib .otile").count() >= 5, "the search ignores case and accents (« ELEPHANT » finds the éléphants)")
+    page.fill("#obj-search", "")
+    page.select_option("#obj-group", "khmer_houses")
+    n_h = page.locator("#obj-lib .otile").count()
+    check(n_h == page.evaluate("window.CIRCUIT_OBJECTS.objects.filter(e => e.g === 'khmer_houses').length") and n_h >= 5,
+          "a family shows its own objects (%d Khmer houses)" % n_h)
+    page.select_option("#obj-group", "")
+    page.fill("#obj-search", "pagode")
+    page.click("#obj-lib .otile[data-kind=pagoda]")
+    check("Cliquez sur la carte" in page.inner_text("#obj-armed"), "a chosen object waits for a click on the map")
+    # 45 m north of a point of the course.
+    spot = page.evaluate("""() => { const l = window.circuitEditor.current.route.line, k = Math.floor(l.lat.length / 3);
+        return [l.lat[k] + 0.0004, l.lon[k]]; }""")
+    click_latlon(page, spot[0], spot[1])
+    page.wait_for_function("window.circuitEditor.state.objects.length === 1")
+    o = page.evaluate("window.circuitEditor.state.objects[0]")
+    check(o["kind"] == "pagoda" and abs(o["lat"] - spot[0]) < 2e-5 and abs(o["lon"] - spot[1]) < 2e-5 and page.evaluate("window.circuitEditor.state.waypoints.length") == 4,
+          "a click places it where clicked, and adds no waypoint")
+    check(page.evaluate("""(() => { const e = window.circuitEditor, o = e.state.objects[0], l = e.current.route.line;
+        let best = 1e9, bi = 0; for (let i = 0; i < l.lat.length; i++) { const d = (l.lat[i] - o.lat) ** 2 + ((l.lon[i] - o.lon) * Math.cos(o.lat * Math.PI / 180)) ** 2; if (d < best) { best = d; bi = i; } }
+        const want = Math.atan2((l.lon[bi] - o.lon) * Math.cos(o.lat * Math.PI / 180), l.lat[bi] - o.lat) * 180 / Math.PI;
+        return Math.abs(((o.heading - want) % 360 + 540) % 360 - 180) < 1; })()"""), "a new object faces the nearest point of the course (heading %s°)" % o["heading"])
+    check(page.locator(".omark").count() == 1 and page.locator(".leaflet-objshapes-pane path:not(.oghost)").count() == 2,
+          "on the map: its mark with its thumbnail, its outline at its size and its front arrow")
+    check(page.locator("#obj-sel").is_visible() and "Pagode" in page.inner_text("#obj-sel") and "× 1" in page.inner_text("#obj-placed"),
+          "the panel shows the object placed and the list of objects")
+    click_latlon(page, spot[0] + 0.0005, spot[1] + 0.0006)
+    page.wait_for_function("window.circuitEditor.state.objects.length === 2")
+    page.keyboard.press("Escape")
+    check(page.inner_text("#obj-armed").strip() == "" and not page.evaluate("window.circuitEditor.objUi.armed"), "Échap stops placing")
+    h0 = page.evaluate("window.circuitEditor.state.objects[1].heading")
+    page.keyboard.press("r")
+    h1 = page.evaluate("window.circuitEditor.state.objects[1].heading")
+    page.keyboard.press("Shift+R")
+    page.keyboard.press("Shift+R")
+    h2 = page.evaluate("window.circuitEditor.state.objects[1].heading")
+    check(round((h1 - h0) % 360, 1) == 15 and round((h0 - h2) % 360, 1) == 15, "R turns the chosen object by 15°, Maj+R the other way")
+    page.click("#obj-turn")
+    check(round((page.evaluate("window.circuitEditor.state.objects[1].heading") - h2) % 360, 1) == 90, "« Tourner de 90° »")
+    page.fill("#obj-size", "1.5")
+    page.dispatch_event("#obj-size", "change")
+    check(page.evaluate("window.circuitEditor.state.objects[1].size") == 1.5, "the size slider: × 1,5")
+    page.keyboard.press("Control+z")
+    check(page.evaluate("window.circuitEditor.state.objects[1].size") == 1, "Ctrl+Z undoes the size in one step")
+    # A drag moves the first one.
+    before = page.evaluate("window.circuitEditor.state.objects[0]")
+    x, y = mark_point(page, 0)
+    page.mouse.move(x, y)
+    page.mouse.down()
+    page.mouse.move(x + 20, y + 10, steps=4)
+    page.mouse.move(x + 40, y + 20, steps=4)
+    page.mouse.up()
+    page.wait_for_function("window.circuitEditor.state.objects[0].lon > %r" % (before["lon"] + 1e-6))
+    moved = page.evaluate("window.circuitEditor.state.objects[0]")
+    check(moved["lat"] < before["lat"] and moved["lon"] > before["lon"] and page.evaluate("window.circuitEditor.state.waypoints.length") == 4,
+          "dragging a mark moves its object (and nothing else)")
+    page.keyboard.press("Control+z")
+    check(page.evaluate("window.circuitEditor.state.objects[0].lat") == before["lat"], "Ctrl+Z puts it back")
+    # Delete with the key, back with Ctrl+Z; a right click deletes too.
+    page.evaluate("window.circuitEditor.objUi.selected")
+    x, y = mark_point(page, 1)
+    page.mouse.click(x, y)
+    page.keyboard.press("Delete")
+    check(page.evaluate("window.circuitEditor.state.objects.length") == 1, "Suppr deletes the chosen object")
+    page.keyboard.press("Control+z")
+    x, y = mark_point(page, 1)
+    page.mouse.click(x, y, button="right")
+    check(page.evaluate("window.circuitEditor.state.objects.length") == 1, "a right click on a mark deletes its object")
+    page.keyboard.press("Control+z")
+    check(page.evaluate("window.circuitEditor.state.objects.length") == 2 and page.locator(".omark").count() == 2, "and Ctrl+Z brings it back")
+    rows_run(page, shots)
+    shot(page, shots, "desktop-objects.png")
+
+
+def hover_latlon(page, lat, lon):
+    x, y = page.evaluate("""([lat, lon]) => { const p = window.circuitEditor.map.latLngToContainerPoint([lat, lon]),
+        r = document.getElementById('map').getBoundingClientRect(); return [r.left + p.x, r.top + p.y]; }""", [lat, lon])
+    page.mouse.move(x, y)
+
+
+def rows_run(page, shots):
+    """The ghost under the pointer, R while placing, a row, a row along the course; all undone after."""
+    ghost = "document.querySelectorAll('.leaflet-objshapes-pane path.oghost[stroke-dasharray]').length"
+    page.fill("#obj-search", "palmier")
+    page.click("#obj-lib .otile[data-kind=palm_a]")
+    l = page.evaluate("""() => { const l = window.circuitEditor.current.route.line, k = Math.floor(l.lat.length / 2), j = Math.floor(l.lat.length * 0.6);
+        return [l.lat[k], l.lon[k], l.lat[j], l.lon[j]]; }""")
+    hover_latlon(page, l[0] + 0.0003, l[1])
+    page.wait_for_function("%s >= 1" % ghost)
+    check(page.evaluate(ghost) >= 1, "with an object chosen, its outline follows the pointer before the click")
+    page.keyboard.press("r")
+    check(page.evaluate("window.circuitEditor.objUi.manual") is True, "R while placing turns what is about to be placed")
+    page.keyboard.press("Escape")
+    n0 = page.evaluate("window.circuitEditor.state.objects.length")
+    # A straight row of 50 m every 10 m: 6 palms, one Ctrl+Z.
+    page.click("#obj-lib .otile[data-kind=palm_a]")
+    page.click(".objmode .seg-btn[data-mode=row]")
+    page.fill("#obj-gap", "10")
+    a = [l[0] + 0.0003, l[1]]
+    b = [l[0] + 0.0003, l[1] + 50 / (111320 * 0.9728)]
+    click_latlon(page, *a)
+    check("finit" in page.inner_text("#obj-armed"), "« En ligne »: a first click, then it asks where the row ends")
+    hover_latlon(page, *b)
+    page.wait_for_function("%s >= 6" % ghost)
+    click_latlon(page, *b)
+    page.wait_for_function("window.circuitEditor.state.objects.length === %d" % (n0 + 6))
+    check(True, "a row of 50 m with a gap of 10 m: 6 objects placed at once")
+    page.keyboard.press("Control+z")
+    check(page.evaluate("window.circuitEditor.state.objects.length") == n0, "one Ctrl+Z takes the whole row away")
+    # Along the course, 20 m off, between two points of it.
+    page.click(".objmode .seg-btn[data-mode=course]")
+    page.fill("#obj-gap", "15")
+    click_latlon(page, l[0] + 0.00018, l[1])
+    click_latlon(page, l[2] + 0.00018, l[3])
+    page.wait_for_function("window.circuitEditor.state.objects.length > %d" % (n0 + 2))
+    res = page.evaluate("""(n0) => { const e = window.circuitEditor, l = e.current.route.line, objs = e.state.objects.slice(n0);
+        const m = 111320, c = Math.cos(objs[0].lat * Math.PI / 180), out = { n: objs.length, dist: [], facing: 0 };
+        objs.forEach((o) => {
+          let best = 1e18, qx = 0, qy = 0;
+          for (let i = 0; i < l.lat.length; i++) {
+            const j = (i + 1) % l.lat.length, ax = (l.lon[i] - o.lon) * m * c, ay = (l.lat[i] - o.lat) * m, bx = (l.lon[j] - o.lon) * m * c, by = (l.lat[j] - o.lat) * m;
+            const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / (dx * dx + dy * dy || 1))), px = ax + dx * t, py = ay + dy * t, d = px * px + py * py;
+            if (d < best) { best = d; qx = px; qy = py; }
+          }
+          out.dist.push(Math.sqrt(best));
+          const want = Math.atan2(qx, qy) * 180 / Math.PI;
+          const off = Math.abs(((o.heading - want) % 360 + 540) % 360 - 180);
+          if (off < 10) out.facing++;
+          out.worst = Math.max(out.worst || 0, off); });
+        return out; }""", n0)
+    d = sorted(res["dist"])
+    mid = d[len(d) // 2]
+    near = sum(1 for v in d if abs(v - mid) < 1.0)
+    check(res["n"] >= 3 and near >= 0.8 * res["n"] and res["facing"] >= 0.8 * res["n"] and res["worst"] < 30,
+          "« Le long du tracé »: %d objects, %d of them %.1f m from the course (± 1 m), %d facing it within 10° (in a bend: within %.0f°)"
+          % (res["n"], near, mid, res["facing"], res["worst"]))
+    shot(page, shots, "desktop-objects-row.png")
+    page.keyboard.press("Control+z")
+    page.click(".objmode .seg-btn[data-mode=one]")
+    page.fill("#obj-gap", "")
+    page.keyboard.press("Escape")
+    page.fill("#obj-search", "")
+    check(page.evaluate("window.circuitEditor.state.objects.length") == n0, "undone, the two objects of before remain")
+
+
 def reopen_run(context, net, errors, base, shots, target):
     print("Reopening the downloaded file in a fresh page")
     net.overpass_down = set()
@@ -586,6 +753,9 @@ def reopen_run(context, net, errors, base, shots, target):
     original = json.loads(pathlib.Path(target).read_text(encoding="utf-8"))
     again = page.evaluate("window.circuitEditor.prepareExport().then(o => o.track.hash)")
     check(again == original["hash"], "exported again, the reopened circuit has the same hash")
+    objs = page.evaluate("window.circuitEditor.prepareExport().then(o => o.track.objects)")
+    check(objs == original["objects"] and page.locator(".omark").count() == 2,
+          "« Ouvrir » puts the objects back on the map, where they were: exported again, the same items")
     shot(page, shots, "desktop-reopened.png")
     page.close()
 

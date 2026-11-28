@@ -70,6 +70,7 @@ contiennent aucun code géographique : ils ne lisent ni `origin`, ni `waypoints`
 | `allowed_classes` | tableau de classes `highway` | non | Classes de routes autorisées au routage dans l'éditeur. |
 | `attribution` | chaîne, 0 à 300 caractères | non | Mention des sources, affichée par les jeux à l'écran de chargement. |
 | `scenery` | objet | non | Le décor du lieu réel, lu par l'éditeur (bâtiments, eau, couverture du sol). Voir « Décor ». Hors du hash. |
+| `objects` | objet | non | Les objets posés à la main sur la carte, pris dans la bibliothèque des objets du jeu. Voir « Objets posés ». Hors du hash. |
 | `photos` | tableau de 0 à 24 photos | non | Photos des lieux du parcours, pour qui habille le circuit (pas pour être affichées). Voir plus bas. Hors du hash. |
 
 Un champ inconnu est **ignoré** par les jeux (compatibilité ascendante). L'éditeur
@@ -206,6 +207,45 @@ par son hash le remplace quand `scenery.made` diffère).
 Les positions sont dans le repère des points (`+x` est, `+z` sud, à l'échelle du
 circuit). Les tailles des bâtiments restent en mètres réels : un jeu choisit ses propres
 modèles et leur espacement à son échelle.
+
+## Objets posés
+
+`objects` est facultatif. Ce sont les objets que l'auteur a choisis dans la
+**bibliothèque des objets** (`objects-library.js`, à côté de l'éditeur : tous les objets
+de décor de 3D Buggy, avec leur taille et une vignette, sortis du jeu par
+`tools/object_library.gd`) et posés lui-même sur la carte. Le jeu les met **exactement
+là**, au sol (ou sur la route, si l'auteur les y a mis), tournés comme indiqué, avec
+leurs collisions ; la végétation et le décor du jeu leur laissent la place. Ils
+**n'entrent pas dans le hash** (c'est de l'habillage, comme `scenery`) : un jeu qui garde
+un circuit par son hash le remplace quand `objects.made` diffère. Relire le décor du
+lieu réel (`scenery`) ne touche pas aux objets posés.
+
+```json
+"objects": {"v": 1, "made": "2026-11-28T01:10:00Z",
+  "items": [["palm_a", 12.5, -30.25, 90, 1], ["gable_house_a", 40.1, 12.0, 180, 1.2]]}
+```
+
+| Champ | Type | Rôle |
+|---|---|---|
+| `v` | `1` | Version. Un jeu ignore des objets d'une version qu'il ne connaît pas. |
+| `made` | date ISO 8601 UTC | La dernière modification des objets. |
+| `items` | tableau de 0 à 2 000 objets | `[sorte, x, z, cap, taille]`. |
+
+- `sorte` : l'identifiant de l'objet dans la bibliothèque, `[a-z0-9_]`, 1 à 48
+  caractères. Un jeu qui ne connaît pas une sorte saute cet objet, sans refuser le
+  circuit.
+- `x`, `z` : la place de l'objet (l'origine du modèle, au sol), dans le repère des
+  points (`+x` est, `+z` sud), en mètres de jeu, 2 décimales au plus, `|x|` et
+  `|z|` ≤ 60 000.
+- `cap` : la direction vers laquelle regarde la **face avant** de l'objet (l'axe `+z`
+  du modèle), en degrés depuis le nord dans le sens des aiguilles d'une montre :
+  `0` nord (`−z`), `90` est (`+x`), `180` sud, `270` ouest. De 0 à 360 exclu,
+  1 décimale au plus. Dans Godot : `Basis(Vector3.UP, PI − deg_to_rad(cap))`.
+- `taille` : facteur de taille, de 0,5 à 2, 2 décimales au plus (`1` : la taille du
+  jeu).
+
+Qui lit le fichier écarte un objet malformé (sorte qui n'en est pas une, nombre
+non fini ou hors des bornes) sans refuser le circuit.
 
 ## Hash
 

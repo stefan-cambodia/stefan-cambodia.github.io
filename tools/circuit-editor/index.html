@@ -117,7 +117,7 @@ small { color: var(--ink-soft); font-size: .86em; }
 .row { display: flex; gap: 8px; margin: 0 0 10px; }
 .field { margin: 0 0 12px; padding: 0; border: 0; min-width: 0; }
 .field > label, .field > legend { display: block; margin: 0 0 4px; padding: 0; font-weight: 600; font-size: .93em; }
-.field input[type=text], .field input[type=number], .field input[type=password], .field select, .search input {
+.field input[type=text], .field input[type=search], .field input[type=number], .field input[type=password], .field select, .search input {
   width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
   background: var(--paper); color: var(--ink); font: inherit; font-size: 16px; }
 .field input:focus-visible, .field select:focus-visible, .search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
@@ -151,6 +151,35 @@ small { color: var(--ink-soft); font-size: .86em; }
 .note.bad { color: var(--bad); }
 .note.hint { margin-top: -6px; font-size: .86em; }
 .photos, .refused { margin: 0 0 12px; padding: 0; list-style: none; }
+.objfind { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.objmode { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
+.objmode .seg { margin-bottom: 12px; }
+.objmode .field { flex: 1 1 70px; }
+.objlib { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; margin: 0 0 12px; padding: 2px;
+  list-style: none; max-height: 44vh; overflow-y: auto; }
+.otile { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; min-height: 100px; padding: 4px;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: inherit;
+  font-size: 11px; line-height: 1.2; text-align: center; cursor: pointer; }
+.otile:hover { border-color: var(--accent); }
+.otile.on { border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.otile:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.oname { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.othumb { display: inline-block; flex: 0 0 auto; background-repeat: no-repeat; font-weight: 700; color: #495057; text-align: center; }
+.omark .othumb { border-radius: 50%; background-color: rgba(255, 255, 255, .9); box-shadow: 0 0 0 2px #fff, 0 1px 4px rgba(0, 0, 0, .45); line-height: 30px; }
+.omark.sel .othumb { box-shadow: 0 0 0 3px #e8590c, 0 1px 5px rgba(0, 0, 0, .5); }
+#map.placing, #map.placing .leaflet-interactive { cursor: crosshair; }
+.note.armed:empty { display: none; }
+.note.armed { padding: 6px 8px; border-radius: var(--radius); background: rgba(11, 114, 133, .1); }
+.objsel { margin: 0 0 12px; padding: 8px; border: 1px solid var(--line); border-radius: var(--radius); }
+.objsel-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.objsel-head small { display: block; color: #5c6670; }
+.objsel input[type=range] { width: 100%; accent-color: var(--accent); }
+.objplaced { margin: 0 0 8px; padding: 0; list-style: none; }
+.objplaced li button { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0 0 4px; padding: 4px 6px; border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.objplaced li button:hover { border-color: var(--accent); }
+.objplaced li b { margin-left: auto; }
+kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: .9em; }
 .photos li { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; padding: 6px; border: 1px solid var(--line); border-radius: var(--radius); }
 .photos li.out { border-color: var(--bad); }
 .photos img { flex: 0 0 64px; width: 64px; height: 48px; object-fit: cover; border-radius: 6px; cursor: pointer; }
@@ -327,6 +356,7 @@ small { color: var(--ink-soft); font-size: .86em; }
         <button type="button" role="tab" class="tab" id="tabbtn-settings" data-tab="settings" aria-selected="false" aria-controls="tab-settings">Réglages</button>
         <button type="button" role="tab" class="tab" id="tabbtn-relief" data-tab="relief" aria-selected="false" aria-controls="tab-relief">Relief</button>
         <button type="button" role="tab" class="tab" id="tabbtn-photos" data-tab="photos" aria-selected="false" aria-controls="tab-photos">Photos</button>
+        <button type="button" role="tab" class="tab" id="tabbtn-objects" data-tab="objects" aria-selected="false" aria-controls="tab-objects">Objets</button>
         <button type="button" role="tab" class="tab" id="tabbtn-send" data-tab="send" aria-selected="false" aria-controls="tab-send">Envoi</button>
       </div>
 
@@ -460,6 +490,55 @@ small { color: var(--ink-soft); font-size: .86em; }
           réencodée : elle ne garde aucune métadonnée. Elle fait partie du fichier : envoyée au jeu, elle est publique.</p>
       </section>
 
+      <!-- Objets -->
+      <section id="tab-objects" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-objects" hidden>
+        <p class="note">Tous les objets du jeu (arbres, maisons, étals, animaux, panneaux, temples, monuments…) : choisissez-en un,
+          puis <b>cliquez sur la carte</b> pour le poser, autant de fois qu'il faut. Le jeu le met exactement là, à sa vraie taille
+          (un mètre de jeu vaut l'échelle du circuit sur la carte), et laisse sa place libre de végétation et de décor.</p>
+        <p id="obj-missing" class="note bad" hidden>La bibliothèque des objets (objects-library.js, à côté de cette page) n'a pas été
+          trouvée : les objets déjà posés restent dans le fichier, mais on ne peut pas en choisir d'autres.</p>
+        <div class="objfind">
+          <div class="field"><label for="obj-search">Chercher</label>
+            <input id="obj-search" type="search" autocomplete="off" spellcheck="false" placeholder="maison, palmier, pagode, moto…"></div>
+          <div class="field"><label for="obj-group">Famille</label><select id="obj-group"></select></div>
+        </div>
+        <div class="objmode">
+          <div class="seg" role="group" aria-label="Pose">
+            <button type="button" class="seg-btn on" data-mode="one" aria-pressed="true">Un par clic</button>
+            <button type="button" class="seg-btn" data-mode="row" aria-pressed="false">En ligne</button>
+            <button type="button" class="seg-btn" data-mode="course" aria-pressed="false">Le long du tracé</button>
+          </div>
+          <div class="field"><label for="obj-gap">Écart</label>
+            <input id="obj-gap" type="number" inputmode="numeric" min="1" max="500" step="1" placeholder="auto"></div>
+        </div>
+        <p id="obj-mode-help" class="note"></p>
+        <p id="obj-armed" class="note armed" role="status" aria-live="polite"></p>
+        <ul id="obj-lib" class="objlib" aria-label="Bibliothèque des objets"></ul>
+
+        <h2>Objets posés <span id="obj-count" class="muted"></span></h2>
+        <div id="obj-sel" class="objsel" hidden>
+          <div class="objsel-head"><span id="obj-sel-thumb"></span><div><b id="obj-sel-name"></b><small id="obj-sel-size"></small></div></div>
+          <div class="field"><label for="obj-heading">Orientation <output id="obj-heading-out"></output></label>
+            <input id="obj-heading" type="range" min="0" max="359" step="1"></div>
+          <div class="field"><label for="obj-size">Taille <output id="obj-size-out"></output></label>
+            <input id="obj-size" type="range" min="0.5" max="2" step="0.05"></div>
+          <div class="buttons">
+            <button type="button" id="obj-turn" class="btn">Tourner de 90°</button>
+            <button type="button" id="obj-face" class="btn">Face à la route</button>
+            <button type="button" id="obj-dup" class="btn">Dupliquer</button>
+            <button type="button" id="obj-del" class="btn danger">Supprimer</button>
+          </div>
+        </div>
+        <ul id="obj-placed" class="objplaced" aria-label="Objets posés"></ul>
+        <p id="obj-none" class="note">Aucun objet posé.</p>
+        <div class="buttons one"><button type="button" id="obj-clear" class="btn" disabled>Retirer tous les objets</button></div>
+        <p class="note">Sur la carte : glisser un objet le déplace, un clic le choisit, un clic droit le supprime. Touches :
+          <kbd>R</kbd> tourne de 15° (<kbd>Maj</kbd>+<kbd>R</kbd> dans l'autre sens), <kbd>Suppr</kbd> supprime l'objet choisi,
+          <kbd>Échap</kbd> arrête la pose. La flèche montre la face avant ; un nouvel objet regarde la route quand elle est proche, sauf
+          si on l'a tourné avec <kbd>R</kbd> pendant la pose. Une ligne entière s'annule d'un seul Ctrl+Z.
+          Ctrl+Z annule.</p>
+      </section>
+
       <!-- Envoi -->
       <section id="tab-send" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-send" hidden>
         <div class="buttons">
@@ -506,6 +585,8 @@ small { color: var(--ink-soft); font-size: .86em; }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<!-- The library of the game's objects, beside the page (made by 3D Buggy's tools/object_library.gd). -->
+<script src="objects-library.js"></script>
 <script id="core">
 /* ==========================================================================
    CircuitCore: pure computation, no DOM, no network, no host API.
@@ -565,7 +646,8 @@ small { color: var(--ink-soft); font-size: .86em; }
     minWidth: 3, maxWidth: 30, minGap: 0.5, maxGap: 50, maxSlope: 0.6, minLength: 400,
     maxTotalLength: 300000, maxCheckpoints: 200, maxGates: 400, maxLaps: 20,
     minSpacing: 1, maxSpacing: 20, maxWaypoints: 2000,
-    maxPhotos: 24, maxPhotoImage: 400000, maxPhotoName: 120      // image: characters of the data URI
+    maxPhotos: 24, maxPhotoImage: 400000, maxPhotoName: 120,     // image: characters of the data URI
+    maxObjects: 2000, minObjectSize: 0.5, maxObjectSize: 2       // objects placed by hand (FORMAT.md, Objets posés)
   };
 
   // The editor's own rules and defaults.
@@ -1461,6 +1543,8 @@ small { color: var(--ink-soft); font-size: .86em; }
     o.photos = Array.isArray(s.photos) ? s.photos : [];
     o.allowed_classes = Array.isArray(s.allowed_classes) ? s.allowed_classes.slice() : C.DEFAULT_ALLOWED.slice();
     o.waypoints = Array.isArray(s.waypoints) ? s.waypoints : [];
+    o.objects = Array.isArray(s.objects) ? s.objects : [];
+    o.objects_made = typeof s.objects_made === 'string' ? s.objects_made : '';
     return o;
   };
 
@@ -1721,6 +1805,9 @@ small { color: var(--ink-soft); font-size: .86em; }
     t.attribution = C.ATTRIBUTION + (S.relief ? C.ATTRIBUTION_RELIEF : '');
     // Outside the hash, like every field from here on: a file without photos stays what it was.
     if (photoRows.length) t.photos = photoRows;
+    // The objects placed by hand, in the frame of the points (outside the hash).
+    var objects = C.objectsField(S.objects, originLL[0], originLL[1], S.scale, S.objects_made);
+    if (objects) t.objects = objects;
     // Editor-only settings, ignored by the games (unknown field), read back by « Ouvrir ».
     t.editor = {
       smooth_m: S.smooth_m, narrow_tracks: S.narrow_tracks, bridge_widths: S.bridge_widths,
@@ -2000,8 +2087,10 @@ small { color: var(--ink-soft); font-size: .86em; }
     }
     // The scenery is optional too; when there, it must be one the editor could have written.
     if (t.scenery !== undefined && !C.sceneryOk(t.scenery)) bad('scenery');
+    // So are the objects placed by hand.
+    if (t.objects !== undefined && !C.objectsOk(t.objects)) bad('objects');
     var res = done();
-    if (errors.length === 0 || errors.every(function (e) { return e.code === 'id' || e.code === 'name' || e.code === 'photos' || e.code === 'scenery'; })) {
+    if (errors.length === 0 || errors.every(function (e) { return e.code === 'id' || e.code === 'name' || e.code === 'photos' || e.code === 'scenery' || e.code === 'objects'; })) {
       res.hash = C.trackHash(t);
       if (res.hash !== t.hash) { bad('hash', { expected: res.hash, found: t.hash }); res.ok = false; }
     }
@@ -2025,6 +2114,9 @@ small { color: var(--ink-soft); font-size: .86em; }
       } else if (k === 'photos') {
         rows = v.map(function (w) { return '    ' + JSON.stringify(w); });
         lines.push('  "photos": [\n' + rows.join(',\n') + '\n  ]');
+      } else if (k === 'objects' && v && Array.isArray(v.items) && v.items.length) {
+        rows = v.items.map(function (w) { return '    ' + JSON.stringify(w); });
+        lines.push('  "objects": {"v": ' + JSON.stringify(v.v) + ', "made": ' + JSON.stringify(v.made) + ', "items": [\n' + rows.join(',\n') + '\n  ]}');
       } else lines.push('  ' + JSON.stringify(k) + ': ' + JSON.stringify(v));
     }
     return '{\n' + lines.join(',\n') + '\n}\n';
@@ -2037,7 +2129,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     if (!t || typeof t !== 'object' || Array.isArray(t) || t.format !== C.FORMAT) return { ok: false, error: 'format', track: null, check: null };
     var check = C.checkTrack(t);
     // Photos that cannot be used are left out by whoever reads the file: they do not make it unreadable.
-    var fatal = check.errors.some(function (e) { return e.code !== 'hash' && e.code !== 'id' && e.code !== 'name' && e.code !== 'photos' && e.code !== 'scenery'; });
+    var fatal = check.errors.some(function (e) { return e.code !== 'hash' && e.code !== 'id' && e.code !== 'name' && e.code !== 'photos' && e.code !== 'scenery' && e.code !== 'objects'; });
     return { ok: !fatal, error: fatal ? check.errors[0].code : null, track: t, check: check };
   };
 
@@ -2047,6 +2139,190 @@ small { color: var(--ink-soft); font-size: .86em; }
     if (!t.origin || typeof t.origin.lat !== 'number' || typeof t.origin.lon !== 'number') return null;
     var enu = C.makeEnu(t.origin.lat, t.origin.lon), out = new Array(t.points.length), i;
     for (i = 0; i < t.points.length; i++) out[i] = enu.inverse(t.points[i][0] * t.scale, -t.points[i][2] * t.scale);
+    return out;
+  };
+
+
+  /* ------------------------------------------------- 10 b. Objects placed by hand */
+
+  // The objects an author places on the map, from the library of the game's
+  // objects (objects-library.js beside the page). The editor keeps each one on
+  // the Earth: { kind, lat, lon, heading, size }, heading the compass bearing
+  // its front faces (degrees, clockwise from north), size a factor of its size
+  // in the game. The file has them in the frame of the points (FORMAT.md,
+  // Objets posés): they follow the start if the course changes.
+  C.OBJECTS_VERSION = 1;
+  C.OBJECT_KIND = /^[a-z0-9_]{1,48}$/;
+
+  function round2(v) { return Math.round(v * 100) / 100; }
+  C.cleanHeading = function (h) {
+    var v = Math.round((((typeof h === 'number' && isFinite(h) ? h : 0) % 360) + 360) % 360 * 10) / 10;
+    return v >= 360 ? 0 : v;
+  };
+  C.cleanSize = function (v) {
+    var L = C.LIMITS;
+    if (typeof v !== 'number' || !isFinite(v)) return 1;
+    return round2(Math.min(Math.max(v, L.minObjectSize), L.maxObjectSize));
+  };
+
+  // An object as the editor keeps it, or null when it cannot be one.
+  C.cleanObject = function (o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o) || typeof o.kind !== 'string' || !C.OBJECT_KIND.test(o.kind)) return null;
+    if (typeof o.lat !== 'number' || typeof o.lon !== 'number' || !isFinite(o.lat) || !isFinite(o.lon) || Math.abs(o.lat) > 90 || Math.abs(o.lon) > 180) return null;
+    return { kind: o.kind, lat: Math.round(o.lat * 1e7) / 1e7, lon: Math.round(o.lon * 1e7) / 1e7, heading: C.cleanHeading(o.heading), size: C.cleanSize(o.size) };
+  };
+
+  // The `objects` field of a file, or null when there is none to write.
+  // objects: editor objects; origin: the start on the Earth; scale: real metres a game metre.
+  C.objectsField = function (objects, lat0, lon0, scale, made) {
+    if (!Array.isArray(objects) || !objects.length) return null;
+    var enu = C.makeEnu(lat0, lon0), items = [], i, o, e, x, z, L = C.LIMITS;
+    for (i = 0; i < objects.length && items.length < L.maxObjects; i++) {
+      o = C.cleanObject(objects[i]);
+      if (!o) continue;
+      e = enu.forward(o.lat, o.lon);
+      x = round2(e[0] / scale); z = round2(-e[1] / scale);
+      if (Math.abs(x) > L.maxXZ || Math.abs(z) > L.maxXZ) continue;
+      items.push([o.kind, x === 0 ? 0 : x, z === 0 ? 0 : z, o.heading, o.size]);
+    }
+    if (!items.length) return null;
+    return { v: C.OBJECTS_VERSION, made: typeof made === 'string' && made ? made : new Date(0).toISOString().replace('.000Z', 'Z'), items: items };
+  };
+
+  // Whether an `objects` field is one the editor could have written.
+  C.objectsOk = function (f) {
+    var L = C.LIMITS, i, it;
+    if (!f || typeof f !== 'object' || Array.isArray(f) || f.v !== C.OBJECTS_VERSION) return false;
+    if (typeof f.made !== 'string' || !isFinite(Date.parse(f.made))) return false;
+    if (!Array.isArray(f.items) || f.items.length > L.maxObjects) return false;
+    for (i = 0; i < f.items.length; i++) {
+      it = f.items[i];
+      if (!Array.isArray(it) || it.length !== 5 || typeof it[0] !== 'string' || !C.OBJECT_KIND.test(it[0])) return false;
+      if (!isNum2(it[1]) || !isNum2(it[2]) || Math.abs(it[1]) > L.maxXZ || Math.abs(it[2]) > L.maxXZ) return false;
+      if (typeof it[3] !== 'number' || !isFinite(it[3]) || it[3] < 0 || it[3] >= 360 || Math.round(it[3] * 10) !== it[3] * 10) return false;
+      if (!isNum2(it[4]) || it[4] < L.minObjectSize || it[4] > L.maxObjectSize) return false;
+    }
+    return true;
+  };
+  function isNum2(v) { return typeof v === 'number' && isFinite(v) && Math.abs(Math.round(v * 100) - v * 100) < 1e-6; }
+
+  // The objects of a file back on the Earth (« Ouvrir »): editor objects, [] when
+  // the file has none or no origin. Items that cannot be read are left out.
+  C.objectsFromTrack = function (t) {
+    if (!t || !t.objects || !Array.isArray(t.objects.items) || t.objects.v !== C.OBJECTS_VERSION) return [];
+    if (!t.origin || typeof t.origin.lat !== 'number' || typeof t.origin.lon !== 'number' || !(t.scale > 0)) return [];
+    var enu = C.makeEnu(t.origin.lat, t.origin.lon), out = [], i, it, ll, o;
+    for (i = 0; i < t.objects.items.length && out.length < C.LIMITS.maxObjects; i++) {
+      it = t.objects.items[i];
+      if (!Array.isArray(it) || typeof it[1] !== 'number' || typeof it[2] !== 'number' || !isFinite(it[1]) || !isFinite(it[2])) continue;
+      ll = enu.inverse(it[1] * t.scale, -it[2] * t.scale);
+      o = C.cleanObject({ kind: it[0], lat: ll[0], lon: ll[1], heading: it[3], size: it[4] });
+      if (o) out.push(o);
+    }
+    return out;
+  };
+
+  // Where an object stands on the map: its rectangle (the model's box seen from
+  // above) and the tip of its front arrow, as [east, north] real metres from its
+  // place. entry: its line of the library (w, d: the box across X and Z of the
+  // model, cx, cz its centre), or null for a kind the library does not know (a
+  // 4 m square). scale: real metres a game metre.
+  C.objectFootprint = function (entry, o, scale) {
+    var w = entry && entry.w > 0 ? entry.w : 4, d = entry && entry.d > 0 ? entry.d : 4;
+    var cx = entry && isFinite(entry.cx) ? entry.cx : 0, cz = entry && isFinite(entry.cz) ? entry.cz : 0;
+    var k = (o.size || 1) * scale, h = (o.heading || 0) * D2R;
+    // The model's +X and +Z (its front) on the ground, east and north.
+    var xe = -Math.cos(h), xn = Math.sin(h), fe = Math.sin(h), fn = Math.cos(h);
+    function at(u, v) { return [(u * xe + v * fe) * k, (u * xn + v * fn) * k]; }
+    var corners = [at(cx - w / 2, cz - d / 2), at(cx + w / 2, cz - d / 2), at(cx + w / 2, cz + d / 2), at(cx - w / 2, cz + d / 2)];
+    return { corners: corners, front: at(cx, cz + d / 2 + Math.max(1.5, d * 0.25)), centre: at(cx, cz) };
+  };
+
+  // Whether (lat, lon) is inside a ring of [lat, lon] points (even-odd rule).
+  C.inRing = function (lat, lon, ring) {
+    var inside = false, i, j;
+    for (i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var yi = ring[i][0], xi = ring[i][1], yj = ring[j][0], xj = ring[j][1];
+      if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+  // The water of a track's scenery on the Earth: rings of [lat, lon], [] without one.
+  C.waterRings = function (t) {
+    if (!t || !t.scenery || !Array.isArray(t.scenery.water) || !t.origin || !(t.scale > 0)) return [];
+    var enu = C.makeEnu(t.origin.lat, t.origin.lon), k = t.scale;
+    return t.scenery.water.filter(function (w) { return w && Array.isArray(w.ring) && w.ring.length >= 3; })
+      .map(function (w) { return w.ring.map(function (p) { return enu.inverse(p[0] * k, -p[1] * k); }); });
+  };
+
+  // The heading that turns an object's front from (lat, lon) towards (lat2, lon2).
+  C.headingTowards = function (lat, lon, lat2, lon2) {
+    var m = C.metersPerDegree(lat), e = (lon2 - lon) * m.lon, n = (lat2 - lat) * m.lat;
+    return C.cleanHeading(Math.atan2(e, n) / D2R);
+  };
+
+  // Rows of objects. A row from a to b ({lat, lon}): its places `spacing` real
+  // metres apart (rounded so that both ends get one), at most ROW_MAX.
+  C.ROW_MAX = 400;
+  C.rowPlaces = function (a, b, spacing) {
+    var m = C.metersPerDegree((a.lat + b.lat) / 2), e = (b.lon - a.lon) * m.lon, n = (b.lat - a.lat) * m.lat, len = Math.sqrt(e * e + n * n);
+    if (!(len >= 0.01)) return [{ lat: a.lat, lon: a.lon }];
+    var k = Math.min(C.ROW_MAX - 1, Math.max(1, Math.round(len / Math.max(spacing, 0.5)))), out = [], i;
+    for (i = 0; i <= k; i++) out.push({ lat: a.lat + (b.lat - a.lat) * i / k, lon: a.lon + (b.lon - a.lon) * i / k });
+    return out;
+  };
+
+  // A row along the course: from where a is beside it to where b is, at a's
+  // distance from it and on a's side, every `spacing` real metres, each object
+  // facing the course (along it when a is on the road). line: { lat[], lon[] },
+  // the course in the direction of the race; closed: a loop (the row may go past
+  // the start). Returns [{ lat, lon, heading }], or [] without a course.
+  C.alongCourse = function (line, closed, a, b, spacing) {
+    var nPts = line && line.lat ? line.lat.length : 0;
+    if (nPts < 2) return [];
+    var m = C.metersPerDegree(a.lat), x = new Float64Array(nPts), y = new Float64Array(nPts), s = new Float64Array(nPts + 1), i;
+    for (i = 0; i < nPts; i++) { x[i] = (line.lon[i] - a.lon) * m.lon; y[i] = (line.lat[i] - a.lat) * m.lat; }
+    var segs = closed ? nPts : nPts - 1;
+    for (i = 0; i < segs; i++) {
+      var j = (i + 1) % nPts;
+      s[i + 1] = s[i] + Math.sqrt((x[j] - x[i]) * (x[j] - x[i]) + (y[j] - y[i]) * (y[j] - y[i]));
+    }
+    var total = s[segs];
+    if (!(total > 0)) return [];
+    // The nearest point of the course to (px, py): its distance along, and the signed offset (+ to the right).
+    function project(px, py) {
+      var best = Infinity, at = 0, off = 0, k;
+      for (k = 0; k < segs; k++) {
+        var j2 = (k + 1) % nPts, dx = x[j2] - x[k], dy = y[j2] - y[k], l2 = dx * dx + dy * dy;
+        var t = l2 > 0 ? Math.max(0, Math.min(1, ((px - x[k]) * dx + (py - y[k]) * dy) / l2)) : 0;
+        var qx = x[k] + dx * t, qy = y[k] + dy * t, d2 = (px - qx) * (px - qx) + (py - qy) * (py - qy);
+        if (d2 < best) {
+          best = d2; at = s[k] + t * (s[k + 1] - s[k]);
+          var l = Math.sqrt(l2) || 1;
+          off = ((px - qx) * (dy / l) - (py - qy) * (dx / l));
+        }
+      }
+      return { at: at, off: off };
+    }
+    // The point and direction of the course at distance d along it.
+    function at(d) {
+      d = closed ? ((d % total) + total) % total : Math.max(0, Math.min(total, d));
+      var lo = 0, hi = segs;
+      while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (s[mid] <= d) lo = mid; else hi = mid; }
+      var j3 = (lo + 1) % nPts, len = s[lo + 1] - s[lo], t = len > 0 ? (d - s[lo]) / len : 0, dx = x[j3] - x[lo], dy = y[j3] - y[lo], l = Math.sqrt(dx * dx + dy * dy) || 1;
+      return { x: x[lo] + dx * t, y: y[lo] + dy * t, tx: dx / l, ty: dy / l };
+    }
+    var pa = project(0, 0), pb = project((b.lon - a.lon) * m.lon, (b.lat - a.lat) * m.lat), from = pa.at, to = pb.at;
+    if (closed && to < from) to += total;
+    if (!closed && to < from) { var tmp = from; from = to; to = tmp; }
+    var count = Math.min(C.ROW_MAX - 1, Math.max(1, Math.round((to - from) / Math.max(spacing, 0.5)))), out = [];
+    for (i = 0; i <= count; i++) {
+      var q = at(from + (to - from) * i / count);
+      // Right of the direction of travel: (ty, -tx) in east, north.
+      var rx = q.ty, ry = -q.tx, ox = q.x + rx * pa.off, oy = q.y + ry * pa.off;
+      var hd = Math.abs(pa.off) < 0.5 ? Math.atan2(q.tx, q.ty) : Math.atan2(-rx * pa.off, -ry * pa.off);
+      out.push({ lat: a.lat + oy / m.lat, lon: a.lon + ox / m.lon, heading: C.cleanHeading(hd / D2R) });
+    }
     return out;
   };
 
@@ -2127,7 +2403,7 @@ small { color: var(--ink-soft); font-size: .86em; }
   // waypoints: [[lat, lon]...]; form: { field: string or boolean }; box:
   // [south, west, north, east] or null; ele: { lattice key: metres } or null;
   // areas: the boxes whose roads were loaded, [[south, west, north, east]...].
-  C.makeDraft = function (kind, waypoints, form, box, ele, saved, areas, photos) {
+  C.makeDraft = function (kind, waypoints, form, box, ele, saved, areas, photos, objects, objectsMade) {
     var d = { v: C.DRAFT_VERSION, saved: saved, kind: kind === 'stage' ? 'stage' : 'loop',
       waypoints: waypoints.map(function (w) { return [w[0], w[1]]; }), form: form };
     if (box) d.box = box.slice();
@@ -2141,13 +2417,19 @@ small { color: var(--ink-soft); font-size: .86em; }
         return m;
       }).filter(function (m) { return m && /^[0-9a-f]{8,64}$/.test(m.id); });
     }
+    // Objects as [kind, lat, lon, heading, size].
+    if (objects && objects.length) {
+      d.objects = objects.map(C.cleanObject).filter(Boolean).slice(0, C.LIMITS.maxObjects)
+        .map(function (o) { return [o.kind, o.lat, o.lon, o.heading, o.size]; });
+      if (typeof objectsMade === 'string' && objectsMade) d.objects_made = objectsMade;
+    }
     return d;
   };
 
   // A draft read back from its text, or null when it is not one. What cannot be
   // used is dropped, never repaired: a draft is a convenience, not a file.
   C.parseDraft = function (text) {
-    var d, i, w, k, v, lat = [], lon = [], wps = [], form = {}, ele = null, box = null, areas = [], photos = [], n = 0;
+    var d, i, w, k, v, lat = [], lon = [], wps = [], form = {}, ele = null, box = null, areas = [], photos = [], objects = [], n = 0;
     if (typeof text !== 'string' || !text) return null;
     try { d = JSON.parse(text); } catch (e) { return null; }
     if (!d || typeof d !== 'object' || d.v !== C.DRAFT_VERSION || !Array.isArray(d.waypoints)) return null;
@@ -2177,6 +2459,13 @@ small { color: var(--ink-soft); font-size: .86em; }
         if (v && d.photos[i] && typeof d.photos[i].id === 'string' && /^[0-9a-f]{8,64}$/.test(d.photos[i].id)) { v.id = d.photos[i].id; photos.push(v); }
       }
     }
+    if (Array.isArray(d.objects)) {
+      for (i = 0; i < d.objects.length && objects.length < C.LIMITS.maxObjects; i++) {
+        w = d.objects[i];
+        v = Array.isArray(w) ? C.cleanObject({ kind: w[0], lat: w[1], lon: w[2], heading: w[3], size: w[4] }) : null;
+        if (v) objects.push(v);
+      }
+    }
     if (d.ele && typeof d.ele === 'object' && !Array.isArray(d.ele)) {
       ele = {};
       for (k in d.ele) {
@@ -2187,7 +2476,8 @@ small { color: var(--ink-soft); font-size: .86em; }
       if (!n) ele = null;
     }
     return { v: C.DRAFT_VERSION, saved: typeof d.saved === 'string' ? d.saved : '', kind: d.kind === 'stage' ? 'stage' : 'loop',
-      waypoints: wps, form: form, box: box, ele: ele, areas: areas, photos: photos };
+      waypoints: wps, form: form, box: box, ele: ele, areas: areas, photos: photos, objects: objects,
+      objects_made: objects.length && typeof d.objects_made === 'string' && isFinite(Date.parse(d.objects_made)) ? d.objects_made : '' };
   };
 
   /* --------------------------------------------------------------- 13. Photos */
@@ -3194,6 +3484,12 @@ small { color: var(--ink-soft); font-size: .86em; }
     return String(text).replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
   }
   function setText(el, text) { el.textContent = typo(text); }
+  // Whether keys pressed in this element are text typed in it.
+  function typing(el) {
+    const tag = el && el.tagName;
+    if (tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    return tag === 'INPUT' && ['range', 'checkbox', 'radio', 'button', 'submit', 'file', 'color'].indexOf(el.type) < 0;
+  }
   function make(tag, cls, text) {
     const el = document.createElement(tag);
     if (cls) el.className = cls;
@@ -3262,7 +3558,9 @@ small { color: var(--ink-soft); font-size: .86em; }
   // The drawing: what undo and redo restore. A waypoint is { lat, lon, edge, t };
   // edge is -1 while it has no road (reopened file, class no longer allowed).
   // A photo is { id, name, lat, lon, ele, taken, bearing, w, h, image } (core, section 13).
-  const state = { kind: 'loop', waypoints: [], photos: [] };
+  // An object placed by hand is { kind, lat, lon, heading, size } (core, section 10 b);
+  // objectsMade: when they last changed (the file's objects.made).
+  const state = { kind: 'loop', waypoints: [], photos: [], objects: [], objectsMade: '' };
   const undoStack = [], redoStack = [];
   let tool = 'add';
   let idTouched = false;                // the user typed an identifier: stop deriving it from the name
@@ -3325,6 +3623,11 @@ small { color: var(--ink-soft); font-size: .86em; }
     layers.photos = L.layerGroup().addTo(map);
     layers.scenery = L.layerGroup().addTo(map);
     layers.markers = L.layerGroup().addTo(map);
+    // Objects placed by hand: their outlines over the course, their marks under the waypoints.
+    map.createPane('objshapes').style.zIndex = 430;
+    map.createPane('objects').style.zIndex = 590;
+    layers.objects = L.layerGroup().addTo(map);
+    layers.objGhost = L.layerGroup().addTo(map);
     layers.probe = L.circleMarker([0, 0], { pane: 'probe', radius: 8, color: '#fff', weight: 3, fillColor: '#e8590c', fillOpacity: 1, interactive: false });
     layers.ghost = L.circleMarker([0, 0], { radius: 9, color: '#fff', weight: 3, fillColor: ROUTE_COLOR, fillOpacity: 0.9, interactive: false });
 
@@ -3687,7 +3990,8 @@ small { color: var(--ink-soft); font-size: .86em; }
   }
 
   function snapshot() {
-    return { kind: state.kind, waypoints: state.waypoints.map((w) => ({ lat: w.lat, lon: w.lon, edge: w.edge, t: w.t })), photos: state.photos.slice() };
+    return { kind: state.kind, waypoints: state.waypoints.map((w) => ({ lat: w.lat, lon: w.lon, edge: w.edge, t: w.t })), photos: state.photos.slice(),
+      objects: state.objects.map((o) => Object.assign({}, o)), objectsMade: state.objectsMade };
   }
   function pushUndo() {
     undoStack.push(snapshot());
@@ -3698,6 +4002,10 @@ small { color: var(--ink-soft); font-size: .86em; }
     state.kind = snap.kind;
     state.waypoints = snap.waypoints;
     state.photos = snap.photos || [];
+    state.objects = snap.objects || [];
+    state.objectsMade = snap.objectsMade || '';
+    if (objUi.selected >= state.objects.length) objUi.selected = -1;
+    objectsShown();
     // A restored waypoint may sit on a class that is no longer allowed.
     resnapForbidden();
     syncKindButtons();
@@ -3737,6 +4045,8 @@ small { color: var(--ink-soft); font-size: .86em; }
     const menuOpen = !$('places-menu').hidden || !$('search-results').hidden;
     closeMenus();
     if (menuOpen || Date.now() - popupClosedAt < 80) return;
+    if (objUi.armed) { onObjectsClick(ev.latlng); return; }
+    if (objUi.selected >= 0) { selectObject(-1); return; }
     if (tool === 'add') addWaypoint(ev.latlng);
     else insertWaypoint(ev);
   }
@@ -3797,10 +4107,14 @@ small { color: var(--ink-soft); font-size: .86em; }
   }
 
   function clearAll() {
-    if (!state.waypoints.length && !state.photos.length) return;
+    if (!state.waypoints.length && !state.photos.length && !state.objects.length) return;
     pushUndo();
     state.waypoints = [];
     state.photos = [];
+    state.objects = [];
+    state.objectsMade = '';
+    objUi.selected = -1;
+    objectsShown();
     photosSaid = null;
     layers.imported.clearLayers();
     refresh();
@@ -3951,6 +4265,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       checkpoint_every_m: $('f-cp').value === '' ? 0 : readNumber('f-cp', 0), gates_auto: $('f-gates').checked,
       relief: $('f-relief').checked, relief_smooth_m: readNumber('f-rsmooth', D.relief_smooth_m), allowed_classes: allowedClasses(),
       photos: state.photos, photo_max_m: readNumber('f-photo-max', D.photo_max_m), scenery: $('f-scenery').checked,
+      objects: state.objects, objects_made: state.objectsMade,
       waypoints: state.waypoints.map((w) => [w.lat, w.lon])
     });
   }
@@ -3982,6 +4297,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     }
     drawMarkers();
     drawRoute();
+    if (objUi.drawnScale !== s.scale) drawObjects();
     renderInfo();
     renderRelief();
     renderPhotos();
@@ -4401,6 +4717,9 @@ small { color: var(--ink-soft); font-size: .86em; }
   // The scenery on the map, light: buildings as their rectangles, water outlined.
   function drawScenery(sc, t) {
     layers.scenery.clearLayers();
+    // The water stays known to the objects: it is the place's, not the course's.
+    objUi.water = C.waterRings(Object.assign({}, t, { scenery: sc }));
+    drawObjects();
     const enu = C.makeEnu(t.origin.lat, t.origin.lon), k = t.scale;
     const ll = (x, z) => enu.inverse(x * k, -z * k);
     sc.water.forEach((w) => L.polygon(w.ring.map((p) => ll(p[0], p[1])), { renderer: roadRenderer, pane: 'roads', interactive: false, color: '#1971c2', weight: 1, fillOpacity: 0.15 }).addTo(layers.scenery));
@@ -4467,7 +4786,7 @@ small { color: var(--ink-soft); font-size: .86em; }
       a.href = url; a.download = out.track.id + '.cambotrack.json';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
-      exportStatus('Fichier ' + a.download + ' téléchargé (' + NUM(out.track.points.length) + ' points).' + (out.track.scenery ? sceneryLine() : ''));
+      exportStatus('Fichier ' + a.download + ' téléchargé (' + NUM(out.track.points.length) + ' points' + objectsLine(out.track) + ').' + (out.track.scenery ? sceneryLine() : ''));
       keepCircuit(true);
     } catch (err) { exportStatus(err.message, true); }
   }
@@ -4565,6 +4884,11 @@ small { color: var(--ink-soft); font-size: .86em; }
       .map((w) => ({ lat: w[0], lon: w[1], edge: -1, t: 0 }));
     state.photos = C.trackPhotos(t).map((ph) => Object.assign(ph, { id: photoId(ph) }));
     state.photos.forEach(keepPhotoImage);
+    state.objects = C.objectsFromTrack(t);
+    state.objectsMade = state.objects.length ? t.objects.made : '';
+    objUi.water = C.waterRings(t);
+    objUi.selected = -1;
+    objectsShown();
     photosSaid = null;
     syncKindButtons();
     resnapLost(RESNAP_M);
@@ -4658,7 +4982,8 @@ small { color: var(--ink-soft); font-size: .86em; }
     }
     // The boxes loaded, each one once.
     const seen = {}, areas = roads.areas.filter((a) => { const k = C.boxKey(a); if (seen[k]) return false; seen[k] = true; return true; });
-    return C.makeDraft(state.kind, state.waypoints.map((w) => [w.lat, w.lon]), formNow(), C.boxOf(lat, lon, draft.box), draft.ele, nowIso(), areas, state.photos);
+    return C.makeDraft(state.kind, state.waypoints.map((w) => [w.lat, w.lon]), formNow(), C.boxOf(lat, lon, draft.box), draft.ele, nowIso(), areas, state.photos,
+      state.objects, state.objectsMade);
   }
 
   function offerDraft(d) {
@@ -4701,6 +5026,10 @@ small { color: var(--ink-soft); font-size: .86em; }
     draft.kept = 'own'; draft.box = d.box; draft.ele = d.ele;
     state.kind = d.kind;
     state.waypoints = d.waypoints.map((w) => ({ lat: w[0], lon: w[1], edge: -1, t: 0 }));
+    state.objects = (d.objects || []).map((o) => Object.assign({}, o));
+    state.objectsMade = d.objects_made || '';
+    objUi.selected = -1;
+    objectsShown();
     // The photos come back with their images, kept on this computer under their id.
     state.photos = [];
     photosSaid = null;
@@ -4771,11 +5100,12 @@ small { color: var(--ink-soft); font-size: .86em; }
   const library = { sigs: {} };          // identifier -> what is kept under it, as drawingSig() writes it
 
   // A drawing reduced to what makes it this drawing: kind, waypoints (to 10 cm), form.
-  function sigOf(kind, waypoints, form, photos) {
+  function sigOf(kind, waypoints, form, photos, objects) {
     return JSON.stringify([kind, waypoints.map((w) => [w[0].toFixed(6), w[1].toFixed(6)]),
-      Object.keys(DRAFT_FIELDS).map((id) => (form[id] === undefined ? null : form[id])), photos.map((ph) => ph.id + (ph.view ? ':' + ph.view : ''))]);
+      Object.keys(DRAFT_FIELDS).map((id) => (form[id] === undefined ? null : form[id])), photos.map((ph) => ph.id + (ph.view ? ':' + ph.view : '')),
+      (objects || []).map((o) => [o.kind, o.lat.toFixed(6), o.lon.toFixed(6), o.heading, o.size])]);
   }
-  function drawingSig() { return sigOf(state.kind, state.waypoints.map((w) => [w.lat, w.lon]), formNow(), state.photos); }
+  function drawingSig() { return sigOf(state.kind, state.waypoints.map((w) => [w.lat, w.lon]), formNow(), state.photos, state.objects); }
   function drawingId() { return $('f-id').value.trim() || C.slugify($('f-name').value); }
   // A drawing on the map that « Mes circuits » does not hold as it is.
   function unkept() { return state.waypoints.length > 0 && library.sigs[drawingId()] !== drawingSig(); }
@@ -4810,7 +5140,7 @@ small { color: var(--ink-soft); font-size: .86em; }
     library.sigs = {};
     list.textContent = '';
     rows.forEach((r) => {
-      library.sigs[r.id] = sigOf(r.draft.kind, r.draft.waypoints, r.draft.form, r.draft.photos);
+      library.sigs[r.id] = sigOf(r.draft.kind, r.draft.waypoints, r.draft.form, r.draft.photos, r.draft.objects);
       const li = make('li'), open = make('button', 'circuit-open'), del = make('button', 'btn icon danger circuit-del');
       const laps = r.kind === 'loop' && r.laps > 1 ? r.laps + ' tours · ' : '';
       open.type = 'button';
@@ -4872,6 +5202,10 @@ small { color: var(--ink-soft); font-size: .86em; }
     undoStack.length = 0; redoStack.length = 0;
     state.waypoints = [];
     state.photos = [];
+    state.objects = [];
+    state.objectsMade = '';
+    objUi.selected = -1;
+    objectsShown();
     photosSaid = null;
     layers.imported.clearLayers();
     $('f-name').value = ''; $('f-id').value = '';
@@ -5476,6 +5810,435 @@ small { color: var(--ink-soft); font-size: .86em; }
     remember.addEventListener('change', sync);
   }
 
+
+  /* --------------------------------------------- 12 b. Objects placed by hand */
+
+  // The library of the game's objects: objects-library.js beside the page, made
+  // by 3D Buggy's tools/object_library.gd ({ cell, cols, groups, objects: [{ id,
+  // f, g, n, w, d, h, cx, cz, t }], atlas }). null when the page has none.
+  const LIB = window.CIRCUIT_OBJECTS && Array.isArray(window.CIRCUIT_OBJECTS.objects) && window.CIRCUIT_OBJECTS.cols > 0 ? window.CIRCUIT_OBJECTS : null;
+  const libById = new Map();
+  if (LIB) LIB.objects.forEach((e) => libById.set(e.id, e));
+  const OBJ_STEP = 15;                   // degrees a press of R turns an object
+  const OBJ_FACE_M = 300;                // a new object faces the course when it is this near (real metres)
+  const OBJ_THUMB = 64, OBJ_MARK = 30;   // pixels of a thumbnail in the list, on the map
+  // armed: the kind a click on the map places; selected: index in state.objects;
+  // drawn: per object, its outline, arrow and mark on the map.
+  // mode: 'one' (a click, an object), 'row' (two clicks, a straight row), 'course'
+  // (two clicks, a row along the course); anchor: the first click of a row;
+  // manual: the heading was turned by hand (R) while placing, the road no longer decides.
+  const objUi = { armed: null, selected: -1, drawn: [], drawnScale: null, lastHeading: 180, editing: false, atlas: '',
+    mode: 'one', anchor: null, manual: false, hover: null, frame: 0, water: [] };
+  const MODE_HELP = {
+    one: 'Un clic sur la carte pose l\'objet choisi. R le tourne avant de le poser.',
+    row: 'Deux clics : le début et la fin de la ligne. Les objets sont posés entre les deux, à l\'écart choisi.',
+    course: 'Deux clics à côté du tracé : la ligne le suit d\'un point à l\'autre, à la même distance et du même côté que le premier clic, chaque objet face à la route. Sur la route, ils suivent la route.'
+  };
+
+  const fold = (v) => String(v).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  function objName(kind) { const e = libById.get(kind); return e ? e.n : kind; }
+  function objScale() { return current.settings ? current.settings.scale : readNumber('f-scale', C.DEFAULTS.scale); }
+
+  // The atlas once, as a blob: its data URI is too big to repeat in every style.
+  function atlasUrl() {
+    if (!objUi.atlas && LIB && typeof LIB.atlas === 'string' && LIB.atlas.startsWith('data:image/')) {
+      try {
+        const comma = LIB.atlas.indexOf(','), type = LIB.atlas.slice(5, LIB.atlas.indexOf(';')), bin = atob(LIB.atlas.slice(comma + 1));
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        objUi.atlas = URL.createObjectURL(new Blob([bytes], { type: type }));
+      } catch (e) { objUi.atlas = LIB.atlas; }
+    }
+    return objUi.atlas;
+  }
+  // A thumbnail as a style: the object's cell of the atlas at px pixels.
+  function thumbStyle(e, px) {
+    const k = px / LIB.cell;
+    return 'width:' + px + 'px;height:' + px + 'px;background-image:url(' + atlasUrl() + ');background-size:' + (LIB.cols * LIB.cell * k) + 'px auto;' +
+      'background-position:' + (-(e.t % LIB.cols) * px) + 'px ' + (-Math.floor(e.t / LIB.cols) * px) + 'px';
+  }
+  function thumb(kind, px) {
+    const e = libById.get(kind), el = make('span', 'othumb');
+    if (e && LIB) el.setAttribute('style', thumbStyle(e, px));
+    else { el.style.width = el.style.height = px + 'px'; el.style.lineHeight = px + 'px'; el.textContent = '?'; }
+    return el;
+  }
+  function sizeText(e, size) {
+    const k = size || 1;
+    return NUM(e.w * k, 1) + ' × ' + NUM(e.d * k, 1) + ' m, ' + NUM(e.h * k, 1) + ' m de haut';
+  }
+  const COMPASS = ['nord', 'nord-est', 'est', 'sud-est', 'sud', 'sud-ouest', 'ouest', 'nord-ouest'];
+  function headingText(h) { return Math.round(h) + '° (' + COMPASS[Math.round(h / 45) % 8] + ')'; }
+
+  // The library, filtered by the search and the family.
+  function renderLibrary() {
+    const list = $('obj-lib');
+    list.textContent = '';
+    if (!LIB) { $('obj-missing').hidden = false; return; }
+    const q = fold($('obj-search').value.trim()), g = $('obj-group').value;
+    let n = 0;
+    LIB.objects.forEach((e) => {
+      if (g && e.g !== g) return;
+      if (q && !(fold(e.n).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q))) return;
+      const li = make('li'), b = make('button', 'otile' + (objUi.armed === e.id ? ' on' : ''));
+      b.type = 'button';
+      b.dataset.kind = e.id;
+      b.title = typo(e.n + ' : ' + sizeText(e) + (LIB.groups[e.g] ? ' · ' + LIB.groups[e.g] : ''));
+      b.setAttribute('aria-pressed', String(objUi.armed === e.id));
+      b.appendChild(thumb(e.id, OBJ_THUMB));
+      b.appendChild(make('span', 'oname', e.n));
+      b.addEventListener('click', () => arm(objUi.armed === e.id ? null : e.id));
+      li.appendChild(b);
+      list.appendChild(li);
+      n++;
+    });
+    if (!n) list.appendChild(make('li', 'note', 'Aucun objet ne correspond.'));
+  }
+
+  // Picks the kind a click on the map places (null: stop placing).
+  function arm(kind) {
+    objUi.armed = kind && libById.has(kind) ? kind : null;
+    objUi.anchor = null;
+    if (!objUi.armed) { objUi.manual = false; layers.objGhost.clearLayers(); }
+    $('map').classList.toggle('placing', !!objUi.armed);
+    document.querySelectorAll('#obj-lib .otile').forEach((b) => {
+      const on = b.dataset.kind === objUi.armed;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    sayArmed();
+  }
+  function sayArmed() {
+    const n = objUi.armed ? objName(objUi.armed) : '';
+    setText($('obj-armed'), !objUi.armed ? ''
+      : objUi.mode === 'one' ? 'Cliquez sur la carte pour poser « ' + n + ' » (autant de fois que voulu). Échap pour arrêter.'
+      : objUi.anchor ? 'Cliquez où la ligne de « ' + n + ' » finit. Échap pour l\'annuler.'
+      : 'Cliquez où la ligne de « ' + n + ' » commence' + (objUi.mode === 'course' ? ', à côté du tracé.' : '.'));
+  }
+  function setMode(mode) {
+    objUi.mode = mode;
+    objUi.anchor = null;
+    document.querySelectorAll('.objmode .seg-btn').forEach((b) => {
+      const on = b.dataset.mode === mode;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    setText($('obj-mode-help'), MODE_HELP[mode]);
+    sayArmed();
+    drawGhost();
+  }
+  // Real metres between two objects of a row: the field, else from the object's size.
+  function rowGap() {
+    const v = parseFloat(String($('obj-gap').value).replace(',', '.'));
+    if (isFinite(v) && v >= 1) return Math.min(v, 500);
+    const e = libById.get(objUi.armed);
+    return Math.max(3, (e ? Math.max(e.w, Math.min(e.d, e.w * 2)) : 4) * objScale() * 1.5);
+  }
+  // The heading of a new object at (lat, lon): the one turned by hand, else facing the course, else the last one.
+  function newHeading(lat, lon) {
+    if (objUi.manual) return objUi.lastHeading;
+    const face = faceCourse(lat, lon);
+    return face === null ? objUi.lastHeading : face;
+  }
+  // The objects a click at `ll` would place now: [{ lat, lon, heading }].
+  function pending(ll) {
+    if (!objUi.armed || !ll) return [];
+    if (objUi.mode === 'one') return [{ lat: ll.lat, lon: ll.lng, heading: newHeading(ll.lat, ll.lng) }];
+    if (!objUi.anchor) return [];
+    const a = { lat: objUi.anchor.lat, lon: objUi.anchor.lng }, b = { lat: ll.lat, lon: ll.lng };
+    if (objUi.mode === 'row') return C.rowPlaces(a, b, rowGap()).map((p) => Object.assign(p, { heading: newHeading(p.lat, p.lon) }));
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (!line) return [];
+    const row = C.alongCourse(line, state.kind === 'loop', a, b, rowGap());
+    if (objUi.manual) row.forEach((p) => { p.heading = objUi.lastHeading; });
+    return row;
+  }
+  // What a click would place, drawn faint under the pointer.
+  function drawGhost() {
+    layers.objGhost.clearLayers();
+    const list = pending(objUi.hover);
+    if (objUi.armed && objUi.mode !== 'one' && objUi.anchor) {
+      L.circleMarker(objUi.anchor, { pane: 'objshapes', className: 'oghost', radius: 5, color: '#e8590c', weight: 2, fillOpacity: 0.6, interactive: false }).addTo(layers.objGhost);
+    }
+    list.slice(0, C.ROW_MAX).forEach((p) => {
+      const sh = objShape({ kind: objUi.armed, lat: p.lat, lon: p.lon, heading: p.heading, size: 1 });
+      L.polygon(sh.ring, { pane: 'objshapes', className: 'oghost', interactive: false, color: '#e8590c', weight: 1.5, dashArray: '4 3', fillOpacity: 0.12 }).addTo(layers.objGhost);
+      L.polyline(sh.arrow, { pane: 'objshapes', className: 'oghost', interactive: false, color: '#e8590c', weight: 2, opacity: 0.8 }).addTo(layers.objGhost);
+    });
+  }
+  function onObjectsHover(ev) {
+    objUi.hover = ev.latlng;
+    if (!objUi.armed || objUi.frame) return;
+    // At most one redraw every 30 ms while the pointer moves.
+    objUi.frame = setTimeout(() => { objUi.frame = 0; drawGhost(); }, 30);
+  }
+  // A click with an object chosen: an object, or the first or last end of a row.
+  function onObjectsClick(latlng) {
+    if (objUi.mode === 'one') { placeObject(latlng); return; }
+    if (objUi.mode === 'course' && !(current.route && current.route.ok)) {
+      toast('« Le long du tracé » suit le tracé : tracez d\'abord le circuit (onglet Tracé), ou posez « En ligne ».', 'bad');
+      return;
+    }
+    if (!objUi.anchor) { objUi.anchor = latlng; sayArmed(); drawGhost(); return; }
+    objUi.hover = latlng;
+    const list = pending(latlng);
+    objUi.anchor = null;
+    sayArmed();
+    const room = C.LIMITS.maxObjects - state.objects.length;
+    if (room <= 0) { toast('Pas plus de ' + NUM(C.LIMITS.maxObjects) + ' objets par circuit.', 'bad'); drawGhost(); return; }
+    const add = list.slice(0, room).map((p) => C.cleanObject({ kind: objUi.armed, lat: p.lat, lon: p.lon, heading: p.heading, size: 1 })).filter(Boolean);
+    if (!add.length) { drawGhost(); return; }
+    pushUndo();
+    add.forEach((o) => state.objects.push(o));
+    objectsChanged(state.objects.length - 1);
+    drawGhost();
+    toast(NUM(add.length) + (add.length > 1 ? ' objets posés' : ' objet posé') + (add.length < list.length ? ' (la limite de ' + NUM(C.LIMITS.maxObjects) + ' est atteinte)' : '') + '. Ctrl+Z les retire d\'un coup.');
+  }
+
+  // The heading towards the nearest point of the course, or null when it is far.
+  function faceCourse(lat, lon) {
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (!line || !line.lat.length) return null;
+    let best = Infinity, bi = -1;
+    const m = C.metersPerDegree(lat);
+    for (let i = 0; i < line.lat.length; i++) {
+      const de = (line.lon[i] - lon) * m.lon, dn = (line.lat[i] - lat) * m.lat, d = de * de + dn * dn;
+      if (d < best) { best = d; bi = i; }
+    }
+    if (bi < 0 || Math.sqrt(best) > OBJ_FACE_M) return null;
+    if (best < 0.01) return null;
+    return C.headingTowards(lat, lon, line.lat[bi], line.lon[bi]);
+  }
+
+  function placeObject(latlng) {
+    if (state.objects.length >= C.LIMITS.maxObjects) { toast('Pas plus de ' + NUM(C.LIMITS.maxObjects) + ' objets par circuit.', 'bad'); return; }
+    const o = C.cleanObject({ kind: objUi.armed, lat: latlng.lat, lon: latlng.lng, heading: newHeading(latlng.lat, latlng.lng), size: 1 });
+    if (!o) return;
+    pushUndo();
+    state.objects.push(o);
+    objectsChanged(state.objects.length - 1);
+  }
+
+  // After any change of the objects: a new date for the file, the map, the panel, the draft.
+  function objectsChanged(sel) {
+    state.objectsMade = nowIso();
+    objUi.selected = sel === undefined ? objUi.selected : sel;
+    if (objUi.selected >= state.objects.length) objUi.selected = -1;
+    if (objUi.selected >= 0) objUi.lastHeading = state.objects[objUi.selected].heading;
+    objectsShown();
+    saveDraftSoon();
+  }
+  // The map and the panel as the objects are now (nothing else changes).
+  function objectsShown() {
+    drawObjects();
+    renderPlaced();
+  }
+
+  function objShape(o) {
+    const fp = C.objectFootprint(libById.get(o.kind) || null, o, objScale()), m = C.metersPerDegree(o.lat);
+    const ll = (q) => [o.lat + q[1] / m.lat, o.lon + q[0] / m.lon];
+    return { ring: fp.corners.map(ll), arrow: [ll(fp.centre), ll(fp.front)] };
+  }
+  function objIcon(o, sel) {
+    const e = libById.get(o.kind);
+    const html = e && LIB ? '<span class="othumb" style="' + thumbStyle(e, OBJ_MARK) + '"></span>'
+      : '<span class="othumb" style="width:' + OBJ_MARK + 'px;height:' + OBJ_MARK + 'px">?</span>';
+    return L.divIcon({ className: 'omark' + (sel ? ' sel' : ''), html: html, iconSize: [OBJ_MARK, OBJ_MARK], iconAnchor: [OBJ_MARK / 2, OBJ_MARK / 2] });
+  }
+  // An object standing in the water of the place's scenery (as last read), that does not float there.
+  function drowned(o) {
+    const e = libById.get(o.kind);
+    return !(e && e.afloat) && objUi.water.some((r) => C.inRing(o.lat, o.lon, r));
+  }
+  function objColour(o, sel) {
+    if (sel) return '#e8590c';
+    if (drowned(o)) return '#c92a2a';
+    const e = libById.get(o.kind);
+    return !e ? '#868e96' : e.f === 's' ? '#862e9c' : '#2b8a3e';
+  }
+
+  function drawObjects() {
+    layers.objects.clearLayers();
+    objUi.drawn = [];
+    objUi.drawnScale = objScale();
+    state.objects.forEach((o, i) => {
+      const sel = i === objUi.selected, sh = objShape(o), colour = objColour(o, sel);
+      const wet = drowned(o);
+      const ring = L.polygon(sh.ring, { pane: 'objshapes', interactive: false, color: colour, weight: sel ? 2.5 : 1.5, fillOpacity: sel ? 0.25 : 0.15,
+        dashArray: wet && !sel ? '6 3' : null, className: wet ? 'owet' : '' }).addTo(layers.objects);
+      const arrow = L.polyline(sh.arrow, { pane: 'objshapes', interactive: false, color: colour, weight: sel ? 3 : 2 }).addTo(layers.objects);
+      const mark = L.marker([o.lat, o.lon], { pane: 'objects', icon: objIcon(o, sel), draggable: true, keyboard: false, title: objName(o.kind),
+        zIndexOffset: sel ? 1000 : 0, autoPan: true }).addTo(layers.objects);
+      mark.on('click', (ev) => { L.DomEvent.stopPropagation(ev); if (objUi.armed) arm(null); selectObject(i); });
+      mark.on('contextmenu', (ev) => { L.DomEvent.stopPropagation(ev); L.DomEvent.preventDefault(ev.originalEvent); deleteObject(i); });
+      mark.on('dragstart', () => { pushUndo(); });
+      mark.on('drag', (ev) => {
+        const p = ev.target.getLatLng();
+        o.lat = p.lat; o.lon = p.lng;
+        reshape(i);
+      });
+      mark.on('dragend', () => {
+        state.objects[i] = C.cleanObject(o) || o;
+        objectsChanged(i);
+      });
+      objUi.drawn.push({ ring: ring, arrow: arrow, mark: mark });
+    });
+  }
+  // One object's outline and arrow again (while it is dragged or turned).
+  function reshape(i) {
+    const d = objUi.drawn[i], o = state.objects[i];
+    if (!d || !o) return;
+    const sh = objShape(o);
+    d.ring.setLatLngs(sh.ring);
+    d.arrow.setLatLngs(sh.arrow);
+  }
+
+  function selectObject(i) {
+    objUi.selected = i >= 0 && i < state.objects.length ? i : -1;
+    if (objUi.selected >= 0) { objUi.lastHeading = state.objects[objUi.selected].heading; showTab('objects'); }
+    objectsShown();
+  }
+  function deleteObject(i) {
+    if (i < 0 || i >= state.objects.length) return;
+    pushUndo();
+    state.objects.splice(i, 1);
+    objectsChanged(objUi.selected === i ? -1 : objUi.selected > i ? objUi.selected - 1 : objUi.selected);
+  }
+  function turnSelected(by) {
+    const o = state.objects[objUi.selected];
+    if (!o) return;
+    pushUndo();
+    o.heading = C.cleanHeading(o.heading + by);
+    objectsChanged();
+  }
+
+  // The panel's list: the objects placed, by kind; the chosen one's settings.
+  function renderPlaced() {
+    const n = state.objects.length, tab = $('tabbtn-objects'), wet = state.objects.filter(drowned).length;
+    tab.textContent = 'Objets';
+    if (n) tab.appendChild(make('span', 'count', String(n)));
+    setText($('obj-count'), n ? '(' + NUM(n) + (wet ? ', dont ' + NUM(wet) + ' dans l\'eau, en rouge' : '') + ')' : '');
+    $('obj-none').hidden = n > 0;
+    $('obj-clear').disabled = n === 0;
+    const byKind = new Map();
+    state.objects.forEach((o, i) => { if (!byKind.has(o.kind)) byKind.set(o.kind, []); byKind.get(o.kind).push(i); });
+    const list = $('obj-placed');
+    list.textContent = '';
+    byKind.forEach((idx, kind) => {
+      const li = make('li'), b = make('button');
+      b.type = 'button';
+      b.title = typo(idx.length > 1 ? 'Montrer le suivant sur la carte' : 'Montrer sur la carte');
+      b.appendChild(thumb(kind, 28));
+      b.appendChild(make('span', '', objName(kind) + (libById.has(kind) ? '' : ' (inconnu de la bibliothèque)')));
+      b.appendChild(make('b', '', '× ' + idx.length));
+      b.addEventListener('click', () => {
+        const at = idx.indexOf(objUi.selected), next = idx[(at + 1) % idx.length];
+        selectObject(next);
+        map.panTo([state.objects[next].lat, state.objects[next].lon]);
+      });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+    const o = state.objects[objUi.selected];
+    $('obj-sel').hidden = !o;
+    if (!o) return;
+    const e = libById.get(o.kind), th = $('obj-sel-thumb');
+    th.textContent = '';
+    th.appendChild(thumb(o.kind, 48));
+    setText($('obj-sel-name'), objName(o.kind));
+    setText($('obj-sel-size'), (e ? sizeText(e, o.size) + (e.f === 's' ? ' · construction' : '') + (e.afloat ? ' · flotte sur l\'eau' : '')
+      : 'Objet que la bibliothèque ne connaît pas : il reste dans le fichier.') + (drowned(o) ? ' · Dans l\'eau : le jeu le pose au fond.' : ''));
+    $('obj-heading').value = String(Math.round(o.heading) % 360);
+    setText($('obj-heading-out'), headingText(o.heading));
+    $('obj-size').value = String(o.size);
+    setText($('obj-size-out'), '× ' + NUM(o.size, 2));
+    $('obj-face').disabled = faceCourse(o.lat, o.lon) === null;
+  }
+
+  // What the export says about them.
+  function objectsLine(t) {
+    const n = t.objects ? t.objects.items.length : 0;
+    return n ? ', ' + NUM(n) + (n > 1 ? ' objets posés' : ' objet posé') : '';
+  }
+
+  function initObjects() {
+    if (LIB) {
+      const sel = $('obj-group'), count = {};
+      LIB.objects.forEach((e) => { count[e.g] = (count[e.g] || 0) + 1; });
+      sel.appendChild(new Option(typo('Toutes (' + LIB.objects.length + ')'), ''));
+      Object.keys(LIB.groups).filter((g) => count[g]).sort((a, b) => LIB.groups[a].localeCompare(LIB.groups[b], 'fr'))
+        .forEach((g) => sel.appendChild(new Option(typo(LIB.groups[g] + ' (' + count[g] + ')'), g)));
+    } else $('obj-group').disabled = $('obj-search').disabled = true;
+    document.querySelectorAll('.objmode .seg-btn').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+    $('obj-gap').addEventListener('input', drawGhost);
+    // On the map's own element: Leaflet hands the pointer's moves to the canvas of
+    // the roads when it is over it, and the map would not hear them.
+    const box = map.getContainer();
+    box.addEventListener('mousemove', (ev) => onObjectsHover({ latlng: map.mouseEventToLatLng(ev) }));
+    box.addEventListener('mouseleave', () => { objUi.hover = null; drawGhost(); });
+    setMode('one');
+    $('obj-search').addEventListener('input', renderLibrary);
+    $('obj-group').addEventListener('change', renderLibrary);
+    // The settings of the chosen object: one undo step for each move of a slider.
+    function live(id, apply) {
+      $(id).addEventListener('input', () => {
+        const o = state.objects[objUi.selected];
+        if (!o) return;
+        if (!objUi.editing) { pushUndo(); objUi.editing = true; }
+        apply(o, parseFloat($(id).value));
+        reshape(objUi.selected);
+        setText($('obj-heading-out'), headingText(o.heading));
+        setText($('obj-size-out'), '× ' + NUM(o.size, 2));
+      });
+      $(id).addEventListener('change', () => { objUi.editing = false; if (state.objects[objUi.selected]) objectsChanged(); });
+    }
+    live('obj-heading', (o, v) => { o.heading = C.cleanHeading(v); });
+    live('obj-size', (o, v) => { o.size = C.cleanSize(v); });
+    $('obj-turn').addEventListener('click', () => turnSelected(90));
+    $('obj-face').addEventListener('click', () => {
+      const o = state.objects[objUi.selected], h = o ? faceCourse(o.lat, o.lon) : null;
+      if (h === null) return;
+      pushUndo();
+      o.heading = h;
+      objectsChanged();
+    });
+    $('obj-dup').addEventListener('click', () => {
+      const o = state.objects[objUi.selected];
+      if (!o || state.objects.length >= C.LIMITS.maxObjects) return;
+      // The copy beside it, along its width.
+      const e = libById.get(o.kind), step = ((e ? e.w : 4) * o.size + 1) * objScale(), m = C.metersPerDegree(o.lat), h = o.heading * Math.PI / 180;
+      const copy = C.cleanObject({ kind: o.kind, lat: o.lat + step * Math.sin(h) / m.lat, lon: o.lon - step * Math.cos(h) / m.lon, heading: o.heading, size: o.size });
+      pushUndo();
+      state.objects.push(copy);
+      objectsChanged(state.objects.length - 1);
+    });
+    $('obj-del').addEventListener('click', () => deleteObject(objUi.selected));
+    $('obj-clear').addEventListener('click', () => {
+      if (!state.objects.length) return;
+      pushUndo();
+      state.objects = [];
+      objectsChanged(-1);
+      toast('Objets retirés. « Annuler » les fait revenir.');
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.ctrlKey || ev.metaKey || ev.altKey || typing(ev.target)) return;
+      if (objUi.armed && (ev.key === 'r' || ev.key === 'R')) {
+        // Turns what is about to be placed: from now on the heading is the one turned.
+        ev.preventDefault();
+        if (!objUi.manual && objUi.hover) objUi.lastHeading = newHeading(objUi.hover.lat, objUi.hover.lng);
+        objUi.manual = true;
+        objUi.lastHeading = C.cleanHeading(objUi.lastHeading + (ev.shiftKey ? -OBJ_STEP : OBJ_STEP));
+        drawGhost();
+        return;
+      }
+      if (objUi.selected < 0) return;
+      if (ev.key === 'r' || ev.key === 'R') { ev.preventDefault(); turnSelected(ev.shiftKey ? -OBJ_STEP : OBJ_STEP); }
+      else if (ev.key === 'Delete' || ev.key === 'Backspace') { ev.preventDefault(); deleteObject(objUi.selected); }
+    });
+    renderLibrary();
+    objectsShown();
+  }
+
   /* ---------------------- 13. Panel, tabs and the settings form */
 
   function showTab(name) {
@@ -5570,11 +6333,14 @@ small { color: var(--ink-soft); font-size: .86em; }
     $('roads-forget').addEventListener('click', forgetKept);
     renderKept();
     document.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Escape') { closeMenus(); return; }
+      if (ev.key === 'Escape') {
+        closeMenus();
+        if (objUi.anchor) { objUi.anchor = null; sayArmed(); drawGhost(); } else if (objUi.armed) arm(null); else if (objUi.selected >= 0) selectObject(-1);
+        return;
+      }
       if (!(ev.ctrlKey || ev.metaKey) || ev.altKey) return;
-      // In a text field, Ctrl+Z belongs to the field.
-      const tag = ev.target && ev.target.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      // In a text field, Ctrl+Z belongs to the field (a slider or a box to tick is not one).
+      if (typing(ev.target)) return;
       const key = ev.key.toLowerCase();
       if (key === 'z' && !ev.shiftKey) { ev.preventDefault(); undo(); }
       else if (key === 'y' || (key === 'z' && ev.shiftKey)) { ev.preventDefault(); redo(); }
@@ -5614,12 +6380,13 @@ small { color: var(--ink-soft); font-size: .86em; }
     initTools();
     initPanel();
     initPhotos();
+    initObjects();
     initDraft();
     syncKindButtons();
     updateLoadButton();
     refresh();
     // For the end-to-end test and for the console.
-    window.circuitEditor = { map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh,
+    window.circuitEditor = { map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh, objUi: objUi,
       forgetScenery: () => { scenery.archives = {}; scenery.tiles.clear(); } };
   }
 

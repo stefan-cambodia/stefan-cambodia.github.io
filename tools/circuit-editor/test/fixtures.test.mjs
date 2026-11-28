@@ -144,7 +144,9 @@ test('index.html: one file, Leaflet 1.9.4 from cdnjs with the verified SRI hashe
   // Nothing else is loaded from elsewhere: no other script, stylesheet or font.
   const external = [...html.matchAll(/<(?:script|link)[^>]*(?:src|href)="(https?:[^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(external.sort(), [script[0].match(/src="([^"]+)"/)[1], link[0].match(/href="([^"]+)"/)[1]].sort());
-  assert.equal([...html.matchAll(/<script\b/g)].length, 3, 'Leaflet, the core, the interface');
+  assert.equal([...html.matchAll(/<script\b/g)].length, 4, 'Leaflet, the library of objects, the core, the interface');
+  // The library of objects comes from beside the page, not from elsewhere.
+  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u)), ['objects-library.js']);
   // The HEIC decoder, loaded by the page only for a HEIC photo: an exact version and its hash
   // (of the file downloaded; its sha256 equals the one jsDelivr publishes for it).
   assert.match(html, /src: 'https:\/\/cdn\.jsdelivr\.net\/npm\/libheif-js@1\.23\.5\/libheif-wasm\/libheif-bundle\.js',/);

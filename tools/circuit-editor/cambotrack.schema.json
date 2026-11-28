@@ -136,6 +136,27 @@
         }
       }
     },
+    "objects": {
+      "type": "object",
+      "required": ["v", "made", "items"],
+      "properties": {
+        "v": { "const": 1 },
+        "made": { "type": "string" },
+        "items": {
+          "type": "array", "maxItems": 2000,
+          "items": {
+            "type": "array", "minItems": 5, "maxItems": 5,
+            "prefixItems": [
+              { "type": "string", "pattern": "^[a-z0-9_]{1,48}$" },
+              { "type": "number", "minimum": -60000, "maximum": 60000 },
+              { "type": "number", "minimum": -60000, "maximum": 60000 },
+              { "type": "number", "minimum": 0, "maximum": 359.9 },
+              { "type": "number", "minimum": 0.5, "maximum": 2 }
+            ]
+          }
+        }
+      }
+    },
     "photos": {
       "type": "array",
       "maxItems": 24,
