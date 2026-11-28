@@ -19,7 +19,7 @@ téléphone.
 | 6 | Routes gardées sur l'ordinateur, profil relié à la carte, « Mes circuits » | idem |
 | 7 | Photos (JPEG, HEIC, album Google Photos en `.zip`), lieux et rôles, tracé proposé à partir des photos, pas de demi-tour aux points de passage | idem |
 | 8 | Décor du lieu réel (Overture Maps : bâtiments, eau, sol) écrit dans le fichier | idem |
-| 9 | **Bibliothèque des objets** : les 373 objets de décor du jeu (53 de plus le 28 nov. : lieux de culte, fêtes, village et rivière, la rue), avec vignettes, recherche et familles ; pose à la main sur la carte, orientation, taille, déplacement, duplication, suppression ; champ `objects` du format | idem, 28 nov. ; le jeu les construit sur sa branche `feature/custom-scenery` |
+| 9 | **Bibliothèque des objets** : les 379 objets de décor du jeu (59 de plus le 28 nov. : lieux de culte, fêtes, village et rivière, la rue, les grands bâtiments de ville), avec vignettes, recherche et familles ; pose à la main sur la carte, orientation, taille, déplacement, duplication, suppression ; champ `objects` du format | idem, 28 nov. ; le jeu les construit sur sa branche `feature/custom-scenery` |
 | 13 | **Poser en ligne** : une rangée droite entre deux clics, ou le long du tracé à la même distance, chaque objet face à la route ; l'objet à venir suit le pointeur ; R le tourne pendant la pose | idem, 28 nov. |
 
 ## À faire, dans l'ordre
