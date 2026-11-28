@@ -34,6 +34,8 @@ case "${1:-}" in
 		cp "$PAGE" "$APP/index.html"
 		# The library of the game's objects, beside the page (« Objets »).
 		if [ -f "$HERE/objects-library.js" ]; then cp "$HERE/objects-library.js" "$APP/objects-library.js"; else rm -f "$APP/objects-library.js"; fi
+		# The page's texts in English and Khmer.
+		if [ -f "$HERE/i18n.js" ]; then cp "$HERE/i18n.js" "$APP/i18n.js"; else rm -f "$APP/i18n.js"; fi
 		cp "$SELF" "$APP/editeur-circuits.sh"
 		chmod +x "$APP/editeur-circuits.sh"
 		# Where this copy comes from, for whoever wonders which version runs.
@@ -75,7 +77,7 @@ EOF
 --uninstall)
 	# Only what --install put there.
 	if [ -L "$BIN" ] && [ "$(readlink "$BIN")" = "$APP/editeur-circuits.sh" ]; then rm -f "$BIN"; fi
-	rm -f "$ENTRY" "$ICON" "$APP/index.html" "$APP/objects-library.js" "$APP/ORIGINE.txt"
+	rm -f "$ENTRY" "$ICON" "$APP/index.html" "$APP/objects-library.js" "$APP/i18n.js" "$APP/ORIGINE.txt"
 	if [ "$HERE" = "$APP" ]; then rm -f "$SELF"; else rm -f "$APP/editeur-circuits.sh"; fi
 	rmdir "$APP" 2>/dev/null || true
 	echo "Éditeur de circuits désinstallé (les tracés gardés par le navigateur ne sont pas touchés)."

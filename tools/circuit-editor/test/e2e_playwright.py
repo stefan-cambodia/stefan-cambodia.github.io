@@ -26,6 +26,7 @@ test runs at 1280 x 800.
 """
 
 import argparse
+import os
 import base64
 import functools
 import hashlib
@@ -128,6 +129,9 @@ class Network:
             return route.continue_()      # the real HEIC decoder, SRI checked too
         if host.endswith("tile.openstreetmap.org") or host.endswith("arcgisonline.com") or host.endswith("opentopomap.org"):
             return route.fulfill(status=200, content_type="image/png", body=PNG_1X1, headers=CORS)
+        if host == "fonts.googleapis.com" and url.path == "/css2" and "Noto+Sans+Khmer" in request.url:
+            self.font_calls = getattr(self, "font_calls", 0) + 1
+            return route.fulfill(status=200, content_type="text/css", body="/* Noto Sans Khmer */", headers=CORS)
         if host == "tiles.overturemaps.org":
             return self.overture_tiles(route, request, url)
         if url.path.endswith("/api/interpreter"):
@@ -296,8 +300,9 @@ def desktop_run(context, net, errors, base, shots, tmp):
     check(page.locator("html").get_attribute("lang") == "fr", "the page is in French")
     check(page.locator("#download").is_disabled() and page.locator("#send").is_disabled(), "nothing to export before a course exists")
 
-    # A click before any road is loaded: a hint, no waypoint.
-    page.mouse.click(700, 400)
+    # A click before any road is loaded (beside the first steps' card): a hint, no waypoint.
+    check(page.locator("#welcome").is_visible(), "the first steps are on the map of an empty page")
+    page.mouse.click(60, 300)
     page.wait_for_selector("#toast:not([hidden])")
     check("Chargez d'abord les routes" in page.inner_text("#toast").replace(" ", " "), "hint when no road is loaded")
 
@@ -734,8 +739,9 @@ def rows_run(page, shots):
           % (res["n"], near, mid, res["facing"], res["worst"]))
     shot(page, shots, "desktop-objects-row.png")
     page.keyboard.press("Control+z")
-    page.click(".objmode .seg-btn[data-mode=one]")
     page.fill("#obj-gap", "")
+    page.click(".objmode .seg-btn[data-mode=one]")
+    check(page.locator("#obj-gap").is_hidden(), "one by one: no spacing to give")
     page.keyboard.press("Escape")
     page.fill("#obj-search", "")
     check(page.evaluate("window.circuitEditor.state.objects.length") == n0, "undone, the two objects of before remain")
@@ -1294,6 +1300,163 @@ def outage_run(context, net, errors, base, shots):
     page.close()
 
 
+def chrome_run(context, net, errors, base, shots):
+    print("The menu bar, the command search, the shortcuts, the steps")
+    net.overpass_down = set()
+    page = new_page(context, errors, base, 1280, 800)
+    sp = lambda t: t.replace("\u202f", " ").replace("\u00a0", " ")
+    page.click(".mb-btn[data-menu=file]")
+    items = page.evaluate("Array.from(document.querySelectorAll('.mb-pop .mi')).map(b => [b.textContent, b.disabled])")
+    labels = [i[0] for i in items]
+    check(any("Ouvrir un fichier" in l for l in labels) and any("Télécharger" in l and d for l, d in items),
+          "« Fichier » lists open, keep, download… and download waits for a course (%d items)" % len(items))
+    page.hover(".mb-btn[data-menu=view]")
+    check(page.locator(".mb-pop").count() == 1 and "Fond : satellite" in sp(page.inner_text(".mb-pop")), "the pointer moves from one menu to the next")
+    page.keyboard.press("Escape")
+    check(page.locator(".mb-pop").count() == 0, "Échap closes the menu")
+    frame_and_load(page)
+    check(page.locator("#welcome").is_hidden(), "no first steps once roads are loaded")
+    check("poser le départ" in sp(page.inner_text("#maphint")) and page.locator("#road-legend").is_visible(),
+          "roads loaded: the map says where to click, and what the road colours mean")
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.wait_for_function("document.getElementById('tabbtn-trace').classList.contains('done')")
+    check(page.locator("#maphint").is_hidden(), "with a course, no more hint on the map")
+    page.click("#wp-box summary")
+    rows = page.evaluate("Array.from(document.querySelectorAll('#wp-list li')).map(li => li.querySelector('.d').textContent)")
+    check(len(rows) == 4 and rows[0] == "départ" and "de jeu" in rows[3], "the list of waypoints, each where it is along the course (%s)" % sp(", ".join(rows)))
+    page.locator("#wp-list li").nth(3).locator("button.del").click()
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 3")
+    page.keyboard.press("Control+z")
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    check(True, "« Retirer » in the list takes a waypoint out, Ctrl+Z puts it back")
+    check(not page.locator("#tabbtn-settings").evaluate("b => b.classList.contains('done')"), "the course is ticked, the settings wait for a name")
+    # A right click on the map: what can be done there; Échap closes it, a click elsewhere too, without a waypoint.
+    x, y = page.evaluate("""(ll) => { const p = window.circuitEditor.map.latLngToContainerPoint(ll), r = document.getElementById('map').getBoundingClientRect();
+        return [r.left + p.x, r.top + p.y]; }""", list(WAYPOINTS[1]))
+    page.mouse.click(x + 40, y + 40, button="right")
+    page.wait_for_selector("#mapmenu:not([hidden])")
+    said = page.inner_text("#mapmenu")
+    check("Ajouter un point de passage ici" in said and "Copier les coordonnées" in said, "a right click on the map offers what can be done there")
+    page.mouse.click(x + 300, y + 200)
+    check(page.locator("#mapmenu").is_hidden() and page.evaluate("window.circuitEditor.state.waypoints.length") == 4,
+          "a click elsewhere closes it and adds no point")
+    page.fill("#bar-name", "Nom dans la barre")
+    check(page.input_value("#f-name") == "Nom dans la barre" and page.input_value("#f-id") == "nom-dans-la-barre",
+          "the name typed in the bar is the circuit's, and its identifier follows")
+    page.wait_for_function("document.getElementById('tabbtn-settings').classList.contains('done')")
+    check(page.locator("#bar-download").is_enabled(), "with a course, « Télécharger » of the bar is ready")
+    page.click("#tabbtn-send")
+    check(sp(page.inner_text("#send-ready")).startswith("✓ Prêt : Nom dans la barre"), "the send step says the circuit is ready, by its name")
+    page.keyboard.press("Control+k")
+    page.wait_for_selector("#palette-veil:not([hidden])")
+    page.keyboard.type("satel")
+    found = sp(page.inner_text("#palette-list"))
+    page.keyboard.press("Enter")
+    sat = page.evaluate("(() => { let on = false; window.circuitEditor.map.eachLayer(l => { if (l._url && l._url.includes('arcgisonline')) on = true; }); return on; })()")
+    check("Fond : satellite" in found and sat and page.locator("#palette-veil").is_hidden(),
+          "Ctrl+K, « satel », Entrée: the satellite view, and the search closes")
+    page.keyboard.press("?")
+    page.wait_for_selector("#keys-veil:not([hidden])")
+    keys = page.inner_text("#keys-table")
+    check("Ctrl+K" in keys and "Télécharger le fichier" in keys and "clic droit" in keys, "« ? » shows the sheet of shortcuts")
+    shot(page, shots, "desktop-keys.png")
+    page.keyboard.press("Escape")
+    page.click("#tabbtn-trace")
+    page.click("#tab-trace .stepnav .next")
+    check(page.locator("#tab-settings").is_visible(), "« Suivant : Réglages » at the foot of the course's step")
+    page.keyboard.press("4")
+    check(page.locator("#tab-photos").is_visible(), "a figure goes to its step (4: Photos)")
+    page.keyboard.press("p")
+    page.wait_for_function("document.getElementById('panel').offsetWidth === 0")
+    check(True, "P hides the panel: the map takes the whole window")
+    page.keyboard.press("p")
+    page.wait_for_function("document.getElementById('panel').offsetWidth > 0")
+    page.wait_for_function("document.getElementById('bar-saved').textContent.includes('Brouillon gardé')")
+    check(True, "the bar says when the drawing in progress was last kept")
+    page.keyboard.press("Control+s")
+    page.wait_for_function("document.getElementById('toast').textContent.includes('Mes circuits')", timeout=10000)
+    check(True, "Ctrl+S keeps the circuit in « Mes circuits »")
+    page.wait_for_function("document.querySelectorAll('#circuits .sketch path').length >= 1")
+    d = page.evaluate("document.querySelector('#circuits .sketch path').getAttribute('d')")
+    check(d.count("L") > 20 and d.endswith("Z"), "« Mes circuits » shows the shape of the loop (%d points)" % (d.count("L") + 1))
+    shot(page, shots, "desktop-menubar.png")
+    page.click("#clear")
+    page.wait_for_selector("#toast .toast-act")
+    page.click("#toast .toast-act")
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    check(True, "« Tout effacer »: the message carries « Annuler », and it brings the course back")
+    page.click("#tabbtn-objects")
+    page.click("#obj-lib .otile[data-kind=palm_a]")
+    page.keyboard.press("Escape")
+    check(page.locator("#obj-recent .otile[data-kind=palm_a]").count() == 1, "an object picked goes into « Utilisés récemment »")
+    page.click("#clear")
+    page.close()
+
+
+def lang_run(context, net, errors, base, shots):
+    print("Languages: English and Khmer")
+    net.overpass_down = set()
+    page = context.new_page()
+    page.set_viewport_size({"width": 1280, "height": 800})
+    page.on("console", lambda m: errors.append("console: " + m.text) if m.type == "error" else None)
+    page.on("pageerror", lambda e: errors.append("pageerror: " + str(e)))
+    page.goto(base + PAGE + "?lang=en")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.map")
+    if page.locator("#draft").is_visible():
+        page.click("#draft-ignore")
+    check(page.evaluate("document.documentElement.lang") == "en" and page.inner_text(".mb-btn[data-menu=file]") == "File",
+          "?lang=en: the page is in English (menu « %s »)" % page.inner_text(".mb-btn[data-menu=file]"))
+    page.evaluate("(pts) => window.circuitEditor.map.fitBounds(pts, { padding: [170, 170], animate: false })", [list(w) for w in WAYPOINTS])
+    page.wait_for_timeout(300)
+    page.click("#load-roads")
+    page.wait_for_function("window.circuitEditor.graph.ways.length > 0", timeout=20000)
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.wait_for_function("window.circuitEditor.current.result && window.circuitEditor.current.result.ok", timeout=30000)
+    summary = page.inner_text("#summary")
+    check("Boucle" not in summary and "de jeu" not in summary, "the course is summed up in English (%s)" % summary.replace(" ", " "))
+    for tab in ["settings", "relief", "photos", "objects", "send", "trace"]:
+        page.click("#tabbtn-" + tab)
+    page.click("#tabbtn-objects")
+    first = page.inner_text("#obj-lib .otile >> nth=0")
+    check(first and "Maison" not in first, "the library's objects carry English names (%s)" % first)
+    page.keyboard.press("?")
+    page.keyboard.press("Escape")
+    page.click(".mb-btn[data-menu=file]")
+    page.keyboard.press("Escape")
+    missing = page.evaluate("window.circuitEditor.i18nMissing()")
+    check(len(missing) <= 3, "English: %d texts left in French%s" % (len(missing), (" (" + " | ".join(missing[:8]) + ")") if missing else ""))
+    if os.environ.get("I18N_DUMP"):
+        json.dump(missing, open(os.environ["I18N_DUMP"] + ".en.json", "w"), ensure_ascii=False, indent=0)
+    shot(page, shots, "desktop-english.png")
+    # The language picker: the page comes back in Khmer with the drawing as it was.
+    page.select_option("#bar-lang", "km")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.lang === 'km' && window.circuitEditor.state.waypoints.length === 4", timeout=30000)
+    check(page.locator("#draft").is_hidden(), "the picker switches to Khmer and the drawing comes back without asking")
+    menu = page.inner_text(".mb-btn[data-menu=file]")
+    check(re.search("[ក-៿]", menu) is not None, "the menus are in Khmer (%s)" % menu)
+    page.wait_for_function("window.circuitEditor.current.result && window.circuitEditor.current.result.ok", timeout=30000)
+    for tab in ["settings", "relief", "photos", "objects", "send", "trace"]:
+        page.click("#tabbtn-" + tab)
+    page.click("#tabbtn-objects")
+    page.keyboard.press("?")
+    page.keyboard.press("Escape")
+    missing = page.evaluate("window.circuitEditor.i18nMissing()")
+    check(len(missing) <= 3, "Khmer: %d texts left in French%s" % (len(missing), (" (" + " | ".join(missing[:8]) + ")") if missing else ""))
+    if os.environ.get("I18N_DUMP"):
+        json.dump(missing, open(os.environ["I18N_DUMP"] + ".km.json", "w"), ensure_ascii=False, indent=0)
+    page.click("#tabbtn-trace")
+    shot(page, shots, "desktop-khmer.png")
+    page.select_option("#bar-lang", "fr")
+    page.wait_for_function("window.circuitEditor && window.circuitEditor.lang === 'fr'", timeout=30000)
+    check(page.inner_text(".mb-btn[data-menu=file]") == "Fichier", "and back to French")
+    page.click("#clear")
+    page.close()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--browser", choices=["webkit", "chrome", "chromium"])
@@ -1310,16 +1473,29 @@ def main():
         print("Browser: %s %s" % (name, browser.version))
         context = browser.new_context(accept_downloads=True, locale="fr-FR")
         context.route("**/*", net.handle)
+        collect = os.environ.get("CIRCUIT_I18N_COLLECT")   # a file: every French text the pages show goes there
+        if collect:
+            context.add_init_script("window.__i18nCollect = true;")
         try:
             target = desktop_run(context, net, errors, base, args.screenshots, tmp)
             reopen_run(context, net, errors, base, args.screenshots, target)
             draft_run(context, net, errors, base, args.screenshots)
             library_run(context, net, errors, base, args.screenshots)
+            chrome_run(context, net, errors, base, args.screenshots)
             photos_run(context, net, errors, base, args.screenshots, tmp)
             photos_first_run(context, net, errors, base, args.screenshots)
             relief_wait_run(context, net, errors, base, args.screenshots)
             outage_run(context, net, errors, base, args.screenshots)
+            lang_run(context, net, errors, base, args.screenshots)
         finally:
+            if collect:
+                page = context.new_page()
+                page.goto(base + PAGE)
+                page.wait_for_timeout(800)
+                seen = page.evaluate("JSON.parse(localStorage.getItem('circuit-editor.i18n-seen') || '[]')")
+                with open(collect, "w", encoding="utf-8") as f:
+                    json.dump(sorted(seen), f, ensure_ascii=False, indent=0)
+                print("i18n: %d texts -> %s" % (len(seen), collect))
             context.close()
             browser.close()
             server.shutdown()

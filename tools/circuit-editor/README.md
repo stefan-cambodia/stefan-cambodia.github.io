@@ -29,6 +29,68 @@ clavier, grand écran).
 - À la main : ouvrir `index.html` dans un navigateur (`file://`), ou `python3 -m http.server`
   à la racine du dépôt puis `http://localhost:8000/tools/circuit-editor/`.
 
+## Les langues
+
+L'éditeur parle **français, anglais et khmer** : le choix est dans la barre du haut (le
+globe), gardé dans le navigateur ; sans choix, la langue du navigateur décide (français,
+khmer, sinon anglais). Changer de langue recharge la page et reprend le tracé en cours sans
+rien demander. `?lang=en` (ou `fr`, `km`) dans l'adresse force une langue. Les nombres et
+les dates suivent la langue ; en khmer, la police Noto Sans Khmer est prise sur Google
+Fonts si l'ordinateur n'en a pas. Les noms des 379 objets de la bibliothèque et de leurs
+familles sont traduits aussi ; la recherche d'objets et de commandes trouve les mots de la
+langue choisie. Le fichier exporté, lui, ne change pas avec la langue.
+
+Pour qui traduit : le français est la source, écrit dans `index.html` ; chaque texte affiché
+passe par `tr()`, qui le cherche dans `i18n.js` (à côté de la page, copié par l'installeur) :
+un texte tel quel, ou un modèle où `{1}`, `{2}`… tiennent ce qui varie (nombres, noms), eux-mêmes
+traduits quand ils le peuvent. Un texte absent reste en français. Pour la liste de tout ce
+que la page affiche : `CIRCUIT_I18N_COLLECT=textes.json python3 test/e2e_playwright.py`
+(le parcours des tests en français, chaque texte relevé) ; le test du navigateur compte les
+textes restés en français en anglais et en khmer (aucun aujourd'hui).
+
+## L'écran
+
+- **La barre du haut** : les menus **Fichier** (nouveau, ouvrir, Mes circuits, garder,
+  télécharger, copier, envoyer, ajouter des photos), **Édition** (annuler, rétablir, les
+  outils, boucle ou spéciale, inverser le sens, tout effacer), **Affichage** (voir tout le
+  circuit, charger les routes, le fond plan, satellite ou relief, masquer le panneau, aller
+  à une étape) et **Aide** (pour commencer, raccourcis, mode d'emploi, format). À côté : le
+  **nom du circuit** (le même que dans Réglages), **Garder** et **Télécharger**.
+- **Commandes** (<kbd>Ctrl</kbd>+<kbd>K</kbd>) : taper ce qu'on veut faire (« satellite »,
+  « photos », « télécharger »…), Entrée. Toutes les commandes des menus y sont.
+- **Les étapes** du panneau sont numérotées, de 1 Tracé à 6 Envoi ; une étape faite est
+  cochée (le tracé roule, le circuit a un nom, le relief est chargé, des photos ou des
+  objets sont là). Les explications longues sont repliées sous « En savoir plus ».
+- **Pour commencer** : sur une carte vide, une carte d'accueil donne les trois gestes
+  (aller au lieu, charger les routes, cliquer sur les routes) et les autres départs (des
+  photos, un fichier, Mes circuits). Elle part dès que les routes sont là ; le menu Aide la
+  rappelle.
+- **Clic droit sur la carte** : ce qu'on peut faire à cet endroit (poser l'objet choisi, un
+  point de passage, l'insérer dans le tracé, centrer, charger les routes autour, copier les
+  coordonnées). Sur un point ou un objet, le clic droit le supprime, comme avant.
+- **Sur la carte** : une fois les routes chargées, une ligne dit où cliquer (le départ, puis
+  plus loin) et une légende donne le sens des couleurs (grande route, petite route, piste,
+  le tracé). Dans « Mes circuits », chaque circuit gardé a le dessin de son tracé.
+- **Points de passage** (étape Tracé) : la liste des points, chacun à sa distance du départ
+  en mètres de jeu ; « Voir » y amène la carte, « Retirer » l'enlève (Ctrl+Z le remet).
+- **D'une étape à l'autre** : au pied de chaque étape, « Suivant » et le retour à la
+  précédente. L'étape Envoi dit d'abord si le circuit est prêt (son nom, sa longueur, ses
+  objets et photos) ou ce qui manque, avec le bouton pour y aller.
+- **Annuler sans chercher** : un message qui dit ce qu'« Annuler » reprendrait (tracé effacé,
+  objets posés ou retirés) porte le bouton lui-même. La barre dit quand le brouillon a été
+  gardé dans le navigateur.
+- **Réglages** : le nom, les tours, l'échelle, les jeux, le décor et l'auteur sont en vue ;
+  l'identifiant, les largeurs, l'espacement, les checkpoints, le lissage et les options sont
+  sous « Réglages avancés » (ouverts d'eux-mêmes si l'identifiant est faux).
+- **Objets** : les derniers choisis sont en tête (« Utilisés récemment », gardés dans le
+  navigateur) ; l'écart ne se demande que pour une ligne.
+- **Raccourcis** (<kbd>?</kbd> les montre tous) : <kbd>Ctrl</kbd>+<kbd>S</kbd> garder,
+  <kbd>Ctrl</kbd>+<kbd>Maj</kbd>+<kbd>S</kbd> télécharger, <kbd>Ctrl</kbd>+<kbd>O</kbd>
+  ouvrir, <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> annuler, rétablir ;
+  <kbd>A</kbd> ajouter, <kbd>M</kbd> modifier, <kbd>F</kbd> voir tout le circuit,
+  <kbd>L</kbd> charger les routes, <kbd>P</kbd> masquer le panneau, <kbd>1</kbd> à
+  <kbd>6</kbd> les étapes ; pour les objets <kbd>R</kbd>, <kbd>Suppr</kbd>, <kbd>Échap</kbd>.
+
 ## En trois étapes
 
 ### 1. Tracer
@@ -588,7 +650,7 @@ extraient ce bloc et l'évaluent dans un contexte `node:vm` vide.
 | `petit-circuit.test.mjs` | **Recette** : les points de passage du Petit Circuit des jeux, recalés et routés sur la carte d'aujourd'hui, donnent 7 089 m de jeu pour un tour à l'échelle 2,5, soit −0,15 % par rapport aux 7,1 km du circuit existant (tolérance : 3 %). Aucun point n'a dû être déplacé ; le plus éloigné de sa route en est à 50 m. |
 | `property.test.mjs` | 160 parcours tirés au hasard sur les routes d'Angkor, avec des réglages et un relief au hasard (tirage à graine fixe) : tout fichier que le code accepte d'exporter respecte le schéma et les règles. |
 | `fixtures.test.mjs` | Les fichiers d'exemple sont bien ceux que le code produit, le validateur de schéma refuse ce qu'il doit, la page n'appelle que Leaflet avec les bonnes empreintes et la bibliothèque des objets à côté d'elle, aucun jeton dans le dossier. |
-| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, pointer le profil d'altitude et voir l'endroit sur la carte, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir avec les routes gardées puis sans ; recharger une zone déjà gardée ; garder deux circuits dans « Mes circuits », passer de l'un à l'autre, en retirer un ; importer cinq fichiers (une photo près du parcours, une loin gardée en rouge, une sans position, une image PNG, un doublon), annuler l'import, resserrer l'écart admis, déposer une photo sur la carte, retrouver les photos après « Reprendre » et « Ouvrir… », importer un album en `.zip`, changer le rôle d'une photo et l'annuler, chercher un objet dans la bibliothèque, en poser deux sur la carte, les tourner, les agrandir, les déplacer, les supprimer, annuler, et les retrouver dans le fichier puis après « Ouvrir… », réduire une photo de 1 600 × 1 200 à 320 × 240, décoder deux photos HEIC avec le vrai décodeur chargé depuis jsDelivr (une seule fois), lire le décor depuis deux archives Overture simulées (requêtes « Range »), le retirer, l'export quand Overture est en panne ; commencer par un album sans aucun tracé (routes chargées autour des photos, tracé proposé par leurs lieux, un seul « Annuler ») ; laisser un tracé, le reprendre à la visite suivante sans redemander ni ses routes ni ses altitudes, puis une fois les routes oubliées, l'ignorer, l'effacer ; le redessiner à une autre visite sans redemander ses altitudes ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
+| `e2e_playwright.py` | Dans un navigateur : charger les routes (avec un serveur Overpass en panne), poser quatre points, annuler, insérer, supprimer, déplacer, télécharger et valider le fichier, pointer le profil d'altitude et voir l'endroit sur la carte, changer le lissage du relief, l'envoyer à une API GitHub simulée (avec un conflit sur le catalogue), le rouvrir avec les routes gardées puis sans ; recharger une zone déjà gardée ; garder deux circuits dans « Mes circuits », passer de l'un à l'autre, en retirer un ; importer cinq fichiers (une photo près du parcours, une loin gardée en rouge, une sans position, une image PNG, un doublon), annuler l'import, resserrer l'écart admis, déposer une photo sur la carte, retrouver les photos après « Reprendre » et « Ouvrir… », importer un album en `.zip`, changer le rôle d'une photo et l'annuler, chercher un objet dans la bibliothèque, en poser deux sur la carte, les tourner, les agrandir, les déplacer, les supprimer, annuler, et les retrouver dans le fichier puis après « Ouvrir… », réduire une photo de 1 600 × 1 200 à 320 × 240, décoder deux photos HEIC avec le vrai décodeur chargé depuis jsDelivr (une seule fois), lire le décor depuis deux archives Overture simulées (requêtes « Range »), le retirer, l'export quand Overture est en panne ; commencer par un album sans aucun tracé (routes chargées autour des photos, tracé proposé par leurs lieux, un seul « Annuler ») ; les menus de la barre, la recherche de commandes (Ctrl+K), la feuille des raccourcis, le nom dans la barre, l'anglais et le khmer (aucun texte resté en français, le passage d'une langue à l'autre sans perdre le tracé), les étapes cochées, masquer le panneau (P), garder avec Ctrl+S ; laisser un tracé, le reprendre à la visite suivante sans redemander ni ses routes ni ses altitudes, puis une fois les routes oubliées, l'ignorer, l'effacer ; le redessiner à une autre visite sans redemander ses altitudes ; l'attente quand Open-Meteo a donné ses 600 altitudes de la minute. |
 
 Dans `test/fixtures/` :
 

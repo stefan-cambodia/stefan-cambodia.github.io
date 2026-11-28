@@ -52,6 +52,7 @@ small { color: var(--ink-soft); font-size: .86em; }
    a flex sibling of it, so opening the panel resizes the map instead of hiding
    its attribution. */
 .app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.work { position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
 .stage { position: relative; flex: 1 1 auto; min-height: 0; }
 .map { position: absolute; inset: 0; background: #dfe6ec; }
 .panel { flex: 0 0 auto; display: flex; flex-direction: column; background: var(--paper);
@@ -63,7 +64,8 @@ small { color: var(--ink-soft); font-size: .86em; }
 .app.open .panel-body { visibility: visible; }
 
 @media (min-width: 900px) {
-  .app { flex-direction: row; }
+  .work { flex-direction: row; }
+  .app.nopanel .panel { display: none; }
   .panel, .app.open .panel { width: var(--panel-w); height: auto; border-top: 0; border-left: 1px solid var(--line);
     box-shadow: -2px 0 10px rgba(15, 25, 40, .10); transition: none; }
   .panel-body { visibility: visible; }
@@ -157,6 +159,10 @@ small { color: var(--ink-soft); font-size: .86em; }
 .objmode .field { flex: 1 1 70px; }
 .objlib { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; margin: 0 0 12px; padding: 2px;
   list-style: none; max-height: 44vh; overflow-y: auto; }
+.objlib.recent { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); max-height: none; margin-bottom: 8px; }
+.objlib.recent .otile { min-height: 0; padding: 3px; }
+.objlib.recent .oname { display: none; }
+h3.minor { margin: 0 0 4px; color: var(--ink-soft); font-size: .82em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .otile { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; min-height: 100px; padding: 4px;
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: inherit;
   font-size: 11px; line-height: 1.2; text-align: center; cursor: pointer; }
@@ -205,10 +211,17 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
 .circuit-open:hover { background: var(--paper-soft); }
 .circuit-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.circuit-open { display: flex; align-items: center; gap: 10px; }
+.circuit-what { flex: 1 1 auto; min-width: 0; }
 .circuit-open b, .circuit-open small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sketch { flex: 0 0 56px; width: 56px; height: 42px; border-radius: 6px; background: #eef4f6; }
+.sketch path { fill: none; stroke: var(--route); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.sketch circle { fill: var(--ok); stroke: #fff; stroke-width: 1; }
 .circuit-del { flex: 0 0 44px; }
 .note.kept .btn.small { min-height: 30px; margin-left: 4px; padding: 2px 10px; font-size: .95em; font-weight: 500; vertical-align: baseline; }
 .help { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
+.checks-row { display: flex; gap: 18px; flex-wrap: wrap; }
+.checks-row .check { padding: 4px 0; min-height: 36px; }
 .help summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; cursor: pointer; }
 .help ul, .help ol { margin: 0 0 12px; padding-left: 20px; }
 .help li { margin-bottom: 5px; }
@@ -255,6 +268,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 .toast { position: absolute; z-index: 1001; left: 12px; right: 12px; bottom: 96px; margin: 0 auto; max-width: 460px; padding: 10px 14px;
   border-radius: var(--radius); background: rgba(27, 36, 48, .94); color: #fff; box-shadow: var(--shadow); text-align: center; }
 .toast.bad { background: rgba(160, 30, 30, .96); }
+.toast-act { margin-left: 12px; min-height: 30px; padding: 3px 12px; border: 1px solid rgba(255, 255, 255, .55); border-radius: 7px;
+  background: none; color: #fff; font: inherit; font-weight: 700; cursor: pointer; vertical-align: baseline; }
+.toast-act:hover { background: rgba(255, 255, 255, .16); }
 .draft { position: absolute; z-index: 1001; top: 124px; left: 12px; right: 12px; margin: 0 auto; max-width: 440px; padding: 14px 16px;
   border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
 .draft p { margin: 0 0 12px; }
@@ -268,6 +284,138 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 @media (max-width: 899px) and (max-height: 760px) {
   .app.open .top { display: none; }
 }
+
+/* ------------------------------------------------------------ Menu bar */
+.appbar { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; height: 50px; padding: 0 10px;
+  background: linear-gradient(90deg, #0a3d4b, #0b5566); color: #fff; z-index: 1300; box-shadow: 0 1px 6px rgba(0, 0, 0, .25); }
+.brand { display: flex; align-items: center; gap: 8px; margin-right: 6px; font-weight: 700; white-space: nowrap; }
+.brand svg { width: 28px; height: 28px; flex: 0 0 28px; }
+.menubar { display: flex; gap: 2px; }
+.mb { position: relative; }
+.mb-btn { min-height: 36px; padding: 6px 11px; border: 0; border-radius: 8px; background: none; color: #e6f4f6; font: inherit;
+  font-weight: 600; cursor: pointer; }
+.mb-btn:hover, .mb-btn[aria-expanded=true] { background: rgba(255, 255, 255, .14); color: #fff; }
+.mb-btn:focus-visible { outline: 2px solid #fcc419; outline-offset: 1px; }
+.mb-pop, .mapmenu { position: absolute; top: calc(100% + 4px); left: 0; min-width: 300px; padding: 6px; border-radius: 10px; background: var(--paper);
+  color: var(--ink); box-shadow: 0 8px 28px rgba(15, 25, 40, .28); z-index: 1400; }
+.mi { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 6px 10px; border: 0; border-radius: 7px;
+  background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.mi:hover:not(:disabled), .mi:focus-visible { background: #e6f2f4; outline: none; }
+.mi:disabled { color: #9aa4ae; cursor: default; }
+.mi > span:first-child { white-space: nowrap; }
+.mi .k { margin-left: auto; padding-left: 18px; color: var(--ink-soft); font-size: .85em; white-space: nowrap; }
+.mi.on::before { content: '✓'; position: absolute; margin-left: -2px; color: var(--accent); font-weight: 700; }
+.mi.on { position: relative; }
+.mi .ic { width: 18px; flex: 0 0 18px; text-align: center; color: var(--accent); }
+.maphint { position: absolute; z-index: 999; top: 14px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 24px);
+  padding: 7px 14px; border-radius: 999px; background: rgba(11, 61, 75, .92); color: #fff; font-size: .92em; font-weight: 600;
+  box-shadow: var(--shadow); pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (min-width: 900px) { .maphint { left: 400px; transform: none; max-width: calc(100% - 470px); } }
+.legend-ctl { padding: 5px 9px; border-radius: 8px; background: rgba(255, 255, 255, .92); box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+  color: var(--ink); font-size: 11.5px; line-height: 1.6; }
+.legend-ctl i { display: inline-block; width: 20px; height: 0; margin-right: 5px; vertical-align: middle; border-top: 3px solid; }
+.mapmenu { top: 0; min-width: 250px; z-index: 1200; }
+.mapmenu .where { padding: 4px 10px 6px; color: var(--ink-soft); font-size: .8em; font-variant-numeric: tabular-nums; }
+.msep { height: 1px; margin: 5px 4px; background: var(--line); }
+.bar-name { flex: 0 1 260px; min-width: 90px; height: 34px; margin-left: 8px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 8px; background: rgba(255, 255, 255, .1); color: #fff; font: inherit; font-weight: 600; }
+.bar-name::placeholder { color: rgba(255, 255, 255, .6); font-weight: 500; }
+.bar-name:hover { border-color: rgba(255, 255, 255, .5); }
+.bar-name:focus { outline: none; background: #fff; color: var(--ink); }
+.bar-saved { color: #9fd8b0; font-size: .82em; white-space: nowrap; }
+.bar-saved:not(:empty)::before { content: '● '; }
+.bar-saved.bad { color: #ffc9c9; }
+@media (max-width: 1100px) { .bar-saved { display: none; } }
+.bar-state { color: #b9dfe5; font-size: .85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-gap { flex: 1 1 auto; }
+.bar-lang-box { display: inline-flex; align-items: center; gap: 4px; color: #cfe7eb; }
+.bar-lang-box svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.bar-lang { min-height: 34px; padding: 4px 6px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 8px; background: rgba(255, 255, 255, .08);
+  color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.bar-lang option { color: var(--ink); }
+/* Khmer: its script, a little more room between the lines. */
+html.lang-km, html.lang-km body, html.lang-km button, html.lang-km input, html.lang-km select, html.lang-km .leaflet-container {
+  font-family: "Noto Sans Khmer", "Khmer OS System", "Khmer OS", "Leelawadee UI", system-ui, sans-serif; }
+html.lang-km body { line-height: 1.55; }
+.bar-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 8px; background: rgba(255, 255, 255, .08); color: #fff; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.bar-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .18); }
+.bar-btn:disabled { opacity: .45; cursor: not-allowed; }
+.bar-btn.primary { background: #fcc419; border-color: #fcc419; color: #1b2430; }
+.bar-btn.primary:hover:not(:disabled) { background: #ffd43b; }
+.bar-btn kbd { border-color: rgba(255, 255, 255, .35); color: #cfe7eb; font-size: .78em; }
+.bar-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 1399px) { .bar-state { display: none; } }
+@media (max-width: 1180px) { .bar-btn kbd { display: none; } }
+@media (max-width: 980px) { .brand span { display: none; } }
+@media (max-width: 899px) { .menubar .mb-btn { padding: 6px 7px; } .bar-name { display: none; } .bar-btn .lbl { display: none; } }
+
+/* ---------------------------------------------------- Steps (the tabs) */
+.tabs { counter-reset: step; }
+.tab { counter-increment: step; display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: .9em; }
+.tab::before { content: counter(step); display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line); color: var(--ink-soft); font-size: .8em; line-height: 1; }
+.tab.on::before { border-color: var(--accent); background: var(--accent); color: #fff; }
+.tab.done::before { content: '✓'; border-color: var(--ok); background: var(--ok); color: #fff; }
+.tab.on.done::before { box-shadow: 0 0 0 3px rgba(11, 114, 133, .35); }
+.tab .count { top: 2px; right: 4px; }
+
+/* ------------------------------------------------- Welcome, dialogs */
+.welcome { position: absolute; z-index: 1000; left: 50%; top: 50%; transform: translate(-50%, -58%); width: min(560px, calc(100% - 24px));
+  padding: 16px 18px 14px; border-radius: 14px; background: rgba(255, 255, 255, .97); box-shadow: 0 6px 26px rgba(15, 25, 40, .28); }
+.welcome h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.welcome p { margin: 0 0 10px; color: var(--ink-soft); font-size: .93em; }
+.welcome ol { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 8px; counter-reset: w; }
+.welcome li { counter-increment: w; display: flex; align-items: center; gap: 10px; }
+.welcome li::before { content: counter(w); flex: 0 0 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: .9em; }
+.welcome li span { flex: 1 1 auto; }
+.welcome li .btn { min-height: 34px; padding: 4px 12px; font-size: .92em; }
+.welcome .alt { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 10px; border-top: 1px solid var(--line); font-size: .92em; }
+.welcome .alt .btn { min-height: 34px; padding: 4px 12px; font-size: .92em; }
+.welcome .close { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: 8px; background: none;
+  color: var(--ink-soft); font-size: 20px; cursor: pointer; }
+.welcome .close:hover { background: var(--paper-soft); }
+.veil { position: fixed; inset: 0; z-index: 2500; display: flex; align-items: flex-start; justify-content: center; padding: 70px 16px 16px;
+  background: rgba(10, 25, 35, .38); }
+.dialog { width: min(620px, 100%); max-height: calc(100vh - 100px); overflow: auto; border-radius: 14px; background: var(--paper);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, .35); }
+.dialog-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 6px; }
+.dialog-head h2 { flex: 1 1 auto; margin: 0; font-size: 1.1rem; }
+.dialog-body { padding: 4px 16px 16px; }
+.palette-input { width: 100%; min-height: 48px; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); border-radius: 14px 14px 0 0;
+  font: inherit; font-size: 17px; outline: none; }
+.palette-list { margin: 0; padding: 6px; list-style: none; max-height: 52vh; overflow-y: auto; }
+.palette-list .mi { min-height: 40px; }
+.palette-list .mi.cur { background: #e6f2f4; }
+.palette-list .grp { color: var(--ink-soft); font-size: .8em; margin-left: 6px; }
+.keys { width: 100%; border-collapse: collapse; font-size: .93em; }
+.keys th { padding: 12px 0 4px; text-align: left; color: var(--accent); font-size: .85em; text-transform: uppercase; letter-spacing: .04em; }
+.keys td { padding: 5px 0; border-bottom: 1px solid var(--paper-soft); vertical-align: top; }
+.keys td:last-child { text-align: right; white-space: nowrap; padding-left: 14px; }
+.ready { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px;
+  border-left: 4px solid var(--warn); background: #fff4e6; }
+.ready b { flex: 1 0 100%; }
+.ready span { flex: 1 1 auto; color: var(--ink-soft); font-size: .92em; }
+.ready.ok { border-left-color: var(--ok); background: #ebfbee; }
+.ready .btn.small { min-height: 32px; padding: 3px 12px; font-size: .92em; }
+.wplist { margin: 0 0 10px; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
+.wplist li { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--paper-soft); }
+.wplist .n { flex: 0 0 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: var(--route); color: #fff; font-size: 12px; font-weight: 700; }
+.wplist li.start .n { background: var(--ok); }
+.wplist li.lost .n { background: var(--bad); }
+.wplist .d { flex: 1 1 auto; color: var(--ink-soft); font-size: .9em; font-variant-numeric: tabular-nums; }
+.wplist button { min-height: 30px; padding: 2px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper);
+  color: var(--ink); font: inherit; font-size: .85em; cursor: pointer; }
+.wplist button.del { color: var(--bad); }
+.stepnav { display: flex; justify-content: space-between; gap: 8px; margin: 18px 0 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.stepnav .next { margin-left: auto; border-color: var(--accent); color: var(--accent); }
+.stepnav .ghost { border-color: transparent; color: var(--ink-soft); font-weight: 500; }
+.tools .lbl { margin-left: 2px; }
+.tools .btn:disabled { opacity: 1; background: var(--paper); color: #b3bac2; }
+.tools .btn.icon.labelled { width: auto; padding: 0 11px; }
+@media (max-width: 1100px) { .tools .lbl { display: none; } .tools .btn.icon.labelled { width: 44px; padding: 0; } }
 
 /* --------------------------------------------------------------- Leaflet */
 .leaflet-container { font: inherit; font-size: 13px; }
@@ -298,6 +446,31 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 <body>
 <div id="app" class="app">
 
+  <!-- ==================================== Menu bar ==================================== -->
+  <header class="appbar" id="appbar">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0b7285"/><path d="M8 22c0-9 3-13 8-13s8 3 8 7-3 6-6 6-4-2-4-4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="8" cy="23" r="3" fill="#fcc419"/></svg>
+      <span>Éditeur de circuits</span></div>
+    <nav id="menubar" class="menubar" aria-label="Menu">
+      <div class="mb"><button type="button" class="mb-btn" data-menu="file" aria-haspopup="menu" aria-expanded="false">Fichier</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="edit" aria-haspopup="menu" aria-expanded="false">Édition</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="view" aria-haspopup="menu" aria-expanded="false">Affichage</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="help" aria-haspopup="menu" aria-expanded="false">Aide</button></div>
+    </nav>
+    <input id="bar-name" class="bar-name" type="text" maxlength="80" placeholder="Circuit sans nom" aria-label="Nom du circuit" autocomplete="off" spellcheck="false">
+    <span id="bar-saved" class="bar-saved" title="Le tracé en cours est gardé dans ce navigateur à chaque changement : il revient à la prochaine visite."></span>
+    <span id="bar-state" class="bar-state" aria-live="polite"></span>
+    <span class="bar-gap"></span>
+    <label class="bar-lang-box" title="Langue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
+      <select id="bar-lang" class="bar-lang notr" aria-label="Langue"></select></label>
+    <button type="button" id="bar-cmd" class="bar-btn" title="Chercher une commande (Ctrl+K)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="lbl">Commandes</span> <kbd>Ctrl K</kbd></button>
+    <button type="button" id="bar-keep" class="bar-btn" title="Garder ce circuit dans « Mes circuits » (Ctrl+S)" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-6h8v6"/></svg><span class="lbl">Garder</span></button>
+    <button type="button" id="bar-download" class="bar-btn primary" title="Télécharger le fichier .cambotrack.json (Ctrl+Maj+S)" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg><span class="lbl">Télécharger</span></button>
+  </header>
+
+  <div class="work">
   <!-- ============================== Map and its overlays ============================== -->
   <div class="stage">
     <div id="map" class="map" role="application" aria-label="Carte : cliquez sur une route pour placer un point de passage"></div>
@@ -318,11 +491,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <button type="button" id="tool-add" class="seg-btn on" aria-pressed="true" title="Un clic sur une route ajoute un point à la fin du tracé">Ajouter</button>
         <button type="button" id="tool-edit" class="seg-btn" aria-pressed="false" title="Un clic sur le tracé y insère un point">Modifier</button>
       </div>
-      <button type="button" id="undo" class="btn icon" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      <button type="button" id="undo" class="btn icon labelled" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl" aria-hidden="true">Annuler</span>
       </button>
-      <button type="button" id="redo" class="btn icon" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      <button type="button" id="redo" class="btn icon labelled" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span class="lbl" aria-hidden="true">Rétablir</span>
+      </button>
+      <button type="button" id="fit" class="btn icon" title="Voir tout le circuit (F)" aria-label="Voir tout le circuit">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>
       </button>
       <button type="button" id="reverse" class="btn icon" title="Inverser le sens du parcours" aria-label="Inverser le sens" disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 12 4 4-4 4"/><path d="M21 16H7"/></svg>
@@ -333,6 +509,24 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <div id="mapmenu" class="mapmenu" role="menu" aria-label="Ici" hidden></div>
+    <div id="maphint" class="maphint" aria-live="polite" hidden></div>
+
+    <div id="welcome" class="welcome" role="group" aria-labelledby="welcome-title" hidden>
+      <button type="button" id="welcome-close" class="close" aria-label="Fermer" title="Fermer">×</button>
+      <h2 id="welcome-title">Faire un circuit en trois gestes</h2>
+      <p>Sur les vraies routes d'OpenStreetMap, pour 3D Buggy et Cambodia Rally.</p>
+      <ol>
+        <li><span>Aller au lieu du circuit</span><button type="button" id="welcome-search" class="btn">Chercher</button><button type="button" id="welcome-places" class="btn">Lieux</button></li>
+        <li><span>Charger les routes de la zone visible</span><button type="button" id="welcome-load" class="btn primary">Charger</button></li>
+        <li><span>Cliquer sur les routes : chaque clic pose un point, le tracé suit la route</span></li>
+      </ol>
+      <div class="alt"><span>Ou :</span>
+        <button type="button" id="welcome-photos" class="btn">Partir de mes photos</button>
+        <button type="button" id="welcome-open" class="btn">Ouvrir un fichier</button>
+        <button type="button" id="welcome-mine" class="btn">Mes circuits</button>
+      </div>
+    </div>
 
     <div id="draft" class="draft" role="group" aria-labelledby="draft-text" hidden>
       <p id="draft-text"></p>
@@ -371,7 +565,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <label class="check"><input type="checkbox" id="allow-tracks" checked>
           <span>Autoriser les pistes <small>(chemins carrossables, <code>highway=track</code>)</small></span></label>
 
-        <dl class="stats">
+        <dl id="trace-stats" class="stats">
           <div><dt>Longueur réelle</dt><dd id="st-real">—</dd></div>
           <div><dt>Longueur de jeu</dt><dd id="st-game">—</dd></div>
           <div class="span"><dt>Temps estimé</dt><dd id="st-time">—</dd></div>
@@ -382,6 +576,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         </dl>
 
         <ul id="messages" class="messages" aria-label="Avertissements"></ul>
+        <details id="wp-box" class="help wps" hidden><summary>Points de passage <span id="wp-count" class="muted"></span></summary>
+          <ol id="wp-list" class="wplist"></ol></details>
         <p id="roads-info" class="note">Aucune route chargée : cadrez la carte sur la zone voulue, puis « Charger les routes de la zone ».</p>
         <p id="roads-kept" class="note kept" hidden><span id="roads-kept-text"></span>
           <button type="button" id="roads-forget" class="btn small">Les oublier</button></p>
@@ -403,17 +599,6 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       <section id="tab-settings" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-settings" hidden>
         <div class="field"><label for="f-name">Nom du circuit</label>
           <input id="f-name" type="text" maxlength="80" placeholder="Petit Circuit perso" autocomplete="off"></div>
-        <div class="field"><label for="f-id">Identifiant</label>
-          <input id="f-id" type="text" maxlength="64" placeholder="petit-circuit-perso" autocomplete="off" autocapitalize="none" spellcheck="false">
-          <small id="f-id-hint">Nom du fichier publié ; minuscules, chiffres et tirets.</small></div>
-        <div class="field"><label for="f-author">Auteur</label>
-          <input id="f-author" type="text" maxlength="60" autocomplete="off"></div>
-        <fieldset class="field"><legend>Jeux visés</legend>
-          <label class="check"><input type="checkbox" id="f-game-buggy" checked><span>3D Buggy</span></label>
-          <label class="check"><input type="checkbox" id="f-game-rally" checked><span>Cambodia Rally</span></label>
-        </fieldset>
-        <label class="check"><input type="checkbox" id="f-scenery" checked><span>Décor du lieu réel <small>(bâtiments, eau, sol :
-          Overture Maps, lus à l'export)</small></span></label>
         <div class="grid2">
           <div class="field"><label for="f-laps">Tours</label>
             <input id="f-laps" type="number" inputmode="numeric" min="1" max="20" step="1" value="3">
@@ -421,22 +606,39 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
           <div class="field"><label for="f-scale">Échelle</label>
             <input id="f-scale" type="number" inputmode="decimal" min="1" max="10" step="0.1" value="2.5">
             <small>Mètres réels pour 1 m de jeu.</small></div>
-          <div class="field"><label for="f-width">Largeur de base</label>
-            <input id="f-width" type="number" inputmode="decimal" min="3" max="30" step="0.5" value="11">
-            <small>En mètres de jeu.</small></div>
-          <div class="field"><label for="f-spacing">Espacement des points</label>
-            <input id="f-spacing" type="number" inputmode="decimal" min="1" max="20" step="0.5" value="4">
-            <small>En mètres de jeu.</small></div>
-          <div class="field"><label for="f-cp">Un checkpoint tous les</label>
-            <input id="f-cp" type="number" inputmode="numeric" min="150" max="20000" step="50" placeholder="auto">
-            <small>Mètres de jeu. Vide : 1 000 m jusqu'à 12 km, 2 000 m au-delà.</small></div>
-          <div class="field"><label for="f-smooth">Rayon de lissage</label>
-            <input id="f-smooth" type="number" inputmode="decimal" min="0" max="100" step="1" value="15">
-            <small>Mètres de jeu ; arrondit les angles.</small></div>
         </div>
-        <label class="check"><input type="checkbox" id="f-narrow" checked><span>Pistes plus étroites <small>(8 m au lieu de la largeur de base)</small></span></label>
-        <label class="check"><input type="checkbox" id="f-bridges" checked><span>Largeur des ponts d'après la carte <small>(1,4 × la largeur indiquée, de 6 m à la largeur de base)</small></span></label>
-        <label class="check"><input type="checkbox" id="f-gates" checked><span>Portes bonus sur les lignes droites <small>(environ une par kilomètre)</small></span></label>
+        <fieldset class="field"><legend>Jeux visés</legend>
+          <div class="checks-row">
+            <label class="check"><input type="checkbox" id="f-game-buggy" checked><span>3D Buggy</span></label>
+            <label class="check"><input type="checkbox" id="f-game-rally" checked><span>Cambodia Rally</span></label>
+          </div>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="f-scenery" checked><span>Décor du lieu réel <small>(bâtiments, eau, sol :
+          Overture Maps, lus à l'export)</small></span></label>
+        <div class="field"><label for="f-author">Auteur</label>
+          <input id="f-author" type="text" maxlength="60" autocomplete="off"></div>
+        <details class="help adv"><summary>Réglages avancés</summary>
+          <div class="field"><label for="f-id">Identifiant</label>
+            <input id="f-id" type="text" maxlength="64" placeholder="petit-circuit-perso" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <small id="f-id-hint">Nom du fichier publié ; minuscules, chiffres et tirets. Il suit le nom tant qu'on ne l'écrit pas.</small></div>
+          <div class="grid2">
+            <div class="field"><label for="f-width">Largeur de base</label>
+              <input id="f-width" type="number" inputmode="decimal" min="3" max="30" step="0.5" value="11">
+              <small>En mètres de jeu.</small></div>
+            <div class="field"><label for="f-spacing">Espacement des points</label>
+              <input id="f-spacing" type="number" inputmode="decimal" min="1" max="20" step="0.5" value="4">
+              <small>En mètres de jeu.</small></div>
+            <div class="field"><label for="f-cp">Un checkpoint tous les</label>
+              <input id="f-cp" type="number" inputmode="numeric" min="150" max="20000" step="50" placeholder="auto">
+              <small>Mètres de jeu. Vide : 1 000 m jusqu'à 12 km, 2 000 m au-delà.</small></div>
+            <div class="field"><label for="f-smooth">Rayon de lissage</label>
+              <input id="f-smooth" type="number" inputmode="decimal" min="0" max="100" step="1" value="15">
+              <small>Mètres de jeu ; arrondit les angles.</small></div>
+          </div>
+          <label class="check"><input type="checkbox" id="f-narrow" checked><span>Pistes plus étroites <small>(8 m au lieu de la largeur de base)</small></span></label>
+          <label class="check"><input type="checkbox" id="f-bridges" checked><span>Largeur des ponts d'après la carte <small>(1,4 × la largeur indiquée, de 6 m à la largeur de base)</small></span></label>
+          <label class="check"><input type="checkbox" id="f-gates" checked><span>Portes bonus sur les lignes droites <small>(environ une par kilomètre)</small></span></label>
+        </details>
       </section>
 
       <!-- Relief -->
@@ -451,8 +653,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
             <option value="300">Fort (300 m)</option>
             <option value="600">Très fort (600 m)</option>
           </select>
-          <small>Le modèle voit le versant à côté de la route, les arbres, la rivière sous un pont. « Fort » retire les bosses
-            et les creux de moins de 300 m de long ; les côtes plus longues restent, leur sommet un peu écrêté.</small></div>
+          <small>« Fort » retire les bosses et les creux de moins de 300 m (arbres, versant voisin, rivière sous un pont).</small></div>
         <p id="relief-status" class="note" role="status" aria-live="polite">Le relief sera chargé quand un tracé existera.</p>
         <button type="button" id="relief-retry" class="btn" hidden>Réessayer</button>
         <canvas id="profile" class="profile" width="600" height="180" aria-label="Profil d'altitude du circuit"></canvas>
@@ -461,19 +662,30 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
           <div><dt>Dénivelé positif</dt><dd id="rl-climb">—</dd></div>
           <div><dt>Altitudes</dt><dd id="rl-range">—</dd></div>
         </dl>
+        <details class="help"><summary>Un modèle de surface : ce qu'il faut savoir</summary>
         <p class="note">C'est un modèle de <b>surface</b> à 90 m : la canopée et les bâtiments y font des bosses qui
-          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé selon le réglage ci-dessus, et les pentes sont limitées à 30 %.</p>
+          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé selon le réglage ci-dessus, et les pentes sont limitées à 30 %.
+          Les altitudes reçues restent sur cet ordinateur : un tracé redessiné ne les redemande pas.</p>
+        </details>
       </section>
 
       <!-- Photos -->
       <section id="tab-photos" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-photos" hidden>
-        <p class="note">Des photos des lieux du parcours, pour décrire à qui habillera le circuit ce qu'on y voit. Elles ne sont
-          pas affichées dans le jeu. À chaque lieu, dans l'ordre de prise de vue : <b>devant</b> (la route qui vient), puis
+        <p class="note">Les photos des lieux du parcours (avec leur position GPS) guident le décor. Sans tracé, l'éditeur en
+          propose un qui passe par elles. Un album Google Photos se donne tel quel, en <code>.zip</code>.</p>
+        <details class="help"><summary>En savoir plus</summary>
+        <p class="note">Elles ne sont pas affichées dans le jeu : elles décrivent à qui habillera le circuit ce qu'on y voit.
+          À chaque lieu, dans l'ordre de prise de vue : <b>devant</b> (la route qui vient), puis
           <b>à gauche</b>, puis <b>à droite</b> ; les suivantes sont <b>en plus</b>, pour mieux décrire l'endroit.</p>
         <p class="note">Il leur faut leur position GPS (localisation de l'appareil photo activée). <b>On peut commencer par
           elles</b> : sans tracé, l'éditeur les pose sur la carte, charge les routes autour et propose un tracé qui passe par chaque
           lieu, dans l'ordre des photos ; il reste à l'adapter. Avec un tracé, chaque nouveau lieu proche devient un point de passage ;
           une photo loin du tracé reste en rouge, hors du fichier, jusqu'à ce que le tracé passe près d'elle.</p>
+        <p class="note"><b>Depuis un album Google Photos</b> : sur photos.google.com, ouvrir l'album, menu ⋮ puis
+          « Tout télécharger », et donner ici le fichier .zip tel quel (bouton ou dépôt sur la carte).</p>
+        <p class="note">On peut aussi déposer les photos sur la carte. Le JPEG et le HEIC (photos « haute efficacité » des Samsung et des iPhone) sont lus. L'image est réduite à 320 pixels et
+          réencodée : elle ne garde aucune métadonnée. Elle fait partie du fichier : envoyée au jeu, elle est publique.</p>
+        </details>
         <div class="buttons one">
           <button type="button" id="photos-add" class="btn primary">Ajouter des photos…</button>
           <input type="file" id="photos-file" accept="image/jpeg,.jpg,.jpeg,image/heic,image/heif,.heic,.heif,.zip,application/zip" multiple hidden>
@@ -484,17 +696,11 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <p id="photos-status" class="note" role="status" aria-live="polite"></p>
         <ul id="photos-refused" class="refused" aria-label="Photos refusées"></ul>
         <ul id="photos" class="photos" aria-label="Photos du circuit"></ul>
-        <p class="note"><b>Depuis un album Google Photos</b> : sur photos.google.com, ouvrir l'album, menu ⋮ puis
-          « Tout télécharger », et donner ici le fichier .zip tel quel (bouton ou dépôt sur la carte).</p>
-        <p class="note">On peut aussi déposer les photos sur la carte. Le JPEG et le HEIC (photos « haute efficacité » des Samsung et des iPhone) sont lus. L'image est réduite à 320 pixels et
-          réencodée : elle ne garde aucune métadonnée. Elle fait partie du fichier : envoyée au jeu, elle est publique.</p>
       </section>
 
       <!-- Objets -->
       <section id="tab-objects" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-objects" hidden>
-        <p class="note">Tous les objets du jeu (arbres, maisons, étals, animaux, panneaux, temples, monuments…) : choisissez-en un,
-          puis <b>cliquez sur la carte</b> pour le poser, autant de fois qu'il faut. Le jeu le met exactement là, à sa vraie taille
-          (un mètre de jeu vaut l'échelle du circuit sur la carte), et laisse sa place libre de végétation et de décor.</p>
+        <p class="note">Choisissez un objet, puis <b>cliquez sur la carte</b> pour le poser : le jeu le met exactement là, à sa vraie taille.</p>
         <p id="obj-missing" class="note bad" hidden>La bibliothèque des objets (objects-library.js, à côté de cette page) n'a pas été
           trouvée : les objets déjà posés restent dans le fichier, mais on ne peut pas en choisir d'autres.</p>
         <div class="objfind">
@@ -513,6 +719,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         </div>
         <p id="obj-mode-help" class="note"></p>
         <p id="obj-armed" class="note armed" role="status" aria-live="polite"></p>
+        <div id="obj-recent-box" hidden><h3 class="minor">Utilisés récemment</h3>
+          <ul id="obj-recent" class="objlib recent" aria-label="Objets utilisés récemment"></ul></div>
         <ul id="obj-lib" class="objlib" aria-label="Bibliothèque des objets"></ul>
 
         <h2>Objets posés <span id="obj-count" class="muted"></span></h2>
@@ -532,15 +740,19 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <ul id="obj-placed" class="objplaced" aria-label="Objets posés"></ul>
         <p id="obj-none" class="note">Aucun objet posé.</p>
         <div class="buttons one"><button type="button" id="obj-clear" class="btn" disabled>Retirer tous les objets</button></div>
-        <p class="note">Sur la carte : glisser un objet le déplace, un clic le choisit, un clic droit le supprime. Touches :
+        <details class="help"><summary>Sur la carte, les touches</summary>
+        <p class="note">Le jeu laisse la place d'un objet posé libre de végétation et de décor ; un mètre de jeu vaut l'échelle du
+          circuit sur la carte. Glisser un objet le déplace, un clic le choisit, un clic droit le supprime. Touches :
           <kbd>R</kbd> tourne de 15° (<kbd>Maj</kbd>+<kbd>R</kbd> dans l'autre sens), <kbd>Suppr</kbd> supprime l'objet choisi,
           <kbd>Échap</kbd> arrête la pose. La flèche montre la face avant ; un nouvel objet regarde la route quand elle est proche, sauf
-          si on l'a tourné avec <kbd>R</kbd> pendant la pose. Une ligne entière s'annule d'un seul Ctrl+Z.
-          Ctrl+Z annule.</p>
+          si on l'a tourné avec <kbd>R</kbd> pendant la pose. Une ligne entière s'annule d'un seul Ctrl+Z.</p>
+        </details>
       </section>
 
       <!-- Envoi -->
       <section id="tab-send" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-send" hidden>
+        <div id="send-ready" class="ready" role="status" aria-live="polite"><b id="send-ready-title"></b><span id="send-ready-text"></span>
+          <button type="button" id="send-ready-go" class="btn small" hidden></button></div>
         <div class="buttons">
           <button type="button" id="download" class="btn" disabled>Télécharger</button>
           <button type="button" id="copy" class="btn" disabled>Copier</button>
@@ -579,6 +791,21 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       </section>
     </div>
   </aside>
+  </div>
+
+  <div id="palette-veil" class="veil" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-label="Chercher une commande">
+      <input id="palette-input" class="palette-input" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Que voulez-vous faire ? (télécharger, satellite, photos…)" aria-label="Chercher une commande">
+      <ul id="palette-list" class="palette-list" role="listbox" aria-label="Commandes"></ul>
+    </div>
+  </div>
+  <div id="keys-veil" class="veil" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="keys-title">
+      <div class="dialog-head"><h2 id="keys-title">Raccourcis clavier</h2><button type="button" id="keys-close" class="btn icon" aria-label="Fermer">×</button></div>
+      <div class="dialog-body"><table id="keys-table" class="keys"></table></div>
+    </div>
+  </div>
 </div>
 
 <noscript><p style="padding:1rem">Cet éditeur a besoin de JavaScript.</p></noscript>
@@ -587,6 +814,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
 <!-- The library of the game's objects, beside the page (made by 3D Buggy's tools/object_library.gd). -->
 <script src="objects-library.js"></script>
+<!-- The page's texts in English and Khmer (French is the source, in this file). -->
+<script src="i18n.js"></script>
 <script id="core">
 /* ==========================================================================
    CircuitCore: pure computation, no DOM, no network, no host API.
@@ -3463,7 +3692,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     { name: 'Phnom Penh', lat: 11.5564, lon: 104.9282, zoom: 13 }
   ];
 
-  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author', draft: 'circuit-editor.draft' };
+  const STORE = { token: 'circuit-editor.github-token', view: 'circuit-editor.view', author: 'circuit-editor.author', draft: 'circuit-editor.draft', recent: 'circuit-editor.recent-objects' };
 
   const ROAD_STYLE = {
     major: { color: '#e8590c', weight: 3.2, opacity: 0.85 },
@@ -3480,9 +3709,110 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // French spacing: a no-break space before : ; ? ! and inside « ».
+  /* Languages. French is the source: every text the page shows is written in
+     French in this file and goes through typo() (setText, make, toast, the page's
+     own text at start). In English or Khmer, tr() finds it in i18n.js beside the
+     page (window.CIRCUIT_I18N[lang]): a text as it is, or a pattern where {1},
+     {2}… stand for what varies (numbers, names), themselves translated when they
+     can be. A text not found stays in French. */
+  const LANGS = { fr: 'Français', en: 'English', km: 'ខ្មែរ' };
+  const LANG_KEY = 'circuit-editor.lang';
+  const I18N = window.CIRCUIT_I18N || {};
+  const LANG = (() => {
+    let q = null;
+    try { q = new URLSearchParams(window.location.search).get('lang'); } catch (e) { q = null; }
+    let kept = null;
+    try { kept = window.localStorage.getItem(LANG_KEY); } catch (e) { kept = null; }
+    const nav = String((navigator.languages && navigator.languages[0]) || navigator.language || 'fr').slice(0, 2).toLowerCase();
+    const want = LANGS[q] ? q : LANGS[kept] ? kept : LANGS[nav] ? nav : 'en';
+    return want === 'fr' || I18N[want] ? want : 'fr';
+  })();
+  const LOCALE = { fr: 'fr-FR', en: 'en-GB', km: 'km-KH' }[LANG];
+  const trCache = new Map();
+  const trMissing = new Set();
+  let trPatterns = null;
+  const norm = (v) => String(v).replace(/\s+/g, ' ').trim();
+  const LETTERS = /[A-Za-zÀ-ÖØ-öø-ÿ]{2}/;
+  let trDone = null;                    // the translations themselves: a text already in the page's language
+  function trCompile() {
+    const d = I18N[LANG] || {};
+    trDone = new Set(Object.values(d).map(norm));
+    trPatterns = Object.keys(d).filter((k) => /\{\d\}/.test(k)).map((k) => {
+      const body = k.replace(/[.*+?^$()|[\]\\]/g, '\\$&');
+      return {
+        lazy: new RegExp('^' + body.replace(/\{(\d)\}/g, '(.+?)') + '$'), greedy: new RegExp('^' + body.replace(/\{(\d)\}/g, '(.+)') + '$'),
+        order: (k.match(/\{(\d)\}/g) || []).map((m) => +m[1]), out: d[k], fixed: k.replace(/\{\d\}/g, '').length
+      };
+    }).sort((a, b) => b.fixed - a.fixed);
+  }
+  // A translation of key, or null: as it is, else by the first pattern whose
+  // parts all translate (a part may itself hold a colon or a dot: the lazy and
+  // the greedy split are both tried), else by the first pattern that matches.
+  function trFind(key, depth) {
+    const d = I18N[LANG];
+    if (Object.prototype.hasOwnProperty.call(d, key)) return d[key];
+    if (!trPatterns) trCompile();
+    if (trDone.has(key)) return key;
+    if (depth > 4) return null;
+    let loose = null;
+    for (const p of trPatterns) {
+      for (const re of [p.lazy, p.greedy]) {
+        const m = re.exec(key);
+        if (!m) continue;
+        const parts = {};
+        let all = true;
+        p.order.forEach((n, i) => {
+          const part = m[i + 1], t = LETTERS.test(part) ? trFind(norm(part), depth + 1) : part;
+          if (t === null) all = false;
+          parts[n] = t === null ? part : t;
+        });
+        const out = p.out.replace(/\{(\d)\}/g, (_, n) => (parts[n] === undefined ? '' : parts[n]));
+        if (all) return out;
+        if (loose === null) loose = out;
+      }
+    }
+    return loose;
+  }
+  // The text in the page's language (French: as it is).
+  function tr(text) {
+    const s = String(text);
+    if (window.__i18nCollect) collectText(s);
+    if (LANG === 'fr') return s;
+    const key = norm(s);
+    if (!key || !LETTERS.test(key)) return s;
+    let out = trCache.get(key);
+    if (out === undefined) {
+      if (!trPatterns) trCompile();
+      out = trFind(key, 0);
+      if (out === null) { trMissing.add(key); out = key; } else trDone.add(norm(out));
+      if (trCache.size > 5000) trCache.clear();
+      trCache.set(key, out);
+    }
+    if (out === key) return s;
+    return s.match(/^\s*/)[0] + out + s.match(/\s*$/)[0];
+  }
+  // For whoever writes the translations: every French text the page shows (collect mode).
+  function collectText(s) {
+    const key = norm(s);
+    if (!key || !/[A-Za-zÀ-ÿ]{2}/.test(key)) return;
+    const all = window.__i18nSeen || (window.__i18nSeen = new Set());
+    if (all.has(key)) return;
+    all.add(key);
+    clearTimeout(window.__i18nTimer);
+    window.__i18nTimer = setTimeout(() => {
+      try {
+        const kept = new Set(JSON.parse(window.localStorage.getItem('circuit-editor.i18n-seen') || '[]'));
+        all.forEach((k) => kept.add(k));
+        window.localStorage.setItem('circuit-editor.i18n-seen', JSON.stringify(Array.from(kept)));
+      } catch (e) { /* collecting is best effort */ }
+    }, 300);
+  }
+
+  // In the page's language; in French, a no-break space before : ; ? ! and inside « ».
   function typo(text) {
-    return String(text).replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
+    const t = tr(text);
+    if (LANG !== 'fr') return t;
+    return t.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
   }
   function setText(el, text) { el.textContent = typo(text); }
   // Whether keys pressed in this element are text typed in it.
@@ -3498,7 +3828,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     return el;
   }
 
-  const NUM = (v, digits) => v.toLocaleString('fr-FR', { minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0 });
+  const NUM = (v, digits) => v.toLocaleString(LOCALE, { minimumFractionDigits: digits || 0, maximumFractionDigits: digits || 0 });
   function fmtDist(m) {
     if (!(m >= 0)) return '—';
     return m < 1000 ? NUM(Math.round(m)) + ' m' : NUM(m / 1000, 2) + ' km';
@@ -3545,6 +3875,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     const el = $('toast');
     setText(el, text);
     el.className = 'toast' + (kind === 'bad' ? ' bad' : '');
+    // A message that says what « Annuler » would take back carries the button itself.
+    if (kind !== 'bad' && /« Annuler »|Ctrl\+Z/.test(text) && undoStack.length) {
+      const b = make('button', 'toast-act', 'Annuler');
+      b.type = 'button';
+      b.addEventListener('click', () => { el.hidden = true; undo(); });
+      el.appendChild(b);
+      ms = ms || 8000;
+    }
     el.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { el.hidden = true; }, ms || (kind === 'bad' ? 8000 : 4500));
@@ -3575,7 +3913,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const probe = { index: -1, view: null, ll: null, track: null };
   const roads = { busy: false, firstServer: 0, areas: [] };   // areas: the boxes loaded in this visit
 
-  let map, roadRenderer, routeRenderer;
+  let map, roadRenderer, routeRenderer, baseLayers = {};
   const layers = {};
 
   /* ---------------------------------------------------- 4. Map and layers */
@@ -3601,9 +3939,24 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       })
     };
     base['Plan (OpenStreetMap)'].addTo(map);
-    L.control.layers(base, null, { position: 'topright' }).addTo(map);
-    L.control.zoom({ position: 'bottomright', zoomInTitle: 'Zoom avant', zoomOutTitle: 'Zoom arrière' }).addTo(map);
+    baseLayers = base;
+    const shown = {};
+    Object.keys(base).forEach((k) => { shown[typo(k)] = base[k]; });
+    L.control.layers(shown, null, { position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright', zoomInTitle: typo('Zoom avant'), zoomOutTitle: typo('Zoom arrière') }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    // What the colours of the roads loaded mean (shown once there are roads).
+    const Legend = L.Control.extend({ onAdd: () => {
+      const d = L.DomUtil.create('div', 'legend-ctl');
+      d.id = 'road-legend';
+      d.hidden = true;
+      [['grande route', 'border-color:' + ROAD_STYLE.major.color], ['petite route, rue', 'border-color:' + ROAD_STYLE.minor.color],
+        ['piste', 'border-color:' + ROAD_STYLE.track.color + ';border-top-style:dashed'], ['le tracé', 'border-color:' + ROUTE_COLOR + ';border-top-width:5px']]
+        .forEach((row) => { const line = make('div'), i = make('i'); i.setAttribute('style', row[1]); line.appendChild(i); line.appendChild(document.createTextNode(typo(row[0]))); d.appendChild(line); });
+      L.DomEvent.disableClickPropagation(d);
+      return d;
+    } });
+    new Legend({ position: 'bottomleft' }).addTo(map);
     // The roads drawn over any background are OpenStreetMap's.
     map.attributionControl.addAttribution('Routes © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL)');
 
@@ -3635,6 +3988,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 
     map.on('popupclose', () => { popupClosedAt = Date.now(); });
     map.on('click', onMapClick);
+    map.on('contextmenu', onMapMenu);
+    map.on('movestart zoomstart', () => { $('mapmenu').hidden = true; });
     map.on('moveend', () => {
       const c = map.getCenter();
       savePref(STORE.view, JSON.stringify({ lat: +c.lat.toFixed(5), lon: +c.lng.toFixed(5), zoom: map.getZoom() }));
@@ -3888,7 +4243,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   }
   function dayText(iso) {
     const t = Date.parse(iso);
-    return isFinite(t) ? new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : 'une date inconnue';
+    return isFinite(t) ? new Date(t).toLocaleDateString(LOCALE, { day: 'numeric', month: 'long' }) : 'une date inconnue';
   }
   // The line of the panel that says what is kept.
   async function renderKept() {
@@ -4009,7 +4364,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     search.timer = setTimeout(async () => {
       search.last = Date.now();
       try {
-        const r = await fetchText(NOMINATIM_URL + '?format=jsonv2&limit=6&accept-language=fr&q=' + encodeURIComponent(q),
+        const r = await fetchText(NOMINATIM_URL + '?format=jsonv2&limit=6&accept-language=' + LANG + '&q=' + encodeURIComponent(q),
           { headers: { Accept: 'application/json' } }, 15000);
         if (serial !== search.serial) return;
         if (r.status === 429 || r.status === 403) { showResults([], 'Le service de recherche demande de ralentir. Réessayez dans un instant.'); return; }
@@ -4085,6 +4440,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   // A click that only closes a menu or a waypoint's popup draws nothing.
   let popupClosedAt = 0;
   function onMapClick(ev) {
+    if (!$('mapmenu').hidden) { $('mapmenu').hidden = true; return; }
     const menuOpen = !$('places-menu').hidden || !$('search-results').hidden;
     closeMenus();
     if (menuOpen || Date.now() - popupClosedAt < 80) return;
@@ -4092,6 +4448,43 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (objUi.selected >= 0) { selectObject(-1); return; }
     if (tool === 'add') addWaypoint(ev.latlng);
     else insertWaypoint(ev);
+  }
+
+  // A right click on the map: what can be done at that spot.
+  function onMapMenu(ev) {
+    L.DomEvent.preventDefault(ev.originalEvent);
+    closeMenus();
+    const m = $('mapmenu'), ll = ev.latlng, p = ev.containerPoint;
+    m.textContent = '';
+    const item = (label, run, ok) => {
+      const b = make('button', 'mi', typo(label));
+      b.type = 'button';
+      b.setAttribute('role', 'menuitem');
+      b.disabled = ok === false;
+      b.addEventListener('click', () => { m.hidden = true; run(); });
+      m.appendChild(b);
+    };
+    m.appendChild(make('div', 'where', NUM(ll.lat, 5) + ', ' + NUM(ll.lng, 5)));
+    if (objUi.armed) item('Poser « ' + objName(objUi.armed) + ' » ici', () => onObjectsClick(ll));
+    item('Ajouter un point de passage ici', () => addWaypoint(ll), graph.ways.length > 0);
+    item('Insérer dans le tracé ici', () => insertWaypoint({ latlng: ll, containerPoint: p }), !!(current.route && current.route.legs.length));
+    m.appendChild(make('div', 'msep'));
+    item('Centrer la carte ici', () => map.panTo(ll));
+    item('Charger les routes autour d\'ici', () => {
+      map.once('moveend', () => setTimeout(() => $('load-roads').click(), 50));
+      map.setView(ll, Math.max(map.getZoom(), 15));
+    });
+    item('Copier les coordonnées', () => {
+      const text = ll.lat.toFixed(6) + ', ' + ll.lng.toFixed(6);
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Coordonnées copiées : ' + text), () => toast(text));
+      else toast(text);
+    });
+    m.hidden = false;
+    const size = map.getSize(), w = m.offsetWidth, h = m.offsetHeight;
+    m.style.left = Math.min(p.x, size.x - w - 8) + 'px';
+    m.style.top = Math.min(p.y, size.y - h - 8) + 'px';
+    const first = m.querySelector('.mi:not(:disabled)');
+    if (first) first.focus({ preventScroll: true });
   }
 
   function addWaypoint(latlng) {
@@ -4487,6 +4880,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     $('download').disabled = !ready;
     $('copy').disabled = !ready;
     $('send').disabled = !ready || !$('f-token').value.trim();
+    renderChrome();
   }
 
   /* --------------------------------------------- 9. Relief: Open-Meteo */
@@ -5001,6 +5395,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     clearTimeout(draft.timer);
     draft.timer = null;
     if (!state.waypoints.length) {
+      setText($('bar-saved'), '');
       if (draft.kept === 'own') {
         draft.saved = savePref(STORE.draft, null);
         draft.kept = 'none'; draft.box = null; draft.ele = null;
@@ -5010,6 +5405,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     if (draft.kept !== 'own') { draft.box = null; draft.ele = null; }
     draft.saved = savePref(STORE.draft, JSON.stringify(currentDrawing()));
     draft.kept = 'own';
+    const t = new Date();
+    setText($('bar-saved'), draft.saved ? 'Brouillon gardé à ' + t.getHours() + ' h ' + String(t.getMinutes()).padStart(2, '0') : 'Brouillon non gardé (navigation privée ?)');
+    $('bar-saved').classList.toggle('bad', !draft.saved);
   }
 
   function formNow() {
@@ -5042,7 +5440,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     draft.kept = 'earlier';
     const name = typeof d.form['f-name'] === 'string' && d.form['f-name'].trim() ? '« ' + d.form['f-name'].trim() + ' »' : 'sans nom';
     const n = d.waypoints.length, t = Date.parse(d.saved);
-    const when = isFinite(t) ? ', laissé le ' + new Date(t).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+    const when = isFinite(t) ? ', laissé le ' + new Date(t).toLocaleString(LOCALE, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
     setText($('draft-text'), 'Un tracé en cours a été retrouvé : ' + name + ', ' + n + (n > 1 ? ' points de passage' : ' point de passage') + when + '.');
     $('draft').hidden = false;
   }
@@ -5186,6 +5584,39 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     });
   }
 
+  // The shape of the course for the list: the route as drawn, 60 points at most.
+  function sketchNow() {
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (!line || line.lat.length < 2) return state.waypoints.map((w) => [+w.lat.toFixed(5), +w.lon.toFixed(5)]);
+    const n = line.lat.length, step = Math.max(1, Math.ceil(n / 60)), out = [];
+    for (let i = 0; i < n; i += step) out.push([+line.lat[i].toFixed(5), +line.lon[i].toFixed(5)]);
+    return out;
+  }
+  // A small drawing of a course (an SVG), north up, its proportions kept.
+  function sketchSvg(pts, closed) {
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg'), W = 56, H = 42, pad = 5;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('class', 'sketch');
+    svg.setAttribute('aria-hidden', 'true');
+    const ok = Array.isArray(pts) ? pts.filter((p) => Array.isArray(p) && isFinite(p[0]) && isFinite(p[1])) : [];
+    if (ok.length < 2) return svg;
+    const k = Math.cos(ok[0][0] * Math.PI / 180);
+    const xs = ok.map((p) => p[1] * k), ys = ok.map((p) => -p[0]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const sc = Math.min((W - 2 * pad) / Math.max(x1 - x0, 1e-9), (H - 2 * pad) / Math.max(y1 - y0, 1e-9));
+    const ox = (W - (x1 - x0) * sc) / 2, oy = (H - (y1 - y0) * sc) / 2;
+    const d = xs.map((x, i) => (i ? 'L' : 'M') + (ox + (x - x0) * sc).toFixed(1) + ' ' + (oy + (ys[i] - y0) * sc).toFixed(1)).join('') + (closed ? 'Z' : '');
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    svg.appendChild(path);
+    const start = document.createElementNS(NS, 'circle');
+    start.setAttribute('cx', (ox + (xs[0] - x0) * sc).toFixed(1));
+    start.setAttribute('cy', (oy + (ys[0] - y0) * sc).toFixed(1));
+    start.setAttribute('r', '2.6');
+    svg.appendChild(start);
+    return svg;
+  }
+
   async function renderCircuits() {
     const rows = await circuitRows(), list = $('circuits');
     library.sigs = {};
@@ -5195,11 +5626,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       const li = make('li'), open = make('button', 'circuit-open'), del = make('button', 'btn icon danger circuit-del');
       const laps = r.kind === 'loop' && r.laps > 1 ? r.laps + ' tours · ' : '';
       open.type = 'button';
-      open.appendChild(make('b', '', r.name));
-      open.appendChild(make('small', '', (r.length_game_m > 0 ? fmtDist(r.length_game_m) + ' de jeu · ' : 'tracé incomplet · ') + laps + 'gardé le ' + dayText(r.saved)));
+      open.appendChild(sketchSvg(Array.isArray(r.sketch) && r.sketch.length > 1 ? r.sketch : r.draft.waypoints, r.kind === 'loop'));
+      const what = make('span', 'circuit-what');
+      what.appendChild(make('b', '', r.name));
+      what.appendChild(make('small', '', (r.length_game_m > 0 ? fmtDist(r.length_game_m) + ' de jeu · ' : 'tracé incomplet · ') + laps + 'gardé le ' + dayText(r.saved)));
+      open.appendChild(what);
       open.addEventListener('click', () => openCircuit(r));
       del.type = 'button';
-      del.title = 'Supprimer de Mes circuits';
+      del.title = typo('Supprimer de Mes circuits');
       del.setAttribute('aria-label', typo('Supprimer « ' + r.name + ' » de Mes circuits'));
       del.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>';
       del.addEventListener('click', () => deleteCircuit(r));
@@ -5226,7 +5660,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     }
     const r = current.result, ok = !!(current.route && current.route.ok && r && r.ok);
     const row = { id: id, name: name, saved: nowIso(), kind: state.kind, laps: current.settings ? current.settings.laps : 1,
-      length_game_m: ok ? r.track.length_game_m : 0, draft: currentDrawing() };
+      length_game_m: ok ? r.track.length_game_m : 0, draft: currentDrawing(), sketch: sketchNow() };
     const done = await circuitWrite((store) => store.put(row));
     await renderCircuits();
     if (!quiet) toast(done ? '« ' + name + ' » est gardé dans Mes circuits.' : 'Ce navigateur n\'a pas pu garder le circuit.', done ? '' : 'bad');
@@ -5277,7 +5711,9 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     ['f-name', 'f-id', 'f-author'].forEach((id) => $(id).addEventListener('input', saveDraftSoon));
     window.addEventListener('pagehide', () => { if (draft.timer) writeDraft(); });
     const d = C.parseDraft(loadPref(STORE.draft));
-    if (d) offerDraft(d);
+    let relang = false;
+    try { relang = window.sessionStorage.getItem('circuit-editor.relang') === '1'; window.sessionStorage.removeItem('circuit-editor.relang'); } catch (e) { relang = false; }
+    if (d) { offerDraft(d); if (relang) resumeDraft(); }
   }
 
   /* -------------------------------------------------------- 11 b. Photos */
@@ -5656,14 +6092,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       }
       const li = make('li', 'photo' + (out ? ' out' : '')), img = document.createElement('img'), what = make('div', 'what'), del = make('button', 'btn icon danger');
       img.src = ph.image; img.alt = '';
-      img.title = 'Voir sur la carte';
+      img.title = typo('Voir sur la carte');
       img.addEventListener('click', () => map.setView([ph.lat, ph.lon], Math.max(map.getZoom(), 16)));
       what.appendChild(make('b', '', ph.name));
       if (kept) {
         const sel = document.createElement('select');
         sel.setAttribute('aria-label', typo('Ce que montre « ' + ph.name + ' »'));
         sel.appendChild(new Option(typo('Selon l\'ordre : ' + (fate.auto ? VIEW_WORDS[fate.view] : 'devant, gauche, droite')), ''));
-        VIEW_CHOICES.forEach(([v, label]) => sel.appendChild(new Option(label, v)));
+        VIEW_CHOICES.forEach(([v, label]) => sel.appendChild(new Option(typo(label), v)));
         sel.value = ph.view || '';
         sel.addEventListener('change', () => setPhotoView(ph.id, sel.value));
         what.appendChild(sel);
@@ -5672,7 +6108,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       const warn = lookWarning(fate);
       if (warn) what.appendChild(make('small', 'look', warn));
       del.type = 'button';
-      del.title = 'Retirer du circuit';
+      del.title = typo('Retirer du circuit');
       del.setAttribute('aria-label', typo('Retirer « ' + ph.name + ' » du circuit'));
       del.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg>';
       del.addEventListener('click', () => removePhoto(ph.id));
@@ -5687,13 +6123,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       pop.appendChild(big);
       pop.appendChild(make('b', '', ph.name));
       pop.appendChild(make('div', '', (kept ? 'Lieu ' + fate.spot + ', ' + VIEW_WORDS[fate.view] + ', à ' + fmtDist(fate.at_m) + ' du départ. ' : '') +
-        (ph.taken ? 'Prise le ' + new Date(ph.taken).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' }) + '. ' : '') +
+        (ph.taken ? 'Prise le ' + new Date(ph.taken).toLocaleString(LOCALE, { dateStyle: 'long', timeStyle: 'short' }) + '. ' : '') +
         line.charAt(0).toUpperCase() + line.slice(1) + '.'));
       L.marker([ph.lat, ph.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [40, 40], iconAnchor: [20, 20] }), keyboard: false, title: ph.name })
         .bindPopup(pop, { maxWidth: 280 }).addTo(layers.photos);
     });
     const tab = $('tabbtn-photos');
-    tab.textContent = 'Photos';
+    tab.textContent = tr('Photos');
     if (state.photos.length) tab.appendChild(make('span', 'count', String(state.photos.length)));
   }
 
@@ -5942,7 +6378,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     let n = 0;
     libOrder.forEach((e) => {
       if (g && e.g !== g) return;
-      if (q && !(fold(e.n).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q))) return;
+      if (q && !(fold(e.n).includes(q) || fold(tr(e.n)).includes(q) || e.id.includes(q) || fold(LIB.groups[e.g] || '').includes(q) ||
+        fold(tr(LIB.groups[e.g] || '')).includes(q))) return;
       const li = make('li'), b = make('button', 'otile' + (objUi.armed === e.id ? ' on' : ''));
       b.type = 'button';
       b.dataset.kind = e.id;
@@ -5956,6 +6393,38 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       n++;
     });
     if (!n) list.appendChild(make('li', 'note', 'Aucun objet ne correspond.'));
+    renderRecent();
+  }
+  // The last kinds picked, first: the ones a circuit uses again and again.
+  const RECENT_MAX = 10;
+  function recentKinds() {
+    let r = [];
+    try { r = JSON.parse(loadPref(STORE.recent) || '[]'); } catch (e) { r = []; }
+    return Array.isArray(r) ? r.filter((k) => typeof k === 'string' && libById.has(k)).slice(0, RECENT_MAX) : [];
+  }
+  function noteRecent(kind) {
+    const r = recentKinds().filter((k) => k !== kind);
+    r.unshift(kind);
+    savePref(STORE.recent, JSON.stringify(r.slice(0, RECENT_MAX)));
+    renderRecent();
+  }
+  function renderRecent() {
+    const list = $('obj-recent'), kinds = LIB ? recentKinds() : [];
+    list.textContent = '';
+    $('obj-recent-box').hidden = !kinds.length || !!$('obj-search').value.trim() || !!$('obj-group').value;
+    kinds.forEach((k) => {
+      const e = libById.get(k), li = make('li'), b = make('button', 'otile rtile' + (objUi.armed === k ? ' on' : ''));
+      b.type = 'button';
+      b.dataset.kind = k;
+      b.title = typo(e.n + ' : ' + sizeText(e));
+      b.setAttribute('aria-label', typo(e.n));
+      b.setAttribute('aria-pressed', String(objUi.armed === k));
+      b.appendChild(thumb(k, 52));
+      b.appendChild(make('span', 'oname', e.n));
+      b.addEventListener('click', () => arm(objUi.armed === k ? null : k));
+      li.appendChild(b);
+      list.appendChild(li);
+    });
   }
 
   // Picks the kind a click on the map places (null: stop placing).
@@ -5964,7 +6433,8 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     objUi.anchor = null;
     if (!objUi.armed) { objUi.manual = false; layers.objGhost.clearLayers(); }
     $('map').classList.toggle('placing', !!objUi.armed);
-    document.querySelectorAll('#obj-lib .otile').forEach((b) => {
+    if (objUi.armed) noteRecent(objUi.armed);
+    document.querySelectorAll('#obj-lib .otile, #obj-recent .otile').forEach((b) => {
       const on = b.dataset.kind === objUi.armed;
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', String(on));
@@ -5987,6 +6457,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       b.setAttribute('aria-pressed', String(on));
     });
     setText($('obj-mode-help'), MODE_HELP[mode]);
+    $('obj-gap').closest('.field').hidden = mode === 'one';
     sayArmed();
     drawGhost();
   }
@@ -6178,7 +6649,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   // The panel's list: the objects placed, by kind; the chosen one's settings.
   function renderPlaced() {
     const n = state.objects.length, tab = $('tabbtn-objects'), wet = state.objects.filter(drowned).length;
-    tab.textContent = 'Objets';
+    tab.textContent = tr('Objets');
     if (n) tab.appendChild(make('span', 'count', String(n)));
     setText($('obj-count'), n ? '(' + NUM(n) + (wet ? ', dont ' + NUM(wet) + ' dans l\'eau, en rouge' : '') + ')' : '');
     $('obj-none').hidden = n > 0;
@@ -6300,6 +6771,332 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     });
     renderLibrary();
     objectsShown();
+  }
+
+
+  /* ------------------- 12 b. Menu bar, commands, shortcuts, first steps */
+
+  // Every command of the page in one table: the menus, the command search
+  // (Ctrl+K) and the sheet of shortcuts are made from it. A command runs what a
+  // button of the page already does, so there is one way of doing each thing.
+  // menu: file | edit | view | help; keys: as shown; ok(): may run now; on(): ticked.
+  const press = (id) => () => { const b = $(id); if (b && !b.disabled) b.click(); };
+  const free = (id) => () => !$(id).disabled;
+  function goTo(tab, id) {
+    $('app').classList.remove('nopanel');
+    if (!window.matchMedia('(min-width: 900px)').matches) setPanel(true);
+    showTab(tab);
+    setTimeout(() => {
+      map.invalidateSize();
+      const el = id && $(id);
+      if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(el.tagName)) el.focus({ preventScroll: true }); }
+    }, 60);
+  }
+  function togglePanel() {
+    if (!window.matchMedia('(min-width: 900px)').matches) { setPanel(!$('app').classList.contains('open')); return; }
+    $('app').classList.toggle('nopanel');
+    setTimeout(() => { map.invalidateSize(); renderRelief(); }, 30);
+  }
+  function setBase(name) {
+    const layer = baseLayers[name];
+    if (!layer || map.hasLayer(layer)) return;
+    Object.keys(baseLayers).forEach((k) => { if (map.hasLayer(baseLayers[k])) map.removeLayer(baseLayers[k]); });
+    layer.addTo(map);
+  }
+  // Frames what there is: the course, else the points, the photos, the objects.
+  function fitAll() {
+    let pts = [];
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (line && line.lat.length) for (let i = 0; i < line.lat.length; i += Math.max(1, Math.floor(line.lat.length / 400))) pts.push([line.lat[i], line.lon[i]]);
+    if (!pts.length) pts = state.waypoints.map((w) => [w.lat, w.lon]);
+    if (!pts.length) pts = state.photos.map((ph) => [ph.lat, ph.lon]).concat(state.objects.map((o) => [o.lat, o.lon]));
+    if (!pts.length) { toast('Rien à cadrer : pas encore de tracé, de photo ni d\'objet.'); return; }
+    if (pts.length === 1) map.setView(pts[0], Math.max(map.getZoom(), 16));
+    else map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 17 });
+  }
+  const STEPS = [['trace', 'Tracé'], ['settings', 'Réglages'], ['relief', 'Relief'], ['photos', 'Photos'], ['objects', 'Objets'], ['send', 'Envoi']];
+  const CMDS = [
+    { menu: 'file', label: 'Nouveau circuit', run: press('new'), words: 'vide effacer recommencer' },
+    { menu: 'file', label: 'Ouvrir un fichier…', keys: 'Ctrl+O', run: press('open'), words: 'importer json cambotrack' },
+    { menu: 'file', label: 'Mes circuits…', run: () => goTo('send', 'circuits'), words: 'liste gardés bibliothèque' },
+    { menu: 'file', sep: true },
+    { menu: 'file', label: 'Garder dans « Mes circuits »', keys: 'Ctrl+S', run: press('keep'), ok: free('keep'), words: 'enregistrer sauver' },
+    { menu: 'file', label: 'Télécharger le fichier', keys: 'Ctrl+Maj+S', run: press('download'), ok: free('download'), words: 'exporter enregistrer sous json' },
+    { menu: 'file', label: 'Copier le fichier', run: press('copy'), ok: free('copy'), words: 'presse-papiers json' },
+    { menu: 'file', label: 'Envoyer au jeu…', run: () => goTo('send', 'f-token'), words: 'publier github catalogue jeton' },
+    { menu: 'file', sep: true },
+    { menu: 'file', label: 'Ajouter des photos…', run: () => { showTab('photos'); $('photos-add').click(); }, words: 'images album zip heic jpeg google' },
+    { menu: 'edit', label: 'Annuler', keys: 'Ctrl+Z', run: press('undo'), ok: free('undo') },
+    { menu: 'edit', label: 'Rétablir', keys: 'Ctrl+Y', run: press('redo'), ok: free('redo') },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Outil : ajouter des points', keys: 'A', run: press('tool-add'), on: () => $('tool-add').classList.contains('on'), words: 'poser clic' },
+    { menu: 'edit', label: 'Outil : modifier le tracé', keys: 'M', run: press('tool-edit'), on: () => $('tool-edit').classList.contains('on'), words: 'insérer' },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Parcours en boucle', run: press('kind-loop'), on: () => $('kind-loop').classList.contains('on'), words: 'tours circuit fermé' },
+    { menu: 'edit', label: 'Spéciale (de A à B)', run: press('kind-stage'), on: () => $('kind-stage').classList.contains('on'), words: 'rallye ouvert' },
+    { menu: 'edit', label: 'Inverser le sens du parcours', run: press('reverse'), ok: free('reverse'), words: 'retourner' },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Tout effacer', run: press('clear'), ok: free('clear'), words: 'supprimer vider' },
+    { menu: 'view', label: 'Voir tout le circuit', keys: 'F', run: fitAll, words: 'cadrer zoom recentrer' },
+    { menu: 'view', label: 'Charger les routes de la zone', keys: 'L', run: press('load-roads'), words: 'openstreetmap overpass' },
+    { menu: 'view', sep: true },
+    { menu: 'view', label: 'Fond : plan', run: () => setBase('Plan (OpenStreetMap)'), on: () => map && map.hasLayer(baseLayers['Plan (OpenStreetMap)']), words: 'carte openstreetmap' },
+    { menu: 'view', label: 'Fond : satellite', run: () => setBase('Satellite (Esri)'), on: () => map && map.hasLayer(baseLayers['Satellite (Esri)']), words: 'photo aérienne vue' },
+    { menu: 'view', label: 'Fond : relief', run: () => setBase('Relief (OpenTopoMap)'), on: () => map && map.hasLayer(baseLayers['Relief (OpenTopoMap)']), words: 'topographique courbes' },
+    { menu: 'view', sep: true },
+    { menu: 'view', label: 'Panneau du circuit', keys: 'P', run: togglePanel, on: () => !$('app').classList.contains('nopanel'), words: 'masquer afficher plein écran carte' }
+  ].concat(STEPS.map((st, i) => ({ menu: 'view', label: 'Étape ' + (i + 1) + ' : ' + st[1], keys: String(i + 1), run: () => goTo(st[0]), step: true }))).concat([
+    { menu: 'help', label: 'Pour commencer', run: () => showWelcome(true), words: 'premiers pas guide' },
+    { menu: 'help', label: 'Raccourcis clavier', keys: '?', run: () => showKeys(true), words: 'touches clavier' },
+    { menu: 'help', label: 'Comment tracer', run: () => { goTo('trace'); const d = document.querySelector('#tab-trace details.help'); if (d) { d.open = true; setTimeout(() => d.scrollIntoView({ block: 'center' }), 80); } } },
+    { menu: 'help', sep: true },
+    { menu: 'help', label: 'Mode d\'emploi complet', run: () => window.open(README_URL, '_blank', 'noopener'), words: 'documentation readme' },
+    { menu: 'help', label: 'Le format des fichiers', run: () => window.open(README_URL.replace(/README\.md$/, 'FORMAT.md'), '_blank', 'noopener'), words: 'cambotrack spécification' }
+  ]);
+  const MENU_NAMES = { file: 'Fichier', edit: 'Édition', view: 'Affichage', help: 'Aide' };
+  const canRun = (c) => !c.ok || c.ok();
+
+  function menuItem(c, after) {
+    const b = make('button', 'mi' + (c.on && c.on() ? ' on' : ''));
+    b.type = 'button';
+    b.setAttribute('role', 'menuitem');
+    b.disabled = !canRun(c);
+    b.appendChild(make('span', '', typo(c.label)));
+    if (c.keys) b.appendChild(make('span', 'k', c.keys));
+    b.addEventListener('click', () => { after(); c.run(); });
+    return b;
+  }
+  const chrome = { open: null, pop: null, welcomeClosed: false, welcomeForced: false, palette: [], cur: 0 };
+  function closeBarMenu() {
+    if (chrome.pop) chrome.pop.remove();
+    document.querySelectorAll('.mb-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    chrome.open = null; chrome.pop = null;
+  }
+  function openBarMenu(name) {
+    closeBarMenu();
+    const btn = document.querySelector('.mb-btn[data-menu=' + name + ']'), pop = make('div', 'mb-pop');
+    pop.setAttribute('role', 'menu');
+    pop.setAttribute('aria-label', MENU_NAMES[name]);
+    CMDS.filter((c) => c.menu === name).forEach((c) => pop.appendChild(c.sep ? make('div', 'msep') : menuItem(c, closeBarMenu)));
+    btn.parentNode.appendChild(pop);
+    btn.setAttribute('aria-expanded', 'true');
+    chrome.open = name; chrome.pop = pop;
+    const first = pop.querySelector('.mi:not(:disabled)');
+    if (first) first.focus({ preventScroll: true });
+  }
+
+  // The command search: what one types finds a command by its words.
+  function renderPalette() {
+    const q = fold($('palette-input').value.trim()), list = $('palette-list');
+    list.textContent = '';
+    chrome.palette = CMDS.filter((c) => !c.sep && canRun(c) && (!q || q.split(/\s+/).every((w) => fold(c.label + ' ' + tr(c.label) + ' ' + (c.words || '') + ' ' + tr(MENU_NAMES[c.menu]) + ' ' + MENU_NAMES[c.menu]).includes(w))));
+    chrome.cur = Math.min(chrome.cur, Math.max(0, chrome.palette.length - 1));
+    chrome.palette.forEach((c, i) => {
+      const b = menuItem(c, () => showPalette(false));
+      b.setAttribute('role', 'option');
+      if (i === chrome.cur) b.classList.add('cur');
+      b.insertBefore(make('span', 'grp', MENU_NAMES[c.menu]), b.querySelector('.k'));
+      const li = make('li');
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+    if (!chrome.palette.length) list.appendChild(make('li', 'note', 'Aucune commande ne correspond.'));
+  }
+  function showPalette(on) {
+    closeBarMenu();
+    $('palette-veil').hidden = !on;
+    if (on) { $('palette-input').value = ''; chrome.cur = 0; renderPalette(); $('palette-input').focus(); }
+  }
+  function showKeys(on) {
+    closeBarMenu();
+    $('keys-veil').hidden = !on;
+    if (!on) return;
+    const t = $('keys-table');
+    t.textContent = '';
+    const head = (text) => { const tr = make('tr'), th = make('th', '', text); th.colSpan = 2; tr.appendChild(th); t.appendChild(tr); };
+    const row = (what, keys) => { const tr = make('tr'); tr.appendChild(make('td', '', typo(what))); const td = make('td'); td.appendChild(make('kbd', '', keys)); tr.appendChild(td); t.appendChild(tr); };
+    head('Commandes');
+    row('Chercher une commande', 'Ctrl+K');
+    CMDS.filter((c) => c.keys && !c.step).forEach((c) => row(c.label, c.keys));
+    row('Aller à une étape (Tracé, Réglages, Relief, Photos, Objets, Envoi)', '1 … 6');
+    head('Sur la carte');
+    row('Poser un point de passage (outil Ajouter)', 'clic sur une route');
+    row('Insérer un point (outil Modifier)', 'clic sur le tracé');
+    row('Déplacer un point ou un objet', 'glisser');
+    row('Supprimer un point ou un objet', 'clic droit dessus');
+    row('Ce qu\'on peut faire à un endroit (point, objet, routes autour, coordonnées)', 'clic droit sur la carte');
+    head('Objets');
+    row('Tourner l\'objet à poser ou choisi de 15°', 'R / Maj+R');
+    row('Supprimer l\'objet choisi', 'Suppr');
+    row('Arrêter la pose, fermer un menu', 'Échap');
+    $('keys-close').focus();
+  }
+  function showWelcome(force) {
+    chrome.welcomeClosed = false;
+    chrome.welcomeForced = !!force;
+    renderChrome();
+  }
+
+  // What the bar, the steps and the first-steps card say, after each change.
+  function renderChrome() {
+    if (!$('appbar')) return;
+    const name = $('f-name').value;
+    if (document.activeElement !== $('bar-name') && $('bar-name').value !== name) $('bar-name').value = name;
+    const sum = $('summary').firstChild ? $('summary').firstChild.textContent : '';
+    setText($('bar-state'), state.waypoints.length > 1 ? sum : '');
+    $('bar-keep').disabled = $('keep').disabled;
+    $('bar-download').disabled = $('download').disabled;
+    const r = current.result, ok = !!(current.route && current.route.ok && r && r.ok), s = current.settings;
+    const done = {
+      trace: ok, settings: ok && !!name.trim(), relief: ok && (!s || !s.relief || (!current.pending && !relief.error)),
+      photos: state.photos.length > 0, objects: state.objects.length > 0, send: false
+    };
+    document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
+    $('trace-stats').hidden = state.waypoints.length < 2;
+    renderWaypointList();
+    if ($('road-legend')) $('road-legend').hidden = !graph.ways.length;
+    // What to do next on the map, while it is not obvious.
+    const hint = !graph.ways.length || objUi.armed ? ''
+      : state.waypoints.length === 0 ? 'Cliquez sur une route pour poser le départ'
+        : state.waypoints.length === 1 ? 'Cliquez plus loin sur une route : le tracé la suivra' : '';
+    setText($('maphint'), typo(hint));
+    $('maphint').hidden = !hint;
+    // The send step says first whether there is something to send, else what is missing.
+    const n = state.waypoints.length, go = $('send-ready-go'), plural = (k, one, many) => NUM(k) + ' ' + (k > 1 ? many : one);
+    let title, text = '', fix = null;
+    if (ok) {
+      title = '✓ Prêt : ' + (name.trim() || 'circuit sans nom');
+      text = sum + (state.objects.length ? ' · ' + plural(state.objects.length, 'objet', 'objets') : '') + (state.photos.length ? ' · ' + plural(state.photos.length, 'photo', 'photos') : '');
+      if (!name.trim()) fix = ['Lui donner un nom', () => goTo('settings', 'f-name')];
+    } else if (n < 2) { title = 'Pas encore de circuit'; text = 'Posez au moins deux points sur les routes.'; fix = ['Aller au tracé', () => goTo('trace')]; }
+    else if (s && s.relief && current.pending && !relief.error) { title = 'Presque prêt'; text = 'Le relief arrive…'; }
+    else { title = 'Pas encore prêt'; text = sum || 'Le tracé a un problème.'; fix = ['Voir le problème', () => goTo('trace', 'messages')]; }
+    setText($('send-ready-title'), typo(title));
+    setText($('send-ready-text'), typo(text));
+    $('send-ready').classList.toggle('ok', ok);
+    go.hidden = !fix;
+    if (fix) { setText(go, fix[0]); go.onclick = fix[1]; }
+    if ($('f-id').classList.contains('invalid')) document.querySelector('#tab-settings details.adv').open = true;
+    const empty = !graph.ways.length && !state.waypoints.length && !state.photos.length && !state.objects.length;
+    $('welcome').hidden = chrome.welcomeClosed || !$('draft').hidden || !(chrome.welcomeForced || empty);
+  }
+
+  // The waypoints as a list: where each one is along the course, a click goes there.
+  let wpSig = '';
+  function renderWaypointList() {
+    const wps = state.waypoints, route = current.route, legs = route && route.legs ? route.legs : [];
+    const sig = JSON.stringify([wps.map((w) => [w.lat, w.lon, w.edge < 0]), legs.map((l) => (l.ok ? Math.round(l.length) : -1)), objScale()]);
+    if (sig === wpSig) return;
+    wpSig = sig;
+    $('wp-box').hidden = wps.length < 2;
+    setText($('wp-count'), '(' + wps.length + ')');
+    const list = $('wp-list'), k = objScale();
+    list.textContent = '';
+    let at = 0, known = true;
+    wps.forEach((w, i) => {
+      const li = make('li', i === 0 ? 'start' : (w.edge < 0 ? 'lost' : ''));
+      li.appendChild(make('span', 'n', i === 0 ? 'D' : String(i + 1)));
+      li.appendChild(make('span', 'd', i === 0 ? 'départ' : known ? typo(fmtDist(at / k) + ' de jeu') : '—'));
+      const go = make('button', '', 'Voir'), del = make('button', 'del', 'Retirer');
+      go.type = del.type = 'button';
+      go.addEventListener('click', () => map.setView([w.lat, w.lon], Math.max(map.getZoom(), 17)));
+      del.addEventListener('click', () => deleteWaypoint(i));
+      li.appendChild(go); li.appendChild(del);
+      list.appendChild(li);
+      const leg = legs[i];
+      if (leg && leg.ok) at += leg.length; else known = false;
+    });
+  }
+
+  function initChrome() {
+    document.querySelectorAll('.mb-btn').forEach((b) => {
+      b.addEventListener('click', (ev) => { ev.stopPropagation(); if (chrome.open === b.dataset.menu) closeBarMenu(); else openBarMenu(b.dataset.menu); });
+      b.addEventListener('mouseenter', () => { if (chrome.open && chrome.open !== b.dataset.menu) openBarMenu(b.dataset.menu); });
+    });
+    document.addEventListener('click', (ev) => {
+      if (chrome.open && !ev.target.closest('.mb')) closeBarMenu();
+      if (!$('mapmenu').hidden && !ev.target.closest('#mapmenu')) $('mapmenu').hidden = true;
+    });
+    $('menubar').addEventListener('keydown', (ev) => {
+      if (!chrome.pop) return;
+      const items = Array.from(chrome.pop.querySelectorAll('.mi:not(:disabled)')), i = items.indexOf(document.activeElement);
+      const names = Object.keys(MENU_NAMES), m = names.indexOf(chrome.open);
+      if (ev.key === 'ArrowDown') { ev.preventDefault(); items[(i + 1) % items.length].focus(); }
+      else if (ev.key === 'ArrowUp') { ev.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+      else if (ev.key === 'ArrowRight') { ev.preventDefault(); openBarMenu(names[(m + 1) % names.length]); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); openBarMenu(names[(m - 1 + names.length) % names.length]); }
+    });
+    // The name in the bar is the name of the form.
+    $('bar-name').addEventListener('input', () => {
+      $('f-name').value = $('bar-name').value;
+      $('f-name').dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    $('bar-name').addEventListener('change', () => { $('f-name').dispatchEvent(new Event('change', { bubbles: true })); refresh(); });
+    $('bar-name').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('bar-name').blur(); });
+    $('f-name').addEventListener('input', () => { if (document.activeElement !== $('bar-name')) $('bar-name').value = $('f-name').value; renderChrome(); });
+    $('bar-keep').addEventListener('click', press('keep'));
+    $('bar-download').addEventListener('click', press('download'));
+    $('bar-cmd').addEventListener('click', () => showPalette(true));
+    $('fit').addEventListener('click', fitAll);
+    // At the foot of each step, the way to the next one.
+    STEPS.forEach((st, i) => {
+      const box = make('div', 'stepnav'), panel = $('tab-' + st[0]);
+      if (i > 0) {
+        const back = make('button', 'btn ghost', typo('← ' + STEPS[i - 1][1]));
+        back.type = 'button';
+        back.addEventListener('click', () => { goTo(STEPS[i - 1][0]); $('panel-body').scrollTop = 0; });
+        box.appendChild(back);
+      }
+      if (i < STEPS.length - 1) {
+        const next = make('button', 'btn next', typo('Suivant : ' + STEPS[i + 1][1] + ' →'));
+        next.type = 'button';
+        next.addEventListener('click', () => { goTo(STEPS[i + 1][0]); $('panel-body').scrollTop = 0; });
+        box.appendChild(next);
+      }
+      panel.appendChild(box);
+    });
+
+    $('palette-input').addEventListener('input', () => { chrome.cur = 0; renderPalette(); });
+    $('palette-input').addEventListener('keydown', (ev) => {
+      const n = chrome.palette.length;
+      if (ev.key === 'ArrowDown' && n) { ev.preventDefault(); chrome.cur = (chrome.cur + 1) % n; renderPalette(); }
+      else if (ev.key === 'ArrowUp' && n) { ev.preventDefault(); chrome.cur = (chrome.cur - 1 + n) % n; renderPalette(); }
+      else if (ev.key === 'Enter' && n) { ev.preventDefault(); const c = chrome.palette[chrome.cur]; showPalette(false); c.run(); }
+    });
+    ['palette-veil', 'keys-veil'].forEach((id) => $(id).addEventListener('click', (ev) => { if (ev.target === $(id)) { $(id).hidden = true; } }));
+    $('keys-close').addEventListener('click', () => showKeys(false));
+
+    $('welcome-close').addEventListener('click', () => { chrome.welcomeClosed = true; chrome.welcomeForced = false; renderChrome(); });
+    $('welcome-search').addEventListener('click', () => $('search-input').focus());
+    $('welcome-places').addEventListener('click', (ev) => { ev.stopPropagation(); $('places-btn').click(); });
+    $('welcome-load').addEventListener('click', () => { chrome.welcomeForced = false; press('load-roads')(); });
+    $('welcome-photos').addEventListener('click', () => { chrome.welcomeForced = false; showTab('photos'); $('photos-add').click(); });
+    $('welcome-open').addEventListener('click', () => { chrome.welcomeForced = false; press('open')(); });
+    $('welcome-mine').addEventListener('click', () => { chrome.welcomeClosed = true; renderChrome(); goTo('send', 'circuits'); });
+
+    document.addEventListener('keydown', (ev) => {
+      const mod = ev.ctrlKey || ev.metaKey, key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+      if (ev.key === 'Escape') {
+        if (!$('mapmenu').hidden) { $('mapmenu').hidden = true; return; }
+        if (!$('palette-veil').hidden) { showPalette(false); return; }
+        if (!$('keys-veil').hidden) { showKeys(false); return; }
+        if (chrome.open) { const b = document.querySelector('.mb-btn[data-menu=' + chrome.open + ']'); closeBarMenu(); b.focus(); }
+        return;
+      }
+      if (mod && !ev.altKey) {
+        if (key === 'k') { ev.preventDefault(); showPalette($('palette-veil').hidden); }
+        else if (key === 's' && ev.shiftKey) { ev.preventDefault(); press('download')(); }
+        else if (key === 's') { ev.preventDefault(); press('keep')(); }
+        else if (key === 'o') { ev.preventDefault(); press('open')(); }
+        return;
+      }
+      if (ev.altKey || typing(ev.target) || !$('palette-veil').hidden || !$('keys-veil').hidden) return;
+      if (objUi.armed || objUi.selected >= 0) { if (key === 'r' || key === 'Delete' || key === 'Backspace') return; }
+      const c = CMDS.find((x) => x.keys && x.keys.length === 1 && x.keys.toLowerCase() === key);
+      if (key === '?') { ev.preventDefault(); showKeys(true); }
+      else if (c && canRun(c)) { ev.preventDefault(); c.run(); }
+    });
+    renderChrome();
   }
 
   /* ---------------------- 13. Panel, tabs and the settings form */
@@ -6427,17 +7224,46 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     document.body.appendChild(wrap);
   }
 
+  // The language picker of the bar: the choice is kept, and the page comes back
+  // in that language with the drawing as it was (taken back without asking).
+  function initLanguage() {
+    const sel = $('bar-lang');
+    Object.keys(LANGS).forEach((k) => { const o = new Option(LANGS[k], k); o.lang = k; sel.appendChild(o); });
+    sel.value = LANG;
+    sel.addEventListener('change', () => {
+      try { window.localStorage.setItem(LANG_KEY, sel.value); } catch (e) { /* the URL keeps it */ }
+      if (draft.timer) writeDraft();
+      try { window.sessionStorage.setItem('circuit-editor.relang', '1'); } catch (e) { /* the offer will ask */ }
+      const u = new URL(window.location.href);
+      u.searchParams.set('lang', sel.value);
+      window.location.replace(u.toString());
+    });
+  }
+
   function start() {
     if (!C) { fatal('Le cœur de l\'éditeur n\'a pas démarré : rechargez la page.'); return; }
     if (!window.L || !window.L.map) {
       fatal('La carte n\'a pas pu être chargée. L\'éditeur prend Leaflet sur cdnjs.cloudflare.com : vérifiez la connexion (ou un bloqueur de contenu), puis rechargez la page.');
       return;
     }
-    // French spacing for the text written in the page itself.
+    // The text written in the page itself: in its language (French: its spacing).
+    document.documentElement.lang = LANG;
+    document.documentElement.classList.add('lang-' + LANG);
+    if (LANG === 'km') {
+      const f = document.createElement('link');
+      f.rel = 'stylesheet';
+      f.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&display=swap';
+      document.head.appendChild(f);
+    }
     const walker = document.createTreeWalker($('app'), NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      if (node.nodeValue.trim()) node.nodeValue = typo(node.nodeValue);
+      if (node.nodeValue.trim() && !(node.parentNode && node.parentNode.closest('code, .notr'))) node.nodeValue = typo(node.nodeValue);
     }
+    document.querySelectorAll('#app [placeholder], #app [title], #app [aria-label]').forEach((el) => {
+      ['placeholder', 'title', 'aria-label'].forEach((a) => { if (el.hasAttribute(a)) el.setAttribute(a, typo(el.getAttribute(a))); });
+    });
+    document.title = typo(document.title);
+    initLanguage();
     initMap();
     initSearch();
     initTools();
@@ -6445,11 +7271,12 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     initPhotos();
     initObjects();
     initDraft();
+    initChrome();
     syncKindButtons();
     updateLoadButton();
     refresh();
     // For the end-to-end test and for the console.
-    window.circuitEditor = { map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh, objUi: objUi,
+    window.circuitEditor = { lang: LANG, tr: tr, i18nMissing: () => Array.from(trMissing), map: map, graph: graph, state: state, current: current, probe: probe, prepareExport: prepareExport, refresh: refresh, objUi: objUi,
       forgetScenery: () => { scenery.archives = {}; scenery.tiles.clear(); } };
   }
 

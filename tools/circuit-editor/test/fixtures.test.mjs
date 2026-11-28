@@ -144,9 +144,13 @@ test('index.html: one file, Leaflet 1.9.4 from cdnjs with the verified SRI hashe
   // Nothing else is loaded from elsewhere: no other script, stylesheet or font.
   const external = [...html.matchAll(/<(?:script|link)[^>]*(?:src|href)="(https?:[^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(external.sort(), [script[0].match(/src="([^"]+)"/)[1], link[0].match(/href="([^"]+)"/)[1]].sort());
-  assert.equal([...html.matchAll(/<script\b/g)].length, 4, 'Leaflet, the library of objects, the core, the interface');
-  // The library of objects comes from beside the page, not from elsewhere.
-  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u)), ['objects-library.js']);
+  assert.equal([...html.matchAll(/<script\b/g)].length, 5, 'Leaflet, the library of objects, the translations, the core, the interface');
+  // The library of objects and the translations come from beside the page, not from elsewhere.
+  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u)), ['objects-library.js', 'i18n.js']);
+  // One font from elsewhere, only for a page in Khmer (the visitor may have no Khmer font).
+  assert.deepEqual([...html.matchAll(/https:\/\/fonts\.googleapis\.com[^'"]*/g)].map((m) => m[0]),
+    ['https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&display=swap']);
+  assert.match(html, /if \(LANG === 'km'\) \{\s*const f = document\.createElement\('link'\);/);
   // The HEIC decoder, loaded by the page only for a HEIC photo: an exact version and its hash
   // (of the file downloaded; its sha256 equals the one jsDelivr publishes for it).
   assert.match(html, /src: 'https:\/\/cdn\.jsdelivr\.net\/npm\/libheif-js@1\.23\.5\/libheif-wasm\/libheif-bundle\.js',/);
