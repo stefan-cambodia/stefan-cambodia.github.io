@@ -15,7 +15,10 @@
 // Map data © OpenStreetMap contributors, ODbL 1.0.
 
 import fs from 'node:fs';
-import { loadCore, FIXTURES, ELEVATION_FIXTURE, buildSample, elevationStore, canonicalText, referenceHash } from './helpers.mjs';
+import {
+  loadCore, FIXTURES, ELEVATION_FIXTURE, buildSample, elevationStore, canonicalText, referenceHash, PHOTO_FIXTURES, photoFixture,
+  mvtBytes, pmtilesBytes,
+} from './helpers.mjs';
 
 const C = loadCore();
 const write = (name, text) => {
@@ -71,3 +74,54 @@ if (C.trackHash(vector) !== vector.hash) throw new Error('the core and node:cryp
 write('hash-vector.cambotrack.json', C.serializeTrack(vector));
 write('hash-vector.canonical.txt', canonicalText(vector));
 console.log(`  hash ${vector.hash}`);
+
+// Photos for the browser test: photo-base.jpg (a small picture drawn on a
+// canvas, no metadata) with an Exif block giving each a position of its own.
+for (const name of Object.keys(PHOTO_FIXTURES)) {
+  const bytes = photoFixture(name);
+  fs.writeFileSync(new URL(name, FIXTURES), bytes);
+  console.log(`wrote ${name} (${bytes.length} bytes)`);
+}
+
+// Overture Maps archives for the browser test, round the sample loop at Angkor
+// (everything is made up: a house every 60 m, crops with a forest, a pond):
+// overture-buildings.pmtiles (zoom 14) and overture-base.pmtiles (zoom 13).
+{
+  const [s, w, n, e] = [13.405, 103.840, 13.425, 103.864];
+  const tileRange = (z) => {
+    const a = C.tileOf(n, w, z), b = C.tileOf(s, e, z), out = [];
+    for (let x = a[0]; x <= b[0]; x++) for (let y = a[1]; y <= b[1]; y++) out.push([z, x, y]);
+    return out;
+  };
+  const units = (z, x, y) => ([lat, lon]) => {
+    const k = 2 ** z, r = lat * Math.PI / 180;
+    return [Math.round(((lon + 180) / 360 * k - x) * 4096), Math.round(((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * k - y) * 4096)];
+  };
+  // Clockwise on screen (north-west, north-east, south-east, south-west): outer rings.
+  const rect = (la0, lo0, la1, lo1) => [[la1, lo0], [la1, lo1], [la0, lo1], [la0, lo0]];
+  const houses = [];
+  for (let lat = s; lat < n; lat += 60 / 110600) {
+    for (let lon = w; lon < e; lon += 60 / 107700) {
+      const i = houses.length;
+      houses.push({ id: 'h' + i, subtype: ['residential', 'commercial', 'religious', ''][i % 4], ring: rect(lat, lon, lat + 8 / 110600, lon + 12 / 107700) });
+    }
+  }
+  const buildings = tileRange(14).map(([z, x, y]) => {
+    const u = units(z, x, y), [tn, tw] = C.tileLatLon(z, x, y), [ts, te] = C.tileLatLon(z, x + 1, y + 1);
+    const mine = houses.filter((h) => h.ring.some(([la, lo]) => la <= tn && la >= ts && lo >= tw && lo <= te));
+    return { z, x, y, bytes: mvtBytes({ building: mine.map((h) => ({ type: 3, props: { id: h.id, ...(h.subtype ? { subtype: h.subtype } : {}) }, parts: [h.ring.map(u)] })) }) };
+  });
+  const base = tileRange(13).map(([z, x, y]) => {
+    const u = units(z, x, y);
+    return { z, x, y, bytes: mvtBytes({
+      land_cover: [{ type: 3, props: { subtype: 'crop', cartography: '{"sort_key":1}' }, parts: [rect(s - 0.02, w - 0.02, n + 0.02, e + 0.02).map(u)] },
+        { type: 3, props: { subtype: 'forest', cartography: '{"sort_key":2}' }, parts: [rect(13.408, 103.858, 13.420, 103.870).map(u)] }],
+      water: [{ type: 3, props: { subtype: 'pond' }, parts: [rect(13.4145, 103.8495, 13.4155, 103.8510).map(u)] }],
+    }) };
+  });
+  for (const [name, tiles] of [['overture-buildings.pmtiles', buildings], ['overture-base.pmtiles', base]]) {
+    const bytes = pmtilesBytes(tiles, { leaf: name.includes('base') });
+    fs.writeFileSync(new URL(name, FIXTURES), bytes);
+    console.log(`wrote ${name} (${bytes.length} bytes, ${tiles.length} tiles)`);
+  }
+}

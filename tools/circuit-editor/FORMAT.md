@@ -69,11 +69,14 @@ contiennent aucun code géographique : ils ne lisent ni `origin`, ni `waypoints`
 | `waypoints` | tableau de `[lat, lon]` | non | Clics de l'éditeur, pour reprendre l'édition. |
 | `allowed_classes` | tableau de classes `highway` | non | Classes de routes autorisées au routage dans l'éditeur. |
 | `attribution` | chaîne, 0 à 300 caractères | non | Mention des sources, affichée par les jeux à l'écran de chargement. |
+| `scenery` | objet | non | Le décor du lieu réel, lu par l'éditeur (bâtiments, eau, couverture du sol). Voir « Décor ». Hors du hash. |
+| `objects` | objet | non | Les objets posés à la main sur la carte, pris dans la bibliothèque des objets du jeu. Voir « Objets posés ». Hors du hash. |
+| `photos` | tableau de 0 à 24 photos | non | Photos des lieux du parcours, pour qui habille le circuit (pas pour être affichées). Voir plus bas. Hors du hash. |
 
 Un champ inconnu est **ignoré** par les jeux (compatibilité ascendante). L'éditeur
 conserve les champs qu'il connaît seulement. Il ajoute un champ `editor` (ses
 réglages : lissage, pistes rétrécies, largeur des ponts, espacement des
-checkpoints, portes automatiques) pour les retrouver à la réouverture : les jeux
+checkpoints, portes automatiques, lissage du relief, distance admise pour les photos) pour les retrouver à la réouverture : les jeux
 ne le lisent pas et il n'entre pas dans le hash.
 
 ## Géométrie
@@ -125,6 +128,124 @@ Un nom que le jeu ne connaît pas est traité comme `dirt`.
   donnent des points sans changer le classement) ; l'éditeur les place sur les
   lignes droites.
 - Au plus 200 checkpoints et 400 portes.
+
+## Photos
+
+`photos` est facultatif. Les photos **ne sont pas faites pour être affichées** : elles
+décrivent les lieux du parcours à qui habille le circuit (décor, bâtiments, végétation),
+en petite taille pour être lues vite. Chaque photo a été prise à moins d'une distance
+choisie dans l'éditeur (100 m réels par défaut) du parcours ; elle est rangée à sa
+place, dans le repère des points. Les photos **n'entrent pas dans le hash** : deux
+fichiers de même hash ont la même route, pas forcément les mêmes photos. Un jeu
+qui ne connaît pas ce champ l'ignore, comme tout champ inconnu.
+
+Les photos prises au même endroit forment un **lieu** (`spot`, numéroté de 1 le long
+du parcours). Dans un lieu, chaque photo a un **rôle** (`view`) : `front` la route
+qui vient, `left` et `right` ses deux côtés pour qui roule dans le sens du circuit,
+`extra` ce qui décrit davantage l'endroit. Par défaut l'éditeur les donne dans l'ordre
+de prise de vue (devant, gauche, droite, puis en plus) ; on peut les changer. Le
+tableau est rangé lieu par lieu, dans l'ordre `front`, `left`, `right`, `extra`.
+
+```json
+{"name":"20261125_172646.jpg","spot":1,"view":"front","lat":13.416314,"lon":103.853748,"ele":23.4,
+ "taken":"2026-11-25T17:26:46","bearing":214.5,
+ "point":57,"at_m":228.3,"side":"left","offset_m":8.02,"x":-13.75,"z":-221.9,
+ "w":320,"h":240,"image":"data:image/jpeg;base64,/9j/4AAQ…"}
+```
+
+| Champ | Type | Obligatoire | Rôle |
+|---|---|---|---|
+| `name` | chaîne, 1 à 120 caractères | oui | Nom du fichier d'origine. Informatif. |
+| `spot` | entier de 1 à 24 | non | Le lieu : les photos prises à moins de 30 m réels de la première photo d'un lieu en sont. Numéroté le long du parcours. Absent des fichiers écrits avant le 27 novembre 2026 au soir. |
+| `view` | `"front"`, `"left"`, `"right"` ou `"extra"` | non | Ce que montre la photo à ce lieu (voir plus haut). Absent comme `spot`. |
+| `lat`, `lon` | nombres, 6 décimales au plus | oui | Où la photo a été prise (WGS84), lu dans ses métadonnées. |
+| `ele` | nombre, en mètres | non | Altitude lue dans les métadonnées. |
+| `taken` | `AAAA-MM-JJTHH:MM:SS` | non | Date de prise de vue, à l'heure de l'appareil (sans fuseau). |
+| `bearing` | nombre de 0 à 360 exclu | non | Direction dans laquelle l'appareil regardait, en degrés depuis le nord. |
+| `point` | indice de point | oui | Le point du parcours le plus proche de la photo. |
+| `at_m` | nombre | oui | Distance de ce point depuis le départ, en mètres de jeu. Informatif. |
+| `side` | `"left"` ou `"right"` | oui | Côté de la route où la photo a été prise, pour qui roule dans le sens du parcours. |
+| `offset_m` | nombre, 2 décimales au plus | oui | Distance de la photo à ce point, en mètres de jeu. |
+| `x`, `z` | nombres, 2 décimales au plus | oui | La place de la photo dans le repère des points (`+x` est, `+z` sud), en mètres de jeu. |
+| `w`, `h` | entiers de 1 à 4096 | oui | Taille de l'image en pixels. |
+| `image` | URI `data:image/jpeg;base64,…` de 400 000 caractères au plus | oui | L'image, réduite par l'éditeur (320 pixels au plus grand côté, 512 avant le 27 novembre 2026 au soir) et réencodée : elle ne porte plus aucune métadonnée. |
+
+Qui lit le fichier écarte une photo qu'il ne peut pas utiliser (image qui n'est
+pas un JPEG en `data:`, indice hors du parcours, `spot` ou `view` qui n'en est pas
+un…) sans refuser le circuit.
+
+`tools/circuit-editor/photos-brief.mjs` sort les photos d'un fichier en images
+séparées avec une fiche par lieu (`brief.md`), pour qui habille le circuit.
+
+## Décor
+
+`scenery` est facultatif. L'éditeur l'écrit à partir des données d'**Overture Maps**
+(bâtiments d'OpenStreetMap et de Microsoft, eau et usage du sol d'OpenStreetMap,
+couverture du sol d'ESA WorldCover) lues autour du parcours, sans autre aide : c'est
+le décor du lieu réel. Un jeu qui le connaît construit ce décor au lieu du sien ; un jeu
+qui ne le connaît pas l'ignore. Le décor **n'entre pas dans le hash** : deux fichiers de
+même hash ont la même route, pas forcément le même décor (un jeu qui garde un circuit
+par son hash le remplace quand `scenery.made` diffère).
+
+```json
+"scenery": {"v": 1, "made": "2026-11-27T20:40:00Z",
+  "source": "Overture Maps 2026-11-18.0 : OpenStreetMap (ODbL), Microsoft ML Buildings (ODbL), ESA WorldCover 2021 (CC BY 4.0)",
+  "cover": {"cell": 16, "x0": -480, "z0": -400, "w": 64, "h": 58, "rle": "12u3c.4f…"},
+  "buildings": [[12.4, -30.1, 14.2, 7.5, 104, 6, 1], …],
+  "water": [{"kind": "pond", "ring": [[30.5, -80.2], [41.0, -79.8], …]}, …]}
+```
+
+| Champ | Type | Rôle |
+|---|---|---|
+| `v` | `1` | Version du décor. Un jeu ignore un décor d'une version qu'il ne connaît pas. |
+| `made` | date ISO 8601 UTC | Quand le décor a été lu. |
+| `source` | chaîne | Les sources et leurs licences, à afficher avec l'`attribution`. |
+| `cover` | objet | La couverture du sol sur une grille alignée sur les axes, en mètres de jeu : `cell` le côté d'une case, `x0`, `z0` le coin (x et z les plus petits), `w` × `h` cases rangées par lignes de z croissant, x croissant dans une ligne. `rle` : la suite des classes, chaque lettre précédée de son nombre de répétitions quand il dépasse 1. Lettres : `u` ville ou village bâti, `c` cultures (rizières), `f` forêt, `g` herbe, `s` broussaille, `b` sol nu, `w` zone humide, `m` mangrove, `a` eau, `.` inconnu. Elle couvre le parcours avec 400 m réels de marge. |
+| `buildings` | tableau | Les bâtiments à moins de 150 m réels du parcours et pas sur la route : `[x, z, longueur, largeur, angle, hauteur, sorte]`. `x`, `z` : le centre, en mètres de jeu (2 décimales). `longueur` ≥ `largeur` : le rectangle qui contient l'emprise, en **mètres réels** (1 décimale). `angle` : direction du grand côté, en degrés de 0 à 179, comptés de l'est vers le nord. `hauteur` : en mètres réels, 0 si inconnue. `sorte` : 0 inconnue, 1 habitation, 2 commerce, 3 bâtiment public, 4 culte, 5 école, 6 industrie ou entrepôt, 7 hôtel. Au plus 8 000, les plus proches du parcours d'abord. |
+| `water` | tableau | Les plans d'eau surfaciques (étangs, lacs, rivières larges, bassins) qui touchent la zone de `cover` : `kind` (`pond`, `lake`, `river`, `reservoir`, `canal`, `water`), `ring` le contour extérieur fermé implicitement, en mètres de jeu (2 décimales), simplifié à 0,5 m de jeu près et coupé au cadre de `cover`. |
+
+Les positions sont dans le repère des points (`+x` est, `+z` sud, à l'échelle du
+circuit). Les tailles des bâtiments restent en mètres réels : un jeu choisit ses propres
+modèles et leur espacement à son échelle.
+
+## Objets posés
+
+`objects` est facultatif. Ce sont les objets que l'auteur a choisis dans la
+**bibliothèque des objets** (`objects-library.js`, à côté de l'éditeur : tous les objets
+de décor de 3D Buggy, avec leur taille et une vignette, sortis du jeu par
+`tools/object_library.gd`) et posés lui-même sur la carte. Le jeu les met **exactement
+là**, au sol (ou sur la route, si l'auteur les y a mis), tournés comme indiqué, avec
+leurs collisions ; la végétation et le décor du jeu leur laissent la place. Ils
+**n'entrent pas dans le hash** (c'est de l'habillage, comme `scenery`) : un jeu qui garde
+un circuit par son hash le remplace quand `objects.made` diffère. Relire le décor du
+lieu réel (`scenery`) ne touche pas aux objets posés.
+
+```json
+"objects": {"v": 1, "made": "2026-11-28T01:10:00Z",
+  "items": [["palm_a", 12.5, -30.25, 90, 1], ["gable_house_a", 40.1, 12.0, 180, 1.2]]}
+```
+
+| Champ | Type | Rôle |
+|---|---|---|
+| `v` | `1` | Version. Un jeu ignore des objets d'une version qu'il ne connaît pas. |
+| `made` | date ISO 8601 UTC | La dernière modification des objets. |
+| `items` | tableau de 0 à 2 000 objets | `[sorte, x, z, cap, taille]`. |
+
+- `sorte` : l'identifiant de l'objet dans la bibliothèque, `[a-z0-9_]`, 1 à 48
+  caractères. Un jeu qui ne connaît pas une sorte saute cet objet, sans refuser le
+  circuit.
+- `x`, `z` : la place de l'objet (l'origine du modèle, au sol), dans le repère des
+  points (`+x` est, `+z` sud), en mètres de jeu, 2 décimales au plus, `|x|` et
+  `|z|` ≤ 60 000.
+- `cap` : la direction vers laquelle regarde la **face avant** de l'objet (l'axe `+z`
+  du modèle), en degrés depuis le nord dans le sens des aiguilles d'une montre :
+  `0` nord (`−z`), `90` est (`+x`), `180` sud, `270` ouest. De 0 à 360 exclu,
+  1 décimale au plus. Dans Godot : `Basis(Vector3.UP, PI − deg_to_rad(cap))`.
+- `taille` : facteur de taille, de 0,5 à 2, 2 décimales au plus (`1` : la taille du
+  jeu).
+
+Qui lit le fichier écarte un objet malformé (sorte qui n'en est pas une, nombre
+non fini ou hors des bornes) sans refuser le circuit.
 
 ## Hash
 
