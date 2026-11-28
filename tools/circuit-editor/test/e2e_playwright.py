@@ -296,8 +296,9 @@ def desktop_run(context, net, errors, base, shots, tmp):
     check(page.locator("html").get_attribute("lang") == "fr", "the page is in French")
     check(page.locator("#download").is_disabled() and page.locator("#send").is_disabled(), "nothing to export before a course exists")
 
-    # A click before any road is loaded: a hint, no waypoint.
-    page.mouse.click(700, 400)
+    # A click before any road is loaded (beside the first steps' card): a hint, no waypoint.
+    check(page.locator("#welcome").is_visible(), "the first steps are on the map of an empty page")
+    page.mouse.click(60, 300)
     page.wait_for_selector("#toast:not([hidden])")
     check("Chargez d'abord les routes" in page.inner_text("#toast").replace(" ", " "), "hint when no road is loaded")
 
@@ -1294,6 +1295,61 @@ def outage_run(context, net, errors, base, shots):
     page.close()
 
 
+def chrome_run(context, net, errors, base, shots):
+    print("The menu bar, the command search, the shortcuts, the steps")
+    net.overpass_down = set()
+    page = new_page(context, errors, base, 1280, 800)
+    sp = lambda t: t.replace("\u202f", " ").replace("\u00a0", " ")
+    page.click(".mb-btn[data-menu=file]")
+    items = page.evaluate("Array.from(document.querySelectorAll('.mb-pop .mi')).map(b => [b.textContent, b.disabled])")
+    labels = [i[0] for i in items]
+    check(any("Ouvrir un fichier" in l for l in labels) and any("Télécharger" in l and d for l, d in items),
+          "« Fichier » lists open, keep, download… and download waits for a course (%d items)" % len(items))
+    page.hover(".mb-btn[data-menu=view]")
+    check(page.locator(".mb-pop").count() == 1 and "Fond : satellite" in sp(page.inner_text(".mb-pop")), "the pointer moves from one menu to the next")
+    page.keyboard.press("Escape")
+    check(page.locator(".mb-pop").count() == 0, "Échap closes the menu")
+    frame_and_load(page)
+    check(page.locator("#welcome").is_hidden(), "no first steps once roads are loaded")
+    for lat, lon in WAYPOINTS:
+        click_latlon(page, lat, lon)
+    page.wait_for_function("window.circuitEditor.state.waypoints.length === 4")
+    page.wait_for_function("document.getElementById('tabbtn-trace').classList.contains('done')")
+    check(not page.locator("#tabbtn-settings").evaluate("b => b.classList.contains('done')"), "the course is ticked, the settings wait for a name")
+    page.fill("#bar-name", "Nom dans la barre")
+    check(page.input_value("#f-name") == "Nom dans la barre" and page.input_value("#f-id") == "nom-dans-la-barre",
+          "the name typed in the bar is the circuit's, and its identifier follows")
+    page.wait_for_function("document.getElementById('tabbtn-settings').classList.contains('done')")
+    check(page.locator("#bar-download").is_enabled(), "with a course, « Télécharger » of the bar is ready")
+    page.keyboard.press("Control+k")
+    page.wait_for_selector("#palette-veil:not([hidden])")
+    page.keyboard.type("satel")
+    found = sp(page.inner_text("#palette-list"))
+    page.keyboard.press("Enter")
+    sat = page.evaluate("(() => { let on = false; window.circuitEditor.map.eachLayer(l => { if (l._url && l._url.includes('arcgisonline')) on = true; }); return on; })()")
+    check("Fond : satellite" in found and sat and page.locator("#palette-veil").is_hidden(),
+          "Ctrl+K, « satel », Entrée: the satellite view, and the search closes")
+    page.keyboard.press("?")
+    page.wait_for_selector("#keys-veil:not([hidden])")
+    keys = page.inner_text("#keys-table")
+    check("Ctrl+K" in keys and "Télécharger le fichier" in keys and "clic droit" in keys, "« ? » shows the sheet of shortcuts")
+    shot(page, shots, "desktop-keys.png")
+    page.keyboard.press("Escape")
+    page.keyboard.press("4")
+    check(page.locator("#tab-photos").is_visible(), "a figure goes to its step (4: Photos)")
+    page.keyboard.press("p")
+    page.wait_for_function("document.getElementById('panel').offsetWidth === 0")
+    check(True, "P hides the panel: the map takes the whole window")
+    page.keyboard.press("p")
+    page.wait_for_function("document.getElementById('panel').offsetWidth > 0")
+    page.keyboard.press("Control+s")
+    page.wait_for_function("document.getElementById('toast').textContent.includes('Mes circuits')", timeout=10000)
+    check(True, "Ctrl+S keeps the circuit in « Mes circuits »")
+    shot(page, shots, "desktop-menubar.png")
+    page.click("#clear")
+    page.close()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--browser", choices=["webkit", "chrome", "chromium"])
@@ -1315,6 +1371,7 @@ def main():
             reopen_run(context, net, errors, base, args.screenshots, target)
             draft_run(context, net, errors, base, args.screenshots)
             library_run(context, net, errors, base, args.screenshots)
+            chrome_run(context, net, errors, base, args.screenshots)
             photos_run(context, net, errors, base, args.screenshots, tmp)
             photos_first_run(context, net, errors, base, args.screenshots)
             relief_wait_run(context, net, errors, base, args.screenshots)

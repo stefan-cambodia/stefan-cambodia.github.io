@@ -52,6 +52,7 @@ small { color: var(--ink-soft); font-size: .86em; }
    a flex sibling of it, so opening the panel resizes the map instead of hiding
    its attribution. */
 .app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.work { position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
 .stage { position: relative; flex: 1 1 auto; min-height: 0; }
 .map { position: absolute; inset: 0; background: #dfe6ec; }
 .panel { flex: 0 0 auto; display: flex; flex-direction: column; background: var(--paper);
@@ -63,7 +64,8 @@ small { color: var(--ink-soft); font-size: .86em; }
 .app.open .panel-body { visibility: visible; }
 
 @media (min-width: 900px) {
-  .app { flex-direction: row; }
+  .work { flex-direction: row; }
+  .app.nopanel .panel { display: none; }
   .panel, .app.open .panel { width: var(--panel-w); height: auto; border-top: 0; border-left: 1px solid var(--line);
     box-shadow: -2px 0 10px rgba(15, 25, 40, .10); transition: none; }
   .panel-body { visibility: visible; }
@@ -269,6 +271,97 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   .app.open .top { display: none; }
 }
 
+/* ------------------------------------------------------------ Menu bar */
+.appbar { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; height: 50px; padding: 0 10px;
+  background: linear-gradient(90deg, #0a3d4b, #0b5566); color: #fff; z-index: 1300; box-shadow: 0 1px 6px rgba(0, 0, 0, .25); }
+.brand { display: flex; align-items: center; gap: 8px; margin-right: 6px; font-weight: 700; white-space: nowrap; }
+.brand svg { width: 28px; height: 28px; flex: 0 0 28px; }
+.menubar { display: flex; gap: 2px; }
+.mb { position: relative; }
+.mb-btn { min-height: 36px; padding: 6px 11px; border: 0; border-radius: 8px; background: none; color: #e6f4f6; font: inherit;
+  font-weight: 600; cursor: pointer; }
+.mb-btn:hover, .mb-btn[aria-expanded=true] { background: rgba(255, 255, 255, .14); color: #fff; }
+.mb-btn:focus-visible { outline: 2px solid #fcc419; outline-offset: 1px; }
+.mb-pop { position: absolute; top: calc(100% + 4px); left: 0; min-width: 300px; padding: 6px; border-radius: 10px; background: var(--paper);
+  color: var(--ink); box-shadow: 0 8px 28px rgba(15, 25, 40, .28); z-index: 1400; }
+.mi { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 6px 10px; border: 0; border-radius: 7px;
+  background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.mi:hover:not(:disabled), .mi:focus-visible { background: #e6f2f4; outline: none; }
+.mi:disabled { color: #9aa4ae; cursor: default; }
+.mi > span:first-child { white-space: nowrap; }
+.mi .k { margin-left: auto; padding-left: 18px; color: var(--ink-soft); font-size: .85em; white-space: nowrap; }
+.mi.on::before { content: '✓'; position: absolute; margin-left: -2px; color: var(--accent); font-weight: 700; }
+.mi.on { position: relative; }
+.mi .ic { width: 18px; flex: 0 0 18px; text-align: center; color: var(--accent); }
+.msep { height: 1px; margin: 5px 4px; background: var(--line); }
+.bar-name { flex: 0 1 260px; min-width: 90px; height: 34px; margin-left: 8px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 8px; background: rgba(255, 255, 255, .1); color: #fff; font: inherit; font-weight: 600; }
+.bar-name::placeholder { color: rgba(255, 255, 255, .6); font-weight: 500; }
+.bar-name:hover { border-color: rgba(255, 255, 255, .5); }
+.bar-name:focus { outline: none; background: #fff; color: var(--ink); }
+.bar-state { color: #b9dfe5; font-size: .85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-gap { flex: 1 1 auto; }
+.bar-btn { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 8px; background: rgba(255, 255, 255, .08); color: #fff; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.bar-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .18); }
+.bar-btn:disabled { opacity: .45; cursor: not-allowed; }
+.bar-btn.primary { background: #fcc419; border-color: #fcc419; color: #1b2430; }
+.bar-btn.primary:hover:not(:disabled) { background: #ffd43b; }
+.bar-btn kbd { border-color: rgba(255, 255, 255, .35); color: #cfe7eb; font-size: .78em; }
+.bar-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 1399px) { .bar-state { display: none; } }
+@media (max-width: 1180px) { .bar-btn kbd { display: none; } }
+@media (max-width: 980px) { .brand span { display: none; } }
+@media (max-width: 899px) { .menubar .mb-btn { padding: 6px 7px; } .bar-name { display: none; } .bar-btn .lbl { display: none; } }
+
+/* ---------------------------------------------------- Steps (the tabs) */
+.tabs { counter-reset: step; }
+.tab { counter-increment: step; display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: .9em; }
+.tab::before { content: counter(step); display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line); color: var(--ink-soft); font-size: .8em; line-height: 1; }
+.tab.on::before { border-color: var(--accent); background: var(--accent); color: #fff; }
+.tab.done::before { content: '✓'; border-color: var(--ok); background: var(--ok); color: #fff; }
+.tab.on.done::before { box-shadow: 0 0 0 3px rgba(11, 114, 133, .35); }
+.tab .count { top: 2px; right: 4px; }
+
+/* ------------------------------------------------- Welcome, dialogs */
+.welcome { position: absolute; z-index: 1000; left: 50%; top: 50%; transform: translate(-50%, -58%); width: min(560px, calc(100% - 24px));
+  padding: 16px 18px 14px; border-radius: 14px; background: rgba(255, 255, 255, .97); box-shadow: 0 6px 26px rgba(15, 25, 40, .28); }
+.welcome h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.welcome p { margin: 0 0 10px; color: var(--ink-soft); font-size: .93em; }
+.welcome ol { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 8px; counter-reset: w; }
+.welcome li { counter-increment: w; display: flex; align-items: center; gap: 10px; }
+.welcome li::before { content: counter(w); flex: 0 0 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: .9em; }
+.welcome li span { flex: 1 1 auto; }
+.welcome li .btn { min-height: 34px; padding: 4px 12px; font-size: .92em; }
+.welcome .alt { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 10px; border-top: 1px solid var(--line); font-size: .92em; }
+.welcome .alt .btn { min-height: 34px; padding: 4px 12px; font-size: .92em; }
+.welcome .close { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: 8px; background: none;
+  color: var(--ink-soft); font-size: 20px; cursor: pointer; }
+.welcome .close:hover { background: var(--paper-soft); }
+.veil { position: fixed; inset: 0; z-index: 2500; display: flex; align-items: flex-start; justify-content: center; padding: 70px 16px 16px;
+  background: rgba(10, 25, 35, .38); }
+.dialog { width: min(620px, 100%); max-height: calc(100vh - 100px); overflow: auto; border-radius: 14px; background: var(--paper);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, .35); }
+.dialog-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px 6px; }
+.dialog-head h2 { flex: 1 1 auto; margin: 0; font-size: 1.1rem; }
+.dialog-body { padding: 4px 16px 16px; }
+.palette-input { width: 100%; min-height: 48px; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); border-radius: 14px 14px 0 0;
+  font: inherit; font-size: 17px; outline: none; }
+.palette-list { margin: 0; padding: 6px; list-style: none; max-height: 52vh; overflow-y: auto; }
+.palette-list .mi { min-height: 40px; }
+.palette-list .mi.cur { background: #e6f2f4; }
+.palette-list .grp { color: var(--ink-soft); font-size: .8em; margin-left: 6px; }
+.keys { width: 100%; border-collapse: collapse; font-size: .93em; }
+.keys th { padding: 12px 0 4px; text-align: left; color: var(--accent); font-size: .85em; text-transform: uppercase; letter-spacing: .04em; }
+.keys td { padding: 5px 0; border-bottom: 1px solid var(--paper-soft); vertical-align: top; }
+.keys td:last-child { text-align: right; white-space: nowrap; padding-left: 14px; }
+.tools .lbl { margin-left: 2px; }
+.tools .btn:disabled { opacity: 1; background: var(--paper); color: #b3bac2; }
+.tools .btn.icon.labelled { width: auto; padding: 0 11px; }
+@media (max-width: 1100px) { .tools .lbl { display: none; } .tools .btn.icon.labelled { width: 44px; padding: 0; } }
+
 /* --------------------------------------------------------------- Leaflet */
 .leaflet-container { font: inherit; font-size: 13px; }
 .leaflet-bottom { bottom: 58px; }
@@ -298,6 +391,28 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
 <body>
 <div id="app" class="app">
 
+  <!-- ==================================== Menu bar ==================================== -->
+  <header class="appbar" id="appbar">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#0b7285"/><path d="M8 22c0-9 3-13 8-13s8 3 8 7-3 6-6 6-4-2-4-4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="8" cy="23" r="3" fill="#fcc419"/></svg>
+      <span>Éditeur de circuits</span></div>
+    <nav id="menubar" class="menubar" aria-label="Menu">
+      <div class="mb"><button type="button" class="mb-btn" data-menu="file" aria-haspopup="menu" aria-expanded="false">Fichier</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="edit" aria-haspopup="menu" aria-expanded="false">Édition</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="view" aria-haspopup="menu" aria-expanded="false">Affichage</button></div>
+      <div class="mb"><button type="button" class="mb-btn" data-menu="help" aria-haspopup="menu" aria-expanded="false">Aide</button></div>
+    </nav>
+    <input id="bar-name" class="bar-name" type="text" maxlength="80" placeholder="Circuit sans nom" aria-label="Nom du circuit" autocomplete="off" spellcheck="false">
+    <span id="bar-state" class="bar-state" aria-live="polite"></span>
+    <span class="bar-gap"></span>
+    <button type="button" id="bar-cmd" class="bar-btn" title="Chercher une commande (Ctrl+K)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="lbl">Commandes</span> <kbd>Ctrl K</kbd></button>
+    <button type="button" id="bar-keep" class="bar-btn" title="Garder ce circuit dans « Mes circuits » (Ctrl+S)" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-6h8v6"/></svg><span class="lbl">Garder</span></button>
+    <button type="button" id="bar-download" class="bar-btn primary" title="Télécharger le fichier .cambotrack.json (Ctrl+Maj+S)" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg><span class="lbl">Télécharger</span></button>
+  </header>
+
+  <div class="work">
   <!-- ============================== Map and its overlays ============================== -->
   <div class="stage">
     <div id="map" class="map" role="application" aria-label="Carte : cliquez sur une route pour placer un point de passage"></div>
@@ -318,11 +433,14 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <button type="button" id="tool-add" class="seg-btn on" aria-pressed="true" title="Un clic sur une route ajoute un point à la fin du tracé">Ajouter</button>
         <button type="button" id="tool-edit" class="seg-btn" aria-pressed="false" title="Un clic sur le tracé y insère un point">Modifier</button>
       </div>
-      <button type="button" id="undo" class="btn icon" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      <button type="button" id="undo" class="btn icon labelled" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl" aria-hidden="true">Annuler</span>
       </button>
-      <button type="button" id="redo" class="btn icon" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      <button type="button" id="redo" class="btn icon labelled" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span class="lbl" aria-hidden="true">Rétablir</span>
+      </button>
+      <button type="button" id="fit" class="btn icon" title="Voir tout le circuit (F)" aria-label="Voir tout le circuit">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>
       </button>
       <button type="button" id="reverse" class="btn icon" title="Inverser le sens du parcours" aria-label="Inverser le sens" disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 12 4 4-4 4"/><path d="M21 16H7"/></svg>
@@ -333,6 +451,22 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     </div>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <div id="welcome" class="welcome" role="group" aria-labelledby="welcome-title" hidden>
+      <button type="button" id="welcome-close" class="close" aria-label="Fermer" title="Fermer">×</button>
+      <h2 id="welcome-title">Faire un circuit en trois gestes</h2>
+      <p>Sur les vraies routes d'OpenStreetMap, pour 3D Buggy et Cambodia Rally.</p>
+      <ol>
+        <li><span>Aller au lieu du circuit</span><button type="button" id="welcome-search" class="btn">Chercher</button><button type="button" id="welcome-places" class="btn">Lieux</button></li>
+        <li><span>Charger les routes de la zone visible</span><button type="button" id="welcome-load" class="btn primary">Charger</button></li>
+        <li><span>Cliquer sur les routes : chaque clic pose un point, le tracé suit la route</span></li>
+      </ol>
+      <div class="alt"><span>Ou :</span>
+        <button type="button" id="welcome-photos" class="btn">Partir de mes photos</button>
+        <button type="button" id="welcome-open" class="btn">Ouvrir un fichier</button>
+        <button type="button" id="welcome-mine" class="btn">Mes circuits</button>
+      </div>
+    </div>
 
     <div id="draft" class="draft" role="group" aria-labelledby="draft-text" hidden>
       <p id="draft-text"></p>
@@ -371,7 +505,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <label class="check"><input type="checkbox" id="allow-tracks" checked>
           <span>Autoriser les pistes <small>(chemins carrossables, <code>highway=track</code>)</small></span></label>
 
-        <dl class="stats">
+        <dl id="trace-stats" class="stats">
           <div><dt>Longueur réelle</dt><dd id="st-real">—</dd></div>
           <div><dt>Longueur de jeu</dt><dd id="st-game">—</dd></div>
           <div class="span"><dt>Temps estimé</dt><dd id="st-time">—</dd></div>
@@ -451,8 +585,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
             <option value="300">Fort (300 m)</option>
             <option value="600">Très fort (600 m)</option>
           </select>
-          <small>Le modèle voit le versant à côté de la route, les arbres, la rivière sous un pont. « Fort » retire les bosses
-            et les creux de moins de 300 m de long ; les côtes plus longues restent, leur sommet un peu écrêté.</small></div>
+          <small>« Fort » retire les bosses et les creux de moins de 300 m (arbres, versant voisin, rivière sous un pont).</small></div>
         <p id="relief-status" class="note" role="status" aria-live="polite">Le relief sera chargé quand un tracé existera.</p>
         <button type="button" id="relief-retry" class="btn" hidden>Réessayer</button>
         <canvas id="profile" class="profile" width="600" height="180" aria-label="Profil d'altitude du circuit"></canvas>
@@ -461,19 +594,30 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
           <div><dt>Dénivelé positif</dt><dd id="rl-climb">—</dd></div>
           <div><dt>Altitudes</dt><dd id="rl-range">—</dd></div>
         </dl>
+        <details class="help"><summary>Un modèle de surface : ce qu'il faut savoir</summary>
         <p class="note">C'est un modèle de <b>surface</b> à 90 m : la canopée et les bâtiments y font des bosses qui
-          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé selon le réglage ci-dessus, et les pentes sont limitées à 30 %.</p>
+          n'existent pas sur la route. Le relief est lu tous les 30 m, lissé selon le réglage ci-dessus, et les pentes sont limitées à 30 %.
+          Les altitudes reçues restent sur cet ordinateur : un tracé redessiné ne les redemande pas.</p>
+        </details>
       </section>
 
       <!-- Photos -->
       <section id="tab-photos" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-photos" hidden>
-        <p class="note">Des photos des lieux du parcours, pour décrire à qui habillera le circuit ce qu'on y voit. Elles ne sont
-          pas affichées dans le jeu. À chaque lieu, dans l'ordre de prise de vue : <b>devant</b> (la route qui vient), puis
+        <p class="note">Les photos des lieux du parcours (avec leur position GPS) guident le décor. Sans tracé, l'éditeur en
+          propose un qui passe par elles. Un album Google Photos se donne tel quel, en <code>.zip</code>.</p>
+        <details class="help"><summary>En savoir plus</summary>
+        <p class="note">Elles ne sont pas affichées dans le jeu : elles décrivent à qui habillera le circuit ce qu'on y voit.
+          À chaque lieu, dans l'ordre de prise de vue : <b>devant</b> (la route qui vient), puis
           <b>à gauche</b>, puis <b>à droite</b> ; les suivantes sont <b>en plus</b>, pour mieux décrire l'endroit.</p>
         <p class="note">Il leur faut leur position GPS (localisation de l'appareil photo activée). <b>On peut commencer par
           elles</b> : sans tracé, l'éditeur les pose sur la carte, charge les routes autour et propose un tracé qui passe par chaque
           lieu, dans l'ordre des photos ; il reste à l'adapter. Avec un tracé, chaque nouveau lieu proche devient un point de passage ;
           une photo loin du tracé reste en rouge, hors du fichier, jusqu'à ce que le tracé passe près d'elle.</p>
+        <p class="note"><b>Depuis un album Google Photos</b> : sur photos.google.com, ouvrir l'album, menu ⋮ puis
+          « Tout télécharger », et donner ici le fichier .zip tel quel (bouton ou dépôt sur la carte).</p>
+        <p class="note">On peut aussi déposer les photos sur la carte. Le JPEG et le HEIC (photos « haute efficacité » des Samsung et des iPhone) sont lus. L'image est réduite à 320 pixels et
+          réencodée : elle ne garde aucune métadonnée. Elle fait partie du fichier : envoyée au jeu, elle est publique.</p>
+        </details>
         <div class="buttons one">
           <button type="button" id="photos-add" class="btn primary">Ajouter des photos…</button>
           <input type="file" id="photos-file" accept="image/jpeg,.jpg,.jpeg,image/heic,image/heif,.heic,.heif,.zip,application/zip" multiple hidden>
@@ -484,17 +628,11 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <p id="photos-status" class="note" role="status" aria-live="polite"></p>
         <ul id="photos-refused" class="refused" aria-label="Photos refusées"></ul>
         <ul id="photos" class="photos" aria-label="Photos du circuit"></ul>
-        <p class="note"><b>Depuis un album Google Photos</b> : sur photos.google.com, ouvrir l'album, menu ⋮ puis
-          « Tout télécharger », et donner ici le fichier .zip tel quel (bouton ou dépôt sur la carte).</p>
-        <p class="note">On peut aussi déposer les photos sur la carte. Le JPEG et le HEIC (photos « haute efficacité » des Samsung et des iPhone) sont lus. L'image est réduite à 320 pixels et
-          réencodée : elle ne garde aucune métadonnée. Elle fait partie du fichier : envoyée au jeu, elle est publique.</p>
       </section>
 
       <!-- Objets -->
       <section id="tab-objects" class="tabpanel" role="tabpanel" aria-labelledby="tabbtn-objects" hidden>
-        <p class="note">Tous les objets du jeu (arbres, maisons, étals, animaux, panneaux, temples, monuments…) : choisissez-en un,
-          puis <b>cliquez sur la carte</b> pour le poser, autant de fois qu'il faut. Le jeu le met exactement là, à sa vraie taille
-          (un mètre de jeu vaut l'échelle du circuit sur la carte), et laisse sa place libre de végétation et de décor.</p>
+        <p class="note">Choisissez un objet, puis <b>cliquez sur la carte</b> pour le poser : le jeu le met exactement là, à sa vraie taille.</p>
         <p id="obj-missing" class="note bad" hidden>La bibliothèque des objets (objects-library.js, à côté de cette page) n'a pas été
           trouvée : les objets déjà posés restent dans le fichier, mais on ne peut pas en choisir d'autres.</p>
         <div class="objfind">
@@ -532,11 +670,13 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
         <ul id="obj-placed" class="objplaced" aria-label="Objets posés"></ul>
         <p id="obj-none" class="note">Aucun objet posé.</p>
         <div class="buttons one"><button type="button" id="obj-clear" class="btn" disabled>Retirer tous les objets</button></div>
-        <p class="note">Sur la carte : glisser un objet le déplace, un clic le choisit, un clic droit le supprime. Touches :
+        <details class="help"><summary>Sur la carte, les touches</summary>
+        <p class="note">Le jeu laisse la place d'un objet posé libre de végétation et de décor ; un mètre de jeu vaut l'échelle du
+          circuit sur la carte. Glisser un objet le déplace, un clic le choisit, un clic droit le supprime. Touches :
           <kbd>R</kbd> tourne de 15° (<kbd>Maj</kbd>+<kbd>R</kbd> dans l'autre sens), <kbd>Suppr</kbd> supprime l'objet choisi,
           <kbd>Échap</kbd> arrête la pose. La flèche montre la face avant ; un nouvel objet regarde la route quand elle est proche, sauf
-          si on l'a tourné avec <kbd>R</kbd> pendant la pose. Une ligne entière s'annule d'un seul Ctrl+Z.
-          Ctrl+Z annule.</p>
+          si on l'a tourné avec <kbd>R</kbd> pendant la pose. Une ligne entière s'annule d'un seul Ctrl+Z.</p>
+        </details>
       </section>
 
       <!-- Envoi -->
@@ -579,6 +719,21 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       </section>
     </div>
   </aside>
+  </div>
+
+  <div id="palette-veil" class="veil" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-label="Chercher une commande">
+      <input id="palette-input" class="palette-input" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Que voulez-vous faire ? (télécharger, satellite, photos…)" aria-label="Chercher une commande">
+      <ul id="palette-list" class="palette-list" role="listbox" aria-label="Commandes"></ul>
+    </div>
+  </div>
+  <div id="keys-veil" class="veil" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="keys-title">
+      <div class="dialog-head"><h2 id="keys-title">Raccourcis clavier</h2><button type="button" id="keys-close" class="btn icon" aria-label="Fermer">×</button></div>
+      <div class="dialog-body"><table id="keys-table" class="keys"></table></div>
+    </div>
+  </div>
 </div>
 
 <noscript><p style="padding:1rem">Cet éditeur a besoin de JavaScript.</p></noscript>
@@ -3575,7 +3730,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
   const probe = { index: -1, view: null, ll: null, track: null };
   const roads = { busy: false, firstServer: 0, areas: [] };   // areas: the boxes loaded in this visit
 
-  let map, roadRenderer, routeRenderer;
+  let map, roadRenderer, routeRenderer, baseLayers = {};
   const layers = {};
 
   /* ---------------------------------------------------- 4. Map and layers */
@@ -3601,6 +3756,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
       })
     };
     base['Plan (OpenStreetMap)'].addTo(map);
+    baseLayers = base;
     L.control.layers(base, null, { position: 'topright' }).addTo(map);
     L.control.zoom({ position: 'bottomright', zoomInTitle: 'Zoom avant', zoomOutTitle: 'Zoom arrière' }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
@@ -4487,6 +4643,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     $('download').disabled = !ready;
     $('copy').disabled = !ready;
     $('send').disabled = !ready || !$('f-token').value.trim();
+    renderChrome();
   }
 
   /* --------------------------------------------- 9. Relief: Open-Meteo */
@@ -6302,6 +6459,259 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     objectsShown();
   }
 
+
+  /* ------------------- 12 b. Menu bar, commands, shortcuts, first steps */
+
+  // Every command of the page in one table: the menus, the command search
+  // (Ctrl+K) and the sheet of shortcuts are made from it. A command runs what a
+  // button of the page already does, so there is one way of doing each thing.
+  // menu: file | edit | view | help; keys: as shown; ok(): may run now; on(): ticked.
+  const press = (id) => () => { const b = $(id); if (b && !b.disabled) b.click(); };
+  const free = (id) => () => !$(id).disabled;
+  function goTo(tab, id) {
+    $('app').classList.remove('nopanel');
+    if (!window.matchMedia('(min-width: 900px)').matches) setPanel(true);
+    showTab(tab);
+    setTimeout(() => {
+      map.invalidateSize();
+      const el = id && $(id);
+      if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (/^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(el.tagName)) el.focus({ preventScroll: true }); }
+    }, 60);
+  }
+  function togglePanel() {
+    if (!window.matchMedia('(min-width: 900px)').matches) { setPanel(!$('app').classList.contains('open')); return; }
+    $('app').classList.toggle('nopanel');
+    setTimeout(() => { map.invalidateSize(); renderRelief(); }, 30);
+  }
+  function setBase(name) {
+    const layer = baseLayers[name];
+    if (!layer || map.hasLayer(layer)) return;
+    Object.keys(baseLayers).forEach((k) => { if (map.hasLayer(baseLayers[k])) map.removeLayer(baseLayers[k]); });
+    layer.addTo(map);
+  }
+  // Frames what there is: the course, else the points, the photos, the objects.
+  function fitAll() {
+    let pts = [];
+    const line = current.route && current.route.ok ? current.route.line : null;
+    if (line && line.lat.length) for (let i = 0; i < line.lat.length; i += Math.max(1, Math.floor(line.lat.length / 400))) pts.push([line.lat[i], line.lon[i]]);
+    if (!pts.length) pts = state.waypoints.map((w) => [w.lat, w.lon]);
+    if (!pts.length) pts = state.photos.map((ph) => [ph.lat, ph.lon]).concat(state.objects.map((o) => [o.lat, o.lon]));
+    if (!pts.length) { toast('Rien à cadrer : pas encore de tracé, de photo ni d\'objet.'); return; }
+    if (pts.length === 1) map.setView(pts[0], Math.max(map.getZoom(), 16));
+    else map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 17 });
+  }
+  const STEPS = [['trace', 'Tracé'], ['settings', 'Réglages'], ['relief', 'Relief'], ['photos', 'Photos'], ['objects', 'Objets'], ['send', 'Envoi']];
+  const CMDS = [
+    { menu: 'file', label: 'Nouveau circuit', run: press('new'), words: 'vide effacer recommencer' },
+    { menu: 'file', label: 'Ouvrir un fichier…', keys: 'Ctrl+O', run: press('open'), words: 'importer json cambotrack' },
+    { menu: 'file', label: 'Mes circuits…', run: () => goTo('send', 'circuits'), words: 'liste gardés bibliothèque' },
+    { menu: 'file', sep: true },
+    { menu: 'file', label: 'Garder dans « Mes circuits »', keys: 'Ctrl+S', run: press('keep'), ok: free('keep'), words: 'enregistrer sauver' },
+    { menu: 'file', label: 'Télécharger le fichier', keys: 'Ctrl+Maj+S', run: press('download'), ok: free('download'), words: 'exporter enregistrer sous json' },
+    { menu: 'file', label: 'Copier le fichier', run: press('copy'), ok: free('copy'), words: 'presse-papiers json' },
+    { menu: 'file', label: 'Envoyer au jeu…', run: () => goTo('send', 'f-token'), words: 'publier github catalogue jeton' },
+    { menu: 'file', sep: true },
+    { menu: 'file', label: 'Ajouter des photos…', run: () => { showTab('photos'); $('photos-add').click(); }, words: 'images album zip heic jpeg google' },
+    { menu: 'edit', label: 'Annuler', keys: 'Ctrl+Z', run: press('undo'), ok: free('undo') },
+    { menu: 'edit', label: 'Rétablir', keys: 'Ctrl+Y', run: press('redo'), ok: free('redo') },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Outil : ajouter des points', keys: 'A', run: press('tool-add'), on: () => $('tool-add').classList.contains('on'), words: 'poser clic' },
+    { menu: 'edit', label: 'Outil : modifier le tracé', keys: 'M', run: press('tool-edit'), on: () => $('tool-edit').classList.contains('on'), words: 'insérer' },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Parcours en boucle', run: press('kind-loop'), on: () => $('kind-loop').classList.contains('on'), words: 'tours circuit fermé' },
+    { menu: 'edit', label: 'Spéciale (de A à B)', run: press('kind-stage'), on: () => $('kind-stage').classList.contains('on'), words: 'rallye ouvert' },
+    { menu: 'edit', label: 'Inverser le sens du parcours', run: press('reverse'), ok: free('reverse'), words: 'retourner' },
+    { menu: 'edit', sep: true },
+    { menu: 'edit', label: 'Tout effacer', run: press('clear'), ok: free('clear'), words: 'supprimer vider' },
+    { menu: 'view', label: 'Voir tout le circuit', keys: 'F', run: fitAll, words: 'cadrer zoom recentrer' },
+    { menu: 'view', label: 'Charger les routes de la zone', keys: 'L', run: press('load-roads'), words: 'openstreetmap overpass' },
+    { menu: 'view', sep: true },
+    { menu: 'view', label: 'Fond : plan', run: () => setBase('Plan (OpenStreetMap)'), on: () => map && map.hasLayer(baseLayers['Plan (OpenStreetMap)']), words: 'carte openstreetmap' },
+    { menu: 'view', label: 'Fond : satellite', run: () => setBase('Satellite (Esri)'), on: () => map && map.hasLayer(baseLayers['Satellite (Esri)']), words: 'photo aérienne vue' },
+    { menu: 'view', label: 'Fond : relief', run: () => setBase('Relief (OpenTopoMap)'), on: () => map && map.hasLayer(baseLayers['Relief (OpenTopoMap)']), words: 'topographique courbes' },
+    { menu: 'view', sep: true },
+    { menu: 'view', label: 'Panneau du circuit', keys: 'P', run: togglePanel, on: () => !$('app').classList.contains('nopanel'), words: 'masquer afficher plein écran carte' }
+  ].concat(STEPS.map((st, i) => ({ menu: 'view', label: 'Étape ' + (i + 1) + ' : ' + st[1], keys: String(i + 1), run: () => goTo(st[0]), step: true }))).concat([
+    { menu: 'help', label: 'Pour commencer', run: () => showWelcome(true), words: 'premiers pas guide' },
+    { menu: 'help', label: 'Raccourcis clavier', keys: '?', run: () => showKeys(true), words: 'touches clavier' },
+    { menu: 'help', label: 'Comment tracer', run: () => { goTo('trace'); const d = document.querySelector('#tab-trace details.help'); if (d) { d.open = true; setTimeout(() => d.scrollIntoView({ block: 'center' }), 80); } } },
+    { menu: 'help', sep: true },
+    { menu: 'help', label: 'Mode d\'emploi complet', run: () => window.open(README_URL, '_blank', 'noopener'), words: 'documentation readme' },
+    { menu: 'help', label: 'Le format des fichiers', run: () => window.open(README_URL.replace(/README\.md$/, 'FORMAT.md'), '_blank', 'noopener'), words: 'cambotrack spécification' }
+  ]);
+  const MENU_NAMES = { file: 'Fichier', edit: 'Édition', view: 'Affichage', help: 'Aide' };
+  const canRun = (c) => !c.ok || c.ok();
+
+  function menuItem(c, after) {
+    const b = make('button', 'mi' + (c.on && c.on() ? ' on' : ''));
+    b.type = 'button';
+    b.setAttribute('role', 'menuitem');
+    b.disabled = !canRun(c);
+    b.appendChild(make('span', '', typo(c.label)));
+    if (c.keys) b.appendChild(make('span', 'k', c.keys));
+    b.addEventListener('click', () => { after(); c.run(); });
+    return b;
+  }
+  const chrome = { open: null, pop: null, welcomeClosed: false, welcomeForced: false, palette: [], cur: 0 };
+  function closeBarMenu() {
+    if (chrome.pop) chrome.pop.remove();
+    document.querySelectorAll('.mb-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    chrome.open = null; chrome.pop = null;
+  }
+  function openBarMenu(name) {
+    closeBarMenu();
+    const btn = document.querySelector('.mb-btn[data-menu=' + name + ']'), pop = make('div', 'mb-pop');
+    pop.setAttribute('role', 'menu');
+    pop.setAttribute('aria-label', MENU_NAMES[name]);
+    CMDS.filter((c) => c.menu === name).forEach((c) => pop.appendChild(c.sep ? make('div', 'msep') : menuItem(c, closeBarMenu)));
+    btn.parentNode.appendChild(pop);
+    btn.setAttribute('aria-expanded', 'true');
+    chrome.open = name; chrome.pop = pop;
+    const first = pop.querySelector('.mi:not(:disabled)');
+    if (first) first.focus({ preventScroll: true });
+  }
+
+  // The command search: what one types finds a command by its words.
+  function renderPalette() {
+    const q = fold($('palette-input').value.trim()), list = $('palette-list');
+    list.textContent = '';
+    chrome.palette = CMDS.filter((c) => !c.sep && canRun(c) && (!q || q.split(/\s+/).every((w) => fold(c.label + ' ' + (c.words || '') + ' ' + MENU_NAMES[c.menu]).includes(w))));
+    chrome.cur = Math.min(chrome.cur, Math.max(0, chrome.palette.length - 1));
+    chrome.palette.forEach((c, i) => {
+      const b = menuItem(c, () => showPalette(false));
+      b.setAttribute('role', 'option');
+      if (i === chrome.cur) b.classList.add('cur');
+      b.insertBefore(make('span', 'grp', MENU_NAMES[c.menu]), b.querySelector('.k'));
+      const li = make('li');
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+    if (!chrome.palette.length) list.appendChild(make('li', 'note', 'Aucune commande ne correspond.'));
+  }
+  function showPalette(on) {
+    closeBarMenu();
+    $('palette-veil').hidden = !on;
+    if (on) { $('palette-input').value = ''; chrome.cur = 0; renderPalette(); $('palette-input').focus(); }
+  }
+  function showKeys(on) {
+    closeBarMenu();
+    $('keys-veil').hidden = !on;
+    if (!on) return;
+    const t = $('keys-table');
+    t.textContent = '';
+    const head = (text) => { const tr = make('tr'), th = make('th', '', text); th.colSpan = 2; tr.appendChild(th); t.appendChild(tr); };
+    const row = (what, keys) => { const tr = make('tr'); tr.appendChild(make('td', '', typo(what))); const td = make('td'); td.appendChild(make('kbd', '', keys)); tr.appendChild(td); t.appendChild(tr); };
+    head('Commandes');
+    row('Chercher une commande', 'Ctrl+K');
+    CMDS.filter((c) => c.keys && !c.step).forEach((c) => row(c.label, c.keys));
+    row('Aller à une étape (Tracé, Réglages, Relief, Photos, Objets, Envoi)', '1 … 6');
+    head('Sur la carte');
+    row('Poser un point de passage (outil Ajouter)', 'clic sur une route');
+    row('Insérer un point (outil Modifier)', 'clic sur le tracé');
+    row('Déplacer un point ou un objet', 'glisser');
+    row('Supprimer un point ou un objet', 'clic droit');
+    head('Objets');
+    row('Tourner l\'objet à poser ou choisi de 15°', 'R / Maj+R');
+    row('Supprimer l\'objet choisi', 'Suppr');
+    row('Arrêter la pose, fermer un menu', 'Échap');
+    $('keys-close').focus();
+  }
+  function showWelcome(force) {
+    chrome.welcomeClosed = false;
+    chrome.welcomeForced = !!force;
+    renderChrome();
+  }
+
+  // What the bar, the steps and the first-steps card say, after each change.
+  function renderChrome() {
+    if (!$('appbar')) return;
+    const name = $('f-name').value;
+    if (document.activeElement !== $('bar-name') && $('bar-name').value !== name) $('bar-name').value = name;
+    const sum = $('summary').firstChild ? $('summary').firstChild.textContent : '';
+    setText($('bar-state'), state.waypoints.length > 1 ? sum : '');
+    $('bar-keep').disabled = $('keep').disabled;
+    $('bar-download').disabled = $('download').disabled;
+    const r = current.result, ok = !!(current.route && current.route.ok && r && r.ok), s = current.settings;
+    const done = {
+      trace: ok, settings: ok && !!name.trim(), relief: ok && (!s || !s.relief || (!current.pending && !relief.error)),
+      photos: state.photos.length > 0, objects: state.objects.length > 0, send: false
+    };
+    document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('done', !!done[b.dataset.tab]));
+    $('trace-stats').hidden = state.waypoints.length < 2;
+    const empty = !graph.ways.length && !state.waypoints.length && !state.photos.length && !state.objects.length;
+    $('welcome').hidden = chrome.welcomeClosed || !$('draft').hidden || !(chrome.welcomeForced || empty);
+  }
+
+  function initChrome() {
+    document.querySelectorAll('.mb-btn').forEach((b) => {
+      b.addEventListener('click', (ev) => { ev.stopPropagation(); if (chrome.open === b.dataset.menu) closeBarMenu(); else openBarMenu(b.dataset.menu); });
+      b.addEventListener('mouseenter', () => { if (chrome.open && chrome.open !== b.dataset.menu) openBarMenu(b.dataset.menu); });
+    });
+    document.addEventListener('click', (ev) => { if (chrome.open && !ev.target.closest('.mb')) closeBarMenu(); });
+    $('menubar').addEventListener('keydown', (ev) => {
+      if (!chrome.pop) return;
+      const items = Array.from(chrome.pop.querySelectorAll('.mi:not(:disabled)')), i = items.indexOf(document.activeElement);
+      const names = Object.keys(MENU_NAMES), m = names.indexOf(chrome.open);
+      if (ev.key === 'ArrowDown') { ev.preventDefault(); items[(i + 1) % items.length].focus(); }
+      else if (ev.key === 'ArrowUp') { ev.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+      else if (ev.key === 'ArrowRight') { ev.preventDefault(); openBarMenu(names[(m + 1) % names.length]); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); openBarMenu(names[(m - 1 + names.length) % names.length]); }
+    });
+    // The name in the bar is the name of the form.
+    $('bar-name').addEventListener('input', () => {
+      $('f-name').value = $('bar-name').value;
+      $('f-name').dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    $('bar-name').addEventListener('change', () => { $('f-name').dispatchEvent(new Event('change', { bubbles: true })); refresh(); });
+    $('bar-name').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') $('bar-name').blur(); });
+    $('f-name').addEventListener('input', () => { if (document.activeElement !== $('bar-name')) $('bar-name').value = $('f-name').value; renderChrome(); });
+    $('bar-keep').addEventListener('click', press('keep'));
+    $('bar-download').addEventListener('click', press('download'));
+    $('bar-cmd').addEventListener('click', () => showPalette(true));
+    $('fit').addEventListener('click', fitAll);
+
+    $('palette-input').addEventListener('input', () => { chrome.cur = 0; renderPalette(); });
+    $('palette-input').addEventListener('keydown', (ev) => {
+      const n = chrome.palette.length;
+      if (ev.key === 'ArrowDown' && n) { ev.preventDefault(); chrome.cur = (chrome.cur + 1) % n; renderPalette(); }
+      else if (ev.key === 'ArrowUp' && n) { ev.preventDefault(); chrome.cur = (chrome.cur - 1 + n) % n; renderPalette(); }
+      else if (ev.key === 'Enter' && n) { ev.preventDefault(); const c = chrome.palette[chrome.cur]; showPalette(false); c.run(); }
+    });
+    ['palette-veil', 'keys-veil'].forEach((id) => $(id).addEventListener('click', (ev) => { if (ev.target === $(id)) { $(id).hidden = true; } }));
+    $('keys-close').addEventListener('click', () => showKeys(false));
+
+    $('welcome-close').addEventListener('click', () => { chrome.welcomeClosed = true; chrome.welcomeForced = false; renderChrome(); });
+    $('welcome-search').addEventListener('click', () => $('search-input').focus());
+    $('welcome-places').addEventListener('click', (ev) => { ev.stopPropagation(); $('places-btn').click(); });
+    $('welcome-load').addEventListener('click', () => { chrome.welcomeForced = false; press('load-roads')(); });
+    $('welcome-photos').addEventListener('click', () => { chrome.welcomeForced = false; showTab('photos'); $('photos-add').click(); });
+    $('welcome-open').addEventListener('click', () => { chrome.welcomeForced = false; press('open')(); });
+    $('welcome-mine').addEventListener('click', () => { chrome.welcomeClosed = true; renderChrome(); goTo('send', 'circuits'); });
+
+    document.addEventListener('keydown', (ev) => {
+      const mod = ev.ctrlKey || ev.metaKey, key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+      if (ev.key === 'Escape') {
+        if (!$('palette-veil').hidden) { showPalette(false); return; }
+        if (!$('keys-veil').hidden) { showKeys(false); return; }
+        if (chrome.open) { const b = document.querySelector('.mb-btn[data-menu=' + chrome.open + ']'); closeBarMenu(); b.focus(); }
+        return;
+      }
+      if (mod && !ev.altKey) {
+        if (key === 'k') { ev.preventDefault(); showPalette($('palette-veil').hidden); }
+        else if (key === 's' && ev.shiftKey) { ev.preventDefault(); press('download')(); }
+        else if (key === 's') { ev.preventDefault(); press('keep')(); }
+        else if (key === 'o') { ev.preventDefault(); press('open')(); }
+        return;
+      }
+      if (ev.altKey || typing(ev.target) || !$('palette-veil').hidden || !$('keys-veil').hidden) return;
+      if (objUi.armed || objUi.selected >= 0) { if (key === 'r' || key === 'Delete' || key === 'Backspace') return; }
+      const c = CMDS.find((x) => x.keys && x.keys.length === 1 && x.keys.toLowerCase() === key);
+      if (key === '?') { ev.preventDefault(); showKeys(true); }
+      else if (c && canRun(c)) { ev.preventDefault(); c.run(); }
+    });
+    renderChrome();
+  }
+
   /* ---------------------- 13. Panel, tabs and the settings form */
 
   function showTab(name) {
@@ -6445,6 +6855,7 @@ kbd { padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; font: i
     initPhotos();
     initObjects();
     initDraft();
+    initChrome();
     syncKindButtons();
     updateLoadButton();
     refresh();
